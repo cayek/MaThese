@@ -1,0 +1,19 @@
+Package: MaTheseR
+Type: Package
+Title: All for my thesis
+Version: 0.0
+Date: 2017-06-14
+Author: Kevin Caye
+Maintainer: Who to complain to <yourfault@somewhere.net>
+Description: More about what it does (maybe more than one line)
+License: GPL-3 + file LICENSE
+LazyData: LazyData: TRUE
+Encoding: UTF-8
+Depends:
+    R (>= 3.2.3)
+Suggests:
+    testthat
+Imports:
+    foreach
+RoxygenNote: 6.0.1.9000
+Roxygen: list(markdown = TRUE)
