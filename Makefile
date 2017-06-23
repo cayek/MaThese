@@ -27,7 +27,14 @@ MaTheseR_document:
 MaTheseR_check:
 	R -e 'devtools::check(pkg = "./Rpackage")'
 
-## krakenator 
+## krakenator
+
+krakenator_install_ExpRiment:
+	ssh -t cayek@krakenator.imag.fr "cd ~/Projects/Thesis/ExpRiment/; git pull; R --vanilla CMD INSTALL --no-multiarch --with-keep.source ."
+
+krakenator_install_MatrixFactorizationR:
+	ssh -t cayek@krakenator.imag.fr "cd ~/Projects/Thesis/MatrixFactorization/Rpackage/; git pull; R --vanilla CMD INSTALL --no-multiarch --with-keep.source ."
+
 krakenator_push_hook:
 	scp ./hooks/post-receive.sh cayek@krakenator:/home/cayek/Gits/2017/MaThese.git/hooks/post-receive
 
