@@ -38,7 +38,7 @@ krakenator_install_MatrixFactorizationR:
 krakenator_push_hook:
 	scp ./hooks/post-receive.sh cayek@krakenator:/home/cayek/Gits/2017/MaThese.git/hooks/post-receive
 
-krakenator_deploy: krakenator_install_MatrixFactorizationR krakenator_install_ExpRiment
+krakenator_deploy:
 	git status
 	git commit --allow-empty -am "deploy on krakenator"
 	git push krakenator master
