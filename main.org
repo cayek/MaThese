@@ -2177,8 +2177,10 @@ qui vivent dans leur un milieu naturel depuis plusieurs générations.
   [1]    670 342478
 #+end_example
 
-******* STARTED Calcul du gradient climatique
+******* DONE Calcul du gradient climatique
+CLOSED: [2017-06-27 mar. 17:56]
 :LOGBOOK:
+- State "DONE"       from "STARTED"    [2017-06-27 mar. 17:56]
 - Note taken on [2017-06-27 mar. 12:02] \\
   On va ajouter les html widget a l'export html :D, voir: http://rmarkdown.rstudio.com/developer_html_widgets.html
 - State "STARTED"    from              [2017-06-27 mar. 12:02]
@@ -2274,16 +2276,18 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_src
 **** Description des experiences
-***** STARTED Scree plot du 1000 genome
+***** RUNNING Scree plot du 1000 genome
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-06-27 mar. 18:01]
+- State "DONE"       from "RUNNING"    [2017-06-27 mar. 17:52]
+- State "RUNNING"    from "STARTED"    [2017-06-27 mar. 16:51]
 - State "STARTED"    from "TODO"       [2017-06-27 mar. 16:42]
 - State "TODO"       from              [2017-06-27 mar. 16:42]
 :END:
 #+begin_src R :results output :exports both
   library(MaTheseR)
 
-  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds"
-  skip_if_not(file.exists(Y))
+  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds"
 
   ## samplers
   samplers <- ExpRsampler_trueData(Y = Y, X = NULL, outlier = NULL) * param()
@@ -2300,14 +2304,27 @@ des individus nous avons choisi d'utiliser la base wordclim
                extractor = ExpRextractor_sing_values)
   expr <- ExpRmouline(expr)
 
-  skip("plots")
-  ExpRplot_sing_values(expr)
-
+  save_expr(expr)
 #+end_src
+
+#+RESULTS:
+#+begin_example
+>   save_expr(expr)
+Expr save in ./OUTPUT/Expr/file355d1f018b7e.rds
+#+end_example
+
 ***** TODO Comparaison numérique sur des simulations
 :LOGBOOK:
 - State "TODO"       from              [2017-06-27 mar. 12:06]
 :END:
+Afin de valider la méthodes et son implémentation nous avons comparé ridgeLFMM
+et lassoLFMM aux autres méthodes de la littérature sur des simulations
+générative. Nous avons .. decrire les param
+
+#+begin_src R :results output :exports both
+
+#+end_src
+
 ***** TODO Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
 - State "TODO"       from              [2017-06-27 mar. 15:29]

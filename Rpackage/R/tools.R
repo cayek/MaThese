@@ -16,7 +16,7 @@ make_output_file <- function(filename, ext, path.dir) {
 save_plot_png <- function(pl, filename = NULL, width = 600, height = 400) {
 
   path.dir = "~/Projects/Thesis/MaThese/OUTPUT/Rplots/"
-  output.file <- make_output_file(filename)
+  output.file <- make_output_file(filename, "png", path.dir)
 
   png(output.file, width, height)
   print(pl)
@@ -32,7 +32,7 @@ save_plot_png <- function(pl, filename = NULL, width = 600, height = 400) {
 save_expr <- function(expr, filename = NULL) {
 
   path.dir = "~/Projects/Thesis/MaThese/OUTPUT/Expr/"
-  output.file <- make_output_file(filename)
+  output.file <- make_output_file(filename, "rds", path.dir)
 
   saveRDS(expr, output.file)
 
