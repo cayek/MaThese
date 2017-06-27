@@ -2274,7 +2274,11 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_src
 **** Description des experiences
-***** Scree plot du 1000 genome
+***** STARTED Scree plot du 1000 genome
+:LOGBOOK:
+- State "STARTED"    from "TODO"       [2017-06-27 mar. 16:42]
+- State "TODO"       from              [2017-06-27 mar. 16:42]
+:END:
 #+begin_src R :results output :exports both
   library(MaTheseR)
 
@@ -2285,7 +2289,7 @@ des individus nous avons choisi d'utiliser la base wordclim
   samplers <- ExpRsampler_trueData(Y = Y, X = NULL, outlier = NULL) * param()
 
   ## methods
-  methods <- method_PCA(K = 50, scale = FALSE) * param()
+  methods <- method_PCA(K = 300, scale = FALSE) * param()
 
   ## expr
   expr <- ExpR(rep.nb.sampler = 1,

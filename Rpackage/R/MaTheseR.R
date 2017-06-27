@@ -7,11 +7,11 @@
 #' @import ggplot2
 #' @import dplyr
 #' @import tidyr
+#' @import MatrixFactorizationR
+#' @import ExpRiment
 #' @importFrom magrittr "%>%"
 #' @importFrom foreach foreach %:% %do% %dopar%
 #' @import tibble
-#' @importFrom Rcpp evalCpp
-#' @useDynLib MaTheseR
 #' @import RcppEigen
 
 NULL
