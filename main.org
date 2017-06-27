@@ -2276,8 +2276,10 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_src
 **** Description des experiences
-***** RUNNING Scree plot du 1000 genome
+***** DONE Scree plot du 1000 genome pour EAS
+CLOSED: [2017-06-27 mar. 19:24]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-06-27 mar. 19:24]
 - State "RUNNING"    from "DONE"       [2017-06-27 mar. 18:01]
 - State "DONE"       from "RUNNING"    [2017-06-27 mar. 17:52]
 - State "RUNNING"    from "STARTED"    [2017-06-27 mar. 16:51]
@@ -2305,12 +2307,19 @@ des individus nous avons choisi d'utiliser la base wordclim
   expr <- ExpRmouline(expr)
 
   save_expr(expr)
+
+  pl <- ExpRplot_sing_values(expr) + 
+  coord_cartesian(xlim = c(1,300))
+
+  save_plot_png(pl)
+
 #+end_src
 
 #+RESULTS:
+[[./OUTPUT/Rplots/file3700288edbce.png]]
 #+begin_example
->   save_expr(expr)
-Expr save in ./OUTPUT/Expr/file355d1f018b7e.rds
+> save_expr(expr)
+Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_example
 
 ***** TODO Comparaison numérique sur des simulations

@@ -9,10 +9,18 @@ method_ridgeLFMM <- function(K, lambda = 1e-4) {
 
 ##' @export
 ExpRmouline.method_ridgeLFMM <- function(m, dat) {
+  ## rum lfmm
   lfmm <- MatrixFactorizationR::ridgeLFMM(K = m$K,
                                        lambda = m$lambda)
   lfmm <- MatrixFactorizationR::MatrixFactorizationR_fit(m, dat)
   m[names(lfmm)] <- lfmm
+
+  ## run hypothesis testing
+  X <- cbind(dat$X, m$U)
+  d <- ncol(X)
+  hp <- hypothesis_testing_lm(dat, X = X)
+
+  m$pvalue <- hp$pvalue[,1:d]
   m
 }
 

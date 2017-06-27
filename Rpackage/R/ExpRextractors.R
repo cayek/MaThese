@@ -13,3 +13,13 @@ df <- tibble::tibble(rep.sampler = rep.sampler,
   print.data.frame(df[1,])
   df
 }
+
+##' @export
+ExpRextractor_pvalue <- function(dat, m, rep.sampler, rep.method) {
+df <- tibble::tibble(rep.sampler = rep.sampler,
+                     rep.method = rep.method,
+                     pvalue = m$pvalue[,1],
+                     index = seq_along(m$pvalue[,1]))
+  print.data.frame(df[1,])
+  df
+}

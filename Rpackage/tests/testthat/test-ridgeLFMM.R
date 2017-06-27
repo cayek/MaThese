@@ -32,3 +32,16 @@ test_that("test CV", {
   ExpRplot_CV_ridgeLFMM(expr, major = "lambda")
 })
 
+
+test_that("test ridge lfmm", {
+
+  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA_samplep1000n100.rds"
+  skip_if_not(file.exists(Y))
+
+  ## samplers
+  samplers <- ExpRsampler_fromTrueData(Y = Y, K = 3, prop.outlier = 0.1) * param()
+  s <- samplers[[1]]
+
+
+
+})
