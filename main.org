@@ -10,6 +10,9 @@
 #+TAGS: noexport(n) deprecated(d)
 #+EXPORT_SELECT_TAGS: export
 #+EXPORT_EXCLUDE_TAGS: noexport
+#+COLUMNS: %25ITEM %TODO %3PRIORITY %TAGS
+#+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(D!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
+
 
 # #+LaTeX_CLASS: book
 #+LaTeX_CLASS: article
@@ -2055,11 +2058,11 @@ particular, as in cite:wang2015confounder,gerard2017unifying, we used the median
 and the mad as robust estimators of the mean and standard deviation of
 statistical test under the null hypothesis.
 
-*** Simulation study and dataset
+*** Experiences
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-**** Others methods
+**** Méthodes comparées
 <<sec:similar_method>>
 ***** lm and lm + pca
 We comparared results of our method to two well known method the linear model
@@ -2068,7 +2071,7 @@ and the linear model with PCA scores.
 
 ***** sva
 ***** famt
-**** Simulations and data
+**** Simulation et vrai jeux de données
 
 ***** Generative model simulation
 
@@ -2092,12 +2095,6 @@ association study (GWAS), an genome-wide association study (EWAS) and an
 ecological association study (EAS). Before running algorithm $\G$ and $\X$
 matrix was centered and normalized with standard deviation for all the study. We
 now describe preprocessing step for each study.
-
-
-
-****** Pre traitement du 1000 genome 
-
-
 
 ****** Association study of DNA methylation with rheumatoid arthritis (EWAS)
 For the EWAS we chose data from a recent association study of DNA methylation with
@@ -2152,8 +2149,8 @@ populations. Pour cette étude nous ne gardons que les individus pour lesquels
 qui vivent dans leur un milieu naturel depuis plusieurs générations.
 
 #+begin_src R :results output :exports both
-  G <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds")
-  indiv.df <- readRDS("~/Projects/Thesis/Data/1000Genomes/Phase3/indiv_df.rds")
+  G <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds")
+  indiv.df <- readRDS("./Data/1000Genomes/Phase3/indiv_df.rds")
 
   ## keep only indiv in G
   indiv.df <- indiv.df %>%
@@ -2170,13 +2167,131 @@ qui vivent dans leur un milieu naturel depuis plusieurs générations.
   G <- G[indiv.df$sample,]
   dim(G)
 
-  saveRDS(G, "~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds")
-  saveRDS(indiv.df, "~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
+  saveRDS(G, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds")
+  saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
 #+end_src
 
-******* Calcul du gradient climatique
+#+RESULTS:
+#+begin_example
+  > dim(G)
+  [1]    670 342478
+#+end_example
+
+******* STARTED Calcul du gradient climatique
+:LOGBOOK:
+- Note taken on [2017-06-27 mar. 12:02] \\
+  On va ajouter les html widget a l'export html :D, voir: http://rmarkdown.rstudio.com/developer_html_widgets.html
+- State "STARTED"    from              [2017-06-27 mar. 12:02]
+:END:
+
+Afin de calculer un gradient climatique avec partir des positions géographique
+des individus nous avons choisi d'utiliser la base wordclim
+#+begin_src R :results output :exports both
+  ## get pop information
+  library(rvest)
+
+  pop.tbl <- read_html("http://www.internationalgenome.org/faq/which-populations-are-part-your-study/")%>%
+    html_nodes("table") %>%
+    html_table() %>%
+    .[[1]]
+
+  head(pop.tbl)
+  names(pop.tbl)[1] <- "pop"
+
+
+  ## pop location
+  library(ggmap)
+
+  indiv.df <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
+  indiv.df <-indiv.df %>% inner_join(pop.tbl)
+
+  indiv.df
+
+  ## match pop localisation
+  indiv.df <- indiv.df %>%
+    mutate(citie = NA)
+  indiv.df[indiv.df$pop == "IBS",]$citie = "Spain"
+  indiv.df[indiv.df$pop == "PJL",]$citie = "Pakistan"
+  indiv.df[indiv.df$pop == "CDX",]$citie = "China"
+  indiv.df[indiv.df$pop == "ACB",]$citie = "Barbados"
+  indiv.df[indiv.df$pop == "GWD",]$citie = "Gambia"
+  indiv.df[indiv.df$pop == "BEB",]$citie = "Bangladesh"
+  indiv.df[indiv.df$pop == "MSL",]$citie = "Sierra Leone"
+  indiv.df[indiv.df$pop == "STU",]$citie = "Sri Lanka"
+  indiv.df[indiv.df$pop == "ITU",]$citie = "Telangana"
+  indiv.df[indiv.df$pop == "CEU",]$citie = "United Kingdom"
+  indiv.df[indiv.df$pop == "LWK",]$citie = "Kenya"
+  indiv.df[indiv.df$pop == "JPT",]$citie = "Japan"
+  indiv.df[indiv.df$pop == "YRI",]$citie = "Nigeria"
+  indiv.df[indiv.df$pop == "TSI",]$citie = "Italia"
+  indiv.df[indiv.df$pop == "GIH",]$citie = "Gujarat"
+
+
+  ## get location
+  cities <- indiv.df %>% group_by(pop) %>%
+    dplyr::filter(row_number(citie) == 1) %>%
+    ungroup() %>%
+    dplyr::select(citie, pop, `Population Description`)
+  cities <- cbind(cities, geocode(cities$citie))
+
+  ## plot with leaflet
+  library(leaflet)
+  m <- leaflet() %>%
+    addTiles() %>%  # Add default OpenStreetMap map tiles
+    addMarkers(lng = cities$lon, lat = cities$lat, popup = cities$`Population Description`)
+  m  # Print the map
+
+
+  ## compute X
+  library(raster)
+  climate <- getData('worldclim', var='bio', res = 2.5)
+  bio <- extract(climate, y = as.matrix(cities[c("lon","lat")]))
+  pc.bio <- prcomp(bio,scale = T)
+  X <- pc.bio$x[,1]
+
+  cities <- cbind(cities, X)
+
+
+  ## add to indiv
+  indiv.df <- indiv.df %>%
+    inner_join(cities)
+
+
+  ## save 
+  saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
+  saveRDS(as.matrix(indiv.df$X), "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds")
+
+  ## plot X
+  indiv.df <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
+  pl <- ggplot(indiv.df, aes(x = lon, y = lat, color = X, size = X, text = `Population Description`)) +
+    geom_point()
+  pl
+
+
+  ## try plotly :D
+  library(plotly)
+  ggplotly(pl)
+
+#+end_src
+**** Description des experiences
+***** TODO Comparaison numérique sur des simulations
+:LOGBOOK:
+- State "TODO"       from              [2017-06-27 mar. 12:06]
+:END:
+***** TODO EAS
+:LOGBOOK:
+- State "TODO"       from              [2017-06-27 mar. 12:06]
+:END:
+***** Validation croisée du modèle lfmmRidge
+#+begin_src R :results output :exports both
+  require(MaThese)
+#+end_src
 
 *** Results
+
+**** EAS
+***** Validation croisé du modèle lfmmRidge
+
 *** Discussion
 *** Figures and tables
 **** Numerical experiments
