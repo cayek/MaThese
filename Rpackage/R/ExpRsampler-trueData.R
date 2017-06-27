@@ -1,7 +1,7 @@
-## sampler
-##' .. content for \description{} (no empty lines) ..
+## Sample True data
 ##'
-##' .. content for \details{} ..
+##' Sample true data set from file.
+##'
 ##' @author cayek
 ##' @export
 ExpRsampler_trueData <- function(Y, X, outlier) {
@@ -12,7 +12,7 @@ ExpRsampler_trueData <- function(Y, X, outlier) {
 }
 
 ##' @export
-ExpRmouline.sampler_trueData <- function(s) {
+ExpRmouline.ExpRsampler_trueData <- function(s) {
   if (!is.null(X)) {
     dat <- MatrixFactorizationR::LfmmDat(s$Y, s$X)
   } else {

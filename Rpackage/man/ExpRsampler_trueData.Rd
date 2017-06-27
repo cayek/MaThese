@@ -2,12 +2,12 @@
 % Please edit documentation in R/ExpRsampler-trueData.R
 \name{ExpRsampler_trueData}
 \alias{ExpRsampler_trueData}
-\title{.. content for \description{} (no empty lines) ..}
+\title{Sample true data set from file.}
 \usage{
 ExpRsampler_trueData(Y, X, outlier)
 }
 \description{
-.. content for \details{} ..
+Sample true data set from file.
 }
 \author{
 cayek
