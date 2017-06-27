@@ -29,6 +29,8 @@ MaTheseR_check:
 
 ## krakenator
 
+krakenator_install_all: krakenator_install_ExpRiment krakenator_install_MatrixFactorizationR krakenator_deploy
+
 krakenator_install_ExpRiment:
 	ssh -t cayek@krakenator.imag.fr "cd ~/Projects/Thesis/ExpRiment/; git pull; make ExpRiment_install"
 

@@ -12,3 +12,9 @@ ExpRplot_CV_ridgeLFMM<- function(expr, major = c('K', 'lambda')) {
   }
   pl
 }
+
+##' @export
+ExpRplot_sing_values <- function(expr) {
+  ggplot(expr$df.res, aes(x = index, y = singular.value)) +
+    geom_point()
+}

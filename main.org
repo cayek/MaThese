@@ -2274,15 +2274,40 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_src
 **** Description des experiences
+***** Scree plot du 1000 genome
+#+begin_src R :results output :exports both
+  library(MaTheseR)
+
+  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds"
+  skip_if_not(file.exists(Y))
+
+  ## samplers
+  samplers <- ExpRsampler_trueData(Y = Y, X = NULL, outlier = NULL) * param()
+
+  ## methods
+  methods <- method_PCA(K = 50, scale = FALSE) * param()
+
+  ## expr
+  expr <- ExpR(rep.nb.sampler = 1,
+               samplers = samplers,
+               rep.nb.method = 1,
+               methods = methods,
+               preprocessors = NULL,
+               extractor = ExpRextractor_sing_values)
+  expr <- ExpRmouline(expr)
+
+  skip("plots")
+  ExpRplot_sing_values(expr)
+
+#+end_src
 ***** TODO Comparaison numérique sur des simulations
 :LOGBOOK:
 - State "TODO"       from              [2017-06-27 mar. 12:06]
 :END:
-***** TODO EAS
+***** TODO Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
-- State "TODO"       from              [2017-06-27 mar. 12:06]
+- State "TODO"       from              [2017-06-27 mar. 15:29]
 :END:
-***** Validation croisée du modèle lfmmRidge
 #+begin_src R :results output :exports both
   library(MaTheseR)
 
@@ -2292,12 +2317,12 @@ des individus nous avons choisi d'utiliser la base wordclim
                                    outlier = NULL) * param()
   dat <- samplers[[1]] %>% ExpRmouline()
 #+end_src
+***** TODO EAS
+:LOGBOOK:
+- State "TODO"       from              [2017-06-27 mar. 12:06]
+:END:
 
 *** Results
-
-**** EAS
-***** Validation croisé du modèle lfmmRidge
-
 *** Discussion
 *** Figures and tables
 **** Numerical experiments

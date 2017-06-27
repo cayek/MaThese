@@ -14,7 +14,9 @@ Depends:
 Suggests:
     testthat
 Imports:
-    foreach
+    foreach,
+    RSpectra,
+    ggplot2
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 Remotes: cayek/ExpRiment, cayek/MatrixFactorizationR
