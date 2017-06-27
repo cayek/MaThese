@@ -4,7 +4,7 @@
 #+TITLE: Méthodes de factorisation matricielle pour la génomique des populations et les tests d'association
 #+AUTHOR:      Kevin Caye
 
-#+LANGUAGE:  en
+#+LANGUAGE: fr
 #+STARTUP: overview indent inlineimages logdrawer
 #+OPTIONS: H:5 author:nil email:nil creator:nil timestamp:nil skip:nil toc:nil ^:nil
 #+TAGS: noexport(n) deprecated(d)
@@ -1537,7 +1537,7 @@ Note: No phenotypes present.
 #+end_example
 *** Conversion au format R
 
-Enfin nous avons utilisé le package bigsnpr pour convertir les données du format
+Nous avons utilisé le package bigsnpr pour convertir les données du format
 =.bed= à un format de matrice R.
 
 #+begin_src R :results output :exports both
@@ -1585,7 +1585,30 @@ Enfin nous avons utilisé le package bigsnpr pour convertir les données du form
   > dim(G)
   [1]    919 345156
 #+end_example
+*** Scaling des données
+Pour certaine analyse il est important de scaler les données. 
 
+#+begin_src R :results output :exports both
+  G <- readRDS("./Data/1000Genomes/Phase3/plink/1000GenomePhase3_QC_norel_prunned.rds")
+  G <- scale(G)
+
+  saveRDS(G, "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled.rds")
+#+end_src
+*** Filtrage des données manquantes
+Il reste certain SNPs avec des données manquantes ($0.7 \%$), nous les avons enlevé.
+#+begin_src R :results output :exports both
+  library(MaThese)
+  G <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled.rds")
+  G <- preprocessing_filter_na(G)
+  saveRDS(G, "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds")
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  TRACE [2017-05-18 16:19:27] proportion of removed loci =  0.00775881050887135
+  > dim(G)
+  [1]    919 342478
+#+end_example
 ** Arabidopsis Thaliana Regional Mapping Lines
 ** 1001 genome
 ** Celiac GWAS
@@ -2119,8 +2142,39 @@ which are not correlated. The final dataset was of size $n = $ and $L = $.
 
 We also impute missing value with the sowtware 
 
-****** Association study of genetic variants with climatic data (EAS)
+****** Étude d'association des variants génétique avec un gradient climatique (EAS)
+******* Preprocessing des données
+Pour cette étude nous avons choisi d'utiliser les données 1000 genome. Après les
+étapes de preprocessing présenter dans la section..., les individus metisse ont
+été exclu. En effet pour une étude d'association à l'environement il n'est pas
+pertinent de travailler avec individu issu du metissage de plusieurs
+populations. Pour cette étude nous ne gardons que les individus pour lesquels
+qui vivent dans leur un milieu naturel depuis plusieurs générations.
 
+#+begin_src R :results output :exports both
+  G <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds")
+  indiv.df <- readRDS("~/Projects/Thesis/Data/1000Genomes/Phase3/indiv_df.rds")
+
+  ## keep only indiv in G
+  indiv.df <- indiv.df %>%
+    dplyr::filter(sample %in% rownames(G))
+
+  ## indiv metadata
+  indiv.df <- indiv.df %>%
+    dplyr::filter(super_pop %in% c("EUR", "SAS", "AFR", "EAS"))
+  indiv.df <- indiv.df %>%
+    dplyr::filter(!(pop %in% c("ASW")))
+  indiv.df
+
+
+  G <- G[indiv.df$sample,]
+  dim(G)
+
+  saveRDS(G, "~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds")
+  saveRDS(indiv.df, "~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
+#+end_src
+
+******* Calcul du gradient climatique
 
 *** Results
 *** Discussion

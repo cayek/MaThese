@@ -30,15 +30,15 @@ MaTheseR_check:
 ## krakenator
 
 krakenator_install_ExpRiment:
-	ssh -t cayek@krakenator.imag.fr "cd ~/Projects/Thesis/ExpRiment/; git pull; R --vanilla CMD INSTALL --no-multiarch --with-keep.source ."
+	ssh -t cayek@krakenator.imag.fr "cd ~/Projects/Thesis/ExpRiment/; git pull; make ExpRiment_install"
 
 krakenator_install_MatrixFactorizationR:
-	ssh -t cayek@krakenator.imag.fr "cd ~/Projects/Thesis/MatrixFactorization/Rpackage/; git pull; R --vanilla CMD INSTALL --no-multiarch --with-keep.source ."
+	ssh -t cayek@krakenator.imag.fr "cd ~/Projects/Thesis/MatrixFactorizationR/; git pull; make MatrixFactorizationR_install"
 
 krakenator_push_hook:
 	scp ./hooks/post-receive.sh cayek@krakenator:/home/cayek/Gits/2017/MaThese.git/hooks/post-receive
 
-krakenator_deploy:
+krakenator_deploy: krakenator_install_MatrixFactorizationR krakenator_install_ExpRiment
 	git status
 	git commit --allow-empty -am "deploy on krakenator"
 	git push krakenator master
