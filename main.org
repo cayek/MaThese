@@ -2284,12 +2284,13 @@ des individus nous avons choisi d'utiliser la base wordclim
 :END:
 ***** Validation croisée du modèle lfmmRidge
 #+begin_src R :results output :exports both
-  require(ExpRiment)
-  require(MaThese)
+  library(MaTheseR)
 
-  s <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA_sampleL100000_PCA.rds")
-
-  dat <- ExpR
+  ## samplers
+  samplers <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds",
+                                   X = "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds",
+                                   outlier = NULL) * param()
+  dat <- samplers[[1]] %>% ExpRmouline()
 #+end_src
 
 *** Results
