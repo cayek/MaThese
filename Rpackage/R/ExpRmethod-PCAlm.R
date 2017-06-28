@@ -59,10 +59,10 @@ ExpRmouline.method_PCAlm <- function(m, dat) {
 
   ## run hypothesis testing
   X <- cbind(dat$X, m$U)
-  d <- ncol(X)
+  d <- ncol(dat$X)
   hp <- hypothesis_testing_lm(dat, X = X)
 
-  m$pvalue <- hp$pvalue[,1:d]
+  m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
   m
 
 }

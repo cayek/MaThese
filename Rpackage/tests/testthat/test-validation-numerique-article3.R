@@ -28,6 +28,7 @@ test_that("validation numerique article 3 sur un petit sample", {
   m.cate <- method_cate(K = K)
   m.famt <- method_famt(K)
   m.sva <- method_sva(K)
+  m.oracle <- method_oracle()
 
   ## m <- m.sva
   ## m <- ExpRmouline(m, dat)
@@ -38,8 +39,8 @@ test_that("validation numerique article 3 sur un petit sample", {
     m.pca * param() + 
     m.cate * param() + 
     m.famt * param() + 
-    m.sva * param() 
-
+    m.sva * param() +
+    m.oracle * param() 
 
   ## run
   ## cl <- parallel::makeCluster(2, outfile = "")
@@ -62,6 +63,8 @@ test_that("validation numerique article 3 sur un petit sample", {
   toplot <- expr$df.res %>%
     dplyr::filter(pvalue.index == "pvalue1")
   plot_AUC_prop_outlier(toplot)
+  plot_pvalue_grid(toplot)
+  plot_precision_recall(toplot)
 
 })
 
