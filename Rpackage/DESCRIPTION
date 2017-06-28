@@ -16,7 +16,8 @@ Suggests:
 Imports:
     foreach,
     RSpectra,
-    ggplot2
+    ggplot2,
+    DescTools
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 Remotes: cayek/ExpRiment, cayek/MatrixFactorizationR

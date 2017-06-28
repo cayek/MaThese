@@ -92,6 +92,12 @@ ExpRmouline.ExpRsampler_fromTrueData <- function(s) {
   p <- ncol(s$load.env$dat$Y)
   n <- nrow(s$load.env$dat$Y)
 
+  ## cs
+  if(is.null(s$cs)) {
+    s$cs <- cs_sampler(s$K)
+  }
+
+
   ## U V and E from svd
   U <- s$load.env$svd$u[,1:s$K] %*% diag(s$load.env$svd$u[1:s$K])
   V <- s$load.env$svd$v[,1:s$K]

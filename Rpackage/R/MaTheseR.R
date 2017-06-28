@@ -13,6 +13,5 @@
 #' @importFrom foreach foreach %:% %do% %dopar%
 #' @import tibble
 #' @import RcppEigen
-
 NULL
 

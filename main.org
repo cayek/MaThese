@@ -2282,10 +2282,19 @@ des individus nous avons choisi d'utiliser la base wordclim
 :END:
 Afin de valider la méthodes et son implémentation nous avons comparé ridgeLFMM
 et lassoLFMM aux autres méthodes de la littérature sur des simulations
-générative. Nous avons .. decrire les param
+générative. 
 
 #+begin_src R :results output :exports both
+  ### The sampler
+  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/Y_sample_p5e4_n919.rds"
+  K <- 5
+  cs <- cs_sampler(K)
+  s <- ExpRsampler_fromTrueData(Y = Y, K = 5, prop.outlier = 0.05, cs = cs, rho.B = 1.0)
+  saveRDS(s, "./OUTPUT/Sampler/validation_numerique.rds")
+#+end_src
 
+
+#+begin_src R :results output :exports both
 #+end_src
 
 ****** anova
