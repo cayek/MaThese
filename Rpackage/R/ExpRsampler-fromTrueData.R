@@ -1,7 +1,6 @@
 ################################################################################
 ## helpers
 
-
 #' Sample cs
 #'
 #' Cs is sample such that the correlation matrix is define and positive
@@ -95,8 +94,9 @@ ExpRmouline.ExpRsampler_fromTrueData <- function(s) {
   ## cs
   if(is.null(s$cs)) {
     s$cs <- cs_sampler(s$K)
+  } else if (is.function(s$cs)) {
+    s$cs <- s$cs(s$K)
   }
-
 
   ## U V and E from svd
   U <- s$load.env$svd$u[,1:s$K] %*% diag(s$load.env$svd$u[1:s$K])
@@ -145,11 +145,15 @@ ExpRmouline.ExpRsampler_fromTrueData <- function(s) {
   }
 
   # return
-  MatrixFactorizationR::SimulatedLfmmDat(Y = Y[sample.ind, sample.loc, drop = FALSE],
-                                         X = X[sample.ind,,drop = FALSE],
-                                         U = U[sample.ind,,drop = FALSE],
-                                         V = V[sample.loc,,drop = FALSE],
-                                         B = B[sample.loc,,drop = FALSE],
-                                         outlier = which(sample.loc %in% outlier))
+  dat <- MatrixFactorizationR::SimulatedLfmmDat(Y = Y[sample.ind, sample.loc, drop = FALSE],
+                                                X = X[sample.ind,,drop = FALSE],
+                                                U = U[sample.ind,,drop = FALSE],
+                                                V = V[sample.loc,,drop = FALSE],
+                                                B = B[sample.loc,,drop = FALSE],
+                                                outlier = which(sample.loc %in% outlier))
+  dat$meta <- list(cs = s$cs,
+                   K = s$K,
+                   prop.outlier = s$prop.outlier)
+  dat
 
 }

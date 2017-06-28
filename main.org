@@ -2285,18 +2285,86 @@ et lassoLFMM aux autres méthodes de la littérature sur des simulations
 générative. 
 
 #+begin_src R :results output :exports both
+  library(MaTheseR)
   ### The sampler
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/Y_sample_p5e4_n919.rds"
   K <- 5
   cs <- cs_sampler(K)
   s <- ExpRsampler_fromTrueData(Y = Y, K = 5, prop.outlier = 0.05, cs = cs, rho.B = 1.0)
   saveRDS(s, "./OUTPUT/Sampler/validation_numerique.rds")
+
+  sv <- s$load.env$svd$d
+  var <- sv / sum(sv)
+
+  pl <- qplot(seq_along(var), var)
+  pl
+  save_plot_png(pl)
 #+end_src
 
+#+RESULTS:
+[[./OUTPUT/Rplots/file42874c17dae9.png]]
+#+begin_example
+> save_plot_png(pl)
+[[./OUTPUT/Rplots/file42874c17dae9.png]]
+#+end_example
 
 #+begin_src R :results output :exports both
-#+end_src
+  library(MaTheseR)
+  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/Y_sampler.rds"
 
+  ## param
+  K <- 5
+  nb.cluster <- 4
+  cs_func <- function(K) {
+    cs <- rep(0, K)
+    cs[1] <- 0.8
+    cs[2] <- 0.2
+    cs
+  }
+
+  ## sampler
+  s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
+  s$cs <- cs_func
+  s$K <- K
+  dat <- ExpRmouline(s)
+  sampler.env <- s$load.env
+  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1))
+
+  ## methods
+  m.ridgeLfmm <- method_ridgeLFMM(K = K)
+  m.lm <- method_lm()
+  m.pca <- method_PCAlm(K = K)
+  m.cate <- method_cate(K = K)
+  m.famt <- method_famt(K)
+  m.sva <- method_sva(K)
+
+  methods <- m.ridgeLfmm * param() +
+    m.lm * param() +
+    m.pca * param() +
+    m.cate * param() +
+    m.famt * param() +
+    m.sva * param()
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  expr <- ExpR(rep.nb.sampler = 2,
+               samplers = samplers,
+               preprocessors = NULL,
+               rep.nb.method = 1,
+               methods = methods,
+               extractor = ExpRextractor_fdr,
+               sampler.env = sampler.env)
+  expr <- ExpRmouline(expr)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## AUC
+  toplot <- expr$df.res %>%
+    dplyr::filter(pvalue.index == "pvalue1")
+  plot_AUC_prop_outlier(toplot)
+
+#+end_src
 ****** anova
 
 ****** plot all

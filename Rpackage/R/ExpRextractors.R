@@ -67,12 +67,11 @@ add_feature <- function(df, dat, m, rep.sampler, rep.method) {
     dplyr::mutate(method = m$name)
 
   ## outlier
-  if (!is.null(dat$outlier)) {
+  if (!is.null(dat$meta$prop.outlier)) {
     df <- df %>%
-      dplyr::mutate(prop.outlier = length(dat$outlier) / p) 
+      dplyr::mutate(prop.outlier = dat$meta$prop.outlier)
   } else {
     df <- df %>%
-      dplyr::mutate(outlier = NA) %>%
       dplyr::mutate(prop.outlier = NA)
   }
 
