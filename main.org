@@ -2336,13 +2336,15 @@ générative.
   m.cate <- method_cate(K = K)
   m.famt <- method_famt(K)
   m.sva <- method_sva(K)
+  m.oracle <- method_oracle()
 
   methods <- m.ridgeLfmm * param() +
     m.lm * param() +
     m.pca * param() +
     m.cate * param() +
     m.famt * param() +
-    m.sva * param()
+    m.sva * param() +
+    m.oracle * param()
 
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
@@ -2361,11 +2363,12 @@ générative.
   ## save expr
   save_expr(expr, "validation_numerique.rds")
 
-  ## AUC
+  ## plots
   toplot <- expr$df.res %>%
     dplyr::filter(pvalue.index == "pvalue1")
   plot_AUC_prop_outlier(toplot)
-
+  plot_pvalue_grid(toplot)
+  plot_precision_recall(toplot)
 #+end_src
 ****** anova
 
@@ -2419,8 +2422,9 @@ CLOSED: [2017-06-27 mar. 19:24]
 > save_expr(expr)
 Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_example
-****** TODO Validation croisée du modèle lfmmRidge sur 1000genome
+****** RUNNING Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-06-28 mer. 20:37]
 - State "TODO"       from              [2017-06-27 mar. 15:29]
 :END:
 #+begin_src R :results output :exports both
@@ -2446,6 +2450,7 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
   parallel::stopCluster(cl)
 
   plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  plot_CV_ridgeLFMM(res.cv$errs, major = "K")
 #+end_src
 
 *** Results
