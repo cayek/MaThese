@@ -2276,7 +2276,26 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_src
 **** Description des experiences
-***** DONE Scree plot du 1000 genome pour EAS
+***** TODO Comparaison numérique sur des simulations
+:LOGBOOK:
+- State "TODO"       from              [2017-06-27 mar. 12:06]
+:END:
+Afin de valider la méthodes et son implémentation nous avons comparé ridgeLFMM
+et lassoLFMM aux autres méthodes de la littérature sur des simulations
+générative. Nous avons .. decrire les param
+
+#+begin_src R :results output :exports both
+
+#+end_src
+
+****** anova
+
+****** plot all
+***** TODO EAS
+:LOGBOOK:
+- State "TODO"       from              [2017-06-27 mar. 12:06]
+:END:
+****** DONE Scree plot du 1000 genome pour EAS
 CLOSED: [2017-06-27 mar. 19:24]
 :LOGBOOK:
 - State "DONE"       from "RUNNING"    [2017-06-27 mar. 19:24]
@@ -2321,20 +2340,7 @@ CLOSED: [2017-06-27 mar. 19:24]
 > save_expr(expr)
 Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_example
-
-***** TODO Comparaison numérique sur des simulations
-:LOGBOOK:
-- State "TODO"       from              [2017-06-27 mar. 12:06]
-:END:
-Afin de valider la méthodes et son implémentation nous avons comparé ridgeLFMM
-et lassoLFMM aux autres méthodes de la littérature sur des simulations
-générative. Nous avons .. decrire les param
-
-#+begin_src R :results output :exports both
-
-#+end_src
-
-***** TODO Validation croisée du modèle lfmmRidge sur 1000genome
+****** TODO Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
 - State "TODO"       from              [2017-06-27 mar. 15:29]
 :END:
@@ -2346,11 +2352,11 @@ générative. Nous avons .. decrire les param
                                    X = "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds",
                                    outlier = NULL) * param()
   dat <- samplers[[1]] %>% ExpRmouline()
+
+  ## methods
+  methods <- method_CV_ridgeLFMM(n.fold.col = 5, n.fold.row = 2,
+                                 lambdas = c(1e-)) * param()
 #+end_src
-***** TODO EAS
-:LOGBOOK:
-- State "TODO"       from              [2017-06-27 mar. 12:06]
-:END:
 
 *** Results
 *** Discussion

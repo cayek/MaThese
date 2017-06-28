@@ -1,6 +1,7 @@
 ##' @export
 method_ridgeLFMM <- function(K, lambda = 1e-4) {
-  args <- as.list(match.call())[-1]
+  args <- list(K = K,
+               lambda = lambda)
   args$name = "ridgeLFMM"
   res <- do.call(ExpRmethod, args)
   class(res) <- c("method_ridgeLFMM", class(res))
@@ -11,8 +12,8 @@ method_ridgeLFMM <- function(K, lambda = 1e-4) {
 ExpRmouline.method_ridgeLFMM <- function(m, dat) {
   ## rum lfmm
   lfmm <- MatrixFactorizationR::ridgeLFMM(K = m$K,
-                                       lambda = m$lambda)
-  lfmm <- MatrixFactorizationR::MatrixFactorizationR_fit(m, dat)
+                                          lambda = m$lambda)
+  lfmm <- MatrixFactorizationR::MatrixFactorizationR_fit(lfmm, dat)
   m[names(lfmm)] <- lfmm
 
   ## run hypothesis testing
