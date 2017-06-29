@@ -7,7 +7,7 @@ test_that("ExpRsampler_fromTrueData", {
   skip_if_not(file.exists(Y))
 
   ## samplers
-  K <- 3
+  K <- 1
   cs <- cs_sampler(K = K)
 
   ## test empty
@@ -21,7 +21,9 @@ test_that("ExpRsampler_fromTrueData", {
   s <- ExpRsampler_fromTrueData(Y = Y, K = K, prop.outlier = 0.1, cs = cs, n = 50, p = 500)
   dat <- ExpRmouline(s)
 
-  dim(dat$Y)
+  expect_equal(dim(dat$Y), c(50, 500))
+  expect_equal(dim(dat$U), c(50, 1))
+  expect_equal(dim(dat$V), c(500, 1))
 
   ## with expRiment
   s <- ExpRsampler_fromTrueData(Y = Y, K = K, prop.outlier = 0.1, cs = cs)
