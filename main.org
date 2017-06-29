@@ -2440,7 +2440,7 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
   nb.cluster <- 4
   cv <- method_CV_ridgeLFMM(n.fold.col = 5, n.fold.row = 4,
                             lambdas = lambdas,
-                            Ks = c(1,2,5,10,15))
+                            Ks = c(1,2,5,10,15, 30))
 
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
@@ -2448,6 +2448,9 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
   res.cv <- ExpRmouline(cv, dat)
   doParallel::stopImplicitCluster()
   parallel::stopCluster(cl)
+
+  ## save expr
+  save_expr(res.cv, "eas_CV_lfmm.rds")
 
   plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
   plot_CV_ridgeLFMM(res.cv$errs, major = "K")
