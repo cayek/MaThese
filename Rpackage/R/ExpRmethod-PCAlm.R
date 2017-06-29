@@ -1,6 +1,6 @@
 ##' @export
-method_PCA <- function(K, scale = FALSE) {
-  args <- as.list(match.call())[-1]
+method_PCA <- function(scale = FALSE) {
+  args <- list(scale = scale)
   args$name = "PCA"
   res <- do.call(ExpRmethod, args)
   class(res) <- c("method_PCA", class(res))

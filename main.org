@@ -1616,6 +1616,140 @@ Il reste certain SNPs avec des données manquantes ($0.7 \%$), nous les avons en
 ** 1001 genome
 ** Celiac GWAS
 Ou ont elle été ddl ??? FP a recu dirrect =./Data/Celiac/dubois_2010/=
+** AT EWAS
+*** Téléchargement des données
+#+BEGIN_SRC R
+  ## try http:// if https:// URLs are not supported
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("Biobase")
+
+  ## try http:// if https:// URLs are not supported
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("GEOquery")
+
+
+  require(Biobase)
+  require(GEOquery)
+
+  ## get le jeu de données dans le format biobase
+  obj861 <- getGEO("GSE42861",GSEMatrix = T)
+
+  ## extrait les phenotypes (factors)
+  disease.state <- pData(phenoData(obj861[[1]]))[,11]
+
+  ## extrait les covariables (subject, age, gender, smocking.status)
+  ## age est converti en numeric
+
+  subject <- pData(phenoData(obj861[[1]]))[,12]
+
+  age.f <- pData(phenoData(obj861[[1]]))[,13]
+  write.table(file = "age.txt", as.character(age.f))
+  age <- as.numeric(read.table(file = "age.txt")[,1])
+
+
+  gender <- pData(phenoData(obj861[[1]]))[,14]
+
+  smocking.status <- pData(phenoData(obj861[[1]]))[,15]
+
+  ## download la matrice d'expression. Attention elle est transposée (individus en colonnes)
+  expmat861 <- exprs(obj861[[1]])
+#+END_SRC
+*** Formatage
+#+BEGIN_SRC R
+  setwd("./Data/GSE42861/")
+
+  ## load data send by OF
+  load("exp861.RData")
+  ls()
+
+  ## save G and X
+  G <- t(expmat861)
+  ### G
+  rm(expmat861)
+  dim(G)
+  saveRDS(G, "betanormalized_metylationlvl.rds")
+
+  ## we scale and center data
+  X <- data.frame(disease.state = as.numeric(disease.state),
+                  age = as.numeric(age),
+                  gender = as.numeric(gender),
+                  smocking.status = as.numeric(smocking.status))
+  X <- scale(X)
+  X <- as.matrix(X)
+  rownames(X) <- rownames(G)
+  saveRDS(X, "X.rds")
+
+  ## downsample for test
+  sample.row <- sample.int(nrow(G), size = 100)
+  sample.col <- sample.int(ncol(G), size = 2000)
+  saveRDS(G[sample.row, sample.col], "betanormalized_metylationlvl.sample.rds")
+  saveRDS(X[sample.row,], "X.sample.rds")
+
+#+END_SRC
+*** Preprocessing
+Nour avons reproduit le preprocessing expliqué dans cite:Zou_2014.
+#+BEGIN_SRC R
+  setwd("./Data/GSE42861/")
+  X <- readRDS("X.rds")
+  G <- readRDS("betanormalized_metylationlvl.rds")
+
+  ## filter maf !
+  maf <- apply(G, 2, function(l){p <- mean(l);min(p, 1 - p)})
+  out.index <- which(maf <= 0.2)
+
+  G.filtered <- G[,-out.index]
+  dim(G.filtered)
+
+  saveRDS(G.filtered, "betanormalized_metylationlvl.filtered.rds")
+
+  ## linear reg res
+  library(ThesisRpackage)
+  ## G.filtered <- readRDS("betanormalized_metylationlvl.filtered.rds")
+  lm.method <- ClassicLinearMethod()
+  dat <- list(G = G.filtered, X = X[,-1])
+
+  lm.method <- fit(lm.method, dat)
+  saveRDS(lm.method$epsilon, "betanormalized_metylationlvl.filtered.LMresidu.rds")
+
+  ## subsample
+  ## G <- readRDS("betanormalized_metylationlvl.filtered.LMresidu.rds")
+  G <- lm.method$epsilon
+  row.sample <- sample.int(nrow(G), 100)
+  col.sample <- sample.int(ncol(G), 1000)
+  X.sample <- X[row.sample,,drop = FALSE]
+  G.sample <- G[row.sample,col.sample]
+  sds <- apply(G.sample, 2, sd)
+  mean(sds == 0)
+  saveRDS(G.sample, "betanormalized_metylationlvl.filtered.LMresidu.sample.rds")
+  saveRDS(X.sample, "X.sample.rds")
+#+END_SRC
+*** Scaling des données
+Pour certaine analyse il est important de scaler les données. 
+#+begin_src R :results output :exports both
+  library(MaTheseR)
+
+  X <- readRDS("./Data/GSE42861/X.rds")
+  G <- readRDS("./Data/GSE42861/betanormalized_metylationlvl.rds")
+
+  ## filter maf !
+  maf <- apply(G, 2, function(l){p <- mean(l);min(p, 1 - p)})
+  out.index <- which(maf <= 0.2)
+
+  G <- G[,-out.index]
+  dim(G)
+
+  ## check variable without variance
+  G <- preprocessing_filter_sd(G)
+  dim(G)
+
+  ## scale and center
+  G <- scale(G)
+
+  ## save
+  saveRDS(G, "./Data/ThesisDataset/3Article/GSE42861/G.rds")
+  saveRDS(X, "./Data/ThesisDataset/3Article/GSE42861/X.rds")
+#+end_src
+
 * Inférence rapide des coefficients de métissage à l'aide des données géographique
 :LOGBOOK:
 - Note taken on [2017-06-05 Mon 13:44] \\
@@ -2455,7 +2589,85 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
   plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
   plot_CV_ridgeLFMM(res.cv$errs, major = "K")
 #+end_src
+***** TODO GWAS
+:LOGBOOK:
+- State "TODO"       from              [2017-06-29 jeu. 09:22]
+:END:
+***** TODO EWAS
+:LOGBOOK:
+- State "TODO"       from              [2017-06-29 jeu. 09:22]
+:END:
+****** Sites candidats detectés dans d'autres études
+Les loci relevé par cite:Rahmani_2016
+#+begin_src R :results output :exports both
+  rahmani.loci <- c("cg05428452",
+                     "cg07839457",
+                     "cg16411857")
+#+end_src
+Ceux de cite:Zou_2014
+#+begin_src R :results output :exports both
+  Zou.loci <- c("cg05428452",
+                "cg07839457",
+                "cg16411857",
+                "cg25372449",
+                "cg20821042")
+#+end_src
 
+On retrouve les 3 mêmes. On va prend cela  
+#+begin_src R :results output :exports both :session *ssh krakenator*
+  G <- readRDS("./Data/ThesisDataset/3Article/GSE42861/G.rds")
+  Zou.loci <- c("cg05428452",
+                "cg07839457",
+                "cg16411857",
+                "cg25372449",
+                "cg20821042")
+  cols <- colnames(G)
+  candidates <- which(colnames(G) %in% Zou.loci)
+  cols[candidates]
+  saveRDS(candidates, "./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
+#+end_src
+
+#+RESULTS:
+: [1] "cg05428452" "cg07839457" "cg16411857" "cg20821042" "cg25372449"
+
+#+begin_src R :results output :exports both :session *ssh krakenator*
+candidates
+#+end_src
+
+#+RESULTS:
+: [1]  36714  51546 101455 125220 149131
+****** RUNNING Scree plot 
+:LOGBOOK:
+- State "RUNNING"    from              [2017-06-29 jeu. 09:36]
+:END:
+#+begin_src R :results output :exports both
+  library(MaTheseR)
+
+  Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
+
+  ## samplers
+  samplers <- ExpRsampler_trueData(Y = Y, X = NULL, outlier = NULL) * param()
+
+  ## methods
+  methods <- method_PCA(scale = FALSE) * param()
+
+  ## expr
+  expr <- ExpR(rep.nb.sampler = 1,
+               samplers = samplers,
+               rep.nb.method = 1,
+               methods = methods,
+               preprocessors = NULL,
+               extractor = ExpRextractor_sing_values)
+  expr <- ExpRmouline(expr)
+
+  save_expr(expr)
+
+  pl <- ExpRplot_sing_values(expr) + 
+    coord_cartesian(xlim = c(1,300))
+
+  save_plot_png(pl)
+
+#+end_src
 *** Results
 *** Discussion
 *** Figures and tables
