@@ -1794,23 +1794,19 @@ est la matrice des coordonnées dans la base des facteurs latents et la matrice
 $\V$ représente les axes de des facteurs latents. Enfin la matrice $\E$ est la
 matrice d'erreur résiduelle de taille $\Yrow\times\Ycol$.
 
-De même que dans cite:tipping1999probabilistic, on suppose que le bruit $\E$
+De même que dans cite:tipping1999probabilistic, nous supposons que le bruit $\E$
 dans eref:eq:model est Gaussien et isotrope
 $$
-\mathbb{N}(0, \sigma^{2} \Id_{\Ycol})
+\Normal(0, \sigma^{2} \Id_{\Ycol})
 $$
 
-où $\sigma^{2}$ est la variance de l'erreur et $\Id_{\Ycol}$.
-
-A classic method to estimate $\U$ $\V$ and $\B$ is to write the following
-loss function
+où $\sigma^{2}$ est la variance de l'erreur et $\Id_{\Ycol}$. Ainsi, l'opposé de la
+log-vraisemblance fait intervenir la fonction objectif
 \begin{equation}
 \label{eq:optim_no_reg}
 \LfmmL 
 \end{equation}
-where $\norm{.}_{F}$ is the Frobenius norm. This loss function arises when
-considering the log-likelihood if $\E$ rows are independent and Gaussian 
-with means $0$ and $\Var(\E_{i,j}) = \sigma$.
+où $\norm{.}_{F}$ est la norme de Frobenius. 
 
 However, the function $\Lnoreg$ do not allow to define unique latent factor
 matrices product $$\C = \U \V^T$$ and a unique primary effect matrix $\B$. It
@@ -2512,8 +2508,11 @@ générative.
 ****** anova
 
 ****** plot all
-***** TODO Influence 
+***** TODO Influence de lambda sur les estimations
 :LOGBOOK:
+- Note taken on [2017-06-29 jeu. 13:53] \\
+  ca va faire des sup mat. C'est pour justifier le choix de lambda petit ! deux
+  graphe: err X prop outlier et err X angle
 - State "TODO"       from              [2017-06-29 jeu. 13:48]
 :END:
 ***** TODO Influence des valeurs manquantes sur l'estimation des variables latentes
@@ -2693,8 +2692,10 @@ CLOSED: [2017-06-29 jeu. 09:42]
   [[./OUTPUT/Rplots/scree_plot_AT.png]]
 #+end_example
 
-****** RUNNING Validation croisée du modèle lfmmRidge
+****** DONE Validation croisée du modèle lfmmRidge
+CLOSED: [2017-06-29 jeu. 14:35]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-06-29 jeu. 14:35]
 - Note taken on [2017-06-29 jeu. 12:10] \\
   Pour K c'est bon c'est clair, on va prendre autour de 25 en gros. Par contre
   pour lambda c'est pas clair ce que ca apporte !! C'est parce qu'il y a peu
@@ -2746,7 +2747,6 @@ CLOSED: [2017-06-29 jeu. 09:42]
   > pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   > save_plot_png(pl)
   [[./OUTPUT/Rplots/file5cab19e1136c.png]]
-
 #+end_example
 
 ****** TODO Etude du jeu de données avec cate lfmm lm et lmPCA
