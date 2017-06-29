@@ -2449,7 +2449,8 @@ générative.
   library(MaTheseR)
 
   ## param
-  K <- 1
+  K.method <- 5
+  K.sampler <- 1
   nb.cluster <- 8
   cs_func <- function(K) {
     cs <- rep(0, K)
@@ -2460,17 +2461,17 @@ générative.
   ## sampler
   s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
   s$cs <- cs_func
-  s$K <- K
+  s$K <- K.sampler
   sampler.env <- s$load.env
-  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1, 0.2, 0.3))
+  samplers <-  s * param(prop.outlier = c(0.01, 0.1, 0.2, 0.3))
 
   ## methods
-  m.ridgeLfmm <- method_ridgeLFMM(K = K)
+  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
   m.lm <- method_lm()
-  m.pca <- method_PCAlm(K = K)
-  m.cate <- method_cate(K = K)
-  m.famt <- method_famt(K)
-  m.sva <- method_sva(K)
+  m.pca <- method_PCAlm(K = K.method)
+  m.cate <- method_cate(K = K.method)
+  m.famt <- method_famt(K.method)
+  m.sva <- method_sva(K.method)
   m.oracle <- method_oracle()
 
   methods <- m.ridgeLfmm * param() +
@@ -2569,8 +2570,9 @@ CLOSED: [2017-06-27 mar. 19:24]
 > save_expr(expr)
 Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_example
-****** TODO Validation croisée du modèle lfmmRidge sur 1000genome
+****** RUNNING Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-06-29 jeu. 14:39]
 - State "TODO"       from "RUNNING"    [2017-06-29 jeu. 10:12]
 - State "RUNNING"    from "TODO"       [2017-06-28 mer. 20:37]
 - State "TODO"       from              [2017-06-27 mar. 15:29]
