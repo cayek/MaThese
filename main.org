@@ -1777,24 +1777,30 @@ méthodes d'ajustement pour les facteurs de confusions repose sur le modèle
 suivant  
 \begin{equation}
 \label{eq:model}
-\Y = \X \B^T + \U \V^T + \E,
+\Y = \X \B^T + \U \V^T + \E.
 \end{equation}
-nous appellerons ce modèle le modèle mixte à facteurs latents. Dans cette
-équation, $\Y$ est la matrice des variables expliquée de taille $\Yrow
-\times \Ycol$, où $\Ycol$ est le variables et $\Yrow$ le nombre d'observations.
-Par exemple, les variables observées peuvent être SNPs ou bien des niveau de
-méthylation. La matrice $\X$ de taille $\Xrox \times \Xcol$ représente les
-variables explicatives. Les variables explicatives peuvent être par exemple une
-maladie ou un gradient environnementale comme la température. La matrice des
-effets de taille $\Ycol \times \Xcol$ est notée $\B$. 
+Comme dans cite:frichot13_testin_assoc_between_loci_envir, nous appellerons ce
+modèle le modèle mixte à facteurs latents (LFMM pour latent factor mixed model
+en anglais). Dans cette équation, $\Y$ est la matrice des variables expliquées
+de taille $\Yrow \times \Ycol$, où $\Ycol$ est le variables et $\Yrow$ le nombre
+d'observations. Par exemple, les variables observées peuvent être des SNPs ou
+bien des niveau de méthylation. La matrice $\X$ de taille $\Xrox \times \Xcol$
+représente les variables explicatives. Les variables explicatives peuvent être
+par exemple une maladie ou un gradient environnementale comme la température. La
+matrice des effets de taille $\Ycol \times \Xcol$ est notée $\B$. Les matrices
+$\U$ et $\V$ sont respectivement de la matrice des coordonnées de taille $\Urow
+\times \K$ et la matrice des axes factoriels $\Ycol\times\Ucol$. La matrice $\U$
+est la matrice des coordonnées dans la base des facteurs latents et la matrice
+$\V$ représente les axes de des facteurs latents. Enfin la matrice $\E$ est la
+matrice d'erreur résiduelle de taille $\Yrow\times\Ycol$.
 
+De même que dans cite:tipping1999probabilistic, on suppose que le bruit $\E$
+dans eref:eq:model est Gaussien et isotrope
+$$
+\mathbb{N}(0, \sigma^{2} \Id_{\Ycol})
+$$
 
-The $\Ycol\times\Xcol$ matrix $\B$
-records primary effects. 
-Matrices $\U$ and $\V$ are respectively $\Urow \times \K$
-score matrix and $\Ycol\times\Ucol$ loading matrix of a regression with $\Ucol$ latent
-factors. The matrix $\U$ record the unobserved latent variables.
-The matrix $\E$ is the residual error matrix of size $\Yrow\times\Ycol$.
+où $\sigma^{2}$ est la variance de l'erreur et $\Id_{\Ycol}$.
 
 A classic method to estimate $\U$ $\V$ and $\B$ is to write the following
 loss function
@@ -2409,8 +2415,8 @@ des individus nous avons choisi d'utiliser la base wordclim
   ggplotly(pl)
 
 #+end_src
-**** Description des experiences
-***** RUNNING Comparaison numérique sur des simulations
+**** Description des expériences
+***** RUNNING Comparaisons numériques sur des simulations
 :LOGBOOK:
 - State "RUNNING"    from "TODO"       [2017-06-28 mer. 18:05]
 - State "TODO"       from              [2017-06-27 mar. 12:06]
@@ -2506,6 +2512,15 @@ générative.
 ****** anova
 
 ****** plot all
+***** TODO Influence 
+:LOGBOOK:
+- State "TODO"       from              [2017-06-29 jeu. 13:48]
+:END:
+***** TODO Influence des valeurs manquantes sur l'estimation des variables latentes
+:LOGBOOK:
+- State "TODO"       from              [2017-06-29 jeu. 13:47]
+- State "TODO"       from              [2017-06-29 jeu. 13:45]
+:END:
 ***** TODO EAS
 :LOGBOOK:
 - State "TODO"       from              [2017-06-27 mar. 12:06]
@@ -2680,6 +2695,10 @@ CLOSED: [2017-06-29 jeu. 09:42]
 
 ****** RUNNING Validation croisée du modèle lfmmRidge
 :LOGBOOK:
+- Note taken on [2017-06-29 jeu. 12:10] \\
+  Pour K c'est bon c'est clair, on va prendre autour de 25 en gros. Par contre
+  pour lambda c'est pas clair ce que ca apporte !! C'est parce qu'il y a peu
+  d'outlier !!! Dans ce cas c'est mieux un lambda petit. Faudra l'expliquer !!
 - State "RUNNING"    from "TODO"       [2017-06-29 jeu. 09:48]
 - State "TODO"       from              [2017-06-29 jeu. 09:44]
 :END:
@@ -2711,9 +2730,30 @@ CLOSED: [2017-06-29 jeu. 09:42]
   ## save expr
   save_expr(res.cv, "ewas_CV_lfmm.rds")
 
-  plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
-  plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  save_plot_png(pl)
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  save_plot_png(pl)
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/file5cab74a51d2c.png]]
+[[./OUTPUT/Rplots/file5cab19e1136c.png]]
+#+begin_example
+  > pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  > save_plot_png(pl)
+  [[./OUTPUT/Rplots/file5cab74a51d2c.png]]
+  > pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  > save_plot_png(pl)
+  [[./OUTPUT/Rplots/file5cab19e1136c.png]]
+
+#+end_example
+
+****** TODO Etude du jeu de données avec cate lfmm lm et lmPCA
+:LOGBOOK:
+- State "TODO"       from              [2017-06-29 jeu. 11:17]
+:END:
+
 *** Results
 *** Discussion
 *** Figures and tables
