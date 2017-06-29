@@ -2447,12 +2447,11 @@ générative.
   library(MaTheseR)
 
   ## param
-  K <- 5
-  nb.cluster <- 4
+  K <- 1
+  nb.cluster <- 8
   cs_func <- function(K) {
     cs <- rep(0, K)
     cs[1] <- 0.8
-    cs[2] <- 0.2
     cs
   }
 
@@ -2461,7 +2460,7 @@ générative.
   s$cs <- cs_func
   s$K <- K
   sampler.env <- s$load.env
-  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1))
+  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1, 0.2, 0.3))
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K)
@@ -2556,8 +2555,9 @@ CLOSED: [2017-06-27 mar. 19:24]
 > save_expr(expr)
 Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_example
-****** RUNNING Validation croisée du modèle lfmmRidge sur 1000genome
+****** TODO Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
+- State "TODO"       from "RUNNING"    [2017-06-29 jeu. 10:12]
 - State "RUNNING"    from "TODO"       [2017-06-28 mer. 20:37]
 - State "TODO"       from              [2017-06-27 mar. 15:29]
 :END:
@@ -2678,8 +2678,9 @@ CLOSED: [2017-06-29 jeu. 09:42]
   [[./OUTPUT/Rplots/scree_plot_AT.png]]
 #+end_example
 
-****** TODO Validation croisée du modèle lfmmRidge
+****** RUNNING Validation croisée du modèle lfmmRidge
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-06-29 jeu. 09:48]
 - State "TODO"       from              [2017-06-29 jeu. 09:44]
 :END:
 
@@ -2695,10 +2696,10 @@ CLOSED: [2017-06-29 jeu. 09:42]
   n <- nrow(dat$Y)
 
   lambdas <- c(1e-5, 1.0, 1e10) / n
-  nb.cluster <- 4
-  cv <- method_CV_ridgeLFMM(n.fold.col = 10, n.fold.row = 4,
+  nb.cluster <- 10
+  cv <- method_CV_ridgeLFMM(n.fold.col = 10, n.fold.row = 10,
                             lambdas = lambdas,
-                            Ks = c(1,2,5,10,25, 50))
+                            Ks = c(1,2,5,10,25, 50, 100))
 
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")

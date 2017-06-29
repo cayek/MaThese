@@ -119,6 +119,7 @@ test_that("validation numerique article 3 easy simulation", {
   toplot <- expr$df.res %>%
     dplyr::filter(pvalue.index == "pvalue1")
   plot_AUC_prop_outlier(toplot)
+  plot_gif_prop_outlier(toplot)
   plot_pvalue_grid(toplot)
   plot_precision_recall(toplot)
 

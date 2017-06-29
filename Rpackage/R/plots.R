@@ -1,12 +1,23 @@
 ##' @export
 plot_AUC_prop_outlier <- function(df) {
+
+  ## compute AUC
   toplot <- df %>%
     group_by(method, prop.outlier, rep.sampler, rep.method) %>%
     summarise(auc = DescTools::AUC(x = true.power, y = 1 - true.fdr)) %>%
     ungroup()
 
-  ggplot(toplot, aes(x = as.factor(prop.outlier), y = auc, color = method)) +
-    geom_boxplot()
+  ## compute mean
+  toplot <- toplot %>%
+    group_by(method, prop.outlier) %>%
+    summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N))
+
+  ggplot(toplot, aes(x = prop.outlier, y = auc.mean, color = method)) +
+    geom_errorbar(aes(ymin = auc.mean - se,
+                      ymax = auc.mean + se,
+                      width = (max(prop.outlier) - min(prop.outlier)) * 0.05)) +
+    geom_line() +
+    geom_point()
 
 }
 
@@ -39,7 +50,7 @@ plot_precision_recall <- function(df) {
 }
 
 ##' @export
-plot_CV_ridgeLFMM<- function(df, major = c('K', 'lambda')) {
+plot_CV_ridgeLFMM <- function(df, major = c('K', 'lambda')) {
 
   if (major[1] == 'K') {
     pl <- ggplot(df, aes(y = err, x = as.factor(K))) +
@@ -53,3 +64,30 @@ plot_CV_ridgeLFMM<- function(df, major = c('K', 'lambda')) {
   pl
 }
 
+##' @export
+plot_gif_prop_outlier <- function(df) {
+
+  aux.f <- function(pvalue) {
+    score2 <- qchisq(pvalue, lower.tail = FALSE, df = 1)
+    median(score2, na.rm = TRUE) / qchisq(0.5, df = 1)
+  }
+
+  ## compute gif
+  toplot <- df %>%
+    group_by(method, prop.outlier, rep.sampler, rep.method) %>%
+    summarise(gif = aux.f(pvalue[!outlier])) %>%
+    ungroup()
+
+  ## compute mean
+  toplot <- toplot %>%
+    group_by(method, prop.outlier) %>%
+    summarise(gif.mean = mean(gif), N = length(gif), sd = sd(gif), se = sd / sqrt(N))
+
+  ggplot(toplot, aes(x = prop.outlier, y = gif.mean, color = method)) +
+    geom_errorbar(aes(ymin = gif.mean - se,
+                      ymax = gif.mean + se,
+                      width = (max(prop.outlier) - min(prop.outlier)) * 0.05)) +
+    geom_line() +
+    geom_point()
+
+}
