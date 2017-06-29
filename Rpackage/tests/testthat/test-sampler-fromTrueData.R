@@ -44,25 +44,33 @@ test_that("ExpRsampler_fromTrueData comp with ThesisRpackage", {
 
   ## sample ThesisRpackage
   cs = c(0.4, 0.2, -0.1, 0.0)
-  s <- FromTrueSampler2(G.file = G.file,
+  s.old <- FromTrueSampler2(G.file = G.file,
                         K = K,
                         prop.outlier = 0.1,
                         cs = cs,
                         pca.file = pca.file,
                         rho.B = 1.0)
+  s.old <- Sampler_load(s.old)
   set.seed(0)
-  dat <- sampl(s)
+  dat.old <- sampl(s.old)
 
 
   ## sampler MaTheseR
-  s <- ExpRsampler_fromTrueData(G.file, K, prop.outlier = 0.1, cs = cs)
+  s.new <- ExpRsampler_fromTrueData(G.file, K, prop.outlier = 0.1, cs = cs)
   set.seed(0)
-  dat.rc <- ExpRmouline(s)
+  dat.new <- ExpRmouline(s.new)
 
   ## c'est pas les même valuer j'espere que c'est a cause de prcomp au lieu de svd...
-  mean(abs(dat.rc$outlier - dat$outlier))
-  mean(abs(dat.rc$B - t(dat$B)))
-  mean(abs(dat.rc$X - dat$X))
+  expect_equal(mean(abs(dat.new$outlier - dat.old$outlier)), 1e-15)
+  expect_equal(mean(abs(dat.new$B - t(dat.old$B))), 1e-15)
+  expect_equal(mean(abs(dat.new$U - dat.old$U)), 1e-15)
+  expect_equal(mean(abs(dat.new$X - dat.old$X)), 1e-15)
+
+### comp svd and pca
+  U.old <- s.old$U
+  U.new <- s.new$load.env$svd$u[,1:s$K] %*% diag(s.new$load.env$svd$d[1:s$K])
+  sqrt(diag(cov(U.old)))
+  sqrt(diag(cov(U.new)))
 
 })
 

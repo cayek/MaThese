@@ -99,7 +99,7 @@ ExpRmouline.ExpRsampler_fromTrueData <- function(s) {
   }
 
   ## U V and E from svd
-  U <- s$load.env$svd$u[,1:s$K] %*% diag(s$load.env$svd$u[1:s$K])
+  U <- s$load.env$svd$u[,1:s$K] %*% diag(s$load.env$svd$d[1:s$K])
   V <- s$load.env$svd$v[,1:s$K]
   E <- s$load.env$dat$Y - tcrossprod(U, V)
 
