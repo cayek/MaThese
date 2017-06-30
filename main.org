@@ -1843,7 +1843,7 @@ L(\hat{\U} - \X \matr{C}, \hat{\V}^{T}, \hat{\B} + \hat{\V} \matr{C}^T}) = L(\ha
 Thus, $\hat{\B}$ is not unique.
 
 
-**** Ridge regularized latent factor mixed model (RidgeLFMM)
+**** Estimateur régularisé en norm $L_{2}$
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 16:21] \\
   faire bien le lien avec le mpdèle PCA +  lm et lambda = 0 implique on n'a pas de
@@ -1852,12 +1852,24 @@ Thus, $\hat{\B}$ is not unique.
   RidgeLFMM et LassoLFMM c'est les non des fonction mais dans les graphe on va
   mettre lasso estimator et ridge estimator.
 :END:
-In this section we present a ridge regularized latent factor mixed model
-(RidgeLFMM). The regularized loss function is written as follow 
+
+Pour estimer les paramètres $\U$, $\V$ et $\B$ de LFMM nous proposons
+d'optimiser la fonction objectif suivante
 \begin{equation}
 \label{eq:optim_ridge_reg}
 \LfmmLridge
 \end{equation}
+où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2} est la norme $L_2$ et
+$\lamba$ le paramètre de régularisation. 
+
+Nous remarquons dans un premier temps que la fonction eqref:eq:optim_ridge_reg
+est convexe en les variables 
+$$ 
+\W = \U \V^{T}, \B. 
+$$
+Parler de convexité et strict convexité ???
+
+(RidgeLFMM). The regularized loss function is written as follow 
 We can show that minimizing the function eqref:eq:optim_ridge_reg leads to the
 following unique solution
 \begin{align}
@@ -1872,6 +1884,12 @@ projection matrix defined as $$\LfmmP.$$ The matrix $\sqrt{\obP}$ is define such
 \begin{equation*}
 \obP = \sqrt{\obP}^{2}
 \end{equation*}
+
+***** Remarques
+:LOGBOOK:
+- Note taken on [2017-06-30 ven. 10:50] \\
+  parler des cas limites de lambda et du problème d'identifiabilité
+:END:
 
 
 ***** Proof
@@ -2450,8 +2468,7 @@ générative.
   ### The sampler
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/Y_sample_p5e4_n919.rds"
   K <- 5
-  cs <- cs_sampler(K)
-  s <- ExpRsampler_fromTrueData(Y = Y, K = 5, prop.outlier = 0.05, cs = cs, rho.B = 1.0)
+  s <- ExpRsampler_fromTrueData(Y = Y, K = 5, prop.outlier = 0.05, cs = NULL, rho.B = 1.0)
   saveRDS(s, "./OUTPUT/Sampler/validation_numerique.rds")
 
   sv <- s$load.env$svd$d
@@ -2459,7 +2476,7 @@ générative.
 
   pl <- qplot(seq_along(var), var)
   pl
-  save_plot_png(pl)
+  save_plot_png(pl, "file42874c17dae9.png")
 #+end_src
 
 #+RESULTS:
@@ -2474,15 +2491,13 @@ générative.
 
   ## param
   K.method <- 5
-  nb.cluster <- 8
+  nb.cluster <- 16
 
   ## sampler
   s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
-  ## s$cs <- cs_func
-  ## s$K <- K.sampler
-  s$rho.B <- 5.0
+  s$rho.B <- 3.0
   sampler.env <- s$load.env
-  samplers <-  s * param(prop.outlier = c(0.01, 0.1, 0.2, 0.3))
+  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1, 0.2), rho.c = c(0.1, 0.3, 0.5, 1.0))
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
@@ -2518,40 +2533,25 @@ générative.
   ## save expr
   save_expr(expr, "validation_numerique.rds")
 
-  ## plots
+  ## plot auc
   toplot <- expr$df.res %>%
-    dplyr::filter(pvalue.index == "pvalue1")
-  pl <- plot_AUC_prop_outlier(toplot)
-  save_plot_png(pl, "validation_num_prop_auc.png")
-  pl <- plot_pvalue_grid(toplot)
-  save_plot_png(pl, "validation_num_prop_grid.png")
-  pl <- plot_precision_recall(toplot)
-  save_plot_png(pl, "validation_num_prop_pr.png")
-  pl <- plot_gif_prop_outlier(toplot)
-  save_plot_png(pl, "validation_num_prop_gif.png")
+    dplyr::filter(pvalue.index == "pvalue1") %>%
+    dplyr::mutate(grid.x = prop.outlier, grid.y = rho.c)
+  pl <- plot_AUC_boxplot(toplot)
+  save_plot_png(pl, "validation_numerique_auc.png")
+  pll <- plot_gif_boxplot(toplot)
+  save_plot_png(pll, "validation_numerique_gif.png")
 #+end_src
 
 #+RESULTS:
-[[./OUTPUT/Rplots/validation_num_prop_auc.png]]
-[[./OUTPUT/Rplots/validation_num_prop_grid.png]]
-[[./OUTPUT/Rplots/validation_num_prop_pr.png]]
-[[./OUTPUT/Rplots/validation_num_prop_gif.png]]
+[[./OUTPUT/Rplots/validation_numerique_auc.png]]
+[[./OUTPUT/Rplots/validation_numerique_gif.png]]
 #+begin_example
-  >   toplot <- expr$df.res %>%
-  +     dplyr::filter(pvalue.index == "pvalue1")
-  >   pl <- plot_AUC_prop_outlier(toplot)
-  >   save_plot_png(pl, "validation_num_prop_auc.png")
-  [[./OUTPUT/Rplots/validation_num_prop_auc.png]]
-  >   pl <- plot_pvalue_grid(toplot)
-  >   save_plot_png(pl, "validation_num_prop_grid.png")
-  [[./OUTPUT/Rplots/validation_num_prop_grid.png]]
-  >   pl <- plot_precision_recall(toplot)
-  >   save_plot_png(pl, "validation_num_prop_pr.png")
-  `geom_smooth()` using method = 'gam'
-  [[./OUTPUT/Rplots/validation_num_prop_pr.png]]
-  >   pl <- plot_gif_prop_outlier(toplot)
-  >   save_plot_png(pl, "validation_num_prop_gif.png")
-  [[./OUTPUT/Rplots/validation_num_prop_gif.png]]
+  > save_plot_png(pl, "validation_numerique_auc.png")
+  [[./OUTPUT/Rplots/validation_numerique_auc.png]]
+  > pll <- plot_gif_boxplot(toplot)
+  > save_plot_png(pll, "validation_numerique_gif.png")
+  [[./OUTPUT/Rplots/validation_numerique_gif.png]]
 #+end_example
 
 ****** anova

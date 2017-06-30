@@ -43,6 +43,19 @@ plot_AUC <- function(df, x.name) {
 }
 
 ##' @export
+plot_AUC_boxplot <- function(df) {
+
+  toplot <- df %>%
+    group_by(method, grid.x, grid.y, rep.sampler, rep.method) %>%
+    compute_auc()
+
+  ggplot(toplot, aes(x = method, y = auc, color = method)) +
+    geom_boxplot() +
+    facet_grid(grid.y ~ grid.x)
+
+}
+
+##' @export
 plot_pvalue_grid <- function(df) {
   p <- ggplot(df,
               aes(x = expected.fd, y = true.fd  - expected.fd )) +
@@ -87,8 +100,6 @@ plot_CV_ridgeLFMM <- function(df, major = c('K', 'lambda')) {
 
 ##' @export
 plot_gif <- function(df, x.label) {
-
-
   toplot <- df %>%
     group_by(method, x, rep.sampler, rep.method) %>%
     compute_gif()
@@ -108,3 +119,15 @@ plot_gif <- function(df, x.label) {
 
 }
 
+##' @export
+plot_gif_boxplot <- function(df) {
+
+  toplot <- df %>%
+    group_by(method, grid.x, grid.y, rep.sampler, rep.method) %>%
+    compute_gif()
+
+  ggplot(toplot, aes(x = method, y = gif, color = method)) +
+    geom_boxplot() +
+    facet_grid(grid.y ~ grid.x)
+
+}
