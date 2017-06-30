@@ -16,10 +16,10 @@ test_that("validation numerique article 3 sur un petit sample", {
     cs[2] <- 0.5
     cs
   }
-  s <- ExpRsampler_fromTrueData(Y = Y, K = K, prop.outlier = 0.05, cs = cs_func, rho.B = 3.0)
+  s <- ExpRsampler_fromTrueData(Y = Y, K = K, prop.outlier = 0.05, cs = NULL, rho.B = 3.0, rho.c = 1.0)
   dat <- ExpRmouline(s)
   sampler.env <- s$load.env
-  samplers <-  s * param(prop.outlier = c(0.01, 0.1, 0.3))
+  samplers <-  s * param(prop.outlier = c(0.01,0.3), rho.c = c(0.1, 0.8))
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K)
@@ -56,15 +56,30 @@ test_that("validation numerique article 3 sur un petit sample", {
   ## doParallel::stopImplicitCluster()
   ## parallel::stopCluster(cl)
 
+  expect_equal(dim(expr$df.res), c(46000, 18))
+
+
   ## plot
   skip("plots")
 
-  ## AUC
+  ## by prop outlier
   toplot <- expr$df.res %>%
-    dplyr::filter(pvalue.index == "pvalue1")
-  plot_AUC_prop_outlier(toplot)
+    dplyr::filter(pvalue.index == "pvalue1", rho.c == 0.1) %>%
+    dplyr::mutate(x = prop.outlier)
   plot_pvalue_grid(toplot)
   plot_precision_recall(toplot)
+  plot_gif(toplot, "prop.outlier")
+  plot_AUC(toplot, "prop.outlier")
+
+
+  ## by rho.c
+  toplot <- expr$df.res %>%
+    dplyr::filter(pvalue.index == "pvalue1", prop.outlier == 0.3) %>%
+    dplyr::mutate(x = rho.c)
+  plot_pvalue_grid(toplot)
+  plot_precision_recall(toplot)
+  plot_gif(toplot, "rho.c")
+  plot_AUC(toplot, "rho.c")
 
 })
 

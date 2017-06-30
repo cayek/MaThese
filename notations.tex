@@ -32,7 +32,7 @@
 \newcommand{\Bcol}{\Xcol} %% B col dim
 \newcommand{\Brow}{\Ycol} %% B row dim
 \newcommand{\E}{\matr{E}} %% residual error matrix
-\newcommand{\C}{\matr{C}} %% approximation matrix with latent factor/
+\newcommand{\W}{\matr{W}} %% approximation matrix with latent factor/
                           %% approximation matrix
 \newcommand{\obP}{\matr{P}_{\lambda}} %% U row dim
 \newcommand{\Lnoreg}{\mathcal{L}} %% L 
@@ -42,7 +42,7 @@
 
 %% lfmm equation
 \newcommand{\LfmmLridge}{%
-\Lridge(\U, \V, \B) =  \frac{1}{2} \norm{\Y - \U \V^T - \X \B^T}_{F}^2 +
+\Lridge(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 +
 \lambda \norm{\B}^{2}_{2}%
 }
 \newcommand{\LfmmL}{%

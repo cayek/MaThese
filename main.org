@@ -1615,6 +1615,7 @@ Il reste certain SNPs avec des données manquantes ($0.7 \%$), nous les avons en
 ** Arabidopsis Thaliana Regional Mapping Lines
 ** 1001 genome
 ** Celiac GWAS
+*** Téléchargement des données
 Ou ont elle été ddl ??? FP a recu dirrect =./Data/Celiac/dubois_2010/=
 ** AT EWAS
 *** Téléchargement des données
@@ -1790,23 +1791,34 @@ par exemple une maladie ou un gradient environnementale comme la température. L
 matrice des effets de taille $\Ycol \times \Xcol$ est notée $\B$. Les matrices
 $\U$ et $\V$ sont respectivement de la matrice des coordonnées de taille $\Urow
 \times \K$ et la matrice des axes factoriels $\Ycol\times\Ucol$. La matrice $\U$
-est la matrice des coordonnées dans la base des facteurs latents et la matrice
-$\V$ représente les axes de des facteurs latents. Enfin la matrice $\E$ est la
-matrice d'erreur résiduelle de taille $\Yrow\times\Ycol$.
+est la matrice des $\K$ variable latentes et la matrice $\V$ représente les axes
+des facteurs latents. Enfin la matrice $\E$ est la matrice d'erreur résiduelle
+de taille $\Yrow\times\Ycol$.
 
-De même que dans cite:tipping1999probabilistic, nous supposons que le bruit $\E$
-dans eref:eq:model est Gaussien et isotrope
-$$
-\Normal(0, \sigma^{2} \Id_{\Ycol})
-$$
+Nous remarquons dans un premier temps que les matrices $\U$ et $\V$ ne sont pas
+définies de façon unique. Nous posons $$ \W = \U \V^{T} $$ la matrice latente.
+Si l'on suppose qu'il y à $\K$ variables latentes sont indépendantes alors la
+matrice latentes $\W$ est de rang $\K$. Dans la suite nous considérerons $\U$ et
+$\V$ comme étant les matrices uniques obtenues grâce à l'analyse en composante
+principale de la matrice latente $\W$.
 
-où $\sigma^{2}$ est la variance de l'erreur et $\Id_{\Ycol}$. Ainsi, l'opposé de la
-log-vraisemblance fait intervenir la fonction objectif
+
+STOP ca c'est une remarque pour après !!
+
+Afin d'estimer les paramètre du model eqref:eq:model, nous supposons comme dans
+cite:tipping1999probabilistic que le bruit est Gaussien et isotrope, c'est a
+dire que $$ \E \sim \Normal(0, \sigma^{2} \Id_{\Ycol}) $$ où $\sigma^{2}$ est la
+variance de l'erreur et $\Id_{\Ycol}$. Nous pouvons alors estimer les paramètres
+du modèle en minimisant l'opposé de la log-vraisemblance. Cela fait intervenir
+la fonction objectif
 \begin{equation}
 \label{eq:optim_no_reg}
 \LfmmL 
 \end{equation}
 où $\norm{.}_{F}$ est la norme de Frobenius. 
+
+Cependant, la fonction $\Lnoreg$ ne permet de définir de façons unique la
+matrice latente $\W$ et la matrice des effets $\B$. 
 
 However, the function $\Lnoreg$ do not allow to define unique latent factor
 matrices product $$\C = \U \V^T$$ and a unique primary effect matrix $\B$. It
@@ -1832,6 +1844,14 @@ Thus, $\hat{\B}$ is not unique.
 
 
 **** Ridge regularized latent factor mixed model (RidgeLFMM)
+:LOGBOOK:
+- Note taken on [2017-06-29 jeu. 16:21] \\
+  faire bien le lien avec le mpdèle PCA +  lm et lambda = 0 implique on n'a pas de
+  solution unique !!
+- Note taken on [2017-06-29 jeu. 16:20] \\
+  RidgeLFMM et LassoLFMM c'est les non des fonction mais dans les graphe on va
+  mettre lasso estimator et ridge estimator.
+:END:
 In this section we present a ridge regularized latent factor mixed model
 (RidgeLFMM). The regularized loss function is written as follow 
 \begin{equation}
@@ -1904,6 +1924,10 @@ As result we have
 \end{align*}
 
 **** Lasso regularized latent factor mixed model (LassoLFMM)
+:LOGBOOK:
+- Note taken on [2017-06-29 jeu. 14:47] \\
+  Faire le lien avec les methodes de low rank approximation
+:END:
 In this section we present a lasso regularized latent factor mixed model (LassoLFMM)
 The regularized loss function is written as follow
 \begin{equation}
@@ -2450,18 +2474,13 @@ générative.
 
   ## param
   K.method <- 5
-  K.sampler <- 1
   nb.cluster <- 8
-  cs_func <- function(K) {
-    cs <- rep(0, K)
-    cs[1] <- 0.8
-    cs
-  }
 
   ## sampler
   s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
-  s$cs <- cs_func
-  s$K <- K.sampler
+  ## s$cs <- cs_func
+  ## s$K <- K.sampler
+  s$rho.B <- 5.0
   sampler.env <- s$load.env
   samplers <-  s * param(prop.outlier = c(0.01, 0.1, 0.2, 0.3))
 
@@ -2502,10 +2521,39 @@ générative.
   ## plots
   toplot <- expr$df.res %>%
     dplyr::filter(pvalue.index == "pvalue1")
-  plot_AUC_prop_outlier(toplot)
-  plot_pvalue_grid(toplot)
-  plot_precision_recall(toplot)
+  pl <- plot_AUC_prop_outlier(toplot)
+  save_plot_png(pl, "validation_num_prop_auc.png")
+  pl <- plot_pvalue_grid(toplot)
+  save_plot_png(pl, "validation_num_prop_grid.png")
+  pl <- plot_precision_recall(toplot)
+  save_plot_png(pl, "validation_num_prop_pr.png")
+  pl <- plot_gif_prop_outlier(toplot)
+  save_plot_png(pl, "validation_num_prop_gif.png")
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/validation_num_prop_auc.png]]
+[[./OUTPUT/Rplots/validation_num_prop_grid.png]]
+[[./OUTPUT/Rplots/validation_num_prop_pr.png]]
+[[./OUTPUT/Rplots/validation_num_prop_gif.png]]
+#+begin_example
+  >   toplot <- expr$df.res %>%
+  +     dplyr::filter(pvalue.index == "pvalue1")
+  >   pl <- plot_AUC_prop_outlier(toplot)
+  >   save_plot_png(pl, "validation_num_prop_auc.png")
+  [[./OUTPUT/Rplots/validation_num_prop_auc.png]]
+  >   pl <- plot_pvalue_grid(toplot)
+  >   save_plot_png(pl, "validation_num_prop_grid.png")
+  [[./OUTPUT/Rplots/validation_num_prop_grid.png]]
+  >   pl <- plot_precision_recall(toplot)
+  >   save_plot_png(pl, "validation_num_prop_pr.png")
+  `geom_smooth()` using method = 'gam'
+  [[./OUTPUT/Rplots/validation_num_prop_pr.png]]
+  >   pl <- plot_gif_prop_outlier(toplot)
+  >   save_plot_png(pl, "validation_num_prop_gif.png")
+  [[./OUTPUT/Rplots/validation_num_prop_gif.png]]
+#+end_example
+
 ****** anova
 
 ****** plot all
@@ -2570,8 +2618,13 @@ CLOSED: [2017-06-27 mar. 19:24]
 > save_expr(expr)
 Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_example
-****** RUNNING Validation croisée du modèle lfmmRidge sur 1000genome
+****** TODO Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
+- State "TODO"       from "RUNNING"    [2017-06-29 jeu. 16:43]
+- Note taken on [2017-06-29 jeu. 16:37] \\
+  Il y a trop peut de structure !!! Je pense que la structure est porté par trop
+  peut de snps !!! Du coup le modèle n'est partinent que pour trop peu de snps et
+  donc on arrive pas a cross valider !!!
 - State "RUNNING"    from "TODO"       [2017-06-29 jeu. 14:39]
 - State "TODO"       from "RUNNING"    [2017-06-29 jeu. 10:12]
 - State "RUNNING"    from "TODO"       [2017-06-28 mer. 20:37]
@@ -2602,9 +2655,24 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
   ## save expr
   save_expr(res.cv, "eas_CV_lfmm.rds")
 
-  plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
-  plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  save_plot_png(pl)
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  save_plot_png(pl)
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/file62412903fe66.png]]
+[[./OUTPUT/Rplots/file624177c6cec6.png]]
+#+begin_example
+  > pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  > save_plot_png(pl)
+  [[./OUTPUT/Rplots/file62412903fe66.png]]
+  > pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  > save_plot_png(pl)
+  [[./OUTPUT/Rplots/file624177c6cec6.png]]
+#+end_example
+
 ***** TODO GWAS
 :LOGBOOK:
 - State "TODO"       from              [2017-06-29 jeu. 09:22]

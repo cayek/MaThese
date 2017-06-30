@@ -64,6 +64,7 @@ ExpRsampler_fromTrueData <- function(Y,
                                      K,
                                      prop.outlier,
                                      cs = NULL,
+                                     rho.c = 1.0,
                                      rho.B = 1.0,
                                      n = NULL,
                                      p = NULL) {
@@ -71,6 +72,7 @@ ExpRsampler_fromTrueData <- function(Y,
                K = K,
                prop.outlier = prop.outlier,
                cs = cs,
+               rho.c = rho.c,
                rho.B = rho.B,
                n = n,
                p = p)
@@ -93,7 +95,7 @@ ExpRmouline.ExpRsampler_fromTrueData <- function(s) {
 
   ## cs
   if(is.null(s$cs)) {
-    s$cs <- cs_sampler(s$K)
+    s$cs <- s$rho.c * cs_sampler(s$K)
   } else if (is.function(s$cs)) {
     s$cs <- s$cs(s$K)
   }
@@ -151,7 +153,7 @@ ExpRmouline.ExpRsampler_fromTrueData <- function(s) {
                                                 V = V[sample.loc,,drop = FALSE],
                                                 B = B[sample.loc,,drop = FALSE],
                                                 outlier = which(sample.loc %in% outlier))
-  dat$meta <- list(cs = s$cs,
+  dat$meta <- list(rho.c = s$rho.c,
                    K = s$K,
                    prop.outlier = s$prop.outlier)
   dat

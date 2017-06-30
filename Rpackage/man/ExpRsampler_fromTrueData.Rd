@@ -4,8 +4,8 @@
 \alias{ExpRsampler_fromTrueData}
 \title{see my notebook (13/06/2017), sample a generative model from true dataset.}
 \usage{
-ExpRsampler_fromTrueData(Y, K, prop.outlier, cs = NULL, rho.B = 1,
-  n = NULL, p = NULL)
+ExpRsampler_fromTrueData(Y, K, prop.outlier, cs = NULL, rho.c = 1,
+  rho.B = 1, n = NULL, p = NULL)
 }
 \description{
 see my notebook (13/06/2017), sample a generative model from true dataset.

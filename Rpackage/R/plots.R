@@ -1,23 +1,44 @@
-##' @export
-plot_AUC_prop_outlier <- function(df) {
-
+compute_auc <- function(df) {
   ## compute AUC
   toplot <- df %>%
-    group_by(method, prop.outlier, rep.sampler, rep.method) %>%
     summarise(auc = DescTools::AUC(x = true.power, y = 1 - true.fdr)) %>%
     ungroup()
+  toplot
+}
+
+compute_gif <- function(df) {
+  aux.f <- function(pvalue) {
+    score2 <- qchisq(pvalue, lower.tail = FALSE, df = 1)
+    median(score2, na.rm = TRUE) / qchisq(0.5, df = 1)
+  }
+
+  ## compute gif
+  toplot <- df %>%
+    summarise(gif = aux.f(pvalue[!outlier])) %>%
+    ungroup()
+  toplot
+}
+
+
+##' @export
+plot_AUC <- function(df, x.name) {
+
+  toplot <- df %>%
+    group_by(method, x, rep.sampler, rep.method) %>%
+    compute_auc()
 
   ## compute mean
   toplot <- toplot %>%
-    group_by(method, prop.outlier) %>%
+    group_by(method, x) %>%
     summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N))
 
-  ggplot(toplot, aes(x = prop.outlier, y = auc.mean, color = method)) +
+  ggplot(toplot, aes(x = x, y = auc.mean, color = method)) +
     geom_errorbar(aes(ymin = auc.mean - se,
                       ymax = auc.mean + se,
-                      width = (max(prop.outlier) - min(prop.outlier)) * 0.05)) +
+                      width = (max(x) - min(x)) * 0.05)) +
     geom_line() +
-    geom_point()
+    geom_point() +
+    xlab(x.name)
 
 }
 
@@ -65,29 +86,25 @@ plot_CV_ridgeLFMM <- function(df, major = c('K', 'lambda')) {
 }
 
 ##' @export
-plot_gif_prop_outlier <- function(df) {
+plot_gif <- function(df, x.label) {
 
-  aux.f <- function(pvalue) {
-    score2 <- qchisq(pvalue, lower.tail = FALSE, df = 1)
-    median(score2, na.rm = TRUE) / qchisq(0.5, df = 1)
-  }
 
-  ## compute gif
   toplot <- df %>%
-    group_by(method, prop.outlier, rep.sampler, rep.method) %>%
-    summarise(gif = aux.f(pvalue[!outlier])) %>%
-    ungroup()
+    group_by(method, x, rep.sampler, rep.method) %>%
+    compute_gif()
 
   ## compute mean
   toplot <- toplot %>%
-    group_by(method, prop.outlier) %>%
+    group_by(method, x) %>%
     summarise(gif.mean = mean(gif), N = length(gif), sd = sd(gif), se = sd / sqrt(N))
 
-  ggplot(toplot, aes(x = prop.outlier, y = gif.mean, color = method)) +
+  ggplot(toplot, aes(x = x, y = gif.mean, color = method)) +
     geom_errorbar(aes(ymin = gif.mean - se,
                       ymax = gif.mean + se,
-                      width = (max(prop.outlier) - min(prop.outlier)) * 0.05)) +
+                      width = (max(x) - min(x)) * 0.05)) +
     geom_line() +
-    geom_point()
+    geom_point() +
+    xlab(x.label)
 
 }
+
