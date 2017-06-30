@@ -1843,7 +1843,7 @@ L(\hat{\U} - \X \matr{C}, \hat{\V}^{T}, \hat{\B} + \hat{\V} \matr{C}^T}) = L(\ha
 Thus, $\hat{\B}$ is not unique.
 
 
-**** Estimateur régularisé en norm $L_{2}$
+**** Estimateur régularisé en norme $L_{2}$
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 16:21] \\
   faire bien le lien avec le mpdèle PCA +  lm et lambda = 0 implique on n'a pas de
@@ -1859,7 +1859,7 @@ d'optimiser la fonction objectif suivante
 \label{eq:optim_ridge_reg}
 \LfmmLridge
 \end{equation}
-où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2} est la norme $L_2$ et
+où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2}$ est la norme $L_2$ et
 $\lamba$ le paramètre de régularisation. 
 
 Nous remarquons dans un premier temps que la fonction eqref:eq:optim_ridge_reg
