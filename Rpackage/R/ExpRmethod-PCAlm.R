@@ -54,7 +54,6 @@ ExpRmouline.method_PCAlm <- function(m, dat) {
                                  dim = c(n, p),
                                  args = list(dat = dat))
   m$U <- res.rspectra$u %*% diag(res.rspectra$d[1:m$K], m$K, m$K)
-  m$U <- m$U
   m$V <- res.rspectra$v
 
   ## run hypothesis testing

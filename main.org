@@ -1784,7 +1784,7 @@ Comme dans cite:frichot13_testin_assoc_between_loci_envir, nous appellerons ce
 modèle le modèle mixte à facteurs latents (LFMM pour latent factor mixed model
 en anglais). Dans cette équation, $\Y$ est la matrice des variables expliquées
 de taille $\Yrow \times \Ycol$, où $\Ycol$ est le variables et $\Yrow$ le nombre
-d'observations. Par exemple, les variables observées peuvent être des SNPs ou
+d'observations. Par exemple, les variables expliquées peuvent être des SNPs ou
 bien des niveau de méthylation. La matrice $\X$ de taille $\Xrox \times \Xcol$
 représente les variables explicatives. Les variables explicatives peuvent être
 par exemple une maladie ou un gradient environnementale comme la température. La
@@ -1801,47 +1801,6 @@ Si l'on suppose qu'il y à $\K$ variables latentes sont indépendantes alors la
 matrice latentes $\W$ est de rang $\K$. Dans la suite nous considérerons $\U$ et
 $\V$ comme étant les matrices uniques obtenues grâce à l'analyse en composante
 principale de la matrice latente $\W$.
-
-
-STOP ca c'est une remarque pour après !!
-
-Afin d'estimer les paramètre du model eqref:eq:model, nous supposons comme dans
-cite:tipping1999probabilistic que le bruit est Gaussien et isotrope, c'est a
-dire que $$ \E \sim \Normal(0, \sigma^{2} \Id_{\Ycol}) $$ où $\sigma^{2}$ est la
-variance de l'erreur et $\Id_{\Ycol}$. Nous pouvons alors estimer les paramètres
-du modèle en minimisant l'opposé de la log-vraisemblance. Cela fait intervenir
-la fonction objectif
-\begin{equation}
-\label{eq:optim_no_reg}
-\LfmmL 
-\end{equation}
-où $\norm{.}_{F}$ est la norme de Frobenius. 
-
-Cependant, la fonction $\Lnoreg$ ne permet de définir de façons unique la
-matrice latente $\W$ et la matrice des effets $\B$. 
-
-However, the function $\Lnoreg$ do not allow to define unique latent factor
-matrices product $$\C = \U \V^T$$ and a unique primary effect matrix $\B$. It
-means that we can not identify the output variance explained by the $K$ latent
-factors and the output variance explained by $\X$.
-
-We will now expose two regularized variants of function $\Lnoreg$ which lead to
-unique primary effect matrix $\B$ and latent factor matrices product $\C$.
-
-***** demo
-We write $\hat{\B}$ the unique matrices of optimization problem defined by the
-loss function $\L$ in [[eqref:eq:optim_no_reg]], and $\hat{\U}$, $\hat{\V}$
-possible matrices for this solution. First, we remark that $\hat{\U}$ and
-$\hat{\V}$ are not unique because, for any invertible matrix $\matr{R}$ we have
-$$L(\hat{\U}, \hat{\V}^{T}, \hat{\B}) = L(\hat{\U} \matr{R}, \matr{R}^{-1}
-\V^{T}, \hat{\B}).$$ Then, we remark that for a any $\Xcol \times \Ycol$ matrix
-$\matr{C}$
-\begin{equation*}
-L(\hat{\U} - \X \matr{C}, \hat{\V}^{T}, \hat{\B} + \hat{\V} \matr{C}^T}) = L(\hat{\U},
-\hat{\V}^{T}, \hat{\B})
-\end{equation*}
-Thus, $\hat{\B}$ is not unique.
-
 
 **** Estimateur régularisé en norme $L_{2}$
 :LOGBOOK:
@@ -1860,16 +1819,24 @@ d'optimiser la fonction objectif suivante
 \LfmmLridge
 \end{equation}
 où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2}$ est la norme $L_2$ et
-$\lamba$ le paramètre de régularisation. 
-
-Nous remarquons dans un premier temps que la fonction eqref:eq:optim_ridge_reg
-est convexe en les variables 
-$$ 
-\W = \U \V^{T}, \B. 
+$\lamba$ le paramètre de régularisation. Le terme 
 $$
-Parler de convexité et strict convexité ???
+\frac{1}{2} \norm{\Y - \U \V^{T} - \X \B^{T}} 
+$$
+correspond à l'opposé de la log vraisemblance où la matrice de bruit $\E$ est
+Gaussienne, isotrope et de moyenne nulle. La terme de régularisation 
+$$ \lambda \norm{\B}^{2}_{2} $$ 
+est indispensable pour distinguer les effets des variables lattentes de celui 
+des variables explicatives. En effet, si
+$$ \lambda = 0 $$ 
+alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a 
+$$
+\Lridge(\U - \X \matr{T}, \V^{T}, \B + \V \matr{T}^T}) = \Lridge(\U, \V^{T},
+\B). 
+$$
 
-(RidgeLFMM). The regularized loss function is written as follow 
+ICI
+
 We can show that minimizing the function eqref:eq:optim_ridge_reg leads to the
 following unique solution
 \begin{align}
@@ -1946,13 +1913,32 @@ As result we have
 - Note taken on [2017-06-29 jeu. 14:47] \\
   Faire le lien avec les methodes de low rank approximation
 :END:
-In this section we present a lasso regularized latent factor mixed model (LassoLFMM)
-The regularized loss function is written as follow
+
+Dans cette partie nous proposons de remplacer la régularisation en norme $L_{2}$
+de la fonction objectif $\Lridge$ eqref:eq:optim_ridge_reg par une
+régularisation $L_{1}$. Le chois de cette régularisation est motivé par
+intuitivement par le fait que l'on s'attend à ce que seulement une certaine
+proportion des variable expliquées $\Y_{j}$ soit associé à la variable
+explicative $\X$. Cela signifie qu'une partie des lignes de la matrice des
+effets $\B$ est nulle. Or la régularisation $\L_{1}$ est connue pour produire des
+matrices des effets creuses cite:Tibshirani_1996.
+
+Nous écrivons la fonction objective de la façon suivante 
 \begin{equation}
 \label{eq:optim_lasso_reg}
 \LfmmLlasso
 \end{equation}
-Where $\norm{.}_{*}$ is the nuclear norm. Contrary to $\Lridge$ finding minimum
+où $\norm{.}_{*}$ est la norme nucléaire. La norme nucléaire est introduite ici
+car elle permet de définir la fonction objective $\Llasso$ convexe. Nous verons
+par la suite que cela permet d'utilisé des algorithme rapide. De plus, cela
+permet de définir la matrice latentes et la matrice des effets de façon unique.
+En effet les 
+
+il faut demontrer la strict convexité !!! voir
+cite:cai10_singul_value_thres_algor_matrix_compl 
+
+
+Where  is the nuclear norm. Contrary to $\Lridge$ finding minimum
 solution of $\Llasso$ is not easy. However, if we made the variable change $$ \C = \U \V^{T}
 $$ in eqref:eq:optim_lasso_reg, the function $\Llasso$ become a convex
 function of $\C$ and $\B$. Thereby, we can apply alternated algorithm to compute
@@ -2454,8 +2440,11 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_src
 **** Description des expériences
-***** RUNNING Comparaisons numériques sur des simulations
+***** TODO Comparaisons numériques sur des simulations
 :LOGBOOK:
+- Note taken on [2017-07-03 lun. 16:13] \\
+  il faudra le relancer avec un oracle qui marche bien !!
+- State "TODO"       from "RUNNING"    [2017-07-03 lun. 16:13]
 - State "RUNNING"    from "TODO"       [2017-06-28 mer. 18:05]
 - State "TODO"       from              [2017-06-27 mar. 12:06]
 :END:
@@ -2618,8 +2607,9 @@ CLOSED: [2017-06-27 mar. 19:24]
 > save_expr(expr)
 Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_example
-****** TODO Validation croisée du modèle lfmmRidge sur 1000genome
+****** RUNNING Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-07-03 lun. 14:39]
 - State "TODO"       from "RUNNING"    [2017-06-29 jeu. 16:43]
 - Note taken on [2017-06-29 jeu. 16:37] \\
   Il y a trop peut de structure !!! Je pense que la structure est porté par trop
@@ -2662,16 +2652,10 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_src
 
 #+RESULTS:
-[[./OUTPUT/Rplots/file62412903fe66.png]]
-[[./OUTPUT/Rplots/file624177c6cec6.png]]
-#+begin_example
-  > pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
-  > save_plot_png(pl)
-  [[./OUTPUT/Rplots/file62412903fe66.png]]
-  > pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
-  > save_plot_png(pl)
-  [[./OUTPUT/Rplots/file624177c6cec6.png]]
-#+end_example
+[[./OUTPUT/Rplots/eas_CV_lambda.png]]
+[[./OUTPUT/Rplots/eas_CV_K.png]]
+
+
 
 ***** TODO GWAS
 :LOGBOOK:
@@ -2763,8 +2747,10 @@ CLOSED: [2017-06-29 jeu. 09:42]
 #+end_example
 
 ****** DONE Validation croisée du modèle lfmmRidge
-CLOSED: [2017-06-29 jeu. 14:35]
+CLOSED: [2017-07-03 lun. 16:18]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-07-03 lun. 16:18]
+- State "RUNNING"    from "DONE"       [2017-07-03 lun. 14:42]
 - State "DONE"       from "RUNNING"    [2017-06-29 jeu. 14:35]
 - Note taken on [2017-06-29 jeu. 12:10] \\
   Pour K c'est bon c'est clair, on va prendre autour de 25 en gros. Par contre
@@ -2786,8 +2772,8 @@ CLOSED: [2017-06-29 jeu. 14:35]
   n <- nrow(dat$Y)
 
   lambdas <- c(1e-5, 1.0, 1e10) / n
-  nb.cluster <- 10
-  cv <- method_CV_ridgeLFMM(n.fold.col = 10, n.fold.row = 10,
+  nb.cluster <- 4
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
                             lambdas = lambdas,
                             Ks = c(1,2,5,10,25, 50, 100))
 
@@ -2802,22 +2788,15 @@ CLOSED: [2017-06-29 jeu. 14:35]
   save_expr(res.cv, "ewas_CV_lfmm.rds")
 
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
-  save_plot_png(pl)
+  save_plot_png(pl, "ewas_CV_lfmm_lambda.png")
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
-  save_plot_png(pl)
+  save_plot_png(pl, "ewas_CV_lfmm_K.png")
 #+end_src
 
 #+RESULTS:
-[[./OUTPUT/Rplots/file5cab74a51d2c.png]]
-[[./OUTPUT/Rplots/file5cab19e1136c.png]]
-#+begin_example
-  > pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
-  > save_plot_png(pl)
-  [[./OUTPUT/Rplots/file5cab74a51d2c.png]]
-  > pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
-  > save_plot_png(pl)
-  [[./OUTPUT/Rplots/file5cab19e1136c.png]]
-#+end_example
+[[./OUTPUT/Rplots/ewas_CV_lfmm_lambda.png]]
+[[./OUTPUT/Rplots/ewas_CV_lfmm_K.png]]
+
 
 ****** TODO Etude du jeu de données avec cate lfmm lm et lmPCA
 :LOGBOOK:
