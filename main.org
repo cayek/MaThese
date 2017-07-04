@@ -22,6 +22,9 @@
 
 #+PROPERTY: header-args    :exports none
 
+#+latex_header: \usepackage{amsthm}
+#+latex_header: \newtheorem{theorem}{Théoreme}
+
 #  LocalWords:  methylation polymorphism nucleotide Frobenius invertible SNP
 #  LocalWords:  preprocessing dataset RidgeLFMM LassoLFMM
 
@@ -1835,31 +1838,47 @@ $$
 \B). 
 $$
 
-ICI
-
-We can show that minimizing the function eqref:eq:optim_ridge_reg leads to the
-following unique solution
+Nous calculons les estimateurs de la façon suivante 
 \begin{align}
 \label{eq:RidgeLfmmEstomatorC}
 \hat{\U} \hat{\V} & =  \sqrt{\obP}^{-1} \mathrm{svd}_{\K}(\sqrt{\obP} \Y ) \\
 \hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V}).
 \end{align}
-Where $svd_{\K}(\matr{A})$ is the best approximation of rank $\K$ for the matrix
-$\matr{A}$ given by the singular value decomposition (SVD). $\Id_{q}$ is the $q \times
-q$ identity matrix. The $\Yrow \times \Yrow$ matrix $\obP$ is an oblique
-projection matrix defined as $$\LfmmP.$$ The matrix $\sqrt{\obP}$ is define such that 
+Où $svd_{\K}(\matr{A})$ est la meilleur approximation de rang $\K$ de la matrice
+$\matr{A}$ données par la décomposition en valeurs singulière (SVD pour singular
+value decomposition) et $\Id_{d}$ est la matrice identité de taille $d \times
+d$. La matrice $\obP$ est définie tel que 
 \begin{equation*}
-\obP = \sqrt{\obP}^{2}
+\LfmmP. 
+\end{equation*} 
+
+ICI on va explimer Plambda en finction des valeurs singulières !!
+
+Cette matrice définie une application linéaire qui enlève une partie de la
+projection orthogonal sur $ \X$. Dans le cas particulier où il n'y a qu'une seul
+variable explicative et quelle est normalisée, on a
+\begin{equation*}
+\obP \X = \frac{1}{\lambda + 1} \X.
 \end{equation*}
+On remarque que le paramètre de régularisation $\lambda$ permet de réguler la
+composante restante le long de $\X$. 
+Enfin $\sqrt{\obP}$ est tel 
+\begin{equation*}
+\obP = \sqrt{\obP}^{2},
+\end{equation*}
+Il s'agit de la racine carrée d'une matrice carrée. Cette dernière est bien
+définie pour $\obP$ qui est symétrique définie positive, c'est à dire que toutes
+ses valeurs propres sont positives.
 
-***** Remarques
-:LOGBOOK:
-- Note taken on [2017-06-30 ven. 10:50] \\
-  parler des cas limites de lambda et du problème d'identifiabilité
-:END:
+Nous pouvons montrer le théorème suivant.
+#+BEGIN_theorem
+<<ridge_theorem>>
+Pour $\lambda$ strictement supérieur à zéro, La fonction objective $\Lridge$
+définie par l'équation eqref:eq:optim_ridge_reg admet un point de minimum
+local tel que 
+#+END_theorem
 
-
-***** Proof
+#+BEGIN_proof
 We want to find 
 \begin{align*}
 \hat{\U} & \in \RR^{\Urow \times \Ucol} \\
@@ -1907,6 +1926,14 @@ As result we have
 \hat{\U} \hat{\V} & =  \sqrt{\obP}^{-1} * \mathrm{svd}_{\K}(\sqrt{\obP} \Y ) \\
 \hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V}).
 \end{align*}
+#+END_proof
+
+***** Remarques
+:LOGBOOK:
+- Note taken on [2017-06-30 ven. 10:50] \\
+  parler des cas limites de lambda et du problème d'identifiabilité
+:END:
+
 
 **** Lasso regularized latent factor mixed model (LassoLFMM)
 :LOGBOOK:
@@ -2481,6 +2508,7 @@ générative.
   ## param
   K.method <- 5
   nb.cluster <- 16
+  rep.nb.sampler <- 2
 
   ## sampler
   s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
@@ -2508,7 +2536,7 @@ générative.
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
   doParallel::registerDoParallel(cl)
-  expr <- ExpR(rep.nb.sampler = 5,
+  expr <- ExpR(rep.nb.sampler = rep.nb.sampler,
                samplers = samplers,
                preprocessors = NULL,
                rep.nb.method = 1,
