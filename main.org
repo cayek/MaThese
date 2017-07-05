@@ -2518,6 +2518,7 @@ générative.
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = 0.15, lambda.K = 25, relative.err.epsilon = 1e-4)
   m.lm <- method_lm()
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
@@ -2531,7 +2532,7 @@ générative.
     m.cate * param() +
     m.famt * param() +
     m.sva * param() +
-    m.oracle * param()
+    m.lasso * param()
 
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
