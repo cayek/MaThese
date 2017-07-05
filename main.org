@@ -1805,7 +1805,7 @@ matrice latentes $\W$ est de rang $\K$. Dans la suite nous considérerons $\U$ e
 $\V$ comme étant les matrices uniques obtenues grâce à l'analyse en composante
 principale de la matrice latente $\W$.
 
-**** Estimateur régularisé en norme $L_{2}$
+**** Estimateurs des moindres carrées régularisés en norme $L_{2}$
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 16:21] \\
   faire bien le lien avec le mpdèle PCA +  lm et lambda = 0 implique on n'a pas de
@@ -1815,8 +1815,13 @@ principale de la matrice latente $\W$.
   mettre lasso estimator et ridge estimator.
 :END:
 
-Pour estimer les paramètres $\U$, $\V$ et $\B$ de LFMM nous proposons
-d'optimiser la fonction objectif suivante
+Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
+modèle lfmm eqref:eq:model basé sur un problème des moindres carrées régularisé
+en norme $L_{2}$. Nous montrerons que cette algorithme conspont a un point de
+minimum local du problème d'optimisation.
+
+Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM nous posons la fonction
+objectif suivante
 \begin{equation}
 \label{eq:optim_ridge_reg}
 \LfmmLridge
@@ -1827,77 +1832,99 @@ $$
 \frac{1}{2} \norm{\Y - \U \V^{T} - \X \B^{T}} 
 $$
 correspond à l'opposé de la log vraisemblance où la matrice de bruit $\E$ est
-Gaussienne, isotrope et de moyenne nulle. La terme de régularisation 
-$$ \lambda \norm{\B}^{2}_{2} $$ 
-est indispensable pour distinguer les effets des variables lattentes de celui 
-des variables explicatives. En effet, si
-$$ \lambda = 0 $$ 
-alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a 
-$$
-\Lridge(\U - \X \matr{T}, \V^{T}, \B + \V \matr{T}^T}) = \Lridge(\U, \V^{T},
-\B). 
-$$
+Gaussienne, isotrope et de moyenne nulle. 
 
-Nous calculons les estimateurs de la façon suivante 
+Nous remarquons que le terme de régularisation
+\begin{equation*}
+\lambda \norm{\B}^{2}_{2}
+\end{equation*}
+est indispensable pour distinguer l'effet des variables lattentes de celui des
+variables explicatives. En effet, si
+\begin{equation*}
+\lambda = 0 
+\end{equation*}
+alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a 
+\begin{equation*}
+\Lridge(\U - \X \matr{T}, \V^{T}, \B + \V \matr{T}^T}) = \Lridge(\U, \V^{T}, \B).
+\end{equation*}
+Ainsi, les points minimuns d'une tel fonction objective ne sont pas pertinent pour
+notre problème.
+
+Les estimateurs sont calculé de la façon suivante 
 \begin{align}
-\label{eq:RidgeLfmmEstomatorC}
+\label{eq:RidgeLfmmEstomatorW}
 \hat{\U} \hat{\V} & =  \sqrt{\obP}^{-1} \mathrm{svd}_{\K}(\sqrt{\obP} \Y ) \\
-\hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V}).
+\label{eq:RidgeLfmmEstomatorB}
+\hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}).
 \end{align}
 Où $svd_{\K}(\matr{A})$ est la meilleur approximation de rang $\K$ de la matrice
-$\matr{A}$ données par la décomposition en valeurs singulière (SVD pour singular
+$\matr{A}$ données par la décomposition en valeurs singulières (SVD pour singular
 value decomposition) et $\Id_{d}$ est la matrice identité de taille $d \times
 d$. La matrice $\obP$ est définie tel que 
 \begin{equation*}
 \LfmmP. 
 \end{equation*} 
-
-ICI on va explimer Plambda en finction des valeurs singulières !!
-
-Cette matrice définie une application linéaire qui enlève une partie de la
-projection orthogonal sur $ \X$. Dans le cas particulier où il n'y a qu'une seul
-variable explicative et quelle est normalisée, on a
+Si l'on calcul la SVD de la matrice $\X$ tel que 
 \begin{equation*}
-\obP \X = \frac{1}{\lambda + 1} \X.
+\X = \matr{Q} \matr{\Sigma} \matr{R}^{T}
 \end{equation*}
-On remarque que le paramètre de régularisation $\lambda$ permet de réguler la
-composante restante le long de $\X$. 
-Enfin $\sqrt{\obP}$ est tel 
+alors par le calcule on peut montrer que
 \begin{equation*}
-\obP = \sqrt{\obP}^{2},
+\obP = \matr{Q} \matr{D} \matr{Q}^{T}
 \end{equation*}
-Il s'agit de la racine carrée d'une matrice carrée. Cette dernière est bien
-définie pour $\obP$ qui est symétrique définie positive, c'est à dire que toutes
-ses valeurs propres sont positives.
+où $\matr{D}$ est une matrice diagonale composée des termes
+\begin{equation*}
+\left\{ \frac{\lambda}{\lambda + \sigma_{1}^{2}}, ..., 
+\frac{\lambda}{\lambda + \sigma_{d}^{2}}, 
+1, ..., 1 \right\},
+\end{equation*}
+où $\sigma_{i = 1..d}$ sont les valeurs singulières de $\X$.
+Enfin, la matrice racine carré de $\oqP$ est l'unique matrice tel que
+\begin{equation*}
+\obP = \sqrt{\obP} \sqrt{\obP},
+\end{equation*}
+calculé en prenant la racine carré des éléments de la matrice diagonale $\matr{D}$.
 
-Nous pouvons montrer le théorème suivant.
+La matrice $\obP$ défie une transformation linéaire qui pour une variable
+aléatoire de moyenne nulle réduit sa corrélation linéaire avec $\X$. Le
+paramètre $\lambda$ permet de régulé la corrélation restante. Si $\lambda$ vaut
+zéro multiplier par $\obP$ revient à prendre le résidu d'une régression linéaire
+par $\X$, on enlève alors toute la corrélation linéaire avec $\X$. Si $\lambda$
+est très grand alors $\obP$ tend vers la matrice identité. Dans ce cas
+l'estimations des variable latente par l'équation eqref:eq:RidgeLfmmEstomatorW
+revient à faire une analyse en composante principale de la matrice $\Y$. Il est
+donc important de choisir une valeur de $\lambda$ qui enlève la bonne proportion
+de corrélation avec la variable explicative $\X$. Nous expliquons dans la partie
+[[sec:hyperparametre]] plus en détaille comment choisir les hyperparamètres.
+
+Le calcul des estimateurs est justifié par le théorème suivant 
 #+BEGIN_theorem
-<<ridge_theorem>>
-Pour $\lambda$ strictement supérieur à zéro, La fonction objective $\Lridge$
-définie par l'équation eqref:eq:optim_ridge_reg admet un point de minimum
-local tel que 
+<<ridge_theorem>> 
+Pour $\lambda$ strictement supérieur à zéro, les estimateurs
+des moindres carrés régularisés en norme $L_{2}$, définis par
+eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, définissent un
+point de minimum local de la fonction objective $\Lridge$
+eqref:eq:optim_ridge_reg.
 #+END_theorem
 
 #+BEGIN_proof
-We want to find 
+On veut trouver
 \begin{align*}
 \hat{\U} & \in \RR^{\Urow \times \Ucol} \\
 \hat{\V} & \in \RR^{\Vrow \times \Vcol} \\
 \hat{\B} & \in \RR^{\Brow \times \Bcol} \\
 \end{align*}
-which minimize the function $\Lridge$ define in eqref:eq:optim_ridge_reg. We
-start to compute the Jacobian of $\Lridge$ along $\B$, $\U$ and $\V$
+qui minimise la fonction $\Lridge$.  Les dérivés partielles donnent
 \begin{equation}
 \begin{cases}
 \label{eq:partial_Lridge}
 & \frac{\partial \Lridge}{\partial \B}(\U, \V, \B) = \X^{T} (\U \V^{T} + \X \B^{T} - \Y) + \lambda \Id_{d} \B^{T} \\
 & \frac{\partial \Lridge}{\partial \V}(\U, \V, \B) = \U^{T} (\U \V^{T} + \X \B^{T} - \Y) \\
-& \frac{\partial \Lridge}{\partial \U}(\U, \V, \B) = (\U \V^{T} + \X \B^{T} - \Y) \V
-
+& \frac{\partial \Lridge}{\partial \U}(\U, \V, \B) = (\U \V^{T} + \X \B^{T} - \Y) \V.
 \end{cases}
 \end{equation}
-The minimum is reach if and even if  eqref:eq:partial_Lridge equal to
-zero. We can write
+Un minimum local de $\Lridge$ vérifie nécessairement l'équation d'Euler, ce qui
+revient a annuler les dérivé partielles. On a alors
 \begin{equation}
 \begin{cases}
 \label{eq:euler_Lridge}
@@ -1906,7 +1933,8 @@ zero. We can write
 & 0 = (\U \V^{T} + \X \B^{T} - \Y) \V
 \end{cases}
 \end{equation}
-Then by using the first line of eqref:eq:euler_Lridge the two last ones we have
+En injectant la première ligne de eqref:eq:euler_Lridge dans les deux
+autres on a
 \begin{equation}
 \label{eq:euler_UV_Lridge}
 \begin{cases}
@@ -1914,26 +1942,21 @@ Then by using the first line of eqref:eq:euler_Lridge the two last ones we have
 & 0 = \obP (\hat{\U} \hat{\V}^{T} - \Y) \hat{\V}
 \end{cases}
 \end{equation}
-Finally, finding the solutions $\hat{\U}$ and $\hat{\V}$ of
-eqref:eq:euler_UV_Lridge is equivalent to find the minimum of 
+On peut trouver des solutions $\hat{\U}$ $\hat{\V}$ de eqref:eq:euler_UV_Lridge
+en trouvant un point minimum de 
 \begin{equation}
-\mathrm{L^{'}_{ridge}}(\U, \V) = \frac{1}{2} \norm{ \sqrt{\obP} (\Y - \U \V^{T})}_{F}^{2}
+\mathrm{L^{'}_{ridge}}(\U, \V) = \frac{1}{2} \norm{ \sqrt{\obP} (\Y - \U \V^{T})}_{F}^{2}.
 \end{equation}
-which is the classic problem of finding $\K$ rank best approximation of the matrix
+On tombe sur le problème de trouver la meilleur approximation de rang $\K$ qui
+est données par la SVD de la matrice
 $$ \sqrt{\obP} \Y.$$
-As result we have 
+Réciproquement, la solution
 \begin{align*}
 \hat{\U} \hat{\V} & =  \sqrt{\obP}^{-1} * \mathrm{svd}_{\K}(\sqrt{\obP} \Y ) \\
-\hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V}).
+\hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V})
 \end{align*}
+annule bien l'équation d'Euler. De plus, 
 #+END_proof
-
-***** Remarques
-:LOGBOOK:
-- Note taken on [2017-06-30 ven. 10:50] \\
-  parler des cas limites de lambda et du problème d'identifiabilité
-:END:
-
 
 **** Lasso regularized latent factor mixed model (LassoLFMM)
 :LOGBOOK:
@@ -2022,6 +2045,7 @@ We iterate these two steps until the algorithm converges to the minimum of
 $\Llasso$ defined in eqref:eq:optim_lasso_reg.
 
 **** Choice of hyper-parameters
+<<sec:hyperparametre>>
 :LOGBOOK:
 - Note taken on [2017-05-25 Thu 11:52] \\
   Pour ridge faire ma petite heuristic pour trouver lambda.
@@ -2469,6 +2493,10 @@ des individus nous avons choisi d'utiliser la base wordclim
 **** Description des expériences
 ***** TODO Comparaisons numériques sur des simulations
 :LOGBOOK:
+- Note taken on [2017-07-05 mer. 18:11] \\
+  j'ai lancé avec le lasso c'est pas mal du tout !! J'ai elevé l'oracle, je sais
+  pas pk il merde... le lasso merde quand il y 20% d'outlier mais c'est normal je
+  lui ai pas mis le bon nombre de non zero !! :D
 - Note taken on [2017-07-03 lun. 16:13] \\
   il faudra le relancer avec un oracle qui marche bien !!
 - State "TODO"       from "RUNNING"    [2017-07-03 lun. 16:13]
