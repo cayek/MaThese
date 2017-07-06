@@ -1799,13 +1799,17 @@ des facteurs latents. Enfin la matrice $\E$ est la matrice d'erreur résiduelle
 de taille $\Yrow\times\Ycol$.
 
 Nous remarquons dans un premier temps que les matrices $\U$ et $\V$ ne sont pas
-définies de façon unique. Nous posons $$ \W = \U \V^{T} $$ la matrice latente.
-Si l'on suppose qu'il y à $\K$ variables latentes sont indépendantes alors la
-matrice latentes $\W$ est de rang $\K$. Dans la suite nous considérerons $\U$ et
-$\V$ comme étant les matrices uniques obtenues grâce à l'analyse en composante
-principale de la matrice latente $\W$.
+définies de façon unique. Nous posons 
+\begin{equation}
+\label{eq:W}
+\W = \U \V^{T} 
+\end{equation}
+la matrice latente. Si l'on suppose qu'il y à $\K$ variables latentes sont
+indépendantes alors la matrice latentes $\W$ est de rang $\K$. Dans la suite
+nous considérerons $\U$ et $\V$ comme étant les matrices uniques obtenues grâce
+à l'analyse en composante principale de la matrice latente $\W$.
 
-**** Estimateurs des moindres carrées régularisés en norme $L_{2}$
+**** Estimation des moindres carrées régularisés en norme $L_{2}$
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 16:21] \\
   faire bien le lien avec le mpdèle PCA +  lm et lambda = 0 implique on n'a pas de
@@ -1815,10 +1819,12 @@ principale de la matrice latente $\W$.
   mettre lasso estimator et ridge estimator.
 :END:
 
-Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
-modèle LFMM défini par eqref:eq:model basé sur un problème des moindres carrées
-régularisé en norme $L_{2}$. Nous montrerons que cette algorithme correspond a
-un point de minimum local du problème d'optimisation.
+Dans cette partie, nous présentons un algorithme d'estimation des paramètres de
+LFMM défini par eqref:eq:model basé sur un problème des moindres carrées
+régularisé en norme $L_{2}$. Nous montrerons que cette algorithme permet de
+calculer un point de minimum global du problème d'optimisation.
+
+***** Fonction objectif
 
 Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM nous posons la fonction
 objectif suivante
@@ -1850,7 +1856,8 @@ alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a
 Ainsi, les points minimuns d'une tel fonction objective ne sont pas pertinents pour
 notre problème.
 
-Afin de calculer les estimateurs qui minimise $\Lridge$ nous commençons par
+***** Algorithme
+Afin d'estimer les paramètres de LFMM qui minimise $\Lridge$ nous commençons par
 calculer la décomposition en valeurs singulières de la matrice des variables
 explicatives $\X$
 \begin{equation*}
@@ -1863,7 +1870,7 @@ singulières
 \begin{equation*}
 \left \{ \sigma_{j} \left \}_{j = 1..\Xcol}.
 \end{equation*}
-Les estimateurs sont calculé de la façon suivante 
+Les estimations sont calculé de la façon suivante 
 \begin{align}
 \label{eq:RidgeLfmmEstomatorW}
 \hat{\U} \hat{\V} & =  \matr{Q} \matr{D}^{-1} \svd_{\K}( \matr{D} \matr{Q}^{T} \Y ) \\
@@ -1892,17 +1899,18 @@ par $\X$, on enlève alors toute la corrélation linéaire avec $\X$. Si $\lambd
 est très grand alors $\obP$ tend vers la matrice identité. Dans ce cas, le
 calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en composante
 principale de la matrice $\Y$. Il est donc important de choisir une valeur de
-$\lambda$ qui enlève la bonne proportion de corrélation avec la variable
-explicative $\X$. Nous expliquons dans la partie [[sec:hyperparametre]] plus en
+$\lambda$ qui enlève la bonne proportion de corrélation avec les variables
+explicatives $\X$. Nous expliquons dans la partie [[sec:hyperparametre]] plus en
 détaille comment choisir les hyperparamètres.
 
-Le calcul des estimateurs est justifié par le théorème suivant 
+L'estimation des paramètres régularisé en norme $\L_{2}$ est justifié par le
+théorème suivant
 #+BEGIN_theorem
 <<ridge_theorem>> 
-Pour $\lambda$ strictement supérieur à zéro, l'estimateurs
-des moindres carrés régularisés en norme $L_{2}$, défini par
-eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, défini un
-point de minimum global de la fonction objective $\Lridge$.
+Pour $\lambda$ strictement supérieur à zéro, l'estimation des
+paramètres de LFMM régularisé en norme $L_{2}$, définie par
+eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, défini un point de
+minimum global de la fonction objective $\Lridge$.
 #+END_theorem
 
 #+BEGIN_proof
@@ -1976,44 +1984,51 @@ est bien un point de minimum global de $\Lridge$.
 #+END_proof
 
 
-**** Lasso regularized latent factor mixed model (LassoLFMM)
+**** Estimation des moindres carrées régularisés en norme $L_{1}$  
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 14:47] \\
   Faire le lien avec les methodes de low rank approximation
 :END:
+Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
+modèle LFMM défini par eqref:eq:model basé sur un problème des moindres carrées
+régularisé en norme $L_{1}$. Nous montrerons que cette algorithme converge vers
+un point de minimum global du problème d'optimisation.
 
-Dans cette partie nous proposons de remplacer la régularisation en norme $L_{2}$
-de la fonction objectif $\Lridge$ eqref:eq:optim_ridge_reg par une
-régularisation $L_{1}$. Le chois de cette régularisation est motivé par
-intuitivement par le fait que l'on s'attend à ce que seulement une certaine
-proportion des variable expliquées $\Y_{j}$ soit associé à la variable
-explicative $\X$. Cela signifie qu'une partie des lignes de la matrice des
-effets $\B$ est nulle. Or la régularisation $\L_{1}$ est connue pour produire des
-matrices des effets creuses cite:Tibshirani_1996.
-
-Nous écrivons la fonction objective de la façon suivante 
+***** Fonction objectif
+Nous proposons la fonction objective suivante
 \begin{equation}
 \label{eq:optim_lasso_reg}
 \LfmmLlasso
 \end{equation}
-où $\norm{.}_{*}$ est la norme nucléaire. La norme nucléaire est introduite ici
-car elle permet de définir la fonction objective $\Llasso$ convexe. Nous verons
-par la suite que cela permet d'utilisé des algorithme rapide. De plus, cela
-permet de définir la matrice latentes et la matrice des effets de façon unique.
-En effet les 
+où $\W$ est la matrice latente définie en eqref:eq:W, $\norm{\B}_{1}$ la norme
+$L_1$ de $\B$ et $\norm{\matr{A}_{*}}$ la norme nucléaire de la matrice
+$\matr{A}$ définie comme la somme ses valeurs singulières.
 
-il faut demontrer la strict convexité !!! voir
+Le choix de la norme $\L_{1}$ est motivé par le fait que l'on s'attend a ce que
+seulement un certaine proportion de variable expliquées soit associées aux
+variables explicatives. C'est à dire que seulement une certaine proportion des
+lignes de la matrices des effets $\B$ doit être différent de zéro. Or la
+régularisation $\L_{1}$ est connue pour produire des estimations parcimonieux
+cite:Tibshirani_1996.
+
+La fonction $\Llasso$ fait aussi intervenir une régularisation sur la matrice
+latentes $\W$. Plutôt que d'avoir des contraintes sur le rang de $\W$ nous avons
+choisi d'ajouter une régularisation sur sa norme nucléaire. Ainsi la fonction
+$\Llasso$ est convexe et nous savons le rang de $\hat{\W}$, un point minium de
+$\Llasso$, décroit avec $\gamma$ le paramètre de régularisation devant la norme
+nucléaire cite:bach2008consistency. 
+
+***** Algorithme
+<<sec:lasso_algo>>
+
+Nous présentons maintenant un algorithme alterné qui permet d'estimer les
+paramètres de LFMM qui minimise la fonction objective $\Llasso$ définie en
+eqref:eq:optim_lasso_reg.
+
+il faut démontrer la strict convexité !!! voir
 cite:cai10_singul_value_thres_algor_matrix_compl 
 
-
-Where  is the nuclear norm. Contrary to $\Lridge$ finding minimum
-solution of $\Llasso$ is not easy. However, if we made the variable change $$ \C = \U \V^{T}
-$$ in eqref:eq:optim_lasso_reg, the function $\Llasso$ become a convex
-function of $\C$ and $\B$. Thereby, we can apply alternated algorithm to compute
-minimum value of $\Llasso$.
-
 ***** An alternated algorithm
-<<sec:lasso_algo>>
 
 We start with null matrices
 \begin{align*}
@@ -2291,7 +2306,7 @@ particular, as in cite:wang2015confounder,gerard2017unifying, we used the median
 and the mad as robust estimators of the mean and standard deviation of
 statistical test under the null hypothesis.
 
-*** Experiences
+*** Expériences
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
@@ -2526,7 +2541,7 @@ Afin de valider la méthodes et son implémentation nous avons comparé ridgeLFM
 et lassoLFMM aux autres méthodes de la littérature sur des simulations
 générative. 
 
-#+begin_src R :results output :exports both
+#+begin_src R 
   library(MaTheseR)
   ### The sampler
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/Y_sample_p5e4_n919.rds"
@@ -2549,7 +2564,7 @@ générative.
 [[./OUTPUT/Rplots/file42874c17dae9.png]]
 #+end_example
 
-#+begin_src R :results output :exports both
+#+begin_src R 
   library(MaTheseR)
 
   ## param
@@ -2649,7 +2664,7 @@ CLOSED: [2017-06-27 mar. 19:24]
 - State "STARTED"    from "TODO"       [2017-06-27 mar. 16:42]
 - State "TODO"       from              [2017-06-27 mar. 16:42]
 :END:
-#+begin_src R :results output :exports both
+#+begin_src R 
   library(MaTheseR)
 
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds"
@@ -2697,7 +2712,7 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 - State "RUNNING"    from "TODO"       [2017-06-28 mer. 20:37]
 - State "TODO"       from              [2017-06-27 mar. 15:29]
 :END:
-#+begin_src R :results output :exports both
+#+begin_src R 
   library(MaTheseR)
 
   ## samplers
@@ -2731,8 +2746,6 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 [[./OUTPUT/Rplots/eas_CV_K.png]]
-
-
 
 ***** TODO GWAS
 :LOGBOOK:
@@ -2787,8 +2800,8 @@ CLOSED: [2017-06-29 jeu. 09:42]
 - State "DONE"       from "RUNNING"    [2017-06-29 jeu. 09:42]
 - State "RUNNING"    from              [2017-06-29 jeu. 09:36]
 :END:
-#+begin_src R :results output :exports both
-  library(MaTheseR)
+#+begin_src R  
+ library(MaTheseR)
 
   Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
 
@@ -2837,7 +2850,7 @@ CLOSED: [2017-07-03 lun. 16:18]
 - State "TODO"       from              [2017-06-29 jeu. 09:44]
 :END:
 
-#+begin_src R :results output :exports both
+#+begin_src R 
   library(MaTheseR)
 
   ## samplers
@@ -2880,10 +2893,10 @@ CLOSED: [2017-07-03 lun. 16:18]
 - State "TODO"       from              [2017-06-29 jeu. 11:17]
 :END:
 
-*** Results
+*** Résultats
 
 *** Discussion
-*** Figures and tables
+*** Figures et table
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
@@ -2891,7 +2904,7 @@ CLOSED: [2017-07-03 lun. 16:18]
 :LOGBOOK:
 - State "TODO"       from              [2017-07-06 jeu. 15:24]
 :END:
-#+begin_src R :results output :exports both
+#+begin_src R
   require(MaTheseR)
   expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
 

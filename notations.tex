@@ -50,7 +50,7 @@
 \Lnoreg(\U, \V, \B) =  \frac{1}{2} \norm{\Y - \U \V^T - \X \B^T}_{F}^2 %
 }
 \newcommand{\LfmmLlasso}{%
-\Llasso(\U, \V, \B) =  \frac{1}{2} \norm{\Y - \U \V^{T} - \X \B^T}_{F}^2 + \lambda \norm{\B}_{1} + \gamma \norm{\U \V^{T}}_{*}%
+\Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 + \lambda \norm{\B}_{1} + \gamma \norm{\W}_{*}%
 }
 \newcommand{\LfmmP}{%
 \obP = \Id_{\Yrow} - \X (\X^T \X + \lambda \Id_{\Xcol})^{-1}
