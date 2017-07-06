@@ -2526,6 +2526,8 @@ des individus nous avons choisi d'utiliser la base wordclim
 **** Description des expériences
 ***** RUNNING Comparaisons numériques sur des simulations
 :LOGBOOK:
+- Note taken on [2017-07-06 jeu. 17:52] \\
+  sinon les resultats sont top :D
 - Note taken on [2017-07-06 jeu. 17:50] \\
   je suis pas sur que c'est le dernier lfmm ridge .... Il faut que je trouve un
   moyen dire quelle version est installé sur krakenator !! avec les commit peut
