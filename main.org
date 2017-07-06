@@ -1868,7 +1868,7 @@ Si l'on calcul la SVD de la matrice $\X$ tel que
 \begin{equation*}
 \X = \matr{Q} \matr{\Sigma} \matr{R}^{T}
 \end{equation*}
-alors par le calcule on peut montrer que
+alors par le calcul on peut montrer que
 \begin{equation*}
 \obP = \matr{Q} \matr{D} \matr{Q}^{T}
 \end{equation*}
@@ -1900,10 +1900,10 @@ de corrélation avec la variable explicative $\X$. Nous expliquons dans la parti
 Le calcul des estimateurs est justifié par le théorème suivant 
 #+BEGIN_theorem
 <<ridge_theorem>> 
-Pour $\lambda$ strictement supérieur à zéro, les estimateurs
-des moindres carrés régularisés en norme $L_{2}$, définis par
-eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, définissent un
-point de minimum local de la fonction objective $\Lridge$
+Pour $\lambda$ strictement supérieur à zéro, l'estimateurs
+des moindres carrés régularisés en norme $L_{2}$, défini par
+eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, défini un
+point critique de la fonction objective $\Lridge$
 eqref:eq:optim_ridge_reg.
 #+END_theorem
 
@@ -1914,7 +1914,8 @@ On veut trouver
 \hat{\V} & \in \RR^{\Vrow \times \Vcol} \\
 \hat{\B} & \in \RR^{\Brow \times \Bcol} \\
 \end{align*}
-qui minimise la fonction $\Lridge$.  Les dérivés partielles donnent
+qui annule la dérivé de $\Lridge$ (par définissions d'un point critique). Les
+dérivés partielles donnent
 \begin{equation}
 \begin{cases}
 \label{eq:partial_Lridge}
@@ -1923,14 +1924,13 @@ qui minimise la fonction $\Lridge$.  Les dérivés partielles donnent
 & \frac{\partial \Lridge}{\partial \U}(\U, \V, \B) = (\U \V^{T} + \X \B^{T} - \Y) \V.
 \end{cases}
 \end{equation}
-Un minimum local de $\Lridge$ vérifie nécessairement l'équation d'Euler, ce qui
-revient a annuler les dérivé partielles. On a alors
+On veut donc que 
 \begin{equation}
 \begin{cases}
 \label{eq:euler_Lridge}
-& \hat{\B}^{T} = (\X^{T} \X + \lambda \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V) \\
-& 0 = \U^{T} (\U \V^{T} + \X \B^{T} - \Y) \\
-& 0 = (\U \V^{T} + \X \B^{T} - \Y) \V
+& \hat{\B}^{T} = (\X^{T} \X + \lambda \Id_{\Bcol})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}) \\
+& 0 = \hat{\U}^{T} (\hat{\U} \hat{\V}^{T} + \X \hat{\B}^{T} - \Y) \\
+& 0 = (\hat{\U} ^\hat{\V}^{T} + \X \hat{\B}^{T} - \Y) \hat{\V}
 \end{cases}
 \end{equation}
 En injectant la première ligne de eqref:eq:euler_Lridge dans les deux
@@ -1947,16 +1947,21 @@ en trouvant un point minimum de
 \begin{equation}
 \mathrm{L^{'}_{ridge}}(\U, \V) = \frac{1}{2} \norm{ \sqrt{\obP} (\Y - \U \V^{T})}_{F}^{2}.
 \end{equation}
-On tombe sur le problème de trouver la meilleur approximation de rang $\K$ qui
-est données par la SVD de la matrice
-$$ \sqrt{\obP} \Y.$$
-Réciproquement, la solution
+Il s'agit du problème de la meilleur approximation de rang $\K$ de la matrice
+\begin{equation*}
+\sqrt{\obP} \Y,
+\end{equation*}
+qui est obtenue en tronquant la SVD pour ne garder que $\K$
+valeurs singulières les plus grandes.
+
+Finalement, la solution
 \begin{align*}
 \hat{\U} \hat{\V} & =  \sqrt{\obP}^{-1} * \mathrm{svd}_{\K}(\sqrt{\obP} \Y ) \\
 \hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V})
 \end{align*}
-annule bien l'équation d'Euler. De plus, 
+est bien un point critique de $\Lridge$.
 #+END_proof
+
 
 **** Lasso regularized latent factor mixed model (LassoLFMM)
 :LOGBOOK:
