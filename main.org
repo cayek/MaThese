@@ -1816,9 +1816,9 @@ principale de la matrice latente $\W$.
 :END:
 
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
-modèle lfmm eqref:eq:model basé sur un problème des moindres carrées régularisé
-en norme $L_{2}$. Nous montrerons que cette algorithme conspont a un point de
-minimum local du problème d'optimisation.
+modèle LFMM défini par eqref:eq:model basé sur un problème des moindres carrées
+régularisé en norme $L_{2}$. Nous montrerons que cette algorithme correspond a
+un point de minimum local du problème d'optimisation.
 
 Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM nous posons la fonction
 objectif suivante
@@ -1838,7 +1838,7 @@ Nous remarquons que le terme de régularisation
 \begin{equation*}
 \lambda \norm{\B}^{2}_{2}
 \end{equation*}
-est indispensable pour distinguer l'effet des variables lattentes de celui des
+est indispensable pour distinguer l'effet des variables latentes de celui des
 variables explicatives. En effet, si
 \begin{equation*}
 \lambda = 0 
@@ -1847,55 +1847,54 @@ alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a
 \begin{equation*}
 \Lridge(\U - \X \matr{T}, \V^{T}, \B + \V \matr{T}^T}) = \Lridge(\U, \V^{T}, \B).
 \end{equation*}
-Ainsi, les points minimuns d'une tel fonction objective ne sont pas pertinent pour
+Ainsi, les points minimuns d'une tel fonction objective ne sont pas pertinents pour
 notre problème.
 
-Les estimateurs sont calculé de la façon suivante 
-\begin{align}
-\label{eq:RidgeLfmmEstomatorW}
-\hat{\U} \hat{\V} & =  \sqrt{\obP}^{-1} \mathrm{svd}_{\K}(\sqrt{\obP} \Y ) \\
-\label{eq:RidgeLfmmEstomatorB}
-\hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}).
-\end{align}
-Où $svd_{\K}(\matr{A})$ est la meilleur approximation de rang $\K$ de la matrice
-$\matr{A}$ données par la décomposition en valeurs singulières (SVD pour singular
-value decomposition) et $\Id_{d}$ est la matrice identité de taille $d \times
-d$. La matrice $\obP$ est définie tel que 
-\begin{equation*}
-\LfmmP. 
-\end{equation*} 
-Si l'on calcul la SVD de la matrice $\X$ tel que 
+Afin de calculer les estimateurs qui minimise $\Lridge$ nous commençons par
+calculer la décomposition en valeurs singulières de la matrice des variables
+explicatives $\X$
 \begin{equation*}
 \X = \matr{Q} \matr{\Sigma} \matr{R}^{T}
 \end{equation*}
-alors par le calcul on peut montrer que
+où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, 
+$\matr{R}$ une matrice unitaire de taille $\Xcol \times \Xcol$ et
+$\matr{\Sigma}$ une matrice de taille $\Xrow \times \Xcol$ contenant les valeurs
+singulières 
 \begin{equation*}
-\obP = \matr{Q} \matr{D} \matr{Q}^{T}
+\left \{ \sigma_{j} \left \}_{j = 1..\Xcol}.
 \end{equation*}
-où $\matr{D}$ est une matrice diagonale composée des termes
+Les estimateurs sont calculé de la façon suivante 
+\begin{align}
+\label{eq:RidgeLfmmEstomatorW}
+\hat{\U} \hat{\V} & =  \matr{Q} \matr{D}^{-1} \svd_{\K}( \matr{D} \matr{Q}^{T} \Y ) \\
+\label{eq:RidgeLfmmEstomatorB}
+\hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}).
+\end{align}
+Où $\svd_{\K}(\matr{A})$ est la meilleur approximation de rang $\K$ de la matrice
+$\matr{A}$ données par la décomposition en valeurs singulières (SVD pour
+singular value decomposition) et $\Id_{d}$ est la matrice identité de taille $d
+\times d$. La matrice $\matr{D}$ est la matrice diagonale de taille $\Yrow
+\times \Yrow$ contenant les éléments
 \begin{equation*}
-\left\{ \frac{\lambda}{\lambda + \sigma_{1}^{2}}, ..., 
-\frac{\lambda}{\lambda + \sigma_{d}^{2}}, 
-1, ..., 1 \right\},
+\left\{ \sqrt{\frac{\lambda}{\lambda + \sigma_{1}^{2}}}, ..., 
+\sqrt{\frac{\lambda}{\lambda + \sigma_{d}^{2}}}, 
+1, ..., 1 \right\}.
 \end{equation*}
-où $\sigma_{i = 1..d}$ sont les valeurs singulières de $\X$.
-Enfin, la matrice racine carré de $\oqP$ est l'unique matrice tel que
-\begin{equation*}
-\obP = \sqrt{\obP} \sqrt{\obP},
-\end{equation*}
-calculé en prenant la racine carré des éléments de la matrice diagonale $\matr{D}$.
 
-La matrice $\obP$ définie une transformation linéaire qui pour une variable
-aléatoire de moyenne nulle réduit sa corrélation linéaire avec $\X$. Le
-paramètre $\lambda$ permet de réguler la corrélation restante. Si $\lambda$ vaut
-zéro multiplier par $\obP$ revient à prendre le résidu d'une régression linéaire
+Notons que l'estimation de la matrice latentes $\hat{\U} \hat{\V}$ dans
+eqref:eq:RidgeLfmmEstomatorW fait intervenir la matrice de changement de base
+$\matr{Q}$. Les $\Xcol$ premiers axes de cette nouvelle base forment une base
+orthonormal de l'espace vectoriel engendré par les variables explicatives. La
+matrice diagonal $\matr{D}$ a pour effet de réduire la composante qui appartient
+à l'espace engendré par $\X$. Si $\lambda$ vaut zéro la multiplication par
+$\matr{D} \matr{Q}^{T}$ revient à prendre le résidu d'une régression linéaire
 par $\X$, on enlève alors toute la corrélation linéaire avec $\X$. Si $\lambda$
-est très grand alors $\obP$ tend vers la matrice identité. Dans ce cas
-l'estimations des variable latente par l'équation eqref:eq:RidgeLfmmEstomatorW
-revient à faire une analyse en composante principale de la matrice $\Y$. Il est
-donc important de choisir une valeur de $\lambda$ qui enlève la bonne proportion
-de corrélation avec la variable explicative $\X$. Nous expliquons dans la partie
-[[sec:hyperparametre]] plus en détaille comment choisir les hyperparamètres.
+est très grand alors $\obP$ tend vers la matrice identité. Dans ce cas, le
+calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en composante
+principale de la matrice $\Y$. Il est donc important de choisir une valeur de
+$\lambda$ qui enlève la bonne proportion de corrélation avec la variable
+explicative $\X$. Nous expliquons dans la partie [[sec:hyperparametre]] plus en
+détaille comment choisir les hyperparamètres.
 
 Le calcul des estimateurs est justifié par le théorème suivant 
 #+BEGIN_theorem
@@ -1904,7 +1903,6 @@ Pour $\lambda$ strictement supérieur à zéro, l'estimateurs
 des moindres carrés régularisés en norme $L_{2}$, défini par
 eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, défini un
 point de minimum global de la fonction objective $\Lridge$.
-eqref:eq:optim_ridge_reg.
 #+END_theorem
 
 #+BEGIN_proof
@@ -1916,7 +1914,7 @@ On veut trouver
 \end{align*}
 qui soit un minimum global de la fonction $\Lridge$. Commençons par remarquer
 que la fonction $\Lridge$ est convexe le long de la variable $\B$ , on peut
-donc écrire le point de minimum global qui en annulant la dérivé de $\Lridge$
+donc trouver le point de minimum global en annulant la dérivé de $\Lridge$
 par rapport à $\B$
 \begin{equation}
 \hat{\B}^{T} = (\X^{T} \X + \lambda \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V).
@@ -1936,9 +1934,9 @@ singulières
 \begin{equation*}
 \left \{ \sigma_{j} \left \}_{j = 1..\Xcol}.
 \end{equation*}
-Ainsi l'écriture de $\mathcal{L}^{'}$ se simplifie comme ceci
+L'écriture de $\mathcal{L}^{'}$ se simplifie comme ceci
 \begin{equation*}
-\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\matr{D} \matr{Q}^{T} (\Y - \U \V^{T})} + 
+\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\matr{B} \matr{Q}^{T} (\Y - \U \V^{T})} + 
 \frac{1}{2} \lambda \norm{\matr{C} \matr{Q}^{T} (\Y - \U \V^{T})}
 \end{equation*}
 où $\matr{C}$ est une matrice de taille $\Xcol \times \Xrow$ remplie de zéro
@@ -1946,53 +1944,35 @@ sauf sur la première diagonale qui contient les valeurs
 \begin{equation*}
 \left\{ \frac{\sigma_{i}}{\sigma_{i}^{2} + \lambda}\right\}_{i = 1..\Xcol}.
 \end{equation*}
-ICI
-
-dérivés partielles donnent
-\begin{equation}
-\begin{cases}
-\label{eq:partial_Lridge}
-& \frac{\partial \Lridge}{\partial \B}(\U, \V, \B) = \X^{T} (\U \V^{T} + \X \B^{T} - \Y) + \lambda \Id_{d} \B^{T} \\
-& \frac{\partial \Lridge}{\partial \V}(\U, \V, \B) = \U^{T} (\U \V^{T} + \X \B^{T} - \Y) \\
-& \frac{\partial \Lridge}{\partial \U}(\U, \V, \B) = (\U \V^{T} + \X \B^{T} - \Y) \V.
-\end{cases}
-\end{equation}
-On veut donc que 
-\begin{equation}
-\begin{cases}
-\label{eq:euler_Lridge}
-& \hat{\B}^{T} = (\X^{T} \X + \lambda \Id_{\Bcol})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}) \\
-& 0 = \hat{\U}^{T} (\hat{\U} \hat{\V}^{T} + \X \hat{\B}^{T} - \Y) \\
-& 0 = (\hat{\U} ^\hat{\V}^{T} + \X \hat{\B}^{T} - \Y) \hat{\V}
-\end{cases}
-\end{equation}
-En injectant la première ligne de eqref:eq:euler_Lridge dans les deux
-autres on a
-\begin{equation}
-\label{eq:euler_UV_Lridge}
-\begin{cases}
-&  0 = \hat(\U)^{T} \obP (\hat{\U} \hat{\V}^{T} - \Y) \\
-& 0 = \obP (\hat{\U} \hat{\V}^{T} - \Y) \hat{\V}
-\end{cases}
-\end{equation}
-On peut trouver des solutions $\hat{\U}$ $\hat{\V}$ de eqref:eq:euler_UV_Lridge
-en trouvant un point minimum de 
-\begin{equation}
-\mathrm{L^{'}_{ridge}}(\U, \V) = \frac{1}{2} \norm{ \sqrt{\obP} (\Y - \U \V^{T})}_{F}^{2}.
-\end{equation}
+La matrice $\matr{B}$ est une matrice diagonale de taille $\Yrow \times \Xrow$
+contenant les termes 
+\begin{equation*}
+\left\{ \frac{\lambda}{\lambda + \sigma_{1}^{2}}, ..., 
+\frac{\lambda}{\lambda + \sigma_{d}^{2}}, 
+1, ..., 1 \right\}.
+\end{equation*}
+Nous pouvons enfin factoriser $\mathcal{L}^{'}$ de sorte que 
+\begin{equation*}
+\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\matr{D} \matr{Q}^{T} (\Y - \U \V^{T})}
+\end{equation*}
+où $\matr{D}$ est la matrice diagonale contenant les éléments 
+\begin{equation*}
+\left\{ \sqrt{\frac{\lambda}{\lambda + \sigma_{1}^{2}}}, ..., 
+\sqrt{\frac{\lambda}{\lambda + \sigma_{d}^{2}}}, 
+1, ..., 1 \right\}.
+\end{equation*}
 Il s'agit du problème de la meilleur approximation de rang $\K$ de la matrice
 \begin{equation*}
-\sqrt{\obP} \Y,
+\matr{D} \matr{Q}^{T} \Y,
 \end{equation*}
-qui est obtenue en tronquant la SVD pour ne garder que $\K$
+qui est obtenue en tronquant la SVD pour ne garder que les $\K$
 valeurs singulières les plus grandes.
-
-Finalement, la solution
+Nous avons bien montré que
 \begin{align*}
-\hat{\U} \hat{\V} & =  \sqrt{\obP}^{-1} * \mathrm{svd}_{\K}(\sqrt{\obP} \Y ) \\
+\hat{\U} \hat{\V} & =  \matr{Q} \matr{D}^{-1} \svd_{\K}( \matr{D} \matr{Q}^{T} \Y ) \\
 \hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V})
 \end{align*}
-est bien un point critique de $\Lridge$.
+est bien un point de minimum global de $\Lridge$.
 #+END_proof
 
 
