@@ -2561,11 +2561,11 @@ générative.
   s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
   s$rho.B <- 3.0
   sampler.env <- s$load.env
-  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1, 0.2), rho.c = c(0.1, 0.3, 0.5, 1.0))
+  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1, 0.15), rho.c = c(0.1, 0.3, 0.5, 0.8))
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
-  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = 0.20, lambda.K = 25, relative.err.epsilon = 1e-4)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.K = 100, relative.err.epsilon = 1e-6)
   m.lm <- method_lm()
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
@@ -2577,9 +2577,10 @@ générative.
     m.lm * param() +
     m.pca * param() +
     m.cate * param() +
-    m.famt * param() +
-    m.sva * param() +
-    m.lasso * param()
+    ## m.famt * param() +
+    ## m.sva * param() +
+    m.lasso * param() +
+    m.oracle * param()
 
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
@@ -2880,9 +2881,45 @@ CLOSED: [2017-07-03 lun. 16:18]
 :END:
 
 *** Results
+
 *** Discussion
 *** Figures and tables
-**** Numerical experiments
+:PROPERTIES:
+:header-args: :cache no :eval no-export :results output :exports none
+:END:
+**** TODO Comparaisons des méthodes
+:LOGBOOK:
+- State "TODO"       from              [2017-07-06 jeu. 15:24]
+:END:
+#+begin_src R :results output :exports both
+  require(MaTheseR)
+  expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
+
+  ## by prop outlier
+  toplot <- expr$df.res %>%
+    dplyr::filter(pvalue.index == "pvalue1") %>%
+    dplyr::mutate(x = prop.outlier)
+  h1.gif.pl <- plot_gif(toplot, "proportion of H1")
+  h1.auc.pl <- plot_AUC(toplot, "proportion of H1")
+
+  ## by rho.c
+  toplot <- expr$df.res %>%
+    dplyr::filter(pvalue.index == "pvalue1") %>%
+    dplyr::mutate(x = rho.c)
+  rho.gif.pl <- plot_gif(toplot, "rho")
+  rho.auc.pl <- plot_AUC(toplot, "rho")
+
+  pl <- cowplot::plot_grid(h1.auc.pl,
+                           h1.gif.pl,
+                           rho.auc.pl,
+                           rho.gif.pl,
+                           ncol = 2, labels = c("A", "B", "C", "D"))
+  save_plot_png(pl, filename = "method_comp.png")
+#+end_src
+
+[[./OUTPUT/Rplots/method_comp.png]]
+
+
 **** GWAS
 **** EWAS
 **** EAS

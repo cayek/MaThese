@@ -16,7 +16,7 @@ test_that("test lasso lfmm", {
   dat <- ExpRmouline(s)
 
   ## methods
-  m <- method_lassoLFMM(K, nozero.prop = 0.15)
+  m <- method_lassoLFMM(K, nozero.prop = NULL)
 
   ## run
   m <- ExpRmouline(m, dat)

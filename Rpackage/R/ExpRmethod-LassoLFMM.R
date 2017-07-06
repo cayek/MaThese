@@ -16,6 +16,11 @@ method_lassoLFMM <- function(K, nozero.prop = 0.1,
 
 ##' @export
 ExpRmouline.method_lassoLFMM <- function(m, dat) {
+
+  if (!is.null(dat$outlier) && is.null(m$nozero.prop)) {
+    m$nozero.prop <- length(dat$outlier) / ncol(dat$Y) * 1.5
+  }
+
   ## rum lfmm
   lfmm <- MatrixFactorizationR::lassoLFMM(K = m$K,
                                           nozero.prop = m$nozero.prop,
