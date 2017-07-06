@@ -1885,9 +1885,9 @@ Enfin, la matrice racine carré de $\oqP$ est l'unique matrice tel que
 \end{equation*}
 calculé en prenant la racine carré des éléments de la matrice diagonale $\matr{D}$.
 
-La matrice $\obP$ défie une transformation linéaire qui pour une variable
+La matrice $\obP$ définie une transformation linéaire qui pour une variable
 aléatoire de moyenne nulle réduit sa corrélation linéaire avec $\X$. Le
-paramètre $\lambda$ permet de régulé la corrélation restante. Si $\lambda$ vaut
+paramètre $\lambda$ permet de réguler la corrélation restante. Si $\lambda$ vaut
 zéro multiplier par $\obP$ revient à prendre le résidu d'une régression linéaire
 par $\X$, on enlève alors toute la corrélation linéaire avec $\X$. Si $\lambda$
 est très grand alors $\obP$ tend vers la matrice identité. Dans ce cas
@@ -1903,7 +1903,7 @@ Le calcul des estimateurs est justifié par le théorème suivant
 Pour $\lambda$ strictement supérieur à zéro, l'estimateurs
 des moindres carrés régularisés en norme $L_{2}$, défini par
 eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, défini un
-point critique de la fonction objective $\Lridge$
+point de minimum global de la fonction objective $\Lridge$.
 eqref:eq:optim_ridge_reg.
 #+END_theorem
 
@@ -1914,7 +1914,40 @@ On veut trouver
 \hat{\V} & \in \RR^{\Vrow \times \Vcol} \\
 \hat{\B} & \in \RR^{\Brow \times \Bcol} \\
 \end{align*}
-qui annule la dérivé de $\Lridge$ (par définissions d'un point critique). Les
+qui soit un minimum global de la fonction $\Lridge$. Commençons par remarquer
+que la fonction $\Lridge$ est convexe le long de la variable $\B$ , on peut
+donc écrire le point de minimum global qui en annulant la dérivé de $\Lridge$
+par rapport à $\B$
+\begin{equation}
+\hat{\B}^{T} = (\X^{T} \X + \lambda \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V).
+\end{equation}
+Il suffit maintenant de minimiser la fonction
+\begin{align*}
+\mathcal{L}^{'}(\U, \V) & = \Lridge(\U, \V, \hat{\B}).
+\end{align*}
+Considérons la décomposition en valeur singulière de $\X$ tel que 
+\begin{equation*}
+\X = \matr{Q} \matr{\Sigma} \matr{R}^{T}
+\end{equation*}
+où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, 
+$\matr{R}$ une matrice unitaire de taille $\Xcol \times \Xcol$ et
+$\matr{\Sigma}$ une matrice de taille $\Xrow \times \Xcol$ contenant les valeurs
+singulières 
+\begin{equation*}
+\left \{ \sigma_{j} \left \}_{j = 1..\Xcol}.
+\end{equation*}
+Ainsi l'écriture de $\mathcal{L}^{'}$ se simplifie comme ceci
+\begin{equation*}
+\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\matr{D} \matr{Q}^{T} (\Y - \U \V^{T})} + 
+\frac{1}{2} \lambda \norm{\matr{C} \matr{Q}^{T} (\Y - \U \V^{T})}
+\end{equation*}
+où $\matr{C}$ est une matrice de taille $\Xcol \times \Xrow$ remplie de zéro
+sauf sur la première diagonale qui contient les valeurs
+\begin{equation*}
+\left\{ \frac{\sigma_{i}}{\sigma_{i}^{2} + \lambda}\right\}_{i = 1..\Xcol}.
+\end{equation*}
+ICI
+
 dérivés partielles donnent
 \begin{equation}
 \begin{cases}
@@ -2496,8 +2529,9 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_src
 **** Description des expériences
-***** TODO Comparaisons numériques sur des simulations
+***** RUNNING Comparaisons numériques sur des simulations
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-07-06 jeu. 11:33]
 - Note taken on [2017-07-05 mer. 18:11] \\
   j'ai lancé avec le lasso c'est pas mal du tout !! J'ai elevé l'oracle, je sais
   pas pk il merde... le lasso merde quand il y 20% d'outlier mais c'est normal je
