@@ -17,7 +17,7 @@ method_lassoLFMM <- function(K, nozero.prop = 0.1,
 ##' @export
 ExpRmouline.method_lassoLFMM <- function(m, dat) {
 
-  if (!is.null(dat$outlier) && is.null(m$nozero.prop)) {
+  if (is.null(m$nozero.prop) && !is.null(dat$outlier)) {
     m$nozero.prop <- length(dat$outlier) / ncol(dat$Y) * 1.5
   }
 
@@ -35,6 +35,7 @@ ExpRmouline.method_lassoLFMM <- function(m, dat) {
   d <- ncol(dat$X)
   hp <- hypothesis_testing_lm(dat, X = X)
 
+  m$score <- hp$score[,1:d, drop = FALSE]
   m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
   m
 }

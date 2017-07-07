@@ -61,6 +61,7 @@ ExpRmouline.method_PCAlm <- function(m, dat) {
   d <- ncol(dat$X)
   hp <- hypothesis_testing_lm(dat, X = X)
 
+  m$score <- hp$score[,1:d, drop = FALSE]
   m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
   m
 

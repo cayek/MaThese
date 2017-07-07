@@ -2575,8 +2575,8 @@ générative.
 
   ## param
   K.method <- 5
-  nb.cluster <- 16
-  rep.nb.sampler <- 2
+  nb.cluster <- 8
+  rep.nb.sampler <- 5
 
   ## sampler
   s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
@@ -2598,8 +2598,8 @@ générative.
     m.lm * param() +
     m.pca * param() +
     m.cate * param() +
-    ## m.famt * param() +
-    ## m.sva * param() +
+    m.famt * param() +
+    m.sva * param() +
     m.lasso * param() +
     m.oracle * param()
 
@@ -2728,10 +2728,10 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
   n <- nrow(dat$Y)
 
   lambdas <- c(1e-5, 1.0, 1e10) / n
-  nb.cluster <- 10
-  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
+  nb.cluster <- 4
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
                             lambdas = lambdas,
-                            Ks = c(1,2,5,10,15, 30))
+                            Ks = c(1,2,3,4,5,10,15))
 
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
@@ -2893,11 +2893,62 @@ CLOSED: [2017-07-03 lun. 16:18]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_lambda.png]]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_K.png]]
 
-
-****** TODO Etude du jeu de données avec cate lfmm lm et lmPCA
+****** TODO Étude du jeu de données
 :LOGBOOK:
 - State "TODO"       from              [2017-06-29 jeu. 11:17]
 :END:
+#+begin_src R
+  library(MaTheseR)
+
+  ## param
+  K.method <- 25
+  nb.cluster <- 2
+  lambda <- 1e-5
+  nozero.prop <- 0.01
+
+  ## sampler
+  Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
+  X <- "./Data/ThesisDataset/3Article/GSE42861/X.rds"
+  outlier <- "./Data/ThesisDataset/3Article/GSE42861/candidates.rds"
+  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = outlier) * param()
+
+  ## methods
+  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
+                              lambda.K = 100, relative.err.epsilon = 1e-6)
+  m.lm <- method_lm()
+  m.pca <- method_PCAlm(K = K.method)
+  m.cate <- method_cate(K = K.method)
+  m.famt <- method_famt(K.method)
+  m.sva <- method_sva(K.method)
+
+  methods <- m.ridgeLfmm * param() +
+    m.lm * param() +
+    m.pca * param() +
+    m.cate * param() +
+    m.famt * param() +
+    m.sva * param() +
+    m.lasso * param()
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  expr <- ExpR(rep.nb.sampler = 1,
+               samplers = samplers,
+               preprocessors = NULL,
+               rep.nb.method = 1,
+               methods = methods,
+               extractor = ExpRextractor_pvalue1_calibrated,
+               sampler.env = sampler.env)
+  expr <- ExpRmouline(expr)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## save expr
+  save_expr(expr, "EWAS_all.rds")
+
+
+#+end_src
 
 *** Résultats
 

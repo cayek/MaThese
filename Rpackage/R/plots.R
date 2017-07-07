@@ -131,3 +131,15 @@ plot_gif_boxplot <- function(df) {
     facet_grid(grid.y ~ grid.x)
 
 }
+
+##' @export
+plot_qqplot <- function(df) {
+  ggplot(df, aes(sample = -log10(pvalue))) +
+    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
+    geom_abline(slope = 1, intercept = 0) +
+    facet_grid(method~.) + 
+    ggtitle("-log10(pvalue) qqplot")
+}
+
+plot_intersection <- function(toplot) {
+}

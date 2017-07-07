@@ -42,13 +42,20 @@ expectedFDR_trueFDR_power <- function(pvalue, outlier) {
 #' Retrun a tidy data frame with fdr power ect
 #'
 #' @export
-tidy_fdr <- function(pvalue, outlier) {
+tidy_fdr <- function(pvalue, outlier, score = NULL) {
   res <- tibble()
   if (!is.null(pvalue)) {
     for (d in 1:ncol(pvalue)) {
+      ## score
+      aux <- expectedFDR_trueFDR_power(as.numeric(pvalue[,d]), outlier) %>%
+        mutate(pvalue.index = paste0("pvalue",d))
+      ## add score
+      if (!is.null(score)) {
+        aux <- aux %>%
+          mutate(score = score[,d])
+      }
       res <- rbind(res,
-                   expectedFDR_trueFDR_power(as.numeric(pvalue[,d]), outlier) %>%
-                     mutate(pvalue.index = paste0("pvalue",d)))
+                   aux)
     }
     res
   } else {
@@ -67,15 +74,15 @@ add_feature <- function(df, dat, m, rep.sampler, rep.method) {
     dplyr::mutate(method = m$name)
 
   ## meta
-  if (length(dat$meta) != 0) {
-    df <- do.call(dplyr::mutate, args = c(list(.data = df), dat$meta))
+  meta <- dat$meta
+  meta$outlier <- NULL ## rm outlier !!
+  if (length(meta) != 0) {
+    df <- do.call(dplyr::mutate, args = c(list(.data = df), meta))
   }
 
   ## K
   df <- df %>%
     dplyr::mutate(method.K = ifelse(!is.null(m$K), m$K, NA))
-  df <- df %>%
-    dplyr::mutate(dat.K = ifelse(!is.null(dat$U), ncol(dat$U), NA))
 
   ## lambda
   df <- df %>%
@@ -106,20 +113,47 @@ df <- tibble::tibble(rep.sampler = rep.sampler,
 
 ##' @export
 ExpRextractor_fdr <- function(dat, m, rep.sampler, rep.method) {
-  df <- tidy_fdr(m$pvalue, dat$outlier)
+  df <- tidy_fdr(m$pvalue, dat$outlier, score = m$score)
   df <- add_feature(df, dat, m, rep.sampler, rep.method)
   print.data.frame(df[1,])
   df
 }
 
 ##' @export
-ExpRextractor_pvalue <- function(dat, m, rep.sampler, rep.method) {
+ExpRextractor_pvalue1 <- function(dat, m, rep.sampler, rep.method) {
 
   ## pvalue
   df <- tibble(pvalue = m$pvalue[,1])
 
+  ## colnames and index
+  df <- df %>%
+    dplyr::mutate(colname = colnames(dat$Y),
+                  index = 1:ncol(dat$Y)) %>%
+    dplyr::mutate(outlier = index %in% dat$meta$outlier)
+
+  ## score
+  df <- df %>%
+    mutate(score = m$score[,1])
+
   df <- add_feature(df, dat, m, rep.sampler, rep.method)
 
   print.data.frame(df[1,])
+  df
+}
+
+##' @export
+ExpRextractor_pvalue1_calibrated <- function(dat, m, rep.sampler, rep.method) {
+  df <- ExpRextractor_pvalue1(dat, m, rep.sampler, rep.method)
+
+  zscoreToPvalue <- function(score) {
+    score %>%
+      sapply(function(z) 2 * pnorm(abs(z), mean = 0, sd = 1, lower.tail = FALSE))
+  }
+
+  df <- df %>%
+    dplyr::mutate(median = median(score),
+                  mad = mad(score)) %>%
+    dplyr::mutate(calibrated.score = (score - median) / mad) %>%
+    dplyr::mutate(calibrated.pvalue = zscoreToPvalue(calibrated.score))
   df
 }

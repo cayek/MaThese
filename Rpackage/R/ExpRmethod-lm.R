@@ -12,6 +12,8 @@ ExpRmouline.method_lm <- function(m, dat) {
 
   ## run hypothesis testing
   hp <- hypothesis_testing_lm(dat, X = dat$X)
+
+  m$score <- hp$score
   m$pvalue <- hp$pvalue
 
   m

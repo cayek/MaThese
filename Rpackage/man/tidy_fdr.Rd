@@ -4,7 +4,7 @@
 \alias{tidy_fdr}
 \title{Retrun a tidy data frame with fdr power ect}
 \usage{
-tidy_fdr(pvalue, outlier)
+tidy_fdr(pvalue, outlier, score = NULL)
 }
 \description{
 Retrun a tidy data frame with fdr power ect
