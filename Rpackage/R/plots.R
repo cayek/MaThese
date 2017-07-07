@@ -141,5 +141,32 @@ plot_qqplot <- function(df) {
     ggtitle("-log10(pvalue) qqplot")
 }
 
-plot_intersection <- function(toplot) {
+plot_intersection <- function(toplot, by, plot = c("point", "tile")) {
+
+  toplot <- dplyr::inner_join(x = toplot, y = toplot, by = by) %>%
+    dplyr::group_by(method.x, method.y) %>%
+    dplyr::summarise(count = n())
+
+  if (!is.null(plot) && plot == "point") {
+    ## from http://stackoverflow.com/questions/32743004/improved-mosaic-plot-like-heatmap-or-bubbles-in-r
+    ggplot(toplot, aes(method.x, method.y)) +
+      geom_point(aes(size = count), alpha=0.8, color="darkgreen", show.legend = FALSE) +
+      geom_text(aes(label = count), color="white") +
+      scale_size(range = c(15,50)) +
+      theme_bw()
+  } else if (!is.null(plot) && plot == "tile") {
+    ggplot(toplot, aes(method.x, method.y)) +
+      geom_tile(aes(fill = count)) +
+      geom_text(aes(label = count), color="white") +
+      scale_x_discrete(expand = c(0,0)) +
+      scale_y_discrete(expand = c(0,0)) +
+      scale_fill_gradient("Legend label", low = "lightblue", high = "blue") +
+      theme_bw()
+  } else {
+    toplot %>%
+      tidyr::spread("method.x", "count") %>%
+      dplyr::rename(method = method.y)
+  }
+
+
 }

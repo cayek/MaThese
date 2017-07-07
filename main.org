@@ -1832,20 +1832,16 @@ objectif suivante
 \label{eq:optim_ridge_reg}
 \LfmmLridge
 \end{equation}
-où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2}$ est la norme $L_2$ et
-$\lamba$ le paramètre de régularisation. Le terme 
-$$
-\frac{1}{2} \norm{\Y - \U \V^{T} - \X \B^{T}} 
-$$
-correspond à l'opposé de la log vraisemblance où la matrice de bruit $\E$ est
-Gaussienne, isotrope et de moyenne nulle. 
+où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2}$ est la norme $L_2$
+et $\lamba$ le paramètre de régularisation. 
 
-Nous remarquons que le terme de régularisation
-\begin{equation*}
-\lambda \norm{\B}^{2}_{2}
-\end{equation*}
-est indispensable pour distinguer l'effet des variables latentes de celui des
-variables explicatives. En effet, si
+Le terme premier terme de $\Lridge$ (terme d'attache aux données) correspond à
+l'opposé de la log vraisemblance où la matrice de bruit $\E$ est Gaussienne,
+isotrope et de moyenne nulle.
+
+Le terme deuxième terme de $\Lridge$ (terme de régularisation) est indispensable
+pour distinguer l'effet des variables latentes de celui des variables
+explicatives. En effet, si
 \begin{equation*}
 \lambda = 0 
 \end{equation*}
@@ -1853,7 +1849,7 @@ alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a
 \begin{equation*}
 \Lridge(\U - \X \matr{T}, \V^{T}, \B + \V \matr{T}^T}) = \Lridge(\U, \V^{T}, \B).
 \end{equation*}
-Ainsi, les points minimuns d'une tel fonction objective ne sont pas pertinents pour
+Ainsi, les points minimuns d'une tel fonction objective ne serait pas pertinents pour
 notre problème.
 
 ***** Algorithme
@@ -1866,10 +1862,7 @@ explicatives $\X$
 où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, 
 $\matr{R}$ une matrice unitaire de taille $\Xcol \times \Xcol$ et
 $\matr{\Sigma}$ une matrice de taille $\Xrow \times \Xcol$ contenant les valeurs
-singulières 
-\begin{equation*}
-\left \{ \sigma_{j} \left \}_{j = 1..\Xcol}.
-\end{equation*}
+singulières $\left \{ \sigma_{j} \left \}_{j = 1..\Xcol}$.
 Les estimations sont calculé de la façon suivante 
 \begin{align}
 \label{eq:RidgeLfmmEstomatorW}
@@ -1881,7 +1874,7 @@ Où $\svd_{\K}(\matr{A})$ est la meilleur approximation de rang $\K$ de la matri
 $\matr{A}$ données par la décomposition en valeurs singulières (SVD pour
 singular value decomposition) et $\Id_{d}$ est la matrice identité de taille $d
 \times d$. La matrice $\matr{D}$ est la matrice diagonale de taille $\Yrow
-\times \Yrow$ contenant les éléments
+\times \Yrow$ qui contient les termes
 \begin{equation*}
 \left\{ \sqrt{\frac{\lambda}{\lambda + \sigma_{1}^{2}}}, ..., 
 \sqrt{\frac{\lambda}{\lambda + \sigma_{d}^{2}}}, 
@@ -1914,16 +1907,12 @@ minimum global de la fonction objective $\Lridge$.
 #+END_theorem
 
 #+BEGIN_proof
-On veut trouver
-\begin{align*}
-\hat{\U} & \in \RR^{\Urow \times \Ucol} \\
-\hat{\V} & \in \RR^{\Vrow \times \Vcol} \\
-\hat{\B} & \in \RR^{\Brow \times \Bcol} \\
-\end{align*}
-qui soit un minimum global de la fonction $\Lridge$. Commençons par remarquer
-que la fonction $\Lridge$ est convexe le long de la variable $\B$ , on peut
-donc trouver le point de minimum global en annulant la dérivé de $\Lridge$
-par rapport à $\B$
+On veut trouver $ \hat{\U} \in \RR^{\Urow \times \Ucol}$, $\hat{\V} \in
+\RR^{\Vrow \times \Vcol}$ et $\hat{\B} \in \RR^{\Brow \times \Bcol}$ qui soit un
+minimum global de la fonction $\Lridge$. Commençons par remarquer que la
+fonction $\Lridge$ est convexe le long de la variable $\B$ , on peut donc
+trouver le point de minimum global en annulant la dérivé de $\Lridge$ par
+rapport à $\B$
 \begin{equation}
 \hat{\B}^{T} = (\X^{T} \X + \lambda \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V).
 \end{equation}
@@ -1935,14 +1924,11 @@ Considérons la décomposition en valeur singulière de $\X$ tel que
 \begin{equation*}
 \X = \matr{Q} \matr{\Sigma} \matr{R}^{T}
 \end{equation*}
-où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, 
-$\matr{R}$ une matrice unitaire de taille $\Xcol \times \Xcol$ et
-$\matr{\Sigma}$ une matrice de taille $\Xrow \times \Xcol$ contenant les valeurs
-singulières 
-\begin{equation*}
-\left \{ \sigma_{j} \left \}_{j = 1..\Xcol}.
-\end{equation*}
-L'écriture de $\mathcal{L}^{'}$ se simplifie comme ceci
+où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, $\matr{R}$
+une matrice unitaire de taille $\Xcol \times \Xcol$ et $\matr{\Sigma}$ une
+matrice de taille $\Xrow \times \Xcol$ contenant les valeurs singulières $\left
+\{ \sigma_{j} \left \}_{j = 1..\Xcol}$.L'écriture de $\mathcal{L}^{'}$ se
+simplifie comme ceci
 \begin{equation*}
 \mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\matr{B} \matr{Q}^{T} (\Y - \U \V^{T})} + 
 \frac{1}{2} \lambda \norm{\matr{C} \matr{Q}^{T} (\Y - \U \V^{T})}
@@ -1980,7 +1966,7 @@ Nous avons bien montré que
 \hat{\U} \hat{\V} & =  \matr{Q} \matr{D}^{-1} \svd_{\K}( \matr{D} \matr{Q}^{T} \Y ) \\
 \hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V})
 \end{align*}
-est bien un point de minimum global de $\Lridge$.
+est un point de minimum global de $\Lridge$.
 #+END_proof
 
 
@@ -2001,14 +1987,14 @@ Nous proposons la fonction objective suivante
 \LfmmLlasso
 \end{equation}
 où $\W$ est la matrice latente définie en eqref:eq:W, $\norm{\B}_{1}$ la norme
-$L_1$ de $\B$ et $\norm{\matr{A}_{*}}$ la norme nucléaire de la matrice
-$\matr{A}$ définie comme la somme ses valeurs singulières.
+$L_1$ de $\B$ et $\norm{\matr{A}}_{*}$ la norme nucléaire de la matrice
+$\matr{A}$ définie comme la somme de ses valeurs singulières.
 
-Le choix de la norme $\L_{1}$ est motivé par le fait que l'on s'attend a ce que
+Le choix de la norme $L_{1}$ est motivé par le fait que l'on s'attend a ce que
 seulement un certaine proportion de variable expliquées soit associées aux
 variables explicatives. C'est à dire que seulement une certaine proportion des
 lignes de la matrices des effets $\B$ doit être différent de zéro. Or la
-régularisation $\L_{1}$ est connue pour produire des estimations parcimonieux
+régularisation $\L_{1}$ est connue pour produire des estimations parcimonieuses
 cite:Tibshirani_1996.
 
 La fonction $\Llasso$ fait aussi intervenir une régularisation sur la matrice
@@ -2021,61 +2007,90 @@ nucléaire cite:bach2008consistency.
 ***** Algorithme
 <<sec:lasso_algo>>
 
-Nous présentons maintenant un algorithme alterné qui permet d'estimer les
-paramètres de LFMM qui minimise la fonction objective $\Llasso$ définie en
-eqref:eq:optim_lasso_reg.
+Nous présentons maintenant un algorithme itératif et alterné qui permet
+d'estimer les paramètres de LFMM qui minimise la fonction objective $\Llasso$
+définie par eqref:eq:optim_lasso_reg.
 
-il faut démontrer la strict convexité !!! voir
-cite:cai10_singul_value_thres_algor_matrix_compl 
-
-***** An alternated algorithm
-
-We start with null matrices
+Nous commencons avec nulle tel que : 
 \begin{align*}
-C_{t = 0} & = 0 \\
-B_{t = 0} & = 0.
+\W_{t = 0} & = 0 \\
+\B_{t = 0} & = 0.
 \end{align*}
-Then we alternate the two steps 
-- compute $\C_{t}$ as minimizing the loss function
+Nous alternons ensuite les deux étapes suivantes : 
+1. calculer $\B_{t}$ le point minimum de 
+   \begin{equation}
+   \label{eq:lasso1}
+   \mathcal{L}_{lasso}^{2}(\B) =  \frac{1}{2} ||(\Y - \W_{t-1}) - \X \B^T||_{F}^2 + \lambda ||\B||_1
+   \end{equation}
+2. calculer $\W_{t}$ le point minimum de  
+   \begin{equation}
+   \mathcal{L}_{lasso}^{1}(\W) = \frac{1}{2} ||(\Y - \X \B_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}.
+   \end{equation}
+Ces deux étapes sont répété jusqu'a ce que l'algorithme est convergé ou bien que
+$t$ est attend le nombre maximum d'itération.
+
+La première étape de l'algorithme consiste à faire une régréssion régularisé en
+norme $L_{1}$ de la matrice résiduelle 
 \begin{equation}
-\mathrm{L_{lasso}^{1}}(\C) = \frac{1}{2} ||(\Y - \X \B_t^T)- \C ||_{F}^2 + \gamma ||\C||_{*}.
+\matr{E}^{1}_{t} = \Y - \W_{t-1}
 \end{equation}
-- compute $\B_{t}$ as minimizing the loss function
+par les variables
+explicatives $\X$. Il existe plusieurs algorithme pour estimer les paramètres de
+la régression régulariser en norme $L_{1}$ comme par exemple l'algorithme de
+descente par coordonnées cite:Friedman_2007. Cependant, si la matrice des
+variables explicatives est tel que
 \begin{equation}
-\mathrm{L_{lasso}^{2}}(\B) =  \frac{1}{2} ||(\Y - \C_{t-1}) - \X \B^T||_{F}^2 + \lambda ||\B||_1
+\X^{T} \X = Id_{n}
 \end{equation}
+alors d'après cite:Tibshirani_1996 on a 
+\begin{equation}
+\B_{t} = \sign(\bar{\B}_{t}) (\bar{\B}_{t} - \lambda)_{+}
+\end{equation}
+où 
+\begin{equation}
+s_{+} = \mathrm{max}(0, s)
+\end{equation}
+$\sign(s)$ est le signe de $s$ et $\bar{\B}_{t}$ est le paramètre de la
+régression linéaire classique données par 
+\begin{equation*}
+\bar{\B}_{t} = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (\matr{E}^{1}_{t}).
+\end{equation*}
+Nous avons choisi d'implémenter ce cas particulier car il est possible de rentre
+les variables explicatives indépendantes avant le calcule de l'algorithme présenté
+ici. 
 
-The first step is a low rank approximation of the
-regression residual matrix 
-$$\matr{E}^{1} = \Y - \X \B_{t}^{T}.$$ 
-which is given by the singular value shrinkage operator
-cite:cai10_singul_value_thres_algor_matrix_compl. 
-If we write the singular value
-decomposition of $\matr{E}^{1}$ as follow
-$$
-\matr{M} \Sigma \matr{N}^{T}
-$$
-were $\matr{M}$ and $\matr{N}$ are respectively $\Yrow \times \K$ and $\Ycol
-\times \K$ matrices of orthogonal columns and 
-$$
-\Sigma = \mathrm{diag}(\{\sigma_{i}\}_{1 \leq i \leq \K})
-$$
-the diagonal matrix of singular values. Then
-the singular value shrinkage operator of $\matr{E}^{1}$ gives
-$$
-\matr{M} \Sigma_{\gamma} \matr{N}^{T}
-$$
-where 
-$$ \Sigma_{\gamma} = \mathrm{diag}(\{(\sigma_{i} - \gamma)_{+}\}_{1 \leq i \leq \K}) $$ 
-and 
-$$t_{+} = \mathrm{max}(0, t).$$
+La deuxième étape de l'algorithme est un problème d'approximation de rang faible
+de la matrice résiduelle 
+\begin{equation}
+\matr{E}^{2}_{t} = \Y - \X \B_{t}^{T}
+\end{equation}
+Cette approximation est données grâce à un seuillage des valeurs singulières de
+la matrice $\matr{E}^{2}_{t}$ cite:cai10_singul_value_thres_algor_matrix_compl.
+Pour cela, on commence par calculer la décomposition en valeurs singulières de
+matrice résiduelle :
+\begin{equation}
+\matr{E}^{2}_{t} = \matr{M} \matr{S} \matr{N}^{T}
+\end{equation}
+où $\matr{M}$ une matrice unitaire de taille $\Yrow \times \Yrow$, $\matr{N}$
+une matrice unitaire de taille $\Ycol \times \Ycol$ et $\matr{S}$ une matrice de
+taille $\Yrow \times \Ycol$ contenant les valeurs singulières $\left \{ s_{j}
+\left \}_{j = 1..\Yrow}$. L'approximation est calculée en remplaçant les valeurs
+singulières dans $\matr{S}$ par les valeurs seuillées $\left \{ (s_{j} -
+\gamma)_{+} \left \}_{j = 1..\Yrow}$. Cette seuillage à pour effet de réduire le
+rang de $\matr{E}^{2}_{t}$ et ramène vers zéro ses valeurs singulières
+restantes.
 
-The second step is a regression of the residual matrix $$\matr{E}^{2} = \Y -
-\C_{t-1}$$ by the primary variable $\X$ with a lasso regularization on the
-primary effect matrix $\B$.
+Enfin nous pouvons démontrer le théorème suivant : 
+#+BEGIN_theorem
+L'algorithme décrit dans la parie [[sec:lasso_algo]] converge vers un point de
+minimum global de la fonction $\Llasso$ définie par eqref:eq:optim_lasso_reg.
+#+END_theorem
 
-We iterate these two steps until the algorithm converges to the minimum of
-$\Llasso$ defined in eqref:eq:optim_lasso_reg.
+#+BEGIN_proof
+PROBLEME : la fonction n'est pas différentiable !!!! je ne peut pas utiliser les
+resultats de l'algo de GAuss Saubel cite:Grippo_2000,Bertsekas_1997
+A suivre !!!
+#+END_proof
 
 **** Choice of hyper-parameters
 <<sec:hyperparametre>>
@@ -2306,7 +2321,7 @@ particular, as in cite:wang2015confounder,gerard2017unifying, we used the median
 and the mad as robust estimators of the mean and standard deviation of
 statistical test under the null hypothesis.
 
-*** Expériences
+*** Expériences                                                  :noexport:
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
@@ -2893,8 +2908,10 @@ CLOSED: [2017-07-03 lun. 16:18]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_lambda.png]]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_K.png]]
 
-****** TODO Étude du jeu de données
+****** DEBUG Étude du jeu de données
 :LOGBOOK:
+- State "DEBUG"      from "RUNNING"    [2017-07-07 ven. 18:49]
+- State "RUNNING"    from "TODO"       [2017-07-07 ven. 13:59]
 - State "TODO"       from              [2017-06-29 jeu. 11:17]
 :END:
 #+begin_src R
@@ -2902,7 +2919,7 @@ CLOSED: [2017-07-03 lun. 16:18]
 
   ## param
   K.method <- 25
-  nb.cluster <- 2
+  nb.cluster <- 4
   lambda <- 1e-5
   nozero.prop <- 0.01
 
@@ -2915,7 +2932,7 @@ CLOSED: [2017-07-03 lun. 16:18]
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
   m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                              lambda.K = 100, relative.err.epsilon = 1e-6)
+                              lambda.K = 25, relative.err.epsilon = 1e-6)
   m.lm <- method_lm()
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
@@ -2938,8 +2955,7 @@ CLOSED: [2017-07-03 lun. 16:18]
                preprocessors = NULL,
                rep.nb.method = 1,
                methods = methods,
-               extractor = ExpRextractor_pvalue1_calibrated,
-               sampler.env = sampler.env)
+               extractor = ExpRextractor_pvalue1_calibrated)
   expr <- ExpRmouline(expr)
   doParallel::stopImplicitCluster()
   parallel::stopCluster(cl)
@@ -2950,9 +2966,16 @@ CLOSED: [2017-07-03 lun. 16:18]
 
 #+end_src
 
-*** Résultats
+#+RESULTS:
+#+begin_example
+  1 lassoLFMM       25            NA
+  Error in { : task 1 failed - "only d = 1 allowed ;-)"
 
-*** Discussion
+#+end_example
+
+*** Résultats                                                    :noexport:
+
+*** Discussion                                                   :noexport:
 *** Figures et table
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
@@ -2993,6 +3016,8 @@ CLOSED: [2017-07-03 lun. 16:18]
 **** GWAS
 **** EWAS
 **** EAS
+*** Références
+
 bibliographystyle:unsrt
 bibliography:../biblio.bib
 

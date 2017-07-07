@@ -59,17 +59,15 @@ test_that("validation numerique article 3 sur un petit sample", {
   plot_qqplot(toplot)
 
   ## filter top
-  expr$df.res %>%
+  toplot <- expr$df.res %>%
     group_by(method) %>%
-    filter_candidates_top(10) %>%
-    select(method, qvalue) %>% 
-    print.data.frame()
+    filter_candidates_top(10)
+  plot_intersection(toplot, by = "colname", plot = "tile")
 
   ## filter threshold
-  expr$df.res %>%
+  toplot <- expr$df.res %>%
     group_by(method) %>%
-    filter_candidates_threshold(0.01) %>%
-    select(method, qvalue) %>% 
-    print.data.frame()
+    filter_candidates_threshold(0.5)
+  plot_intersection(toplot, by = "colname", plot = "point")
 
 }
