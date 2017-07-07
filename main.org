@@ -2868,8 +2868,8 @@ CLOSED: [2017-07-03 lun. 16:18]
   n <- nrow(dat$Y)
 
   lambdas <- c(1e-5, 1.0, 1e10) / n
-  nb.cluster <- 4
-  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
+  nb.cluster <- 10
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
                             lambdas = lambdas,
                             Ks = c(1,2,5,10,25, 50, 100))
 
