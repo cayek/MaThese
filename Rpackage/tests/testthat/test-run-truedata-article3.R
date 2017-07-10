@@ -70,4 +70,17 @@ test_that("validation numerique article 3 sur un petit sample", {
     filter_candidates_threshold(0.5)
   plot_intersection(toplot, by = "colname", plot = "point")
 
+  ## venn diagram
+  toplot <- expr$df.res %>%
+    group_by(method) %>%
+    filter_candidates_top(10)
+  sets <- list(lm = toplot$index[toplot$method == "lm"],
+               cate = toplot$index[toplot$method == "cate"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"]
+               )
+  venn.pl <- plot_venn(sets[1:5])
+  grid.draw(venn.pl)
+
 }

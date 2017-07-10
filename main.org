@@ -3039,9 +3039,12 @@ CLOSED: [2017-07-03 lun. 16:18]
 
 #+end_src
 
-******* Charger l'expérience et la liste trouver dans les autres papier
-
-******* Que donne la recalibration ?
+******* Charger l'expérience et les candidats
+#+BEGIN_SRC R
+  expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
+#+END_SRC
+******* Que donne la calibration ?
 #+BEGIN_SRC R
   expr$df.res %>%
     group_by(method) %>%
@@ -3080,25 +3083,84 @@ CLOSED: [2017-07-03 lun. 16:18]
   Removed 8126 rows containing non-finite values (stat_qq).
 #+end_example
 
-******* Les top 30
+******* Le top 30
 #+BEGIN_SRC R
-  ## filter top
   toplot <- expr$df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
-    filter_candidates_top(30)
-  plot_intersection(toplot, by = "colname", plot = "tile")
+    filter_candidates_top(15)
 
+  ## candidats
+  toplot %>% group_by(method) %>%
+    summarise(power = mean(candidates %in% index))
+
+  pl <- plot_intersection(toplot, by = "colname", plot = "tile")
+  save_plot_png(pl, "ewas_top_inter.png")
 #+END_SRC
+
+#+RESULTS:
+[[./OUTPUT/Rplots/ewas_top_inter.png]]
+#+begin_example
+# A tibble: 7 x 2
+     method power
+      <chr> <dbl>
+1      cate     1
+2      famt     0
+3 lassoLFMM     1
+4        lm     0
+5     PCAlm     1
+6 ridgeLFMM     1
+7       sva     0
+#+end_example
 
 ******* Contrôle du FDR à $0.01$
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
     filter_candidates_threshold(0.01)
-  plot_intersection(toplot, by = "colname", plot = "point")
 
+  ## candidats
+  toplot %>% group_by(method) %>%
+    summarise(power = mean(candidates %in% index))
+
+  pl <- plot_intersection(toplot, by = "colname", plot = "point")
+  save_plot_png(pl, "ewas_fdr01_inter.png")
 #+END_SRC
 
+#+RESULTS:
+[[./OUTPUT/Rplots/ewas_fdr01_inter.png]]
+#+begin_example
+# A tibble: 6 x 2
+     method power
+      <chr> <dbl>
+1      cate     1
+2      famt     1
+3 lassoLFMM     1
+4     PCAlm     1
+5 ridgeLFMM     1
+6       sva     1
+#+end_example
+
+******* Venn diagram
+#+begin_src R 
+  toplot <- expr$df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_top(10) %>%
+    ungroup() %>%
+
+
+  sets <- list(lm = toplot$index[toplot$method == "lm"],
+               cate = toplot$index[toplot$method == "cate"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"]
+               )
+
+
+
+#+end_src
 *** Résultats                                                    :noexport:
 
 *** Discussion                                                   :noexport:
