@@ -3147,8 +3147,8 @@ CLOSED: [2017-07-03 lun. 16:18]
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
-    filter_candidates_top(10) %>%
-    ungroup() %>%
+    filter_candidates_threshold(0.01) %>%
+    ungroup() 
 
 
   sets <- list(lm = toplot$index[toplot$method == "lm"],
@@ -3159,7 +3159,7 @@ CLOSED: [2017-07-03 lun. 16:18]
                )
 
 
-
+  out <- plot_venn(sets[2:5])
 #+end_src
 *** Résultats                                                    :noexport:
 

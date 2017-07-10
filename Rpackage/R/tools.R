@@ -19,7 +19,7 @@ save_plot_png <- function(pl, filename = NULL, width = 600, height = 400) {
   output.file <- make_output_file(filename, "png", path.dir)
 
   png(output.file, width, height)
-  print(pl)
+  grid::grid.draw(pl)
   dev.off()
 
   filename <- base::basename(output.file)
