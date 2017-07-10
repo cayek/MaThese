@@ -24,6 +24,7 @@
 
 #+latex_header: \usepackage{amsthm}
 #+latex_header: \newtheorem{theorem}{Théoreme}
+#+latex_header: \newtheorem{corollaire}{Corollaire}
 
 #  LocalWords:  methylation polymorphism nucleotide Frobenius invertible SNP
 #  LocalWords:  preprocessing dataset RidgeLFMM LassoLFMM
@@ -2007,11 +2008,11 @@ nucléaire cite:bach2008consistency.
 ***** Algorithme
 <<sec:lasso_algo>>
 
-Nous présentons maintenant un algorithme itératif et alterné qui permet
-d'estimer les paramètres de LFMM qui minimise la fonction objective $\Llasso$
-définie par eqref:eq:optim_lasso_reg.
+Nous présentons maintenant un algorithme de descente par bloque de coordonnées
+qui permet d'estimer les paramètres de LFMM qui minimise la fonction objective
+$\Llasso$ définie par eqref:eq:optim_lasso_reg.
 
-Nous commencons avec nulle tel que : 
+Nous commençons avec nulle tel que : 
 \begin{align*}
 \W_{t = 0} & = 0 \\
 \B_{t = 0} & = 0.
@@ -2080,17 +2081,18 @@ singulières dans $\matr{S}$ par les valeurs seuillées $\left \{ (s_{j} -
 rang de $\matr{E}^{2}_{t}$ et ramène vers zéro ses valeurs singulières
 restantes.
 
-Enfin nous pouvons démontrer le théorème suivant : 
-#+BEGIN_theorem
+L'algorithme de descente par bloque de coordonnées ne converge pas en général
+vers un minimum quand la fonction n'est pas continument différentiable, comme
+c'est le cas pour $\Llasso$. Cependant, $\Llasso$ est convexe et la partie non
+différentiable est séparable, c'est à dire que l'on peut l'exprimer comme la
+somme d'une fonction de $\W$ et $\B$. La parties non séparable est bien
+continument différentiable. Ainsi d'après, le théorème 5.2 de cite:Tseng_2001
+nous pouvons énoncer le résultat suivant :
+
+#+BEGIN_corollaire
 L'algorithme décrit dans la parie [[sec:lasso_algo]] converge vers un point de
 minimum global de la fonction $\Llasso$ définie par eqref:eq:optim_lasso_reg.
-#+END_theorem
-
-#+BEGIN_proof
-PROBLEME : la fonction n'est pas différentiable !!!! je ne peut pas utiliser les
-resultats de l'algo de GAuss Saubel cite:Grippo_2000,Bertsekas_1997
-A suivre !!!
-#+END_proof
+#+END_corollaire
 
 **** Choice of hyper-parameters
 <<sec:hyperparametre>>
@@ -3209,9 +3211,12 @@ CLOSED: [2017-07-03 lun. 16:18]
 
 [[./OUTPUT/Rplots/method_comp.png]]
 
-
 **** GWAS
-**** EWAS
+**** TODO EWAS
+:LOGBOOK:
+- State "TODO"       from              [2017-07-10 lun. 15:49]
+:END:
+
 #+BEGIN_SRC R
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
@@ -3233,9 +3238,10 @@ CLOSED: [2017-07-03 lun. 16:18]
 
   out <- plot_venn(sets[2:5])
 
-  save_plot_png(out, "ewas_results_venn")
-
+  save_plot_png(out, "ewas_results_venn.png")
 #+END_SRC
+
+[[./OUTPUT/Rplots/ewas_results_venn.png]]
 
 **** EAS
 *** Références
