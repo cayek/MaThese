@@ -2671,6 +2671,13 @@ générative.
 - State "TODO"       from              [2017-06-29 jeu. 13:47]
 - State "TODO"       from              [2017-06-29 jeu. 13:45]
 :END:
+***** TODO Influence des hyper paramètres
+:LOGBOOK:
+- Note taken on [2017-07-10 lun. 09:12] \\
+  Il faut que je montre comment les estimateur évolue en fonction de K, lambda et
+  gamma. Montrer que la cross validation marche aussi !
+- State "TODO"       from              [2017-07-10 lun. 09:12]
+:END:
 ***** TODO EAS
 :LOGBOOK:
 - State "TODO"       from              [2017-06-27 mar. 12:06]
@@ -2720,8 +2727,14 @@ CLOSED: [2017-06-27 mar. 19:24]
 > save_expr(expr)
 Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_example
-****** RUNNING Validation croisée du modèle lfmmRidge sur 1000genome
+****** DONE Validation croisée du modèle lfmmRidge sur 1000genome
+CLOSED: [2017-07-10 lun. 09:07]
 :LOGBOOK:
+- Note taken on [2017-07-10 lun. 09:07] \\
+  Il y a trop de bruit par rapport au signal !! La validation croisée ne permet
+  rien de dire ! On va se baser sur le scree plot et sur ce qu'on sait a priorie
+  (peut d'outlier)
+- State "DONE"       from "RUNNING"    [2017-07-10 lun. 09:07]
 - State "RUNNING"    from "TODO"       [2017-07-03 lun. 14:39]
 - State "TODO"       from "RUNNING"    [2017-06-29 jeu. 16:43]
 - Note taken on [2017-06-29 jeu. 16:37] \\
@@ -2767,6 +2780,64 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 [[./OUTPUT/Rplots/eas_CV_K.png]]
+
+****** TODO Étude du jeu de données
+:LOGBOOK:
+- State "TODO"       from              [2017-07-10 lun. 09:06]
+:END:
+#+begin_src R
+  library(MaTheseR)
+
+  ## param
+  K.method <- 25
+  nb.cluster <- 4
+  lambda <- 1e-5
+  nozero.prop <- 0.01
+
+  ## sampler
+  Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
+  X <- readRDS("./Data/ThesisDataset/3Article/GSE42861/X.rds")
+  X <- X[,1, drop = FALSE]
+  head(X)
+  outlier <- "./Data/ThesisDataset/3Article/GSE42861/candidates.rds"
+  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = outlier) * param()
+
+  ## methods
+  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
+                              lambda.K = 25, relative.err.epsilon = 1e-6)
+  m.lm <- method_lm()
+  m.pca <- method_PCAlm(K = K.method)
+  m.cate <- method_cate(K = K.method)
+  m.famt <- method_famt(K.method)
+  m.sva <- method_sva(K.method)
+
+  methods <- m.ridgeLfmm * param() +
+    m.lm * param() +
+    m.pca * param() +
+    m.cate * param() +
+    m.famt * param() +
+    m.sva * param() +
+    m.lasso * param()
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  expr <- ExpR(rep.nb.sampler = 1,
+               samplers = samplers,
+               preprocessors = NULL,
+               rep.nb.method = 1,
+               methods = methods,
+               extractor = ExpRextractor_pvalue1_calibrated)
+  expr <- ExpRmouline(expr)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## save expr
+  save_expr(expr, "EWAS_all.rds")
+
+
+#+end_src
 
 ***** TODO GWAS
 :LOGBOOK:
@@ -2925,7 +2996,9 @@ CLOSED: [2017-07-03 lun. 16:18]
 
   ## sampler
   Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
-  X <- "./Data/ThesisDataset/3Article/GSE42861/X.rds"
+  X <- readRDS("./Data/ThesisDataset/3Article/GSE42861/X.rds")
+  X <- X[,1, drop = FALSE]
+  head(X)
   outlier <- "./Data/ThesisDataset/3Article/GSE42861/candidates.rds"
   samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = outlier) * param()
 
@@ -2966,12 +3039,65 @@ CLOSED: [2017-07-03 lun. 16:18]
 
 #+end_src
 
+******* Charger l'expérience et la liste trouver dans les autres papier
+
+******* Que donne la recalibration ?
+#+BEGIN_SRC R
+  expr$df.res %>%
+    group_by(method) %>%
+    summarise(mad = mad[1], median = median[1])
+#+END_SRC
+
 #+RESULTS:
 #+begin_example
-  1 lassoLFMM       25            NA
-  Error in { : task 1 failed - "only d = 1 allowed ;-)"
-
+  # A tibble: 7 x 3
+       method      mad        median
+        <chr>    <dbl>         <dbl>
+  1      cate 1.220559  0.0143364030
+  2      famt 5.798501  3.9801590213
+  3 lassoLFMM 1.138814 -0.0017840118
+  4        lm 4.212716  0.0453431462
+  5     PCAlm 1.135042  0.0002846393
+  6 ridgeLFMM 1.193740  0.0135590474
+  7       sva 4.003476  2.8316228410
 #+end_example
+
+******* Les qqplots ?
+#+BEGIN_SRC R
+  toplot <- expr$df.res %>%
+    mutate(pvalue = calibrated.pvalue) %>%
+    dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
+  pl <- plot_qqplot(toplot)
+  save_plot_png(pl, "EWAS_qqplots.png")
+  pl
+#+END_SRC
+
+#+RESULTS:
+[[./OUTPUT/Rplots/EWAS_qqplots.png]]
+#+begin_example
+  [[./OUTPUT/Rplots/EWAS_qqplots.png]]
+  Warning message:
+  Removed 8126 rows containing non-finite values (stat_qq).
+#+end_example
+
+******* Les top 30
+#+BEGIN_SRC R
+  ## filter top
+  toplot <- expr$df.res %>%
+    group_by(method) %>%
+    filter_candidates_top(30)
+  plot_intersection(toplot, by = "colname", plot = "tile")
+
+#+END_SRC
+
+******* Contrôle du FDR à $0.01$
+#+BEGIN_SRC R
+  toplot <- expr$df.res %>%
+    group_by(method) %>%
+    filter_candidates_threshold(0.01)
+  plot_intersection(toplot, by = "colname", plot = "point")
+
+#+END_SRC
 
 *** Résultats                                                    :noexport:
 

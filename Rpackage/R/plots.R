@@ -141,6 +141,7 @@ plot_qqplot <- function(df) {
     ggtitle("-log10(pvalue) qqplot")
 }
 
+##' @export
 plot_intersection <- function(toplot, by, plot = c("point", "tile")) {
 
   toplot <- dplyr::inner_join(x = toplot, y = toplot, by = by) %>%
