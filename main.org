@@ -3160,7 +3160,16 @@ CLOSED: [2017-07-03 lun. 16:18]
 
 
   out <- plot_venn(sets[2:5])
+
+  save_plot_png(out, "ewas_fdr01_venn.png")
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/ewas_fdr01_venn.png]]
+#+begin_example
+
+#+end_example
+
 *** Résultats                                                    :noexport:
 
 *** Discussion                                                   :noexport:
@@ -3203,6 +3212,31 @@ CLOSED: [2017-07-03 lun. 16:18]
 
 **** GWAS
 **** EWAS
+#+BEGIN_SRC R
+  expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
+
+  toplot <- expr$df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_threshold(0.01) %>%
+    ungroup() 
+
+
+  sets <- list(lm = toplot$index[toplot$method == "lm"],
+               cate = toplot$index[toplot$method == "cate"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"]
+               )
+
+
+  out <- plot_venn(sets[2:5])
+
+  save_plot_png(out, "ewas_results_venn")
+
+#+END_SRC
+
 **** EAS
 *** Références
 
