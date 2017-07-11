@@ -3245,7 +3245,7 @@ On prend K = 9 variables lattentes.
     ## runing hypothesis testing
     message("Loading whole celia dataset !")
     dat.celiac <- MatrixFactorizationR::LfmmDat(Y = "./Data/ThesisDataset/3Article/Celiac/G.rds",
-                                                X = X, missing.ind = c())
+                                                X = X, missing.ind = FALSE)
     message("done")
     d <- ncol(dat$X)
     hp <- MatrixFactorizationR::hypothesis_testing_lm(dat.celiac, X = X)
