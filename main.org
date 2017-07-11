@@ -2883,8 +2883,13 @@ CLOSED: [2017-07-11 mar. 12:00]
 [[./OUTPUT/Rplots/EAS_sree_plot.png]]
 
 
-****** RUNNING Validation croisée du modèle lfmmRidge sur 1000genome
+****** DONE Validation croisée du modèle lfmmRidge sur 1000genome
+CLOSED: [2017-07-11 mar. 14:36]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-07-11 mar. 14:36]
+- Note taken on [2017-07-11 mar. 14:36] \\
+  Mdr ca a pas changé grand chose !!!! Du coup on prend ce que donne le scree plot
+  et un lambda petit !!!
 - Note taken on [2017-07-11 mar. 11:04] \\
   C'est reparti, le pb c'était les snps sans variance !!
 - Note taken on [2017-07-11 mar. 10:07] \\
@@ -3235,11 +3240,13 @@ On prend K = 9 variables lattentes.
     message("Empty dat!")
     dat$Y <- NULL
     gc()
+    message("done")
 
     ## runing hypothesis testing
     message("Loading whole celia dataset !")
     dat.celiac <- MatrixFactorizationR::LfmmDat(Y = "./Data/ThesisDataset/3Article/Celiac/G.rds",
                                                 X = X, missing.ind = c())
+    message("done")
     d <- ncol(dat$X)
     hp <- MatrixFactorizationR::hypothesis_testing_lm(dat.celiac, X = X)
 
@@ -3254,12 +3261,19 @@ On prend K = 9 variables lattentes.
     ExpRextractor_pvalue1_calibrated(dat, m, rep.sampler, rep.method)
   }
 
+  run_celiac <- function(m) {
+    dat.clumped <- MatrixFactorizationR::LfmmDat(Y = Y, X = X, missing.ind = c())
+    m <- ExpRmouline(m, dat.clumped)
+    df <- ExpRextractor_celiac(dat.clumped, m, 1, 1)
+    ## save expr
+    message("saving output")
+    out.file <- paste0("celiac_df_", m$name, ".rds")
+    message(out.file)
+    save_expr(df.lm, out.file)
+  }
+
   ## run lm
-  dat.clumped <- MatrixFactorizationR::LfmmDat(Y = Y, X = X, missing.ind = c())
-  m.lm <- ExpRmouline(m.lm, dat.clumped)
-  df.lm <- ExpRextractor_celiac(dat.clumped, m.lm, 1, 1)
-  ## save expr
-  save_expr(df.lm, "celiac_lm.rds")
+
 
   ## run ridgeLfmm
   m <- m.ridgeLfmm
