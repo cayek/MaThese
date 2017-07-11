@@ -3245,7 +3245,7 @@ On prend K = 9 variables lattentes.
     ## runing hypothesis testing
     message("Loading whole celia dataset !")
     dat.celiac <- MatrixFactorizationR::LfmmDat(Y = "./Data/ThesisDataset/3Article/Celiac/G.rds",
-                                                X = X, missing.ind = FALSE)
+                                                X = X, missing = FALSE)
     message("done")
     d <- ncol(dat$X)
     hp <- MatrixFactorizationR::hypothesis_testing_lm(dat.celiac, X = X)
@@ -3262,7 +3262,7 @@ On prend K = 9 variables lattentes.
   }
 
   run_celiac <- function(m) {
-    dat.clumped <- MatrixFactorizationR::LfmmDat(Y = Y, X = X, missing.ind = c())
+    dat.clumped <- MatrixFactorizationR::LfmmDat(Y = Y, X = X, missing = FALSE)
     m <- ExpRmouline(m, dat.clumped)
     df <- ExpRextractor_celiac(dat.clumped, m, 1, 1)
     ## save expr
@@ -3273,7 +3273,7 @@ On prend K = 9 variables lattentes.
   }
 
   ## run lm
-
+  run_celiac(m.lm)
 
   ## run ridgeLfmm
   m <- m.ridgeLfmm
