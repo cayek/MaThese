@@ -56,7 +56,7 @@ test_that("validation numerique article 3 sur un petit sample", {
   ## doParallel::stopImplicitCluster()
   ## parallel::stopCluster(cl)
 
-  expect_equal(dim(expr$df.res), c(46000, 18))
+  expect_equal(dim(expr$df.res), c(56000, 18))
 
 
   ## plot
@@ -113,6 +113,7 @@ test_that("validation numerique article 3 easy simulation", {
     m.famt * param() + 
     m.sva * param() +
     m.oracle * param() 
+
 
   ## run
   ## cl <- parallel::makeCluster(2, outfile = "")

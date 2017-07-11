@@ -1604,7 +1604,7 @@ Pour certaine analyse il est important de scaler les données.
 *** Filtrage des données manquantes
 Il reste certain SNPs avec des données manquantes ($0.7 \%$), nous les avons enlevé.
 #+begin_src R :results output :exports both
-  library(MaThese)
+  library(MaTheseR)
   G <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled.rds")
   G <- preprocessing_filter_na(G)
   saveRDS(G, "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds")
@@ -1618,9 +1618,98 @@ Il reste certain SNPs avec des données manquantes ($0.7 \%$), nous les avons en
 #+end_example
 ** Arabidopsis Thaliana Regional Mapping Lines
 ** 1001 genome
-** Celiac GWAS
+** TODO Celiac GWAS
+:LOGBOOK:
+- Note taken on [2017-07-11 mar. 09:32] \\
+  J'ai juste mis la dernière étape pour pouvoir lancer les analyses ! Les autres
+  étapes sont juste un recopie de Notes.org
+- State "TODO"       from              [2017-07-11 mar. 09:27]
+:END:
 *** Téléchargement des données
 Ou ont elle été ddl ??? FP a recu dirrect =./Data/Celiac/dubois_2010/=
+
+
+*** Contrôle qualité
+*** Filtrage des individus trop apparenté
+*** Imputation des données manquantes
+Avec bigsnpr et xgboost
+*** Élagage
+*** Conversion au format R et scaling
+#+begin_src R :results output :exports both :session *ssh krakenator*
+  library(bigsnpr)
+  celiac <- snp_attach("~/Projects/Thesis/Data/Celiac/dubois_2010/celiacQC_flo/backingfiles/celiacQC_flo.rds")
+  ind.clumping <- readRDS("./Data/Celiac/dubois_2010/celiacQC_flo/celiacQC_clumping_ind.rds")
+
+  ## save clumped loci
+  saveRDS(ind.clumping, "~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
+
+  ## filter correlated indiv to  0.08
+  celiac.aux <- snp_attach("~/Projects/Thesis/Data/Celiac/dubois_2010/backingfiles/celiacQC.rds")
+  ind.indiv <- which(celiac$fam$sample.ID %in% celiac.aux$fam$sample.ID)
+
+  ## G
+  G <- attach.BM(celiac$genotypes)[ind.indiv,]
+  rownames(G) <- celiac$fam$sample.ID[ind.indiv]
+  colnames(G) <- celiac$map$marker.ID
+  n <- nrow(G)
+  L <- ncol(G)
+
+  ## memory cleaning
+  rm(celiac)
+  rm(celiac.aux)
+  gc()
+
+  ## G <- scale(G) ## too much memory used...
+  mu <- apply(G, 2, mean)
+  sigma <- apply(G,2,sd)
+  gc()
+  G <- sweep(G, 2, mu)
+  rm(mu)
+  gc()
+  G <- sweep(G, 2, sigma, FUN = "/")
+  rm(sigma)
+  gc()
+
+  saveRDS(G, "~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/G.rds")
+  dim(G)
+
+
+  ## G clumped
+  G <- attach.BM(celiac$genotypes)[ind.indiv,ind.clumping]
+  rownames(G) <- celiac$fam$sample.ID[ind.indiv]
+  colnames(G) <- celiac$map$marker.ID[ind.clumping]
+  n <- nrow(G)
+  L <- ncol(G)
+  G <- scale(G)
+  saveRDS(G, "~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/G_clumped.rds")
+  dim(G)
+
+  ## X
+  X <- matrix(celiac$fam$affection[ind.indiv], n, 1)
+  X <- scale(X)
+  rownames(X) <- celiac$fam$sample.ID[ind.indiv]
+  saveRDS(X, "~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/X.rds")
+  dim(X)
+#+end_src
+
+#+RESULTS:
+: [1]  15155 281122
+: [1] 15155 94497
+: [1] 15155     1
+**** Un petit test sur les données
+#+begin_src R :results output :exports both
+  G <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/G.rds")
+  G.clumped <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/G_clumped.rds")
+  ind.clumping <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
+
+  mean(abs(G[,ind.clumping] - G.clumped))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  [1] 2.356696e-17
+#+end_example
+
 ** AT EWAS
 *** Téléchargement des données
 #+BEGIN_SRC R
@@ -2414,6 +2503,7 @@ populations. Pour cette étude nous ne gardons que les individus pour lesquels
 qui vivent dans leur un milieu naturel depuis plusieurs générations.
 
 #+begin_src R :results output :exports both
+  library(MaTheseR)
   G <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds")
   indiv.df <- readRDS("./Data/1000Genomes/Phase3/indiv_df.rds")
 
@@ -2428,9 +2518,19 @@ qui vivent dans leur un milieu naturel depuis plusieurs générations.
     dplyr::filter(!(pop %in% c("ASW")))
   indiv.df
 
-
+  ## remove indiv
   G <- G[indiv.df$sample,]
   dim(G)
+
+  ## filter sd, there are snps without variance !!
+  sds <- apply(G, 2, sd)
+  quantile(sds, 0.000001)
+  G <- preprocessing_filter_sd(G, 0.0)
+  dim(G)
+
+  ## scale G
+  G <- scale(G)
+  anyNA(G)
 
   saveRDS(G, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds")
   saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
@@ -2438,8 +2538,42 @@ qui vivent dans leur un milieu naturel depuis plusieurs générations.
 
 #+RESULTS:
 #+begin_example
+  > indiv.df
+  # A tibble: 670 x 4
+      sample   pop super_pop gender
+       <chr> <chr>     <chr>  <chr>
+   1 HG01527   IBS       EUR   male
+   2 HG01531   IBS       EUR female
+   3 HG01583   PJL       SAS   male
+   4 HG01586   PJL       SAS   male
+   5 HG01589   PJL       SAS   male
+   6 HG01593   PJL       SAS female
+   7 HG01625   IBS       EUR   male
+   8 HG01628   IBS       EUR female
+   9 HG01630   IBS       EUR   male
+  10 HG01679   IBS       EUR female
+  # ... with 660 more rows
+  > 
+  > ## remove indiv
+  > G <- G[indiv.df$sample,]
   > dim(G)
   [1]    670 342478
+  > 
+  > ## filter sd, there are snps without variance !!
+  > sds <- apply(G, 2, sd)
+  > quantile(sds, 0.000001)
+  0.0001% 
+        0 
+  > G <- preprocessing_filter_sd(G, 0.0)
+  proportion of removed loci = 5.83979116906779e-06
+  > dim(G)
+  [1]    670 342476
+  > 
+  > ## scale G
+  > G <- scale(G)
+  > anyNA(G)
+  [1] FALSE
+  > 
 #+end_example
 
 ******* DONE Calcul du gradient climatique
@@ -2495,8 +2629,8 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 
   ## get location
-  cities <- indiv.df %>% group_by(pop) %>%
-    dplyr::filter(row_number(citie) == 1) %>%
+  cities <- indiv.df %>% dplyr::group_by(pop) %>%
+    dplyr::filter(row_number() == 1) %>%
     ungroup() %>%
     dplyr::select(citie, pop, `Population Description`)
   cities <- cbind(cities, geocode(cities$citie))
@@ -2523,26 +2657,42 @@ des individus nous avons choisi d'utiliser la base wordclim
   indiv.df <- indiv.df %>%
     inner_join(cities)
 
+  ## scale
+  indiv.df$X <- scale(indiv.df$X)
+
+  ## X for EAS
+  X.eas <- as.matrix(indiv.df$X)
+  dim(X.eas)
 
   ## save 
   saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
-  saveRDS(as.matrix(indiv.df$X), "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds")
+  saveRDS(X.eas, "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds")
 
   ## plot X
   indiv.df <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
   pl <- ggplot(indiv.df, aes(x = lon, y = lat, color = X, size = X, text = `Population Description`)) +
     geom_point()
   pl
-
+  save_plot_png(pl, "X_eas.png")
 
   ## try plotly :D
   library(plotly)
   ggplotly(pl)
 
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/X_eas.png]]
+#+begin_example
+  >   dim(X.eas)
+  [1] 670   1
+
+#+end_example
+
 **** Description des expériences
-***** RUNNING Comparaisons numériques sur des simulations
+***** STARTED Comparaisons numériques sur des simulations
 :LOGBOOK:
+- State "STARTED"    from "RUNNING"    [2017-07-11 mar. 10:26]
 - Note taken on [2017-07-06 jeu. 17:52] \\
   sinon les resultats sont top :D
 - Note taken on [2017-07-06 jeu. 17:50] \\
@@ -2680,8 +2830,9 @@ générative.
   gamma. Montrer que la cross validation marche aussi !
 - State "TODO"       from              [2017-07-10 lun. 09:12]
 :END:
-***** TODO EAS
+***** STARTED EAS
 :LOGBOOK:
+- State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - State "TODO"       from              [2017-06-27 mar. 12:06]
 :END:
 ****** DONE Scree plot du 1000 genome pour EAS
@@ -2729,9 +2880,18 @@ CLOSED: [2017-06-27 mar. 19:24]
 > save_expr(expr)
 Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
 #+end_example
-****** DONE Validation croisée du modèle lfmmRidge sur 1000genome
-CLOSED: [2017-07-10 lun. 09:07]
+****** RUNNING Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
+- Note taken on [2017-07-11 mar. 11:04] \\
+  C'est reparti, le pb c'était les snps sans variance !!
+- Note taken on [2017-07-11 mar. 10:07] \\
+  ca plante, je sais pas pk !! la ca tourne !!
+- State "RUNNING"    from "DEBUG"      [2017-07-11 mar. 10:07]
+- State "DEBUG"      from "DONE"       [2017-07-11 mar. 09:35]
+- State "DONE"       from "RUNNING"    [2017-07-11 mar. 09:35]
+- Note taken on [2017-07-11 mar. 09:10] \\
+  je refait avec X et G scaled
+- State "RUNNING"    from "DONE"       [2017-07-11 mar. 09:10]
 - Note taken on [2017-07-10 lun. 09:07] \\
   Il y a trop de bruit par rapport au signal !! La validation croisée ne permet
   rien de dire ! On va se baser sur le scree plot et sur ce qu'on sait a priorie
@@ -2753,12 +2913,12 @@ CLOSED: [2017-07-10 lun. 09:07]
 
   ## samplers
   dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds",
-                                   X = "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds",
-                                   outlier = NULL) %>% ExpRmouline()
+                              X = "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds",
+                              outlier = NULL) %>% ExpRmouline()
   n <- nrow(dat$Y)
 
-  lambdas <- c(1e-5, 1.0, 1e10) / n
-  nb.cluster <- 4
+  lambdas <- c(1e-5, 1.0, 1e8) / n
+  nb.cluster <- 2
   cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
                             lambdas = lambdas,
                             Ks = c(1,2,3,4,5,10,15))
@@ -2794,11 +2954,11 @@ CLOSED: [2017-07-10 lun. 09:07]
   K.method <- 25
   nb.cluster <- 4
   lambda <- 1e-5
-  nozero.prop <- 0.01
+  nozero.prop <- 0.05
 
   ## sampler
-  Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
-  X <- readRDS("./Data/ThesisDataset/3Article/GSE42861/X.rds")
+  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds"
+  X <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds")
   X <- X[,1, drop = FALSE]
   head(X)
   outlier <- "./Data/ThesisDataset/3Article/GSE42861/candidates.rds"
@@ -2841,12 +3001,270 @@ CLOSED: [2017-07-10 lun. 09:07]
 
 #+end_src
 
-***** TODO GWAS
+***** STARTED GWAS
 :LOGBOOK:
+- State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - State "TODO"       from              [2017-06-29 jeu. 09:22]
 :END:
-***** TODO EWAS
+****** STARTED SNPs détecté par d'autre analyse
 :LOGBOOK:
+- State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
+- Note taken on [2017-07-11 mar. 10:04] \\
+  Il y a du ménage a faire ici !!
+- State "TODO"       from              [2017-07-11 mar. 10:04]
+:END:
+We retrieve SNPs associated with Celiac disease in GWAS catalogue.
+#+begin_src R :results output :exports both :session *ssh krakenator*
+  GWAS.catalog <- readRDS("~/Projects/Thesis/Data/GWASCatalog/gwas_catalog_v1.0.1-associations_e88_r2017-04-24.rds")
+
+  celiac.catalog <- GWAS.catalog %>%
+    dplyr::filter(grepl(".*[cC]eliac.*", `DISEASE/TRAIT`)) %>%
+    mutate(marker.ID = SNPS)
+
+  library(bigsnpr)
+  celiac <- snp_attach("~/Projects/Thesis/Data/Celiac/dubois_2010/celiacQC_flo/backingfiles/celiacQC_flo.rds")
+
+
+  ## join by marker_ID
+  celiac.outlier <- celiac$map %>%
+    inner_join(celiac.catalog) %>%
+    as_tibble()
+
+  ## not same pos
+  ## celiac.outlier %>%
+  ##   dplyr::select(marker.ID, chromosome, physical.pos, CHR_ID, CHR_POS) %>%
+  ##   print.data.frame()
+
+  ## a candidate list
+  cat("nb of candidates:", nrow(celiac.outlier), "\n")
+  celiac.outlier$SNPS
+  candidates <- which(celiac$map$marker.ID %in% celiac.outlier$SNPS)
+  saveRDS(candidates,
+          "~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Le chargement a nécessité le package : bigmemory
+Le chargement a nécessité le package : bigmemory.sri
+
+Attachement du package : ‘bigmemory.sri’
+
+The following object is masked from ‘package:testthat’:
+
+    describe
+
+Le chargement a nécessité le package : bigstatsr
+Joining, by = "marker.ID"
+nb of candidates: 60
+ [1] "rs3748816"  "rs12727642" "rs10903122" "rs6691768"  "rs864537"  
+ [6] "rs864537"   "rs859637"   "rs2157453"  "rs2816316"  "rs2816316" 
+[11] "rs296547"   "rs13003464" "rs10188217" "rs13015714" "rs917997"  
+[16] "rs13010713" "rs7574865"  "rs4675374"  "rs13098911" "rs6441961" 
+[21] "rs17810546" "rs17810546" "rs10936599" "rs1464510"  "rs1464510" 
+[26] "rs13151961" "rs13151961" "rs1020388"  "rs1033180"  "rs2187668" 
+[31] "rs2187668"  "rs2474619"  "rs10806425" "rs531930"   "rs802734"  
+[36] "rs2327832"  "rs1738074"  "rs1738074"  "rs212402"   "rs212388"  
+[41] "rs6974491"  "rs9792269"  "rs975730"   "rs1953126"  "rs1250552" 
+[46] "rs10876993" "rs653178"   "rs653178"   "rs653178"   "rs2762051" 
+[51] "rs1958589"  "rs4899260"  "rs12928822" "rs2074404"  "rs1893217" 
+[56] "rs1893217"  "rs157640"   "rs4819388"  "rs2298428"  "rs2298428"
+#+end_example
+
+Je ne sais pas ou Flo a récupéré ces datas mais c'est surement que la release du
+genome humain est GRCh37, alors que ce que j'ai ddl sur gwas catalog repose sur
+GRCh38. 
+
+*Ccl*: on va prendre ces outliers car les rs reste les mêmes d'après Thomas K.
+
+*Candidates for G_clumped and test*:
+#+begin_src R :results output :exports both
+  library(ThesisRpackage)
+  dat <- Article3_Celiac_sampler(clumped = FALSE) %>%
+    sampl()
+
+  snps.name <- colnames(dat$G)[dat$outlier]
+  snps.name
+  length(snps.name)
+
+
+  ## for clumped dataset
+  rm(dat)
+  gc()
+  G <- readRDS('~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/G_clumped.rds')
+  candidates.clumped <- which(colnames(G) %in% snps.name)
+  length(candidates.clumped)
+  colnames(G)[candidates.clumped]
+  saveRDS(candidates.clumped, "~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates_clumped.rds")
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  > snps.name
+   [1] "rs3748816"  "rs12727642" "rs10903122" "rs6691768"  "rs864537"  
+   [6] "rs859637"   "rs2157453"  "rs2816316"  "rs296547"   "rs13003464"
+  [11] "rs10188217" "rs13015714" "rs917997"   "rs13010713" "rs7574865" 
+  [16] "rs4675374"  "rs13098911" "rs6441961"  "rs17810546" "rs10936599"
+  [21] "rs1464510"  "rs13151961" "rs1020388"  "rs1033180"  "rs2187668" 
+  [26] "rs2474619"  "rs10806425" "rs531930"   "rs802734"   "rs2327832" 
+  [31] "rs1738074"  "rs212402"   "rs212388"   "rs6974491"  "rs9792269" 
+  [36] "rs975730"   "rs1953126"  "rs1250552"  "rs10876993" "rs653178"  
+  [41] "rs2762051"  "rs1958589"  "rs4899260"  "rs12928822" "rs2074404" 
+  [46] "rs1893217"  "rs157640"   "rs4819388"  "rs2298428" 
+  > length(snps.name)
+  [1] 49
+  > length(candidates.clumped)
+  [1] 10
+  > colnames(G)[candidates.clumped]
+   [1] "rs10903122" "rs859637"   "rs13010713" "rs1464510"  "rs1020388" 
+   [6] "rs1738074"  "rs653178"   "rs1958589"  "rs1893217"  "rs157640" 
+#+end_example
+****** STARTED Scree plot
+:LOGBOOK:
+- State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
+- Note taken on [2017-07-11 mar. 10:03] \\
+  J'utilise ThesisRpackage, il faudra changer ca si je veux que la thèse soit
+  stand alone
+- State "TODO"       from              [2017-07-11 mar. 10:03]
+:END:
+#+begin_src R :results output :exports both
+  library(ThesisRpackage)
+
+  ## we keep only disease.state
+  X <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/X.rds")
+  head(X)
+
+  s <- TrueSampler(G.file = "~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/G_clumped.rds",
+                   X.file = X,
+                   outlier.file = NULL,
+                   n = NULL,
+                   L = NULL)
+  expr <- PCAExperiment(s = s,
+                        description = "celiac clumped PCA")
+  expr <- runExperiment(expr)
+  dumpExperiment(expr)
+#+end_src
+
+#+begin_src R :results output graphics :file Rplots/celiac_pca.png :exports both :width 600 :height 400 
+  expr <- retrieveExperiment(124)
+  expr$description
+  variances <- expr$res.df$sdev / sum(expr$res.df$sdev)
+  ## plot
+  pl <- qplot(x = seq_along(variances), y = variances, geom='line') +
+    geom_point() +
+    coord_cartesian(xlim = c(1,100))
+  pl
+#+end_src
+
+#+RESULTS:
+[[file:../Rplots/celiac_pca.png]]
+
+On prend K = 9 variables lattentes.
+
+****** TODO Validation croisée avec lfmmRidge
+:LOGBOOK:
+- Note taken on [2017-07-11 mar. 10:10] \\
+  On va voir si ca passe :D
+- State "TODO"       from              [2017-07-11 mar. 10:10]
+:END:
+
+#+begin_src R 
+  library(MaTheseR)
+
+  ## samplers
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds",
+                              X = "./Data/ThesisDataset/3Article/Celiac/X.rds",
+                              outlier = NULL) %>% ExpRmouline()
+  n <- nrow(dat$Y)
+
+  lambdas <- c(1e-5, 1.0, 1e5) / n
+  nb.cluster <- 1
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
+                            lambdas = lambdas,
+                            Ks = c(1,2,3,7,10,15))
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  res.cv <- ExpRmouline(cv, dat)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## save expr
+  save_expr(res.cv, "gwas_CV_lfmm.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  save_plot_png(pl, "gwas_CV_lambda.png")
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  save_plot_png(pl, "gwas_CV_K.png")
+#+end_src
+****** TODO Étude du jeu de données 
+:LOGBOOK:
+- State "TODO"       from              [2017-07-11 mar. 11:37]
+:END:
+
+#+begin_src R
+  library(MaTheseR)
+
+  ## param
+  K.method <- 9
+  lambda <- 1e-5
+  nozero.prop <- 0.005
+
+  ## sampler
+  Y <- "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds"
+  X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
+  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
+
+  ## methods
+  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
+                              lambda.K = 25, relative.err.epsilon = 1e-6)
+  m.lm <- method_lm()
+  m.pca <- method_PCAlm(K = K.method)
+  m.cate <- method_cate(K = K.method)
+
+
+  ## extractor
+  ExpRextractor_celiac <- function(dat, m, rep.sampler, rep.method) {
+    ## runing hypothesis testing
+    X <- cbind(dat$X, m$U)
+    message("Loading whole celia dataset !")
+    dat.celiac <- MatrixFactorizationR::LfmmDat(Y = "./Data/ThesisDataset/3Article/Celiac/G.rds",
+                                                X = X)
+    d <- ncol(dat$X)
+    hp <- MatrixFactorizationR::hypothesis_testing_lm(dat.celiac, X = X)
+
+    m$score <- hp$score[,1:d, drop = FALSE]
+    m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
+
+    ## free memory
+    rm(dat.celiac)
+    rm(hp)
+    gc()
+
+    ExpRextractor_pvalue1_calibrated(dat, m, rep.sampler, rep.method)
+  }
+
+  ## run lm
+  methods <- m.lm * param()
+  expr <- ExpR(rep.nb.sampler = 1,
+               samplers = samplers,
+               preprocessors = NULL,
+               rep.nb.method = 1,
+               methods = methods,
+               extractor = ExpRextractor_celiac)
+  expr <- ExpRmouline(expr)
+  ## save expr
+  save_expr(expr, "celiac_lm.rds")
+
+
+#+end_src
+***** DONE EWAS
+CLOSED: [2017-07-11 mar. 11:45]
+:LOGBOOK:
+- State "DONE"       from "STARTED"    [2017-07-11 mar. 11:45]
+- State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - State "TODO"       from              [2017-06-29 jeu. 09:22]
 :END:
 ****** Sites candidats detectés dans d'autres études
@@ -2981,8 +3399,14 @@ CLOSED: [2017-07-03 lun. 16:18]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_lambda.png]]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_K.png]]
 
-****** RUNNING Étude du jeu de données
+****** DONE Étude du jeu de données
+CLOSED: [2017-07-11 mar. 11:45]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-07-11 mar. 11:45]
+- Note taken on [2017-07-11 mar. 10:25] \\
+  c'est reparti :D
+- Note taken on [2017-07-11 mar. 10:23] \\
+  ok c'est pas bon avec 5% !! pas étonnant 5% c'est trop !!
 - State "RUNNING"    from "DEBUG"      [2017-07-11 mar. 08:41]
 - Note taken on [2017-07-11 mar. 08:41] \\
   je relance avec 5% de no zero pour le lasso !!
@@ -2997,7 +3421,7 @@ CLOSED: [2017-07-03 lun. 16:18]
   K.method <- 25
   nb.cluster <- 4
   lambda <- 1e-5
-  nozero.prop <- 0.05
+  nozero.prop <- 0.01
 
   ## sampler
   Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
@@ -3085,20 +3509,15 @@ CLOSED: [2017-07-03 lun. 16:18]
   pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
     stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
     geom_abline(slope = 1, intercept = 0)
-  pll
   save_plot_png(pll, "EWAS_qqplots2.png")
+  pll
 #+END_SRC
 
 #+RESULTS:
 [[./OUTPUT/Rplots/EWAS_qqplots2.png]]
 [[./OUTPUT/Rplots/EWAS_qqplots.png]]
-#+begin_example
-  [[./OUTPUT/Rplots/EWAS_qqplots.png]]
-  Warning message:
-  Removed 8126 rows containing non-finite values (stat_qq).
-#+end_example
 
-******* Le top 30
+******* Le top 15
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
@@ -3181,9 +3600,6 @@ CLOSED: [2017-07-03 lun. 16:18]
 
 #+RESULTS:
 [[./OUTPUT/Rplots/ewas_fdr01_venn.png]]
-#+begin_example
-
-#+end_example
 
 *** Résultats                                                    :noexport:
 
