@@ -2960,15 +2960,13 @@ CLOSED: [2017-07-11 mar. 14:36]
 
   ## param
   K.method <- 7
-  nb.cluster <- 4
+  nb.cluster <- 2
   lambda <- 1e-5
   nozero.prop <- 0.01
 
   ## sampler
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds"
-  X <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds")
-  X <- X[,1, drop = FALSE]
-  head(X)
+  X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds"
   samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = outlier) * param()
 
   ## methods
