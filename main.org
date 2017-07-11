@@ -3248,7 +3248,9 @@ On prend K = 9 variables lattentes.
                                                 X = X, missing = FALSE)
     message("done")
     d <- ncol(dat$X)
+    message("Running hp")
     hp <- MatrixFactorizationR::hypothesis_testing_lm(dat.celiac, X = X)
+    message("done")
 
     m$score <- hp$score[,1:d, drop = FALSE]
     m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
