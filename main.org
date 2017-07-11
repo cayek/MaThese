@@ -3207,16 +3207,16 @@ On prend K = 9 variables lattentes.
 
 #+begin_src R
   library(MaTheseR)
+  library(MatrixFactorizationR)
 
   ## param
   K.method <- 9
   lambda <- 1e-5
   nozero.prop <- 0.005
 
-  ## sampler
+  ## dat
   Y <- "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds"
   X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
-  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
@@ -3239,7 +3239,7 @@ On prend K = 9 variables lattentes.
     ## runing hypothesis testing
     message("Loading whole celia dataset !")
     dat.celiac <- MatrixFactorizationR::LfmmDat(Y = "./Data/ThesisDataset/3Article/Celiac/G.rds",
-                                                X = X)
+                                                X = X, missing.ind = c())
     d <- ncol(dat$X)
     hp <- MatrixFactorizationR::hypothesis_testing_lm(dat.celiac, X = X)
 
@@ -3255,17 +3255,19 @@ On prend K = 9 variables lattentes.
   }
 
   ## run lm
-  methods <- m.lm * param()
-  expr <- ExpR(rep.nb.sampler = 1,
-               samplers = samplers,
-               preprocessors = NULL,
-               rep.nb.method = 1,
-               methods = methods,
-               extractor = ExpRextractor_celiac)
-  expr <- ExpRmouline(expr)
+  dat.clumped <- MatrixFactorizationR::LfmmDat(Y = Y, X = X, missing.ind = c())
+  m.lm <- ExpRmouline(m.lm, dat.clumped)
+  df.lm <- ExpRextractor_celiac(dat.clumped, m.lm, 1, 1)
   ## save expr
-  save_expr(expr, "celiac_lm.rds")
+  save_expr(df.lm, "celiac_lm.rds")
 
+  ## run ridgeLfmm
+  m <- m.ridgeLfmm
+  dat.clumped <- MatrixFactorizationR::LfmmDat(Y = Y, X = X, missing.ind = c())
+  m <- ExpRmouline(m, dat.clumped)
+  df <- ExpRextractor_celiac(dat, m., 1, 1)
+  ## save expr
+  save_expr(df, "celiac_lm.rds")
 
 #+end_src
 ***** DONE EWAS
