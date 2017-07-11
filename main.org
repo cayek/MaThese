@@ -2836,8 +2836,13 @@ générative.
 - State "TODO"       from              [2017-06-27 mar. 12:06]
 :END:
 ****** DONE Scree plot du 1000 genome pour EAS
-CLOSED: [2017-06-27 mar. 19:24]
+CLOSED: [2017-07-11 mar. 12:00]
 :LOGBOOK:
+- Note taken on [2017-07-11 mar. 12:01] \\
+  K = 7 ca semple bien :D
+- State "DONE"       from "RUNNING"    [2017-07-11 mar. 12:00]
+- State "RUNNING"    from "DONE"       [2017-07-11 mar. 11:53]
+- State "DONE"       from "DONE"       [2017-07-11 mar. 11:53]
 - State "DONE"       from "RUNNING"    [2017-06-27 mar. 19:24]
 - State "RUNNING"    from "DONE"       [2017-06-27 mar. 18:01]
 - State "DONE"       from "RUNNING"    [2017-06-27 mar. 17:52]
@@ -2854,7 +2859,7 @@ CLOSED: [2017-06-27 mar. 19:24]
   samplers <- ExpRsampler_trueData(Y = Y, X = NULL, outlier = NULL) * param()
 
   ## methods
-  methods <- method_PCA(K = 300, scale = FALSE) * param()
+  methods <- method_PCA(scale = FALSE) * param()
 
   ## expr
   expr <- ExpR(rep.nb.sampler = 1,
@@ -2868,18 +2873,16 @@ CLOSED: [2017-06-27 mar. 19:24]
   save_expr(expr)
 
   pl <- ExpRplot_sing_values(expr) + 
-  coord_cartesian(xlim = c(1,300))
+  coord_cartesian(xlim = c(1,100))
 
-  save_plot_png(pl)
+  save_plot_png(pl, "EAS_sree_plot.png")
 
 #+end_src
 
 #+RESULTS:
-[[./OUTPUT/Rplots/file3700288edbce.png]]
-#+begin_example
-> save_expr(expr)
-Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
-#+end_example
+[[./OUTPUT/Rplots/EAS_sree_plot.png]]
+
+
 ****** RUNNING Validation croisée du modèle lfmmRidge sur 1000genome
 :LOGBOOK:
 - Note taken on [2017-07-11 mar. 11:04] \\
@@ -2951,17 +2954,16 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
   library(MaTheseR)
 
   ## param
-  K.method <- 25
+  K.method <- 7
   nb.cluster <- 4
   lambda <- 1e-5
-  nozero.prop <- 0.05
+  nozero.prop <- 0.01
 
   ## sampler
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds"
   X <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds")
   X <- X[,1, drop = FALSE]
   head(X)
-  outlier <- "./Data/ThesisDataset/3Article/GSE42861/candidates.rds"
   samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = outlier) * param()
 
   ## methods
@@ -2996,7 +2998,7 @@ Expr save in ./OUTPUT/Expr/file37004c9591a3.rds
   parallel::stopCluster(cl)
 
   ## save expr
-  save_expr(expr, "EWAS_all.rds")
+  save_expr(expr, "EAS_all.rds")
 
 
 #+end_src
@@ -3227,8 +3229,14 @@ On prend K = 9 variables lattentes.
 
   ## extractor
   ExpRextractor_celiac <- function(dat, m, rep.sampler, rep.method) {
-    ## runing hypothesis testing
+
     X <- cbind(dat$X, m$U)
+    ## free dat
+    message("Empty dat!")
+    dat$Y <- NULL
+    gc()
+
+    ## runing hypothesis testing
     message("Loading whole celia dataset !")
     dat.celiac <- MatrixFactorizationR::LfmmDat(Y = "./Data/ThesisDataset/3Article/Celiac/G.rds",
                                                 X = X)

@@ -83,4 +83,4 @@ test_that("validation numerique article 3 sur un petit sample", {
   venn.pl <- plot_venn(sets[1:5])
   grid.draw(venn.pl)
 
-}
+})
