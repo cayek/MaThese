@@ -2951,8 +2951,11 @@ CLOSED: [2017-07-11 mar. 14:36]
 [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 [[./OUTPUT/Rplots/eas_CV_K.png]]
 
-****** TODO Étude du jeu de données
+****** RUNNING Étude du jeu de données
 :LOGBOOK:
+- Note taken on [2017-07-11 mar. 16:30] \\
+  ca tourne sur krak !!
+- State "RUNNING"    from "TODO"       [2017-07-11 mar. 16:30]
 - State "TODO"       from              [2017-07-10 lun. 09:06]
 :END:
 #+begin_src R
@@ -2967,7 +2970,7 @@ CLOSED: [2017-07-11 mar. 14:36]
   ## sampler
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds"
   X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds"
-  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = outlier) * param()
+  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
@@ -3258,6 +3261,8 @@ On prend K = 9 variables lattentes.
     rm(hp)
     gc()
 
+    ## read fake dat with colnames
+    dat$Y <- readRDS("./Data/ThesisDataset/3Article/Celiac/G_fake.rds")
     ExpRextractor_pvalue1_calibrated(dat, m, rep.sampler, rep.method)
   }
 
