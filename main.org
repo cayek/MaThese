@@ -2981,8 +2981,11 @@ CLOSED: [2017-07-03 lun. 16:18]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_lambda.png]]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_K.png]]
 
-****** DEBUG Étude du jeu de données
+****** RUNNING Étude du jeu de données
 :LOGBOOK:
+- State "RUNNING"    from "DEBUG"      [2017-07-11 mar. 08:41]
+- Note taken on [2017-07-11 mar. 08:41] \\
+  je relance avec 5% de no zero pour le lasso !!
 - State "DEBUG"      from "RUNNING"    [2017-07-07 ven. 18:49]
 - State "RUNNING"    from "TODO"       [2017-07-07 ven. 13:59]
 - State "TODO"       from              [2017-06-29 jeu. 11:17]
@@ -2994,7 +2997,7 @@ CLOSED: [2017-07-03 lun. 16:18]
   K.method <- 25
   nb.cluster <- 4
   lambda <- 1e-5
-  nozero.prop <- 0.01
+  nozero.prop <- 0.05
 
   ## sampler
   Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
@@ -3043,6 +3046,7 @@ CLOSED: [2017-07-03 lun. 16:18]
 
 ******* Charger l'expérience et les candidats
 #+BEGIN_SRC R
+  library(MaTheseR)
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
 #+END_SRC
@@ -3075,9 +3079,18 @@ CLOSED: [2017-07-03 lun. 16:18]
   pl <- plot_qqplot(toplot)
   save_plot_png(pl, "EWAS_qqplots.png")
   pl
+
+
+  ## all on the same graph
+  pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
+    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
+    geom_abline(slope = 1, intercept = 0)
+  pll
+  save_plot_png(pll, "EWAS_qqplots2.png")
 #+END_SRC
 
 #+RESULTS:
+[[./OUTPUT/Rplots/EWAS_qqplots2.png]]
 [[./OUTPUT/Rplots/EWAS_qqplots.png]]
 #+begin_example
   [[./OUTPUT/Rplots/EWAS_qqplots.png]]
