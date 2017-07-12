@@ -32,6 +32,7 @@ method_main <- function(m, dat, main.fun, hp.func = NULL) {
 
   ## run hypothesis testing
   if (!is.null(hp.func)) {
+    message("running hp")
     X <- cbind(dat$X, m$U)
     d <- ncol(dat$X)
     hp <- hp.func(dat, X)

@@ -3410,6 +3410,7 @@ On prend K = 9 variables lattentes.
 #+begin_src R
   library(MaTheseR)
   library(MatrixFactorizationR)
+  library(matter)
 
   ## param
   K.method <- 9
