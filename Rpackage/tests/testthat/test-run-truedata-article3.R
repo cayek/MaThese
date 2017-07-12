@@ -1,5 +1,5 @@
 library(testthat)
-context("validation numerique article 3")
+context("true data article 3")
 
 test_that("true dataset article 3 sur un petit sample", {
 

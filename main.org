@@ -3417,56 +3417,27 @@ On prend K = 9 variables lattentes.
   nozero.prop <- 0.005
 
   ## dat
-  Y <- "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds"
+  Y <- "./Data/ThesisDataset/3Article/Celiac/G.matter.rds"
   X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
+  col.mask <- readRDS("./Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
+  dat <- LfmmMatterDat(Y, X)
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
   m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
                               lambda.K = 25, relative.err.epsilon = 1e-6)
-  m.lm <- method_lm()
+  m.lm <- method_lm(col.mask = col.mask,
+                    inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lm.rds",
+                    inter.res.file = "./OUTPUT/Expr/celiac_inter_lm.rds")
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
 
 
-  ## extractor
-  ExpRextractor_celiac <- function(dat, m, rep.sampler, rep.method) {
-
-    X <- cbind(dat$X, m$U)
-    ## free dat
-    message("Empty dat!")
-    dat$Y <- NULL
-    gc()
-    message("done")
-
-    ## runing hypothesis testing
-    message("Loading whole celia dataset !")
-    dat.celiac <- MatrixFactorizationR::LfmmDat(Y = "./Data/ThesisDataset/3Article/Celiac/G.rds",
-                                                X = X, missing = FALSE)
-    message("done")
-    d <- ncol(dat$X)
-    message("Running hp")
-    hp <- MatrixFactorizationR::hypothesis_testing_lm(dat.celiac, X = X)
-    message("done")
-
-    m$score <- hp$score[,1:d, drop = FALSE]
-    m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
-
-    ## keep column names
-    dat$Y <- dat.celiac$Y[1,, drop = FALSE]
-
-    ## free memory
-    rm(dat.celiac)
-    rm(hp)
-    gc()
-
-    ExpRextractor_pvalue1_calibrated(dat, m, rep.sampler, rep.method)
-  }
 
   run_celiac <- function(m) {
     dat.clumped <- MatrixFactorizationR::LfmmDat(Y = Y, X = X, missing = FALSE)
     m <- ExpRmouline(m, dat.clumped)
-    df <- ExpRextractor_celiac(dat.clumped, m, 1, 1)
+    df <- ExpRextractor_pvalue1_calibrated(dat.clumped, m, 1, 1)
     ## save expr
     message("saving output")
     out.file <- paste0("celiac_df_", m$name, ".rds")
