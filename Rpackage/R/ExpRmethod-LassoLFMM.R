@@ -23,25 +23,21 @@ method_lassoLFMM <- function(K, col.mask = NULL,
 ##' @export
 ExpRmouline.method_lassoLFMM <- function(m, dat) {
 
-  if (is.null(m$nozero.prop) && !is.null(dat$outlier)) {
-    m$nozero.prop <- length(dat$outlier) / ncol(dat$Y) * 1.5
-  }
+
+  ## lasso lfmm main
+  main.fun <- function(m, dat) {
+    if (is.null(m$nozero.prop) && !is.null(dat$outlier)) {
+      m$nozero.prop <- length(dat$outlier) / ncol(dat$Y) * 1.5
+    }
 
   ## rum lfmm
-  lfmm <- MatrixFactorizationR::lassoLFMM(K = m$K,
-                                          nozero.prop = m$nozero.prop,
-                                          lambda.eps = m$lambda.eps,
-                                          lambda.K = m$lambda.K)
+    lfmm <- MatrixFactorizationR::lassoLFMM(K = m$K,
+                                            nozero.prop = m$nozero.prop,
+                                            lambda.eps = m$lambda.eps,
+                                            lambda.K = m$lambda.K)
   lfmm <- MatrixFactorizationR::MatrixFactorizationR_fit(lfmm, dat, it.max = m$it.max,
                                                          relative.err.epsilon = m$relative.err.epsilon)
-  m[names(lfmm)] <- lfmm
-
-  ## run hypothesis testing
-  X <- cbind(dat$X, m$U)
-  d <- ncol(dat$X)
-  hp <- hypothesis_testing_lm(dat, X = X)
-
-  m$score <- hp$score[,1:d, drop = FALSE]
-  m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
-  m
+    lfmm
+  }
+  method_main(m, dat, main.fun, hp.func = MatrixFactorizationR::hypothesis_testing_lm)
 }

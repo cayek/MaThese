@@ -10,11 +10,12 @@ LfmmMatterDat.builder <- setRefClass("LfmmMatterDat", fields = c("Y", "X", "meta
                                          matter::crossprod(.self$Y, x)
                                        },
                                        sigma2_lm = function(X, B, nb.df) {
-                                         res <- foreach(j = 1:ncol(Y), .combine = 'c') %dopar%
-                                           {
-                                             aux <- Y[,j] - tcrossprod(X , B[j,,drop = FALSE])
-                                             sum(aux * aux)
-                                           }
+                                         res <- 1:ncol(.self$Y)
+                                         aux.f <- function(j) {
+                                           aux <- .self$Y[,j] - tcrossprod(X , B[j,,drop = FALSE])
+                                           sum(aux * aux)
+                                         }
+                                         res <- sapply(res,aux.f)
                                          res <- res / nb.df
                                          res
                                        }
