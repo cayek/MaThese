@@ -2710,8 +2710,11 @@ des individus nous avons choisi d'utiliser la base wordclim
 #+end_example
 
 **** Description des expériences
-***** STARTED Comparaisons numériques sur des simulations
+***** RUNNING Comparaisons numériques sur des simulations
 :LOGBOOK:
+- Note taken on [2017-07-12 mer. 19:39] \\
+  je fais tourner la simu final !!!
+- State "RUNNING"    from "STARTED"    [2017-07-12 mer. 19:39]
 - State "STARTED"    from "RUNNING"    [2017-07-11 mar. 10:26]
 - Note taken on [2017-07-06 jeu. 17:52] \\
   sinon les resultats sont top :D
@@ -2763,13 +2766,13 @@ générative.
   ## param
   K.method <- 5
   nb.cluster <- 8
-  rep.nb.sampler <- 5
+  rep.nb.sampler <- 10
 
   ## sampler
   s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
   s$rho.B <- 3.0
   sampler.env <- s$load.env
-  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1, 0.15), rho.c = c(0.1, 0.3, 0.5, 0.8))
+  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1, 0.15, 0.2), rho.c = c(0.1, 0.3, 0.5, 0.8, 1.0))
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
@@ -3422,25 +3425,25 @@ On prend K = 9 variables lattentes.
 
   ## methods
   methods <- list()
-  m.ridgeLfmm <- method_ridgeLFMM(K = K.method,
+  methods$m.ridgeLfmm <- method_ridgeLFMM(K = K.method,
                                   col.mask = col.mask,
                                   inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_ridgelfmm.rds",
                                   inter.res.file = "./OUTPUT/Expr/celiac_inter_ridgelfmm.rds")
   methods$m.lm <- method_lm(col.mask = col.mask,
                             inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lm.rds",
                             inter.res.file = "./OUTPUT/Expr/celiac_inter_lm.rds")
-  m.pca <- method_PCAlm(K = K.method,
+  methods$m.pca <- method_PCAlm(K = K.method,
                         col.mask = col.mask,
                         inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
                         inter.res.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds"
                         )
-  m.cate <- method_cate(K = K.method,
+  methods$m.cate <- method_cate(K = K.method,
                         col.mask = col.mask,
                         inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
                         inter.res.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
                         hp = "lm"
                         )
-  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
+  methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
                               lambda.K = 25, relative.err.epsilon = 1e-6,
                               col.mask = col.mask,
                               inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
