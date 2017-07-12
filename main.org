@@ -3420,7 +3420,8 @@ On prend K = 9 variables lattentes.
   Y <- "./Data/ThesisDataset/3Article/Celiac/G.matter.rds"
   X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
   col.mask <- readRDS("./Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
-  dat <- LfmmMatterDat(Y, X, NULL)
+  outlier <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  dat <- LfmmMatterDat(Y, X, outlier)
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)

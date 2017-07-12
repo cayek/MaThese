@@ -22,7 +22,7 @@ LfmmMatterDat.builder <- setRefClass("LfmmMatterDat", fields = c("Y", "X", "meta
                                      )
 
 ##' @export
-LfmmMatterDat <- function(X, Y, outlier) {
+LfmmMatterDat <- function(Y, X, outlier) {
   dat <- LfmmMatterDat.builder(Y = read_input(Y),
                                X = read_input(X),
                                meta = list())
