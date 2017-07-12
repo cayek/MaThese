@@ -26,8 +26,11 @@ ExpRmouline.method_PCA <- function(m, dat) {
 }
 
 ##' @export
-method_PCAlm <- function(K) {
-  args <- list(K = K)
+method_PCAlm <- function(K, col.mask = NULL,
+                         inter.res.saving.file = NULL, inter.res.file = NULL) {
+  args <- list(K = K, col.mask = col.mask,
+               inter.res.saving.file = inter.res.saving.file,
+               inter.res.file = inter.res.file)
   args$name = "PCAlm"
   res <- do.call(ExpRmethod, args)
   class(res) <- c("method_PCAlm", class(res))
@@ -37,33 +40,29 @@ method_PCAlm <- function(K) {
 ##' @export
 ExpRmouline.method_PCAlm <- function(m, dat) {
 
-  n <- nrow(dat$Y)
-  p <- ncol(dat$Y)
-  ## rum svd
-  Af <- function(x, args) {
-    args$dat$productY(x)
+    ## ridge lfmm main
+  main.fun <- function(m, dat) {
+    n <- nrow(dat$Y)
+    p <- ncol(dat$Y)
+    ## rum svd
+    Af <- function(x, args) {
+      args$dat$productY(x)
+    }
+    Atransf <- function(x, args) {
+      args$dat$productYt(x)
+    }
+    res.rspectra <- RSpectra::svds(A = Af,
+                                   Atrans = Atransf,
+                                   k = m$K,
+                                   nu = m$K, nv = m$K,
+                                   opts = list(tol = 10e-10),
+                                   dim = c(n, p),
+                                   args = list(dat = dat))
+    m$U <- res.rspectra$u %*% diag(res.rspectra$d[1:m$K], m$K, m$K)
+    m$V <- res.rspectra$v
+    m
   }
-  Atransf <- function(x, args) {
-    args$dat$productYt(x)
-  }
-  res.rspectra <- RSpectra::svds(A = Af,
-                                 Atrans = Atransf,
-                                 k = m$K,
-                                 nu = m$K, nv = m$K,
-                                 opts = list(tol = 10e-10),
-                                 dim = c(n, p),
-                                 args = list(dat = dat))
-  m$U <- res.rspectra$u %*% diag(res.rspectra$d[1:m$K], m$K, m$K)
-  m$V <- res.rspectra$v
 
-  ## run hypothesis testing
-  X <- cbind(dat$X, m$U)
-  d <- ncol(dat$X)
-  hp <- hypothesis_testing_lm(dat, X = X)
-
-  m$score <- hp$score[,1:d, drop = FALSE]
-  m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
-  m
-
+  method_main(m, dat, main.fun, hp.func = MatrixFactorizationR::hypothesis_testing_lm)
 }
 

@@ -1,7 +1,10 @@
 ##' @export
-method_cate <- function(K) {
+method_cate <- function(K, col.mask = NULL,
+                        inter.res.saving.file = NULL, inter.res.file = NULL) {
   TestRequiredPkg("cate")
-  args <- list(K = K)
+  args <- list(K = K, col.mask = col.mask,
+               inter.res.saving.file = inter.res.saving.file,
+               inter.res.file = inter.res.file)
   args$name = "cate"
   res <- do.call(ExpRmethod, args)
   class(res) <- c("method_cate", class(res))

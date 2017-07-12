@@ -1,5 +1,7 @@
 ##' @export
-method_lassoLFMM <- function(K, nozero.prop = 0.1,
+method_lassoLFMM <- function(K, col.mask = NULL,
+                             inter.res.saving.file = NULL, inter.res.file = NULL,
+                             nozero.prop = 0.1,
                              lambda.K = 100, lambda.eps = 0.001,
                              it.max = 100, relative.err.epsilon = 1e-6) {
   args <- list(K = K,
@@ -7,7 +9,11 @@ method_lassoLFMM <- function(K, nozero.prop = 0.1,
                lambda.K = lambda.K,
                lambda.eps = lambda.eps,
                it.max = it.max,
-               relative.err.epsilon = relative.err.epsilon)
+               relative.err.epsilon = relative.err.epsilon,
+               inter.res.saving.file = inter.res.saving.file,
+               inter.res.file = inter.res.file,
+               col.mask = col.mask
+               )
   args$name = "lassoLFMM"
   res <- do.call(ExpRmethod, args)
   class(res) <- c("method_lassoLFMM", class(res))

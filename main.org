@@ -3423,14 +3423,26 @@ On prend K = 9 variables lattentes.
 
   ## methods
   methods <- list()
-  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
+  m.ridgeLfmm <- method_ridgeLFMM(K = K.method,
+                                  col.mask = col.mask,
+                                  inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_ridgelfmm.rds",
+                                  inter.res.file = "./OUTPUT/Expr/celiac_inter_ridgelfmm.rds")
   m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                              lambda.K = 25, relative.err.epsilon = 1e-6)
+                              lambda.K = 25, relative.err.epsilon = 1e-6,
+                              col.mask = col.mask,
+                              inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
+                              inter.res.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds"
+                              )
   methods$m.lm <- method_lm(col.mask = col.mask,
                             inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lm.rds",
                             inter.res.file = "./OUTPUT/Expr/celiac_inter_lm.rds")
-  m.pca <- method_PCAlm(K = K.method)
-  m.cate <- method_cate(K = K.method)
+  m.pca <- method_PCAlm(K = K.method,
+                        col.mask = col.mask,
+                        inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
+                        inter.res.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds"
+                        )
+  m.cate <- method_cate(K = K.method,
+                        )
 
 
   run_celiac <- function(m) {
@@ -3440,23 +3452,32 @@ On prend K = 9 variables lattentes.
     outlier <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
     dat <- LfmmMatterDat(Y, X, outlier)
 
-    cl <- parallel::makeCluster(nb.cluster, outfile = "")
-    doParallel::registerDoParallel(cl)
-    m <- ExpRmouline(m, dat)
-    doParallel::stopImplicitCluster()
-    parallel::stopCluster(cl)
-
-    df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
-    ## save expr
-    message("saving output")
     out.file <- paste0("celiac_df_", m$name, ".rds")
-    message(out.file)
-    save_expr(df, out.file)
+    out.file.path <- paste0("./OUTPUT/Expr/", out.file)
+    if (file.exists(out.file.path)) {
+      df <- readRDS(out.file.path)
+    } else {
+      message("run method")
+      cl <- parallel::makeCluster(nb.cluster, outfile = "")
+      doParallel::registerDoParallel(cl)
+      m <- ExpRmouline(m, dat)
+      doParallel::stopImplicitCluster()
+      parallel::stopCluster(cl)
+      df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
+      ## save expr
+      message("saving output")
+      message(out.file)
+      save_expr(df, out.file)
+    }
+    df
   }
 
+  res.df <- tibble()
   for (m in methods) {
-    run_celiac(m)
+    res.df <- run_celiac(m) %>%
+      rbind(res.df)
   }
+  save_expr(res.df, "celiac_all_df.rds")
 #+end_src
 
 #+RESULTS:
