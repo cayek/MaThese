@@ -1,7 +1,7 @@
 library(testthat)
 context("validation numerique article 3")
 
-test_that("validation numerique article 3 sur un petit sample", {
+test_that("true dataset article 3 sur un petit sample", {
 
   ## param
   K.method <- 25
@@ -83,4 +83,18 @@ test_that("validation numerique article 3 sur un petit sample", {
   venn.pl <- plot_venn(sets[1:5])
   grid.draw(venn.pl)
 
+})
+
+test_that("mutate_annotation", {
+
+  G.fake <- readRDS("./Data/ThesisDataset//3Article/Celiac/G_fake.rds")
+  candidates <- readRDS("./Data/ThesisDataset//3Article/Celiac/gwas_catalog_candidates.rds")
+  df <- tibble::tibble(snps = colnames(G.fake)[candidates])
+
+  df <- df %>%
+    mutate_annotation()
+
+  df %>%
+    dplyr::select(phenotype_name, phenotype_description, chr_name)
+  ## RMK: we retrieve CELIAC desease
 })

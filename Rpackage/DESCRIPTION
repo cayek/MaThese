@@ -12,7 +12,8 @@ Encoding: UTF-8
 Depends:
     R (>= 3.2.3)
 Suggests:
-    testthat
+    testthat,
+    biomaRt
 Imports:
     foreach,
     RSpectra,

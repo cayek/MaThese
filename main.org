@@ -2951,8 +2951,10 @@ CLOSED: [2017-07-11 mar. 14:36]
 [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 [[./OUTPUT/Rplots/eas_CV_K.png]]
 
-****** RUNNING Étude du jeu de données
+****** DONE Étude du jeu de données
+CLOSED: [2017-07-12 mer. 09:48]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-07-12 mer. 09:48]
 - Note taken on [2017-07-11 mar. 16:30] \\
   ca tourne sur krak !!
 - State "RUNNING"    from "TODO"       [2017-07-11 mar. 16:30]
@@ -3009,6 +3011,116 @@ CLOSED: [2017-07-11 mar. 14:36]
 
 #+end_src
 
+******* Charger l'experience
+#+BEGIN_SRC R
+  library(MaTheseR)
+  expr <- readRDS("./OUTPUT/Expr/EAS_all.rds")
+#+END_SRC
+******* Que donne la calibration ?
+#+BEGIN_SRC R
+  expr$df.res %>%
+    group_by(method) %>%
+    summarise(mad = mad[1], median = median[1])
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+  # A tibble: 7 x 3
+       method       mad     median
+        <chr>     <dbl>      <dbl>
+  1      cate 1.1636647 0.02952085
+  2      famt 0.7583801 0.54186725
+  3 lassoLFMM 0.9976638 0.01602369
+  4        lm 2.1461003 0.57581267
+  5     PCAlm 0.9873353 0.01161204
+  6 ridgeLFMM 1.1645450 0.03903020
+  7       sva 0.7385787 0.53293170
+#+end_example
+
+******* Les qqplots ?
+#+BEGIN_SRC R
+  toplot <- expr$df.res %>%
+    mutate(pvalue = calibrated.pvalue) %>%
+    dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
+  pl <- plot_qqplot(toplot)
+  save_plot_png(pl, "EAS_qqplots.png")
+  pl
+
+
+  ## all on the same graph
+  pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
+    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
+    geom_abline(slope = 1, intercept = 0)
+  save_plot_png(pll, "EAS_qqplots2.png")
+  pll
+#+END_SRC
+
+#+RESULTS:
+[[./OUTPUT/Rplots/EAS_qqplots.png]]
+[[./OUTPUT/Rplots/EAS_qqplots2.png]]
+
+******* Le top 15
+#+BEGIN_SRC R
+  toplot <- expr$df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_top(15)
+
+  pl <- plot_intersection(toplot, by = "colname", plot = "tile")
+  save_plot_png(pl, "eas_top_inter.png")
+#+END_SRC
+
+#+RESULTS:
+[[./OUTPUT/Rplots/eas_top_inter.png]]
+
+******* Contrôle du FDR à $0.01$
+#+BEGIN_SRC R
+  toplot <- expr$df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_threshold(0.01)
+
+  pl <- plot_intersection(toplot, by = "colname", plot = "point")
+  save_plot_png(pl, "eas_fdr01_inter.png")
+#+END_SRC
+
+#+RESULTS:
+[[./OUTPUT/Rplots/eas_fdr01_inter.png]]
+
+******* Venn diagram
+#+begin_src R 
+  toplot <- expr$df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_threshold(0.01) %>%
+    ungroup() 
+
+
+  sets <- list(lm = toplot$index[toplot$method == "lm"],
+               cate = toplot$index[toplot$method == "cate"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"]
+               )
+
+
+  out <- plot_venn(sets[2:5])
+
+  save_plot_png(out, "eas_fdr01_venn.png")
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/eas_fdr01_venn.png]]
+
+******* Annotation
+#+BEGIN_SRC R
+  toplot <- expr$df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_threshold(0.01) %>%
+    ungroup() 
+
+#+END_SRC
 ***** STARTED GWAS
 :LOGBOOK:
 - State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
@@ -3206,8 +3318,9 @@ On prend K = 9 variables lattentes.
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_K.png")
 #+end_src
-****** TODO Étude du jeu de données 
+****** STARTED Étude du jeu de données 
 :LOGBOOK:
+- State "STARTED"    from "TODO"       [2017-07-12 mer. 08:40]
 - State "TODO"       from              [2017-07-11 mar. 11:37]
 :END:
 
@@ -3256,13 +3369,14 @@ On prend K = 9 variables lattentes.
     m$score <- hp$score[,1:d, drop = FALSE]
     m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
 
+    ## keep column names
+    dat$Y <- dat.celiac$Y[1,, drop = FALSE]
+
     ## free memory
     rm(dat.celiac)
     rm(hp)
     gc()
 
-    ## read fake dat with colnames
-    dat$Y <- readRDS("./Data/ThesisDataset/3Article/Celiac/G_fake.rds")
     ExpRextractor_pvalue1_calibrated(dat, m, rep.sampler, rep.method)
   }
 
@@ -3274,21 +3388,37 @@ On prend K = 9 variables lattentes.
     message("saving output")
     out.file <- paste0("celiac_df_", m$name, ".rds")
     message(out.file)
-    save_expr(df.lm, out.file)
+    save_expr(df, out.file)
   }
 
   ## run lm
   run_celiac(m.lm)
 
   ## run ridgeLfmm
-  m <- m.ridgeLfmm
-  dat.clumped <- MatrixFactorizationR::LfmmDat(Y = Y, X = X, missing.ind = c())
-  m <- ExpRmouline(m, dat.clumped)
-  df <- ExpRextractor_celiac(dat, m., 1, 1)
-  ## save expr
-  save_expr(df, "celiac_lm.rds")
-
+  run_celiac(m.ridgeLfmm)
 #+end_src
+
+#+RESULTS:
+#+begin_example
+  > run_celiac(m.lm)
+  Empty dat!
+  done
+  Loading whole celia dataset !
+  done
+  Running hp
+  Such a big matrix ! 
+  done
+       pvalue   colname index outlier     score rep.sampler rep.method method
+  1 0.8476241 rs3934834     1   FALSE -0.192154           1          1     lm
+    method.K method.lambda
+  1       NA            NA
+  saving output
+  celiac_df_lm.rds
+  Expr save in ./OUTPUT/Expr/celiac_df_lm.rds
+  Warning message:
+  executing %dopar% sequentially: no parallel backend registered 
+#+end_example
+
 ***** DONE EWAS
 CLOSED: [2017-07-11 mar. 11:45]
 :LOGBOOK:
