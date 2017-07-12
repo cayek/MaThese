@@ -3416,30 +3416,37 @@ On prend K = 9 variables lattentes.
   K.method <- 9
   lambda <- 1e-5
   nozero.prop <- 0.005
+  nb.cluster <- 4
 
-  ## dat
-  Y <- "./Data/ThesisDataset/3Article/Celiac/G.matter.rds"
-  X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
+  ## mask
   col.mask <- readRDS("./Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
-  outlier <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
-  dat <- LfmmMatterDat(Y, X, outlier)
 
   ## methods
+  methods <- list()
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
   m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
                               lambda.K = 25, relative.err.epsilon = 1e-6)
-  m.lm <- method_lm(col.mask = col.mask,
-                    inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lm.rds",
-                    inter.res.file = "./OUTPUT/Expr/celiac_inter_lm.rds")
+  methods$m.lm <- method_lm(col.mask = col.mask,
+                            inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lm.rds",
+                            inter.res.file = "./OUTPUT/Expr/celiac_inter_lm.rds")
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
 
 
-
   run_celiac <- function(m) {
-    dat.clumped <- MatrixFactorizationR::LfmmDat(Y = Y, X = X, missing = FALSE)
-    m <- ExpRmouline(m, dat.clumped)
-    df <- ExpRextractor_pvalue1_calibrated(dat.clumped, m, 1, 1)
+    ## dat
+    Y <- "./Data/ThesisDataset/3Article/Celiac/G.matter.rds"
+    X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
+    outlier <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+    dat <- LfmmMatterDat(Y, X, outlier)
+
+    cl <- parallel::makeCluster(nb.cluster, outfile = "")
+    doParallel::registerDoParallel(cl)
+    m <- ExpRmouline(m, dat)
+    doParallel::stopImplicitCluster()
+    parallel::stopCluster(cl)
+
+    df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
     ## save expr
     message("saving output")
     out.file <- paste0("celiac_df_", m$name, ".rds")
@@ -3447,11 +3454,9 @@ On prend K = 9 variables lattentes.
     save_expr(df, out.file)
   }
 
-  ## run lm
-  run_celiac(m.lm)
-
-  ## run ridgeLfmm
-  run_celiac(m.ridgeLfmm)
+  for (m in methods) {
+    run_celiac(m)
+  }
 #+end_src
 
 #+RESULTS:
