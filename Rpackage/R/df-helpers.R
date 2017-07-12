@@ -27,7 +27,7 @@ mutate_annotation <- function(df,
                                              "phenotype_description")) {
 
   ## version of genome must match
-  listMarts()
+  biomaRt::listMarts()
 
   the.snps <- unique(df$snps)
 
