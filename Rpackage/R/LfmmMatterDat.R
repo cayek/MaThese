@@ -28,8 +28,8 @@ LfmmMatterDat <- function(X, Y, outlier) {
                                meta = list())
   ## outlier
   dat$meta$outlier <- c()
-  if (!is.null(s$outlier)) {
-    dat$meta$outlier <- MatrixFactorizationR::read_input(s$outlier)
+  if (!is.null(outlier)) {
+    dat$meta$outlier <- MatrixFactorizationR::read_input(outlier)
   }
   dat
 }
