@@ -1709,7 +1709,27 @@ Avec bigsnpr et xgboost
 #+begin_example
   [1] 2.356696e-17
 #+end_example
+*** DONE Conversion au format =matter=
+CLOSED: [2017-07-12 mer. 17:00]
+:LOGBOOK:
+- Note taken on [2017-07-12 mer. 17:00] \\
+  Ok c'est fait mais attention !!! ce qu'il y a avant risque de changer !!!
+- State "DONE"       from "STARTED"    [2017-07-12 mer. 17:00]
+- State "STARTED"    from              [2017-07-12 mer. 15:58]
+:END:
+#+BEGIN_SRC R
+  library(matter)
 
+  G <- readRDS("./Data/ThesisDataset/3Article/Celiac/G.rds")
+  G.matter <- matter::matter_mat(data = G,
+                                 nrow = nrow(G), ncol = ncol(G))
+  colnames(G.matter) <- colnames(G)
+  rownames(G.matter) <- rownames(G)
+  file.copy(paths(G.matter), "./Data/ThesisDataset/3Article/Celiac/G.matter.bin")
+  paths(G.matter) <- "./Data/ThesisDataset/3Article/Celiac/G.matter.bin"
+  ## G.matter <- matter_mat(path = "./Data/ThesisDataset/3Article/Celiac/G.matter.bin", nrow = 15155, ncol = 281122)
+  saveRDS(G.matter, "./Data/ThesisDataset/3Article/Celiac/G.matter.rds")
+#+END_SRC
 ** AT EWAS
 *** Téléchargement des données
 #+BEGIN_SRC R
@@ -2951,9 +2971,9 @@ CLOSED: [2017-07-11 mar. 14:36]
 [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 [[./OUTPUT/Rplots/eas_CV_K.png]]
 
-****** DONE Étude du jeu de données
-CLOSED: [2017-07-12 mer. 09:48]
+****** STARTED Étude du jeu de données
 :LOGBOOK:
+- State "STARTED"    from "DONE"       [2017-07-12 mer. 11:10]
 - State "DONE"       from "RUNNING"    [2017-07-12 mer. 09:48]
 - Note taken on [2017-07-11 mar. 16:30] \\
   ca tourne sur krak !!
@@ -3107,22 +3127,83 @@ CLOSED: [2017-07-12 mer. 09:48]
   out <- plot_venn(sets[2:5])
 
   save_plot_png(out, "eas_fdr01_venn.png")
+
+
+  ## see common snps
+  inter.list <- function(...) {
+    id <- list(...)
+    res <- sets[[id[[1]]]]
+    for (i in id) {
+      res <- base::intersect(res, sets[[i]])
+    }
+    res
+  }
+  sets <- sets[2:5]
+  candidates.snps.df <- toplot %>%
+    dplyr::filter(index %in% inter.list(1,2,3,4))
+  snps <- unique(candidates.snps.df$colname)
+  snps
+  ## annotation
+  require(biomaRt)
+
+  ## annotation
+  biomaRt::listMarts()
+  snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+  listFilters(snp.db)
+  listAttributes(snp.db)
+  att <- c("p_value", "ensembl_mart_snp")
+
 #+end_src
 
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_fdr01_venn.png]]
 
-******* Annotation
+******* TODO Annotation
+:LOGBOOK:
+- State "TODO"       from "DONE"       [2017-07-12 mer. 11:10]
+- State "DONE"       from              [2017-07-12 mer. 11:10]
+:END:
 #+BEGIN_SRC R
+  require(biomaRt)
+
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
+    dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM")) %>%
     filter_candidates_threshold(0.01) %>%
-    ungroup() 
+    ungroup()
+
+  ## annotation
+  biomaRt::listMarts()
+  snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+  listFilters(snp.db)
+  listAttributes(snp.db)
+  att
 
   toplot <- toplot %>%
-    mutate_annotation()
+    mutate(snps = colname) %>%
+    mutate_annotation(snp.db, att)
+
+  toplot %>%
+    dplyr::select(phenotype_description, phenotype_name) %>%
+    print.data.frame()
 #+END_SRC
+
+******* TODO manhattan plot
+:LOGBOOK:
+- State "TODO"       from              [2017-07-12 mer. 11:11]
+:END:
+#+begin_src R 
+  toplot <- expr$df.res %>%
+    dplyr::filter(method == "lassoLFMM")
+
+  pl <- ggplot(toplot, aes(x = index, y = -log(pvalue))) +
+    geom_point()
+  pl
+  ggplot(toplot, aes(pvalue)) +
+    geom_histogram()
+#+end_src
+
 ***** STARTED GWAS
 :LOGBOOK:
 - State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]

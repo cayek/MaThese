@@ -98,3 +98,4 @@ test_that("mutate_annotation", {
     dplyr::select(phenotype_name, phenotype_description, chr_name)
   ## RMK: we retrieve CELIAC desease
 })
+
