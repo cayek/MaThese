@@ -5,7 +5,8 @@ method_cate <- function(K, col.mask = NULL,
   TestRequiredPkg("cate")
   args <- list(K = K, col.mask = col.mask,
                inter.res.saving.file = inter.res.saving.file,
-               inter.res.file = inter.res.file)
+               inter.res.file = inter.res.file,
+               hp = hp)
   args$name = "cate"
   res <- do.call(ExpRmethod, args)
   class(res) <- c("method_cate", class(res))
@@ -32,9 +33,9 @@ ExpRmouline.method_cate <- function(m, dat) {
     m
   }
 
-  if (hp[1] == "cate") {
+  if (m$hp[1] == "cate") {
     method_main(m, dat, main.fun, hp.func = NULL)
-  } else if (hp[1] == "lm") {
+  } else if (m$hp[1] == "lm") {
     method_main(m, dat, main.fun, hp.func = MatrixFactorizationR::hypothesis_testing_lm)
   }
 }

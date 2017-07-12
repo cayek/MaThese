@@ -3437,7 +3437,8 @@ On prend K = 9 variables lattentes.
   m.cate <- method_cate(K = K.method,
                         col.mask = col.mask,
                         inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
-                        inter.res.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds"
+                        inter.res.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
+                        hp = "lm"
                         )
   m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
                               lambda.K = 25, relative.err.epsilon = 1e-6,
@@ -3447,6 +3448,7 @@ On prend K = 9 variables lattentes.
                               )
 
   run_celiac <- function(m) {
+    message("=============== ", m$name)
     ## dat
     Y <- "./Data/ThesisDataset/3Article/Celiac/G.matter.rds"
     X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
@@ -3456,14 +3458,14 @@ On prend K = 9 variables lattentes.
     out.file <- paste0("celiac_df_", m$name, ".rds")
     out.file.path <- paste0("./OUTPUT/Expr/", out.file)
     if (file.exists(out.file.path)) {
+      message("Reading ", out.file.path)
       df <- readRDS(out.file.path)
     } else {
-      message("run method")
+      message("Running method")
       m <- ExpRmouline(m, dat)
       df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
       ## save expr
-      message("saving output")
-      message(out.file)
+      message("Saving output in ", out.file)
       save_expr(df, out.file)
     }
     df
