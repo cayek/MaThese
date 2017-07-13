@@ -3433,14 +3433,14 @@ On prend K = 9 variables lattentes.
                             inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lm.rds",
                             inter.res.file = "./OUTPUT/Expr/celiac_inter_lm.rds")
   methods$m.pca <- method_PCAlm(K = K.method,
-                        col.mask = col.mask,
-                        inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
-                        inter.res.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds"
-                        )
+                                col.mask = col.mask,
+                                inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_PCAlm.rds",
+                                inter.res.file = "./OUTPUT/Expr/celiac_inter_PCAlm.rds"
+                                )
   methods$m.cate <- method_cate(K = K.method,
                         col.mask = col.mask,
-                        inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
-                        inter.res.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
+                        inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_cate.rds",
+                        inter.res.file = "./OUTPUT/Expr/celiac_inter_cate.rds",
                         hp = "lm"
                         )
   methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,

@@ -12,6 +12,7 @@ method_main <- function(m, dat, main.fun, hp.func = NULL) {
     message("Reading intermediate res from", m$inter.res.file)
     m <- readRDS(m$inter.res.file)
   } else {
+    message("Computing latent variables")
     res <- main.fun(m, dat)
     m[names(res)] <- res
   }
