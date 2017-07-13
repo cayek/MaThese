@@ -1542,11 +1542,49 @@ Note: No phenotypes present.
 ... done.
 
 #+end_example
-*** Conversion au format R
+*** Conversion dans format utilisable en R
 
 Nous avons utilisé le package bigsnpr pour convertir les données du format
 =.bed= à un format de matrice R.
 
+**** STARTED Données non prunnées
+:LOGBOOK:
+- State "STARTED"    from "RUNNING"    [2017-07-13 jeu. 12:29]
+- Note taken on [2017-07-13 jeu. 11:57] \\
+  Après ca on va creer la matrice matter par block !! Et il faudra calculer les
+  indice du prinning et aussi les indice sur les individus !!!
+- Note taken on [2017-07-13 jeu. 11:57] \\
+  Ca tourne sur mon pc fixe :D
+- State "RUNNING"    from "TODO"       [2017-07-13 jeu. 11:57]
+- State "TODO"       from              [2017-07-13 jeu. 08:59]
+:END:
+Nous allons utiliser =matter=
+#+BEGIN_SRC R
+  library(bigsnpr)
+  setwd("./Data/1000Genomes/Phase3/plink/")
+  bedfile <- "1000GenomePhase3_QC_norel.bed"
+
+  snp_readBed(bedfile, "1000GenomePhase3", backingpath = "backingfiles_norel")
+
+  genome1000 <- snp_attach("backingfiles_norel/1000GenomePhase3.rds")
+  dim(genome1000$genotypes)
+
+  ## convert in matter format
+  library(matter)
+  G.matter <- matter_mat(nrow = nrow(genome1000$genotypes),
+                         ncol = ncol(genome1000$genotypes))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+  > dim(genome1000$genotypes)
+  [1]     919 5398440
+#+end_example
+
+**** TODO Données prunnées
+:LOGBOOK:
+- State "TODO"       from              [2017-07-13 jeu. 12:29]
+:END:
 #+begin_src R :results output :exports both
   library(bigsnpr)
   setwd("./Data/1000Genomes/Phase3/plink")
@@ -1592,7 +1630,19 @@ Nous avons utilisé le package bigsnpr pour convertir les données du format
   > dim(G)
   [1]    919 345156
 #+end_example
-*** Scaling des données
+
+On veut récuperer les noms des collones restantes 
+#+BEGIN_SRC R
+  library(bigsnpr)
+  setwd("./Data/1000Genomes/Phase3/plink")
+  genome1000 <- snp_attach("backingfiles/1000GenomePhase3.rds")
+
+#+END_SRC
+
+*** TODO Scaling des données
+:LOGBOOK:
+- State "TODO"       from              [2017-07-13 jeu. 12:29]
+:END:
 Pour certaine analyse il est important de scaler les données. 
 
 #+begin_src R :results output :exports both
@@ -1601,7 +1651,10 @@ Pour certaine analyse il est important de scaler les données.
 
   saveRDS(G, "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled.rds")
 #+end_src
-*** Filtrage des données manquantes
+*** TODO Filtrage des données manquantes
+:LOGBOOK:
+- State "TODO"       from              [2017-07-13 jeu. 12:29]
+:END:
 Il reste certain SNPs avec des données manquantes ($0.7 \%$), nous les avons enlevé.
 #+begin_src R :results output :exports both
   library(MaTheseR)
@@ -2712,6 +2765,11 @@ des individus nous avons choisi d'utiliser la base wordclim
 **** Description des expériences
 ***** RUNNING Comparaisons numériques sur des simulations
 :LOGBOOK:
+- Note taken on [2017-07-13 jeu. 12:06] \\
+  Je l'ai relancé avec moins de rep pourle sampler ! ca prendra moins de place en
+  mémoire !!!
+- Note taken on [2017-07-13 jeu. 08:55] \\
+  Ca prend 50 % de la mémoire !!!!! C'est par ce qu'il y a beaucoup de données !!
 - Note taken on [2017-07-12 mer. 19:39] \\
   je fais tourner la simu final !!!
 - State "RUNNING"    from "STARTED"    [2017-07-12 mer. 19:39]
@@ -2766,7 +2824,7 @@ générative.
   ## param
   K.method <- 5
   nb.cluster <- 8
-  rep.nb.sampler <- 10
+  rep.nb.sampler <- 5
 
   ## sampler
   s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
@@ -3404,8 +3462,11 @@ On prend K = 9 variables lattentes.
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_K.png")
 #+end_src
-****** STARTED Étude du jeu de données 
+****** RUNNING Étude du jeu de données 
 :LOGBOOK:
+- Note taken on [2017-07-13 jeu. 08:55] \\
+  C'est reparti sur krak !!
+- State "RUNNING"    from "STARTED"    [2017-07-13 jeu. 08:55]
 - State "STARTED"    from "TODO"       [2017-07-12 mer. 08:40]
 - State "TODO"       from              [2017-07-11 mar. 11:37]
 :END:
@@ -3425,13 +3486,13 @@ On prend K = 9 variables lattentes.
 
   ## methods
   methods <- list()
+  methods$m.lm <- method_lm(col.mask = col.mask,
+                            inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lm.rds",
+                            inter.res.file = "./OUTPUT/Expr/celiac_inter_lm.rds")
   methods$m.ridgeLfmm <- method_ridgeLFMM(K = K.method,
                                   col.mask = col.mask,
                                   inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_ridgelfmm.rds",
                                   inter.res.file = "./OUTPUT/Expr/celiac_inter_ridgelfmm.rds")
-  methods$m.lm <- method_lm(col.mask = col.mask,
-                            inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lm.rds",
-                            inter.res.file = "./OUTPUT/Expr/celiac_inter_lm.rds")
   methods$m.pca <- method_PCAlm(K = K.method,
                                 col.mask = col.mask,
                                 inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_PCAlm.rds",
@@ -3939,5 +4000,4 @@ bibliography:../biblio.bib
   être que c'est pas la peine de se prendre la tête... Surtout que la cross
   validation j'en aurai deja parlé !
 :END:
-
 
