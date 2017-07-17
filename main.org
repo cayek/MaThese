@@ -27,7 +27,7 @@
 #+latex_header: \newtheorem{corollaire}{Corollaire}
 
 #  LocalWords:  methylation polymorphism nucleotide Frobenius invertible SNP
-#  LocalWords:  preprocessing dataset RidgeLFMM LassoLFMM
+#  LocalWords:  preprocessing dataset RidgeLFMM LassoLFMM hyperparamètre
 
 #+BEGIN_QUOTE
 In Code we trust, all others bring data.
@@ -1939,6 +1939,7 @@ Pour certaine analyse il est important de scaler les données.
 *** Introduction
 *** Méthodes 
 **** Modèle 
+<<sec:model>>
 Nous introduisons dans cette partie le modèle et les notations. La plupart des
 méthodes d'ajustement pour les facteurs de confusions repose sur le modèle
 suivant  
@@ -1973,6 +1974,7 @@ nous considérerons $\U$ et $\V$ comme étant les matrices uniques obtenues grâ
 à l'analyse en composante principale de la matrice latente $\W$.
 
 **** Estimation des moindres carrées régularisés en norme $L_{2}$
+<<sec:estimator_L2>>
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 16:21] \\
   faire bien le lien avec le mpdèle PCA +  lm et lambda = 0 implique on n'a pas de
@@ -2134,6 +2136,7 @@ est un point de minimum global de $\Lridge$.
 
 
 **** Estimation des moindres carrées régularisés en norme $L_{1}$  
+<<sec:estimator_L1>>
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 14:47] \\
   Faire le lien avec les methodes de low rank approximation
@@ -2256,7 +2259,7 @@ L'algorithme décrit dans la parie [[sec:lasso_algo]] converge vers un point de
 minimum global de la fonction $\Llasso$ définie par eqref:eq:optim_lasso_reg.
 #+END_corollaire
 
-**** Choice of hyper-parameters
+**** Choix des hyperparamètres 
 <<sec:hyperparametre>>
 :LOGBOOK:
 - Note taken on [2017-05-25 Thu 11:52] \\
@@ -2272,9 +2275,102 @@ minimum global de la fonction $\Llasso$ définie par eqref:eq:optim_lasso_reg.
   l'arrache avant etc...
 :END:
 
-LassoLFMM and RidgeLFMM method results depend on two kinds of hyper-parameter,
-the number of latent factors and the regularization parameters. We present here
-practice solutions to assess these hyper-parameters. 
+La sélections des hyperparamètres est un problème très fréquents en analyse de
+données. Nous présentons plusieurs approches pratiques pour choisir les
+hyperparamètre qui interviennent dans les algorithmes que nous présenté ici.
+Nous commençons par présenter les différentes approches possible pour choisir le
+nombre de variables latentes $K$. Nous présentons ensuite plusieurs heuristiques
+qui permettent de choisir les paramêtres de régularisation. Enfin nous présentons
+un algorithmes de cross validation adapté aux algorithmes que nous avons
+présentés.
+
+***** Nombre $\K$ de variables latentes
+Nous avons vu dans la section [[sec:estimator_L2]] que la matrice latente peut être
+estimée grâce à l'analyse en composante principale (ACP) de $\D
+\Q^{T} \Y$. Ainsi, nous proposons d'employer les techniques d'estimation
+du nombre variables latentes utilisées pour le modèle de l'ACP sur la matrice
+$\D \Q^{T} \Y$ afin d'estimer le nombre $\K$ de variable latente
+pour le modèle LFMM.
+
+Il existe de nombreuses approches pour déterminer le nombre de composantes
+principales de l'ACP, celle-ci sont très bien expliqué dans
+cite:jolliffe1986principal. On peut grouper ses approche en trois catégories.
+Les approches subjective comme l'utilisation du scree plot, il s'agit du graphes
+des valeurs singulières. Les approches basé sur une modélisation de la
+distribution des données observées, comme par exemple la méthode présenté dans
+cite:choi2014selecting. Les approches basées sur la validation croisée, comme
+celle que nous détaillons plus loin. 
+
+Aucune méthode ne s'est imposé comme la référence, et il est préférable d'en
+utiliser plusieurs. Ainsi, l'utilisateur peut utiliser différentes méthodes sur
+la matrice $\D \Q^{T} \Y$ pour différente valeurs de $\lambda$ le paramètre de
+régularisation $L_{2}$. 
+
+***** Paramètre de régularisation $L_{2}$
+Le paramètre de régularisation $L_{2}$ intervient dans le calcule de
+l'estimation de la matrice latente décrit dans la partie [[sec:estimator_L2]] par le
+biais de la matrice diagonal $\D$. Cette matrice permet de réduire la
+corrélation entre les variables expliquées $\Y$ et les variables explicatives
+$\X$ afin de pouvoir estimer les variables latentes. 
+
+Si le paramètre de régularisation $L_{2}$ tend vers zéro, les variables expliqué
+et explicative seront linéairement décorrélé. Cependant on ne pourra plus inverser
+la matrice diagonale $\D$. De plus dans le cas ou les variable latentes sont
+trop corrélé avec $\X$ alors on risque de mal estimer celles-ci. 
+
+Si le paramètre tend vers l'infini alors la matrice $\D$ tend vers la matrice
+identité l'estimation des variables latentes sont données pas l'analyse en
+composante principale de $\Y$.
+
+Ainsi le choix de du paramètre de régularisation $L_{2}$ est une affaire de
+dosage, il doit être ni trop grand ni trop petit. Nous avons remarqué dans les
+expériences que $\lambda$ petit donne les meilleurs résultats dans de nombreux
+cas.
+
+***** Paramètre de régularisation $L_{1}$
+Le paramètre de régularisation $L_{1}$ à un impacte sur le nombre de ligne non
+nulle dans la matrice des effets $\B$. Nous savons à priori que seulement une
+partie des variable expliqué sont corrélé avec les variables explicatives.
+Ainsi, il est possible d'interpréter la proportion de ligne non nulle dans $\B$
+comme la proportion des variables qui sont corrélé avec $\X$. Ainsi plutôt que
+de choisir le paramètre de régularisation, il est plus simple de choisir la
+proportion de variable expliqué par $\X$. Pour trouver un lambda qui correspond a
+cette proportion nous proposons une heuristique basé sur un chemin de
+régularisation inspiré par cite:friedman10_regul_paths_gener_linear_model. 
+
+Nous commençons par la plus petite valeur du paramètre de régularisation
+$\lambda$ tel que le vecteur
+\begin{equation}
+\bar{\B}_{t} = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (\matr{E}^{1}_{t = 1})
+\end{equation}
+vaut zéro. Ceci est le résultat de la première étape de l'algorithme
+d'estimation des moindes carré régularisé en norme $L_{1}$ présenté dans la
+partie [[sec:estimator_L1]]. Nous notons cette valeur $\lambda_{\mathrm{max}}$.
+Ensuite, nous construisons une séquence $m$ valeurs de $\lambda$ décroissant
+selon une échelle logarithme depuis $\lambda_{\mathrm{max}}$ jusqu'à
+\begin{equation}
+\lambda_{\mathrm{min}} = \epsilon \lambda_{\mathrm{max}}.
+\end{equation}
+Nous calculons le nombre de valeurs non nulle dans $\hat{\B}$ l'estimation de la
+matrice des effets et stop si la proportion de valeurs non nulle souhaitée est dépassée.
+
+
+***** Paramètre de régularisation de la norme nucléaire
+Le paramètre de régularisation de la norme à une influence sur le rang nucléaire de la
+matrice latente $\W$. Il est plus simple d'un point de vu utilisateur de choisir
+le rang de cette matrice, qui correspond au nombre de variables latentes $K$,
+que de choisir le paramètre de régularisation $\gamma$. En effet cela permet
+d'utiliser la même valeur de $K$ pour l'estimation $L_{1}$ que celle utilisé
+pour l'estimation $L_{2}$. 
+
+Nous proposons l'heuristique suivante pour calculer $\gamma$ à partir de $K$.
+Nous commençons par caculer les valeurs singulières de la matrice des variables
+expliquées $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, 
+\begin{equation}
+\gamma = \frac{(\sigma_{\K} + \sigma_{\K + 1})}{2}.
+\end{equation}
+
+
 
 ***** Cross validation
 :LOGBOOK:
@@ -2333,108 +2429,6 @@ Finally, we compute the residual error on the test set such as
 Err = \norm{ \Y^{i}_{(j)} + \X^{(i)}} \B^{(-i)_{(j)} + \U^{(i)}_{(-j)} \V^{(-i)}
 \end{equation}
 
-***** Choice of K using singular value
-Methods presented in this paper are very close to the Principal Component
-Analysis (PCA), we can seen them as a PCA of $$\Y - \X \B^{T}$$ if we know the
-primary effect matrix $\B$. Thus we propose to select the number of latent variables
-$\K$ by visualizing the scree plot.
-
-We empirically observed that this method leads to an overestimated number of
-factor in the model described in eqref:eq:model since the co-variate would be
-considered as a latent variable. However, because the goal of our methods is to
-estimate latent variation while protecting variation explained by co-variate $\X$,
-we observed that our algorithms was robust to overestimated $\K$.
-
-***** Heuristic to choice of $\lambda$ for RidgeLFMM
-:LOGBOOK:
-- Note taken on [2017-06-01 jeu. 12:03] \\
-  et la on fait le lien avec le model de cate :D
-- Note taken on [2017-05-26 Fri 14:45] \\
-  voir mon cahier (30/01/2017) et il va falloir normaliser lambda ?? a voir !!C'est chiant car
-  j'ai deja lancé les experiences !!
-:END:
-In our experiments, we remarked that low values of $\lambda$ gave better
-results. We try here to give insights to understood this remark.
-
-Firstly we write the oblique projection of model equation eqref:eq:model as follow
-\begin{equation}
-\sqrt{\obP} \Y = \sqrt{\obP} (\U \V^{T} + \E)+ \sqrt{\obP} X \B^{T}.
-\end{equation}
-When $\lambda$ is close to zero the term 
-\begin{equation}
-\label{eq:obPXB}
-\sqrt{\obP} X \B^{T}
-\end{equation}
-tends to zero. Thus if the latent score stored in $\U$ was not correlated with
-$\X$ we must chose $\lambda$ equal zero and compute latent factors and primary
-effects separately. As identified in cite:wang2015confounder, the complicated
-case is when latent variables $\U$ and primary variables $\X$ are correlated. In
-this case we want $\lambda$ to be small enough such that eqref:eq:obPXB tends
-to zero and the SVD in ref:eq:RidgeLfmmEstomatorC to extract only the
-latent variables. But if $\lambda$ is to close to zero the latent variables
-should be hard to estimate with SVD in particular if there are highly correlated
-with $\X$ and the number of output variables correlated with X is high.
-
-We observed that for a centered and normalized output and primary matrices $\Y$
-and $\X$, $\lambda = \frac{1}{\Yrow} 10^{-5}$ provided good results in our
-experiments.
-
-****** COMMENT cate model
-In the article of \MethodCate method cite:wang2015confounder, authors propose to
-explicitly model the relationship between the factor score matrix $\U$ and the
-primary variables matrix $\X$. They assume that there is a linear relationship
-between $\U$ and $\X$ such as 
-\begin{equation}
-\label{eq:CorUX}
-\U = \X \matr{\alpha}^{T} + \matr{W},
-\end{equation}
-where
-$\W$ is a $\Urow \times \K$ residual error matrix independent of $\X$ and $\E$
-and $matr{\alpha}$ $\Xcol \times \Ucol$ characterizes the linear relationship
-between $\U$ and $\X$. If $\matr{\alpha}$ is null, there is no problem of
-confounding and $\U$, $\V$ and $\X$ can be estimated separately.  
-
-***** Heuristic to choice of $\gamma$ for LassoLFMM
-This hyper-parameter impact the rank of the $C$ matrix. To assess the gamma
-value we compute singular values of $\Y$ $(\sigma_1, ..., \sigma_{\Yrow})$. Then
-we set
-$$
-\gamma = \frac{(\sigma_{\K} + \sigma_{\K + 1})}{2} 
-$$
-for $K$ the chosen number of latent factors. In our experiments, we observed
-that for such computed $\gamma$ the rank of $\C$ returned by lasso algorithm was
-$K$.
-
-
-***** Heuristic to choice of $\lambda$ for LassoLFMM
-:LOGBOOK:
-- Note taken on [2017-06-13 Mar 15:21] \\
-  changer dans le papier et dans le code + introduire la svd soft dans le papier !!
-- Note taken on [2017-06-13 Mar 15:20] \\
-  ce qui est implementé c'est reg de G - C avec la svd du couo il faut que je
-  commence par la svd pas par la reg linear !!!
-:END:
-This hyper-parameter impact the number of line set to zero in $B$. We know that
-only a part of observe variable $G_j$ are correlated with the variable $X$. So
-we can interpret the proportion on non zero line in $B$ as the proportion of
-variables which correlate with $X$. To find the lambda which correspond to the
-proportion we propose an heuristic based on a regularization path of lambda
-value inspired by cite:friedman10_regul_paths_gener_linear_model. 
-
-We start with the smallest value of $\lambda$ such that the entire vector $$
-\hat{\B} = \mathrm{argmin} \norm{(\Y - \C_{t = 1}) - \X \B^{T}} + \lambda |B|$$ equal
-zero, here $$\Y - \C_{t = 1}$$ is residual of the singular value shrinkage
-operator. This is the result of the lasso algorithm first step explain in
-section [[sec:lasso_algo]].
-
-Then we construct a sequence of m values of $\lambda$ decreasing from
-$\lambda_{\mathrm{max}}$ to $\lambda_{\mathrm{min}}$ on the log scale. Typical
-values are \epsilon = 0.001 and K = 100. The algorithm is run for decreasing
-value of this sequence. Each time the algorithm converges for a $\lambda$ we
-compute the number of non zero line in the computed $\B$ and stop if the
-interested proportion of non zero in $\B$ is reached. Otherwise we continue with
-the following value of $\lambda$ is the sequence.
-
 **** Hypothesis testing
 :LOGBOOK:
 - Note taken on [2017-05-25 Thu 11:55] \\
@@ -2484,6 +2478,7 @@ empirical calibration for the variance and the mean of statistical test. In
 particular, as in cite:wang2015confounder,gerard2017unifying, we used the median
 and the mad as robust estimators of the mean and standard deviation of
 statistical test under the null hypothesis.
+
 
 *** Expériences                                                  :noexport:
 :PROPERTIES:
@@ -2763,8 +2758,12 @@ des individus nous avons choisi d'utiliser la base wordclim
 #+end_example
 
 **** Description des expériences
-***** RUNNING Comparaisons numériques sur des simulations
+***** DONE Comparaisons numériques sur des simulations
+CLOSED: [2017-07-17 Lun 08:13]
 :LOGBOOK:
+- Note taken on [2017-07-17 Lun 08:14] \\
+  C'est bon c'est fini ! Il faudra regarder les plots !
+- State "DONE"       from "RUNNING"    [2017-07-17 Lun 08:13]
 - Note taken on [2017-07-13 jeu. 12:06] \\
   Je l'ai relancé avec moins de rep pourle sampler ! ca prendra moins de place en
   mémoire !!!
@@ -2889,9 +2888,6 @@ générative.
   [[./OUTPUT/Rplots/validation_numerique_gif.png]]
 #+end_example
 
-****** anova
-
-****** plot all
 ***** TODO Influence de lambda sur les estimations
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 13:53] \\
@@ -3462,8 +3458,12 @@ On prend K = 9 variables lattentes.
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_K.png")
 #+end_src
-****** RUNNING Étude du jeu de données 
+****** DEBUG Étude du jeu de données 
 :LOGBOOK:
+- State "DEBUG"      from "DONE"       [2017-07-17 Lun 08:18]
+- State "DONE"       from "RUNNING"    [2017-07-17 Lun 08:18]
+- Note taken on [2017-07-17 Lun 08:18] \\
+  lasso c'est planté !! il faudra le relancer mais le reste est OK !!
 - Note taken on [2017-07-13 jeu. 08:55] \\
   C'est reparti sur krak !!
 - State "RUNNING"    from "STARTED"    [2017-07-13 jeu. 08:55]
@@ -3545,23 +3545,48 @@ On prend K = 9 variables lattentes.
 
 #+RESULTS:
 #+begin_example
-  > run_celiac(m.lm)
-  Empty dat!
-  done
-  Loading whole celia dataset !
-  done
-  Running hp
-  Such a big matrix ! 
-  done
-       pvalue   colname index outlier     score rep.sampler rep.method method
-  1 0.8476241 rs3934834     1   FALSE -0.192154           1          1     lm
+  unmask data
+  running hp
+       pvalue   colname index outlier     score rep.sampler rep.method    method
+  1 0.4774726 rs3934834     1   FALSE 0.7103911           1          1 ridgeLFMM
     method.K method.lambda
-  1       NA            NA
-  saving output
-  celiac_df_lm.rds
-  Expr save in ./OUTPUT/Expr/celiac_df_lm.rds
-  Warning message:
-  executing %dopar% sequentially: no parallel backend registered 
+  1        9         1e-04
+  Saving output in celiac_df_ridgeLFMM.rds
+  Expr save in ./OUTPUT/Expr/celiac_df_ridgeLFMM.rds
+  =============== PCAlm
+  Running method
+  mask data
+  Computing latent variables
+  Saving intermediate res into./OUTPUT/Expr/celiac_inter_PCAlm.rds
+  unmask data
+  running hp
+      pvalue   colname index outlier    score rep.sampler rep.method method
+  1 0.212448 rs3934834     1   FALSE 1.246915           1          1  PCAlm
+    method.K method.lambda
+  1        9            NA
+  Saving output in celiac_df_PCAlm.rds
+  Expr save in ./OUTPUT/Expr/celiac_df_PCAlm.rds
+  =============== cate
+  Running method
+  mask data
+  Computing latent variables
+  Saving intermediate res into./OUTPUT/Expr/celiac_inter_cate.rds
+  unmask data
+  running hp
+       pvalue   colname index outlier     score rep.sampler rep.method method
+  1 0.6707667 rs3934834     1   FALSE 0.4251043           1          1   cate
+    method.K method.lambda
+  1        9            NA
+  Saving output in celiac_df_cate.rds
+  Expr save in ./OUTPUT/Expr/celiac_df_cate.rds
+  =============== lassoLFMM
+  Running method
+  mask data
+  Computing latent variables
+  Error in envRefSetField(x, what, refObjectClass(x), selfEnv, value) :
+    ‘missing.ind’ is not a field in class “LfmmMatterDat”
+  > save_expr(res.df, "celiac_all_df.rds")
+  Expr save in ./OUTPUT/Expr/celiac_all_df.rds
 #+end_example
 
 ***** DONE EWAS
@@ -3914,6 +3939,8 @@ CLOSED: [2017-07-11 mar. 11:45]
 :END:
 **** TODO Comparaisons des méthodes
 :LOGBOOK:
+- Note taken on [2017-07-17 Lun 08:15] \\
+  L'experience est fini il faut faire le plot et l'anova !!!
 - State "TODO"       from              [2017-07-06 jeu. 15:24]
 :END:
 #+begin_src R
@@ -3944,7 +3971,10 @@ CLOSED: [2017-07-11 mar. 11:45]
 
 [[./OUTPUT/Rplots/method_comp.png]]
 
-**** GWAS
+**** TODO GWAS
+:LOGBOOK:
+- State "TODO"       from              [2017-07-17 Lun 08:16]
+:END:
 **** TODO EWAS
 :LOGBOOK:
 - State "TODO"       from              [2017-07-10 lun. 15:49]
@@ -3976,7 +4006,10 @@ CLOSED: [2017-07-11 mar. 11:45]
 
 [[./OUTPUT/Rplots/ewas_results_venn.png]]
 
-**** EAS
+**** TODO EAS
+:LOGBOOK:
+- State "TODO"       from              [2017-07-17 Lun 08:16]
+:END:
 *** Références
 
 bibliographystyle:unsrt
