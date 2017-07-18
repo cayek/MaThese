@@ -36,6 +36,12 @@ In Code we trust, all others bring data.
 
 * Introduction
 :LOGBOOK:
+- Note taken on [2017-07-18 Tue 15:11] \\
+  une remarque en passant: l'intro est pour moi la place pour définir le contexte
+  général, les mots du titre, la pbq et le plan qui y répond ! 
+  Ce n'est pas la que je fait un état de l'art. L'état de l'art est dans les deux
+  grosse partis ! C'est deux grosse parties sont indépendantes l'une de l'autre !
+  Donc si il y a des répétition, tant pis !!
 - Note taken on [2017-06-09 ven. 16:37] \\
   Il faut que j'ai travailler sur deux méthodes ! Les deux répondes à deux
   problématique différentes et le tout s'inscrit dans un besoin t'outils adapté à
@@ -86,7 +92,11 @@ factorisation de matrice en statistique.
 - Note taken on [2017-06-07 Mer 14:42] \\
   - analyse de la structure de variance covariance: PCA
   - analyse de la structure de population: structure, snmf, etc
+
+ En faite je ne vais def ca ici ! c'est juste le genet des pops ici !!
   - ewas: refactor
+  - gwas: gemma etc
+  - eas: ...
 :END:
 ** Test d'association
 ** La factorisation de matrice en statistique
@@ -95,7 +105,7 @@ factorisation de matrice en statistique.
   Kenneth lange, factorisation de matrice = avenir des stat ! a retrouver !
 :END:
 ** Problématique et plan
-* Données 
+* Données                                                          :noexport:
 Nous décrivons dans cette partie les données réelles qui sont analysée dans
 cette thèse. Afin de rendre les analyse le plus possible reproductible
 reproductible, nous décrivons les étapes de pré traitement qui ont été affecté
@@ -1923,6 +1933,12 @@ Pour certaine analyse il est important de scaler les données.
 
 * Inférence rapide des coefficients de métissage à l'aide des données géographique
 :LOGBOOK:
+- Note taken on [2017-07-18 Tue 15:07] \\
+  Non je ne vais pas avoir le temps, je vais traduire l'article, étoffer un peu
+  et basta. Je mettrais en perspective le traitement des données manquantes pour
+  tess3r et sur un très gros dataset si j'ai le temps (1001 genome, avec une
+  analyse de la population et une association environmental, pour ilustrer les
+  deux feature gros dataset et NA)
 - Note taken on [2017-06-05 Mon 13:44] \\
   Ce qui serais stylé c'est d'ajouté une cross validation propre pour tess3 :D, et
   de relancer les analyse sur AT, voir pk pas sur les très gros dataset AT :D !!!
@@ -1931,15 +1947,7 @@ Pour certaine analyse il est important de scaler les données.
   analyse mais très proprement :D, y compris pour l'étude stat à la fin
   (recalibration propre !)
 :END:
-** Detection de la structure de population
-** Test adaptation local 
-** presentation de l'article 1
 * Estimation des facteurs latents pour corriger les test d'association :3Article:
-** before article 2
-*** Les tests d'hypothèse multiple
-*** Les modèle a facteur lattents pour ca
-*** presentation de l'article 2
-** Article
 *** Introduction
 *** Méthodes 
 **** Modèle 
@@ -2267,7 +2275,7 @@ minimum global de la fonction $\Llasso$ définie par eqref:eq:optim_lasso_reg.
 Dans cette partie nous abordons la complexité des algorithmes d'estimation des
 paramètre que nous avons introduit dans les parties [[sec:estimator_L2]] et
 [[sec:estimator_L1]]. On peut distinguer deux grandes étapes présents dans les
-algorithmes d'estimation $L_{1}$ et $L_{2}$. La première est le calcule de la
+algorithmes d'estimation $L_{1}$ et $L_{2}$. La première est le calcul de la
 décomposition en valeur singulière tronqué (voir le calcule de la matrice
 latente donné par l'équation eqref:eq:RidgeLfmmEstomatorW pour l'estimation
 $L_{2}$ et la résolution du problème d'optimisation de la fonction
@@ -2278,30 +2286,34 @@ l'équation eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$ et la
 résolution du problème d'optimisation de la fonction $\mathcal{L}_{lasso}^{2}$
 définie par eqref:eq:lasso1 pour l'estimation $L_{1}$).
 
-D'après cite:Halko_2011, le calcul des $K$ composante dominante de la
-décomposition en valeur singulière demande $O(\Yrow \Ycol \K)$ opérations. Cette
-complexité temporelle peut même être réduite à $O(\Yrow \Ycol \log(\K))$ si on
-utilise une méthode avec projections aléatoires. 
+D'après cite:Halko_2011, le calcul des $K$ composantes dominantes de la
+décomposition en valeurs singulières demande $O(\Yrow \Ycol \K)$ opérations.
+Cette complexité temporelle peut même être réduite à $O(\Yrow \Ycol \log(\K))$
+si on utilise une méthode avec projections aléatoires.
 
 La deuxième étape importante des algorithmes que nous avons présenté est l'étape
-de projection du résidu de l'aproximation matricielle de rang faible sur
-l'espace engendré par $\X$. Si on prend en compte toutes les opérations
-matricielle, cette étape nécéssite $O(\Xcol (\Yrow \Ycol + \K (\Yrow + \Ycol) +
-\Xcol ( \Xcol + \Yrow + \Ycol + 1))$.
+de projection du résidu de l'approximation de rang faible sur l'espace engendré
+par $\X$. Si on prend en compte toutes les opérations matricielles, cette étape
+nécessite $O(\Xcol (\Yrow \Ycol + \K (\Yrow + \Ycol) + \Xcol ( \Xcol + \Yrow +
+\Ycol + 1))$.
 
-Finalement, si on prend en compte les opération matricielle restantes dans les
-deux algorithmes, le nombre d'opération est de l'ordre de $O(\Yrow \Ycol \K)$.
-L'algorithme d'estimation $L_{1}$ est bien sur plus long car il réalise
-plusieurs fois (ce nombre de fois dépend de la vitesse a laquel l'algorithme
-itératif converge) les opération de décompostion en valeur singuière et de
-projection alors que l'algorithme ne les réalise qu'une seul fois.
+Finalement, si on considère les opération restantes dans les deux algorithmes,
+le nombre d'opération est de l'ordre de $O(\Yrow \Ycol \K)$. L'algorithme
+d'estimation $L_{1}$ est bien entendu plus long car il réalise plusieurs
+fois (le nombre d'itérations dépend de la vitesse à laquelle
+l'algorithme converge) les opérations de décomposition en valeur
+singulière et de projection alors que l'algorithme ne les réalise qu'une seul
+fois.
 
-Enfin il est important de signaler que les algorithmes d'éstimation $L_{1}$ et
-$L_{2}$ ne nécésssite pas de dupliquer matrice des variables explicatives n'est
-pas dupliqué en mémoire. En effet, la matrice $\Y$ est de taille $\Yrow \times
-\Ycol$  et donc la dupliquer pourrait poser des problèmes pour les grands jeux
-de données. Il est même possible d'envisager de ne pas charger la matrice en
-mémoire rapide de l'ordinateur (la RAM).
+Outre la complexité temporelle il est important d'étudier la complexité
+spatiale, surtout pour ce genres d'algorithme qui prennent en entré des données
+potentielle trop grand pour la mémoire vive de l'ordinateur (RAM). Les
+algorithmes d'estimation $L_{1}$ et $L_{2}$ ne nécessite pas de dupliquer la
+matrice des variables explicatives $\Y$. En effet, la matrice $\Y$ est de taille
+$\Yrow \times \Ycol$ et donc la dupliquer pourrait poser des problèmes sur des
+ordinateur ne possédant pas assez de RAM. Il est même possible d'envisager de ne
+pas charger la matrice en RAM en accédant au données seulement quand cela est
+nécessaire. 
 
 **** Choix des hyperparamètres 
 <<sec:hyperparametre>>
@@ -2473,7 +2485,7 @@ Finally, we compute the residual error on the test set such as
 Err = \norm{ \Y^{i}_{(j)} + \X^{(i)}} \B^{(-i)_{(j)} + \U^{(i)}_{(-j)} \V^{(-i)}
 \end{equation}
 
-**** Hypothesis testing
+**** Test d'hypothèse
 :LOGBOOK:
 - Note taken on [2017-05-25 Thu 11:55] \\
   parler de lm : G ~U + X 
@@ -2481,30 +2493,54 @@ Err = \norm{ \Y^{i}_{(j)} + \X^{(i)}} \B^{(-i)_{(j)} + \U^{(i)}_{(-j)} \V^{(-i)}
   la recalibration par mad + median
 :END:
 
-Until now, we only presented how to estimate latent factor and primary effect
-matrices. However, the purpose which motivate the estimation of latent factor by
-considering the primary variable is the detection of observed output variables
-associated with the variable of interest. We propose here to use latent factor
-score matrix $\U$ as co-variables of a linear model.
+Jusque ici, nous avons présenté une méthode qui permet d'estimer les variables
+latentes tout en prenant en compte des variable explicative. Cependant,
+l'objectif initial est de trouver la liste des variables expliqué associé aux
+variable explicative tout en prenant en compte les variables latentes. Nous
+présentons dans cette partie un test d'hypothèse corrigé pour les variables
+latentes.
 
-***** Linear model with latent factor score
-:LOGBOOK:
-- Note taken on [2017-05-26 Fri 15:35] \\
-  faut que je choississe les notations mieux que ca, je m'enmmèle la ...
-:END:
+Une méthode classique de correction des tests d'hypothèse pour les variables de
+confusion est d'utiliser une estimation de celles-ci comme variable explicative
+du modèle mis en place réaliser le test d'hypothèse. C'est une méthode très
+courante dans les études d'associations en général
+cite:Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016. Nous avons
+choisi de réaliser un test d'hypothèse qui repose sur un modèle linéaire, mais
+l'estimation des variables latentes peuvent être utilisé comme co-variable dans
+n'importe quelle modèle statistique.
 
-After computing latent factors score matrices $\U$ with the lasso or ridge
-algorithm, we use them as co-variables with $\X$ in a linear model. For each
-observed output $\Y_{j}$ we have
+Afin de simplifier les notation et sans perte de généralité, nous supposons
+qu'il n'y a qu'une seul variable explicative, c'est à dire que $\Xcol$ vaut $1$.
+De plus nous rappelons que l'estimation de la matrice des $\K$ variables
+latentes $\hat{\U}$ est défini de façon unique grâce à l'ACP de la matrice
+$\hat{\W}$. La matrice $\hat{\W}$ est l'estimation $L_{1}$ ou $L_{2}$ de la
+matrice latente du modèle LFMM.
+
+***** Calcul de la statistique de test
+Afin de réaliser le test d'hypothèse le plus général possible nous avons choisi
+d'utiliser le modèle linéaire suivant 
 \begin{equation}
-\Y_{j} =  \U \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{\epsilon_{j}}
+\Y_{j} =  \hat{\U} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{\epsilon_{j}}
 \end{equation}
-where $\matr{\epsilon_{j}}$ is a Gaussian error with mean zero.
-Then, we can compute the p-value to test the null hypothesis 
-$$
-\beta_j = 0.
-$$
+pour chaque variable expliqué $j$. La matrice $\hat{\U}$ est l'estimation
+$L_{1}$ ou $L_{2}$ de la matrice des variables latente du modèle LFMM. On
+suppose que l'erreur $\matr{\epsilon_{j}}$ est Gaussienne de moyen nulle. On
+veut tester l'hypothèse de nullité du coefficient de régression $\beta_{j}$.
+Sous ces hypothèses on peut calculer pour chaque variable expliqué une
+statistique .Le détail des calculs de la statistique de test est données dans la
+section 3.2 de cite:Hastie_2009. La statistique de test suit sous lh'ypothèse
+nulle le loi de student à $\Yrow - \K - 1$ degrés de liberté. On peut donc
+calculer pour chaque variable expliqué $j$ une \pvalue $p_{j}$.
 
+
+***** Calibration du test d'hypothèse
+Les hypothèses faite pour calculé la \pvalue sont parfois fausses. Quand on
+réalise un seul test d'hypothèse il n'est pas facile de se rendre Dans le
+cadres des test d'hypothèse multiple On peut
+trouver dans cite:Efron_2004 une listes des raisons 
+
+
+***** Contrôle du taux de fausse découverte
 
 ***** Hypothesis calibration
 :LOGBOOK:
@@ -4059,11 +4095,19 @@ CLOSED: [2017-07-11 mar. 11:45]
 bibliographystyle:unsrt
 bibliography:../biblio.bib
 
-* Conclusion 
 
-
-* COMMENT perspectives : Vers le big data
+* perspectives : Vers le big data
 :LOGBOOK:
+- Note taken on [2017-07-18 Tue 15:49] \\
+  strategie: il faut que je finisse tout le reste avec les versions actuelles
+  (tess3r, et ce que j'ai fait pour le moment d'lfmm). Quand tout sera fini ! Je
+  repenserai l'archi de tess3r (tout en R et une seul data en mémoire). Je pense
+  que je n'arriverais pas faire de l'acces de très grosse données depui un fichier
+  et la gestion des NA en même temps. Mais je peux montrer les deux séparément,
+  cad on montre que on arrive a faire un algo robuste au NA pour tess3r et lfmm
+  mais c'est pas complétement implémenté. ET on montre sur un très gros dataset
+  une analyse complete pop et lfmm (le 1001 génome est top pour ca car on a une
+  matrice imputé :D)
 - Note taken on [2017-07-18 Tue 10:57] \\
   - traitement des données manquantes
   - acess au données (pas dans la ram, je peux parler des infracstructure big data
@@ -4098,4 +4142,6 @@ bibliography:../biblio.bib
   être que c'est pas la peine de se prendre la tête... Surtout que la cross
   validation j'en aurai deja parlé !
 :END:
+
+* Conclusion 
 
