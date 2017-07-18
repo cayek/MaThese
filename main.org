@@ -90,6 +90,10 @@ factorisation de matrice en statistique.
 :END:
 ** Test d'association
 ** La factorisation de matrice en statistique
+:LOGBOOK:
+- Note taken on [2017-07-18 Tue 08:55] \\
+  Kenneth lange, factorisation de matrice = avenir des stat ! a retrouver !
+:END:
 ** Problématique et plan
 * Données 
 Nous décrivons dans cette partie les données réelles qui sont analysée dans
@@ -2133,8 +2137,6 @@ Nous avons bien montré que
 \end{align*}
 est un point de minimum global de $\Lridge$.
 #+END_proof
-
-
 **** Estimation des moindres carrées régularisés en norme $L_{1}$  
 <<sec:estimator_L1>>
 :LOGBOOK:
@@ -2190,6 +2192,7 @@ Nous alternons ensuite les deux étapes suivantes :
    \end{equation}
 2. calculer $\W_{t}$ le point minimum de  
    \begin{equation}
+   \label{eq:lasso2}
    \mathcal{L}_{lasso}^{1}(\W) = \frac{1}{2} ||(\Y - \X \B_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}.
    \end{equation}
 Ces deux étapes sont répété jusqu'a ce que l'algorithme est convergé ou bien que
@@ -2258,6 +2261,47 @@ nous pouvons énoncer le résultat suivant :
 L'algorithme décrit dans la parie [[sec:lasso_algo]] converge vers un point de
 minimum global de la fonction $\Llasso$ définie par eqref:eq:optim_lasso_reg.
 #+END_corollaire
+
+
+**** Complexité des algorithmes
+Dans cette partie nous abordons la complexité des algorithmes d'estimation des
+paramètre que nous avons introduit dans les parties [[sec:estimator_L2]] et
+[[sec:estimator_L1]]. On peut distinguer deux grandes étapes présents dans les
+algorithmes d'estimation $L_{1}$ et $L_{2}$. La première est le calcule de la
+décomposition en valeur singulière tronqué (voir le calcule de la matrice
+latente donné par l'équation eqref:eq:RidgeLfmmEstomatorW pour l'estimation
+$L_{2}$ et la résolution du problème d'optimisation de la fonction
+$\mathcal{L}_{lasso}^{1}$ définie par eqref:eq:lasso2 pour l'estimation
+$L_{1}$). La seconde est le calcule de la projection orthogonal sur l'espace
+engendré par les variables explicatives (voir le calcule de $\W$ donné par
+l'équation eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$ et la
+résolution du problème d'optimisation de la fonction $\mathcal{L}_{lasso}^{2}$
+définie par eqref:eq:lasso1 pour l'estimation $L_{1}$).
+
+D'après cite:Halko_2011, le calcul des $K$ composante dominante de la
+décomposition en valeur singulière demande $O(\Yrow \Ycol \K)$ opérations. Cette
+complexité temporelle peut même être réduite à $O(\Yrow \Ycol \log(\K))$ si on
+utilise une méthode avec projections aléatoires. 
+
+La deuxième étape importante des algorithmes que nous avons présenté est l'étape
+de projection du résidu de l'aproximation matricielle de rang faible sur
+l'espace engendré par $\X$. Si on prend en compte toutes les opérations
+matricielle, cette étape nécéssite $O(\Xcol (\Yrow \Ycol + \K (\Yrow + \Ycol) +
+\Xcol ( \Xcol + \Yrow + \Ycol + 1))$.
+
+Finalement, si on prend en compte les opération matricielle restantes dans les
+deux algorithmes, le nombre d'opération est de l'ordre de $O(\Yrow \Ycol \K)$.
+L'algorithme d'estimation $L_{1}$ est bien sur plus long car il réalise
+plusieurs fois (ce nombre de fois dépend de la vitesse a laquel l'algorithme
+itératif converge) les opération de décompostion en valeur singuière et de
+projection alors que l'algorithme ne les réalise qu'une seul fois.
+
+Enfin il est important de signaler que les algorithmes d'éstimation $L_{1}$ et
+$L_{2}$ ne nécésssite pas de dupliquer matrice des variables explicatives n'est
+pas dupliqué en mémoire. En effet, la matrice $\Y$ est de taille $\Yrow \times
+\Ycol$  et donc la dupliquer pourrait poser des problèmes pour les grands jeux
+de données. Il est même possible d'envisager de ne pas charger la matrice en
+mémoire rapide de l'ordinateur (la RAM).
 
 **** Choix des hyperparamètres 
 <<sec:hyperparametre>>
@@ -4018,8 +4062,29 @@ bibliography:../biblio.bib
 * Conclusion 
 
 
-* COMMENT perspectives
+* COMMENT perspectives : Vers le big data
 :LOGBOOK:
+- Note taken on [2017-07-18 Tue 10:57] \\
+  - traitement des données manquantes
+  - acess au données (pas dans la ram, je peux parler des infracstructure big data
+    classique)
+  - si j'ai le temps j'implémente ces 2 feature cad: 
+    - NA -> comparaison avec et sans NA et procedure naive
+    - matrice en mémoriedans un BED -> on a seulement besoin du produit par X ! 
+  
+  c'est la suite logique de ma problématique cad : 
+  - data de plus en plus grosse donc on veut pas les dupliquer, il y a des données
+    manquantes
+  - mon taf c'est de fournir des logicielles !
+  
+  
+  Je peux ecrire cette partie comme un mini article ! cad
+  intro 
+  methode
+  resultats
+  discution 
+  conclusion
+
 - Note taken on [2017-05-26 Fri 15:49] \\
   Je pense que je ne vais pas pouvoir développer la crossvalidation et les données
   manquante. 
