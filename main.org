@@ -2302,29 +2302,39 @@ On note
 \bar{x} = (\bar{x}_{1}, ..., \bar{x}_{N})
 \end{equation}
 un point limite de ${x^{k}}}$, $/bar{x}$ est bien dans $X$ car cette ensemble
-est fermé. Comme $g$ est convexe et différentielle on a pour tout $x \in \X$
-\begin{equation}
+est fermé. Comme $g$ est convexe et différentiable on a pour tout $x \in \X$
+\begin{align}
 \label{eq:lassoProof1}
-f(x) - f(\bar{x}) \geq \nabla g(\bar{x})(x - \bar{x}) + 
-\Sum_{i = 1]^{N} (f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
-\end{equation}
-où $\nabla g(\bar{x})$ est la dérivé de $g$ en $\bar{x}$. On a ensuite 
+f(x) - f(\bar{x}) & \geq & \nabla g(\bar{x})(x - \bar{x}) + 
+\sum_{i = 1}^{N} (f_{i}(x_{i}) - f_{i}(\bar{x}_{i})) \\
+ & & = \sum_{i = 1}^{N} ( \nabla_{i} g(\bar{x})(x - \bar{x}) + 
+ f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
+\end{align}
+où $\nabla g(\bar{x})$ est la dérivé de $g$ en $\bar{x}$ et $\nabla_{i}
+g(\bar{x})$ la dérivé le long de la $i\mathrm{-ieme}$ variable. Or nous savons
+par construction de $\bar{x}$ on a 
 \begin{equation}
 \label{eq:lassoProof2}
-\nabla g(\bar{x})^{T} (x - \bar{x}) + 
-\Sum_{i = 1]^{N} (f_{i}(x_{i}) - f_{i}(\bar{x}_{i})) = 
-\Sum_{i = 1]^{N} ( \nabla_{i} g(\bar{x})(x - \bar{x}) + 
- f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
-\end{equation}
-où $\nabla_{i} g(\bar{x})$ est la dérivé le long de la $i$ième variable. Or nous
-savons par construction que $\bar{x}$ est tel que pour tout $i$ 
+f(\bar{x}) \leq f(\bar{x}_{1}, ...,x_{i},..., \bar{x}_{N}), \forall x_{i} \in
+X_{i}.
+\end{equation} 
+On a donc pour chaque variable d'indice $i$
+\begin{align*}
+\nabla_{i} g(\bar{x})(x - \bar{x}) + f_{i}(x_{i}) - f_{i}(\bar{x}_{i}) & \geq  (\nabla_{i} g(\bar{x}) + s_{i})(x - \bar{x}) \\
+\label{eq:lassoProof3}
+& \geq 0
+\end{align*}
+où $s_{i}$ est une sous dérivé de la fonction convexe $f_{i}$. L'equation
+ref:eq:lassoProof2 nous permet de dire qu'il existe une sous dérivé $s_{i}$ tel
+que 
 \begin{equation}
-f(\bar{x}) \leq f(\bar{x}_{1}, ...,x_{i},..., \bar{x}_{N}), ~ \forall x_{i} \in X_{i}
+\label{eq:3}
+(\nabla_{i} g(\bar{x}) + s_{i}) = 0
 \end{equation}
-Or comme les fonctions $f_{i}$ sont convexe on sait qu'il existe $s_{i}$ tel que 
+d'où l'équation ref:eq:lassoProof3.
+Nous avons donc en utilisant ref:eq:lassoProof3 et ref:eq:lasso1 que $x \in \X$
 \begin{equation}
-\Sum_{i = 1]^{N} ( \nabla_{i} g(\bar{x})(x - \bar{x}) + 
- f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
+f(x) - f(\bar{x}) \geq 0.
 \end{equation}
 
 #+END_proof
