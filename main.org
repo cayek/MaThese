@@ -25,6 +25,7 @@
 #+latex_header: \usepackage{amsthm}
 #+latex_header: \newtheorem{theorem}{Théoreme}
 #+latex_header: \newtheorem{corollaire}{Corollaire}
+#+latex_header: \newtheorem{proposition}{Proposition}
 
 #  LocalWords:  methylation polymorphism nucleotide Frobenius invertible SNP
 #  LocalWords:  preprocessing dataset RidgeLFMM LassoLFMM hyperparamètre
@@ -2010,7 +2011,7 @@ objectif suivante
 \LfmmLridge
 \end{equation}
 où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2}$ est la norme $L_2$
-et $\lamba$ le paramètre de régularisation. 
+et $\lambRidge$ le paramètre de régularisation. 
 
 Le terme premier terme de $\Lridge$ (terme d'attache aux données) correspond à
 l'opposé de la log vraisemblance où la matrice de bruit $\E$ est Gaussienne,
@@ -2020,13 +2021,13 @@ Le terme deuxième terme de $\Lridge$ (terme de régularisation) est indispensab
 pour distinguer l'effet des variables latentes de celui des variables
 explicatives. En effet, si
 \begin{equation*}
-\lambda = 0 
+\lambRidge = 0 
 \end{equation*}
 alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a 
 \begin{equation*}
 \Lridge(\U - \X \matr{T}, \V^{T}, \B + \V \matr{T}^T}) = \Lridge(\U, \V^{T}, \B).
 \end{equation*}
-Ainsi, les points minimuns d'une tel fonction objective ne serait pas pertinents pour
+Ainsi, les points de minima d'une tel fonction objective ne sont pas pertinent pour
 notre problème.
 
 ***** Algorithme
@@ -2045,7 +2046,7 @@ Les estimations sont calculé de la façon suivante
 \label{eq:RidgeLfmmEstomatorW}
 \hat{\U} \hat{\V} & =  \matr{Q} \matr{D}^{-1} \svd_{\K}( \matr{D} \matr{Q}^{T} \Y ) \\
 \label{eq:RidgeLfmmEstomatorB}
-\hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}).
+\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}).
 \end{align}
 Où $\svd_{\K}(\matr{A})$ est la meilleur approximation de rang $\K$ de la matrice
 $\matr{A}$ données par la décomposition en valeurs singulières (SVD pour
@@ -2053,8 +2054,8 @@ singular value decomposition) et $\Id_{d}$ est la matrice identité de taille $d
 \times d$. La matrice $\matr{D}$ est la matrice diagonale de taille $\Yrow
 \times \Yrow$ qui contient les termes
 \begin{equation*}
-\left\{ \sqrt{\frac{\lambda}{\lambda + \sigma_{1}^{2}}}, ..., 
-\sqrt{\frac{\lambda}{\lambda + \sigma_{d}^{2}}}, 
+\left\{ \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{1}^{2}}}, ..., 
+\sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{d}^{2}}}, 
 1, ..., 1 \right\}.
 \end{equation*}
 
@@ -2063,13 +2064,13 @@ eqref:eq:RidgeLfmmEstomatorW fait intervenir la matrice de changement de base
 $\matr{Q}$. Les $\Xcol$ premiers axes de cette nouvelle base forment une base
 orthonormal de l'espace vectoriel engendré par les variables explicatives. La
 matrice diagonal $\matr{D}$ a pour effet de réduire la composante qui appartient
-à l'espace engendré par $\X$. Si $\lambda$ vaut zéro la multiplication par
+à l'espace engendré par $\X$. Si $\lambRidge$ vaut zéro la multiplication par
 $\matr{D} \matr{Q}^{T}$ revient à prendre le résidu d'une régression linéaire
-par $\X$, on enlève alors toute la corrélation linéaire avec $\X$. Si $\lambda$
+par $\X$, on enlève alors toute la corrélation linéaire avec $\X$. Si $\lambRidge$
 est très grand alors $\obP$ tend vers la matrice identité. Dans ce cas, le
 calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en composante
 principale de la matrice $\Y$. Il est donc important de choisir une valeur de
-$\lambda$ qui enlève la bonne proportion de corrélation avec les variables
+$\lambRidge$ qui enlève la bonne proportion de corrélation avec les variables
 explicatives $\X$. Nous expliquons dans la partie [[sec:hyperparametre]] plus en
 détaille comment choisir les hyperparamètres.
 
@@ -2077,7 +2078,7 @@ L'estimation des paramètres régularisé en norme $\L_{2}$ est justifié par le
 théorème suivant
 #+BEGIN_theorem
 <<ridge_theorem>> 
-Pour $\lambda$ strictement supérieur à zéro, l'estimation des
+Pour $\lambRidge$ strictement supérieur à zéro, l'estimation des
 paramètres de LFMM régularisé en norme $L_{2}$, définie par
 eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, défini un point de
 minimum global de la fonction objective $\Lridge$.
@@ -2091,7 +2092,7 @@ fonction $\Lridge$ est convexe le long de la variable $\B$ , on peut donc
 trouver le point de minimum global en annulant la dérivé de $\Lridge$ par
 rapport à $\B$
 \begin{equation}
-\hat{\B}^{T} = (\X^{T} \X + \lambda \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V).
+\hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V).
 \end{equation}
 Il suffit maintenant de minimiser la fonction
 \begin{align*}
@@ -2108,18 +2109,18 @@ matrice de taille $\Xrow \times \Xcol$ contenant les valeurs singulières $\left
 simplifie comme ceci
 \begin{equation*}
 \mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\matr{B} \matr{Q}^{T} (\Y - \U \V^{T})} + 
-\frac{1}{2} \lambda \norm{\matr{C} \matr{Q}^{T} (\Y - \U \V^{T})}
+\frac{1}{2} \lambRidge \norm{\matr{C} \matr{Q}^{T} (\Y - \U \V^{T})}
 \end{equation*}
 où $\matr{C}$ est une matrice de taille $\Xcol \times \Xrow$ remplie de zéro
 sauf sur la première diagonale qui contient les valeurs
 \begin{equation*}
-\left\{ \frac{\sigma_{i}}{\sigma_{i}^{2} + \lambda}\right\}_{i = 1..\Xcol}.
+\left\{ \frac{\sigma_{i}}{\sigma_{i}^{2} + \lambRidge}\right\}_{i = 1..\Xcol}.
 \end{equation*}
 La matrice $\matr{B}$ est une matrice diagonale de taille $\Yrow \times \Xrow$
 contenant les termes 
 \begin{equation*}
-\left\{ \frac{\lambda}{\lambda + \sigma_{1}^{2}}, ..., 
-\frac{\lambda}{\lambda + \sigma_{d}^{2}}, 
+\left\{ \frac{\lambRidge}{\lambRidge + \sigma_{1}^{2}}, ..., 
+\frac{\lambRidge}{\lambRidge + \sigma_{d}^{2}}, 
 1, ..., 1 \right\}.
 \end{equation*}
 Nous pouvons enfin factoriser $\mathcal{L}^{'}$ de sorte que 
@@ -2128,8 +2129,8 @@ Nous pouvons enfin factoriser $\mathcal{L}^{'}$ de sorte que
 \end{equation*}
 où $\matr{D}$ est la matrice diagonale contenant les éléments 
 \begin{equation*}
-\left\{ \sqrt{\frac{\lambda}{\lambda + \sigma_{1}^{2}}}, ..., 
-\sqrt{\frac{\lambda}{\lambda + \sigma_{d}^{2}}}, 
+\left\{ \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{1}^{2}}}, ..., 
+\sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{d}^{2}}}, 
 1, ..., 1 \right\}.
 \end{equation*}
 Il s'agit du problème de la meilleur approximation de rang $\K$ de la matrice
@@ -2141,7 +2142,7 @@ valeurs singulières les plus grandes.
 Nous avons bien montré que
 \begin{align*}
 \hat{\U} \hat{\V} & =  \matr{Q} \matr{D}^{-1} \svd_{\K}( \matr{D} \matr{Q}^{T} \Y ) \\
-\hat{\B} & = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V})
+\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V})
 \end{align*}
 est un point de minimum global de $\Lridge$.
 #+END_proof
@@ -2196,7 +2197,7 @@ Nous alternons ensuite les deux étapes suivantes :
 1. calculer $\B_{t}$ le point minimum de 
    \begin{equation}
    \label{eq:lasso1}
-   \mathcal{L}_{lasso}^{2}(\B) =  \frac{1}{2} ||(\Y - \W_{t-1}) - \X \B^T||_{F}^2 + \lambda ||\B||_1
+   \mathcal{L}_{lasso}^{2}(\B) =  \frac{1}{2} ||(\Y - \W_{t-1}) - \X \B^T||_{F}^2 + \lambdaLasso ||\B||_1
    \end{equation}
 2. calculer $\W_{t}$ le point minimum de  
    \begin{equation}
@@ -2221,7 +2222,7 @@ variables explicatives est tel que
 \end{equation}
 alors d'après cite:Tibshirani_1996 on a 
 \begin{equation}
-\B_{t} = \sign(\bar{\B}_{t}) (\bar{\B}_{t} - \lambda)_{+}
+\B_{t} = \sign(\bar{\B}_{t}) (\bar{\B}_{t} - \lambdaLasso)_{+}
 \end{equation}
 où 
 \begin{equation}
@@ -2230,7 +2231,7 @@ s_{+} = \mathrm{max}(0, s)
 $\sign(s)$ est le signe de $s$ et $\bar{\B}_{t}$ est le paramètre de la
 régression linéaire classique données par 
 \begin{equation*}
-\bar{\B}_{t} = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (\matr{E}^{1}_{t}).
+\bar{\B}_{t} = (\X^{T} \X + \lambdaLasso \Id_{d})^{-1} \X^{T} (\matr{E}^{1}_{t}).
 \end{equation*}
 Nous avons choisi d'implémenter ce cas particulier car il est possible de rentre
 les variables explicatives indépendantes avant le calcule de l'algorithme présenté
@@ -2258,18 +2259,75 @@ rang de $\matr{E}^{2}_{t}$ et ramène vers zéro ses valeurs singulières
 restantes.
 
 L'algorithme de descente par bloque de coordonnées ne converge pas en général
-vers un minimum quand la fonction n'est pas continument différentiable, comme
-c'est le cas pour $\Llasso$. Cependant, $\Llasso$ est convexe et la partie non
-différentiable est séparable, c'est à dire que l'on peut l'exprimer comme la
-somme d'une fonction de $\W$ et $\B$. La parties non séparable est bien
-continument différentiable. Ainsi d'après, le théorème 5.2 de cite:Tseng_2001
-nous pouvons énoncer le résultat suivant :
+vers un minimum quand la fonction n'est pas continûment différentielle, comme
+c'est le cas pour $\Llasso$. Cependant, les théorèmes démontrer dans
+cite:Tseng_2001 permette de démontrer la convergence de l'algorithme
+d'estimation $L_{1}$ dans un cadre plus large qui complique l'extraction des
+résultats intéressants dans notre cas. Pour facilité la compréhension, nous
+proposons de démontrer un théorème plus faible qui s'applique directement à
+notre cas. Pour cela nous introduisons la fonction $f$ définie sur son domaine
+\begin{equation}
+\label{eq:domf}
+X = X_{1} \times X_{2} \times ... \times X_{N}
+\end{equation}
+un produit Cartésien d'ensemble fermé et convexe. L'algorithme de descente par bloque de
+coordonnées est définie par la formule de récurrence suivante :
+\begin{equation}
+\label{eq:blokAlgo}
+x_{i}^{k+1} \in \mathrm{arg} \min_{\zeta \in X_{i}} f(x_{1}^{k}, ...,x_{i-1}^{k},\zeta,x_{i+1}^{k},..., x_{N}^{k}), ~
+i = 1,..., N.
+\end{equation}
+En nous inspirant des résultats présenté dans cite:Tseng_2001 et de la
+proposition 2.7.1 de cite:Bertsekas_1997 qui montre la convergence de
+l'algorithme de descente par bloque de coordonnées dans le cas différentiable,
+nous démontrons la proposition suivante :
+#+BEGIN_theorem 
+Si $f$ est continue, convexe et 
+\begin{equation}
+f(x_{1},..., x_{N}) = g(x_{1}, ..., x_{N}) + \Sum_{i = 1]^{N} f_{i}(x_{i}) 
+\end{equation}
+où g est convexe et différentielle et les fonctions $f_{i}$ sont continues et
+convexes. Nous supposons de plus que pour tout $i \in {1,...,N}$ le minimum
+\begin{equation}
+\min_{\zeta \in X_{1}} f(x_{1}, ...,x_{i-1},\zeta,x_{i+1},..., x_{N})}
+\end{equation}
+est atteint en un point unique. Soit la séquence généré par ${x^{k}}}$ généré
+par eqref:eq:blokAlgo. Alors tout point limite de ${x^{k}}}$ est un point de
+minimum global de $f$.
+#+END_theorem
 
-#+BEGIN_corollaire
-L'algorithme décrit dans la parie [[sec:lasso_algo]] converge vers un point de
-minimum global de la fonction $\Llasso$ définie par eqref:eq:optim_lasso_reg.
-#+END_corollaire
+#+BEGIN_proof 
+On note
+\begin{equation}
+\bar{x} = (\bar{x}_{1}, ..., \bar{x}_{N})
+\end{equation}
+un point limite de ${x^{k}}}$, $/bar{x}$ est bien dans $X$ car cette ensemble
+est fermé. Comme $g$ est convexe et différentielle on a pour tout $x \in \X$
+\begin{equation}
+\label{eq:lassoProof1}
+f(x) - f(\bar{x}) \geq \nabla g(\bar{x})(x - \bar{x}) + 
+\Sum_{i = 1]^{N} (f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
+\end{equation}
+où $\nabla g(\bar{x})$ est la dérivé de $g$ en $\bar{x}$. On a ensuite 
+\begin{equation}
+\label{eq:lassoProof2}
+\nabla g(\bar{x})^{T} (x - \bar{x}) + 
+\Sum_{i = 1]^{N} (f_{i}(x_{i}) - f_{i}(\bar{x}_{i})) = 
+\Sum_{i = 1]^{N} ( \nabla_{i} g(\bar{x})(x - \bar{x}) + 
+ f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
+\end{equation}
+où $\nabla_{i} g(\bar{x})$ est la dérivé le long de la $i$ième variable. Or nous
+savons par construction que $\bar{x}$ est tel que pour tout $i$ 
+\begin{equation}
+f(\bar{x}) \leq f(\bar{x}_{1}, ...,x_{i},..., \bar{x}_{N}), ~ \forall x_{i} \in X_{i}
+\end{equation}
+Or comme les fonctions $f_{i}$ sont convexe on sait qu'il existe $s_{i}$ tel que 
+\begin{equation}
+\Sum_{i = 1]^{N} ( \nabla_{i} g(\bar{x})(x - \bar{x}) + 
+ f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
+\end{equation}
 
+#+END_proof
 
 **** Complexité des algorithmes
 Dans cette partie nous abordons la complexité des algorithmes d'estimation des
@@ -2380,7 +2438,7 @@ composante principale de $\Y$.
 
 Ainsi le choix de du paramètre de régularisation $L_{2}$ est une affaire de
 dosage, il doit être ni trop grand ni trop petit. Nous avons remarqué dans les
-expériences que $\lambda$ petit donne les meilleurs résultats dans de nombreux
+expériences que $\lambdaRidge$ petit donne les meilleurs résultats dans de nombreux
 cas.
 
 ***** Paramètre de régularisation $L_{1}$
@@ -2390,22 +2448,23 @@ partie des variable expliqué sont corrélé avec les variables explicatives.
 Ainsi, il est possible d'interpréter la proportion de ligne non nulle dans $\B$
 comme la proportion des variables qui sont corrélé avec $\X$. Ainsi plutôt que
 de choisir le paramètre de régularisation, il est plus simple de choisir la
-proportion de variable expliqué par $\X$. Pour trouver un lambda qui correspond a
-cette proportion nous proposons une heuristique basé sur un chemin de
-régularisation inspiré par cite:friedman10_regul_paths_gener_linear_model. 
+proportion de variable expliqué par $\X$. Pour trouver un paramètre de
+régularisation qui correspond à cette proportion nous proposons une heuristique
+basé sur un chemin de régularisation inspiré par
+cite:friedman10_regul_paths_gener_linear_model.
 
 Nous commençons par la plus petite valeur du paramètre de régularisation
-$\lambda$ tel que le vecteur
+$\lambLasso$ tel que le vecteur
 \begin{equation}
-\bar{\B}_{t} = (\X^{T} \X + \lambda \Id_{d})^{-1} \X^{T} (\matr{E}^{1}_{t = 1})
+\bar{\B}_{t} = (\X^{T} \X + \lambLasso \Id_{d})^{-1} \X^{T} (\matr{E}^{1}_{t = 1})
 \end{equation}
 vaut zéro. Ceci est le résultat de la première étape de l'algorithme
-d'estimation des moindes carré régularisé en norme $L_{1}$ présenté dans la
-partie [[sec:estimator_L1]]. Nous notons cette valeur $\lambda_{\mathrm{max}}$.
-Ensuite, nous construisons une séquence $m$ valeurs de $\lambda$ décroissant
-selon une échelle logarithme depuis $\lambda_{\mathrm{max}}$ jusqu'à
+d'estimation des moindres carré régularisé en norme $L_{1}$ présenté dans la
+partie [[sec:estimator_L1]]. Nous notons cette valeur $\lambLasso^{\mathrm{max}}$.
+Ensuite, nous construisons une séquence $m$ valeurs de $\lambLasso$ décroissant
+selon une échelle logarithme depuis $\lambLasso^{\mathrm{max}}$ jusqu'à
 \begin{equation}
-\lambda_{\mathrm{min}} = \epsilon \lambda_{\mathrm{max}}.
+\lambLasso^{\mathrm{min}} = \epsilon \lambLasso^{\mathrm{max}}.
 \end{equation}
 Nous calculons le nombre de valeurs non nulle dans $\hat{\B}$ l'estimation de la
 matrice des effets et stop si la proportion de valeurs non nulle souhaitée est dépassée.
@@ -2494,20 +2553,21 @@ Err = \norm{ \Y^{i}_{(j)} + \X^{(i)}} \B^{(-i)_{(j)} + \U^{(i)}_{(-j)} \V^{(-i)}
 :END:
 
 Jusque ici, nous avons présenté une méthode qui permet d'estimer les variables
-latentes tout en prenant en compte des variable explicative. Cependant,
-l'objectif initial est de trouver la liste des variables expliqué associé aux
-variable explicative tout en prenant en compte les variables latentes. Nous
-présentons dans cette partie un test d'hypothèse corrigé pour les variables
-latentes.
+latentes de LFMM. Cependant, l'objectif initial est de trouver la liste des
+variables expliquées associées aux variables explicatives tout en prenant en compte
+les variables latentes. Nous présentons dans cette partie un test d'hypothèse
+corrigé pour les variables latentes.
 
-Une méthode classique de correction des tests d'hypothèse pour les variables de
-confusion est d'utiliser une estimation de celles-ci comme variable explicative
-du modèle mis en place réaliser le test d'hypothèse. C'est une méthode très
-courante dans les études d'associations en général
-cite:Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016. Nous avons
-choisi de réaliser un test d'hypothèse qui repose sur un modèle linéaire, mais
-l'estimation des variables latentes peuvent être utilisé comme co-variable dans
-n'importe quelle modèle statistique.
+Une approche simple consiste a considérer que l'estimation des variables
+latentes $\hat{\U}$ comme les vraies valeurs $/hat{\U}$ et des les utilisé à
+coté des variable explicative du modèle mis en place réaliser le test
+d'hypothèse. C'est une méthode très courante dans les études d'associations qui
+a montrer de très bon résultats surtout quand il y assez d'observation
+cite:gerard2017unifying,Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016.
+Nous avons choisi de réaliser un test d'hypothèse qui repose sur un modèle
+linéaire car cela correspond au modèle LFMM quand on suppose que $\U$ est
+connue, mais l'estimation des variables latentes peuvent être traité comme des
+variables explicatives dans n'importe quel modèle statistique.
 
 Afin de simplifier les notation et sans perte de généralité, nous supposons
 qu'il n'y a qu'une seul variable explicative, c'est à dire que $\Xcol$ vaut $1$.
@@ -2527,37 +2587,45 @@ $L_{1}$ ou $L_{2}$ de la matrice des variables latente du modèle LFMM. On
 suppose que l'erreur $\matr{\epsilon_{j}}$ est Gaussienne de moyen nulle. On
 veut tester l'hypothèse de nullité du coefficient de régression $\beta_{j}$.
 Sous ces hypothèses on peut calculer pour chaque variable expliqué une
-statistique .Le détail des calculs de la statistique de test est données dans la
-section 3.2 de cite:Hastie_2009. La statistique de test suit sous lh'ypothèse
-nulle le loi de student à $\Yrow - \K - 1$ degrés de liberté. On peut donc
-calculer pour chaque variable expliqué $j$ une \pvalue $p_{j}$.
+statistique $z_{j}$. Le détail des calculs de la statistique de test est données dans la
+section 3.2 de cite:Hastie_2009. La statistique de test suit sous l'hypothèse
+nulle le loi de Student à $\Yrow - \K - 1$ degrés de liberté. On peut donc
+calculer pour chaque variable expliqué une \pvalue $p_{j}$.
 
 
 ***** Calibration du test d'hypothèse
-Les hypothèses faite pour calculé la \pvalue sont parfois fausses. Quand on
-réalise un seul test d'hypothèse il n'est pas facile de se rendre Dans le
-cadres des test d'hypothèse multiple On peut
-trouver dans cite:Efron_2004 une listes des raisons 
+Il arrive parfois que la statistique de suive pas la distribution théorique sous
+l'hypothèse nulle. On dit dans ce cas que le test est mal calibré. On peut
+trouver dans cite:Efron_2004 des exemples de situations qui peuvent aboutir à
+des tests mal calibrés. 
 
+Dans les exemples que nous présentons ici ont s'attend a ce que la majorité des
+variables ne soit pas associé avec la variable explicative, ainsi une large
+majorité des statistiques de test sont distribué selon l'hypothèse nulle. Nous
+utilisons l'approche choisi dans cite:Sun_2012, qui consiste à calculer la
+médiane et la déviation absolue à la médiane (MAD pour median absolute
+déviation) directement sur les $z$ statistiques. En effet, la médiane donne une
+estimation robuste de la moyenne et le MAD de l'écart type. On a alors une
+nouvelle statistique de test
+\begin{equation}
+\tilde{z_{j}} = \frac{z_{j} - \med(z_{1}, ..., z_{\Ycol})}{
+\mad(z_{1}, ..., z_{\Ycol})}.
+\end{equation}
+Pour calculer les nouvelles \pvalue, on suppose que $\tilde{z_{j}}$ suit une loi
+normal de moyenne nulle et d'écart type 1 sous l'hypothèse nulle.
 
-***** Contrôle du taux de fausse découverte
-
-***** Hypothesis calibration
+***** Contrôle du taux de fausse découverte                    :noexport:
 :LOGBOOK:
-- Note taken on [2017-06-01 jeu. 14:45] \\
-  Voir dans cite:gerard2017unifying la parti sur la calibration !
+- Note taken on [2017-07-19 Wed 10:44] \\
+  non si je fais une partie la dessus il va falloir que je developpe !! alors que
+  je veux juste dire que j'ai utilisé qvalue....
 :END:
-
-Even with latent factors correction we can observed not calibrated p-value. This
-can be due to presence of not interested but small effects, correlation between
-observations or remaining unobserved variables cite:Efron_2004. 
-
-In true data analysis we expect that a small proportion of output variables will
-be associated with the primary variables (not more than $1 \%$). Thus we used
-empirical calibration for the variance and the mean of statistical test. In
-particular, as in cite:wang2015confounder,gerard2017unifying, we used the median
-and the mad as robust estimators of the mean and standard deviation of
-statistical test under the null hypothesis.
+Dans cette dernière partie, nous présentons en quelques mots les outils que nous
+avons utiliser pour controler le taux de fausse découvertes dans les
+experiences. Dans le cadre des test d'association nous voulons en sortie de la
+méthode obtenir une liste de variable expliqué candidat pour l'association avec
+la variable explicative. Pour choisir cette liste 
+Dans le cadre des test d'association multiple 
 
 
 *** Expériences                                                  :noexport:

@@ -11,6 +11,8 @@
 \newcommand{\RR}{\mathbb{R}} %% real ensemble
 \newcommand{\Normal}{\mathcal{N}} %% Normal distribution
 \newcommand{\svd}{\mathrm{svd}} %% la svd
+\newcommand{\med}{\mathrm{median}} %% la median
+\newcommand{\mad}{\mathrm{MAD}} %% le MAD
 
 %% name of method
 \newcommand{\MethodCate}{CATE}
@@ -41,21 +43,23 @@
 \newcommand{\Llasso}{\mathcal{L}_{lasso}} %% L lasso 
 \newcommand{\Lridge}{\mathcal{L}_{ridge}} %% L ridge
 \newcommand{\Q}{\matr{Q}} %% svd de X
-\newcommand{\D}{\matr{D}_{\lambda}} %% matrice utilisé dans l'estimateur ridge
+\newcommand{\D}{\matr{D}_{\lambRidge}} %% matrice utilisé dans l'estimateur ridge
+\newcommand{\lambRidge}{\lambda_{2}} %% reg devant norme L2
+\newcommand{\lambLasso}{\lambda_{1}} %% reg devant norme L1
 
 %% lfmm equation
 \newcommand{\LfmmLridge}{%
 \Lridge(\U, \V, \B) =  \frac{1}{2} \norm{\Y - \U \V^{T} - \X \B^T}_{F}^2 +
-\frac{\lambda}{2} \norm{\B}^{2}_{2}%
+\frac{\lambRidge}{2} \norm{\B}^{2}_{2}%
 }
 \newcommand{\LfmmL}{%
 \Lnoreg(\U, \V, \B) =  \frac{1}{2} \norm{\Y - \U \V^T - \X \B^T}_{F}^2 %
 }
 \newcommand{\LfmmLlasso}{%
-\Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 + \lambda \norm{\B}_{1} + \gamma \norm{\W}_{*}%
+\Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 + \lambdaLasso \norm{\B}_{1} + \gamma \norm{\W}_{*}%
 }
 \newcommand{\LfmmP}{%
-\obP = \Id_{\Yrow} - \X (\X^T \X + \lambda \Id_{\Xcol})^{-1}
+\obP = \Id_{\Yrow} - \X (\X^T \X + \lambRidge \Id_{\Xcol})^{-1}
 \X^T%
 }
 
