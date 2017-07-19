@@ -107,6 +107,9 @@ factorisation de matrice en statistique.
 :END:
 ** Problématique et plan
 * Données                                                          :noexport:
+:PROPERTIES:
+:header-args: :cache no :eval no-export :results output :exports none
+:END:
 Nous décrivons dans cette partie les données réelles qui sont analysée dans
 cette thèse. Afin de rendre les analyse le plus possible reproductible
 reproductible, nous décrivons les étapes de pré traitement qui ont été affecté
@@ -2207,7 +2210,7 @@ Nous alternons ensuite les deux étapes suivantes :
 Ces deux étapes sont répété jusqu'a ce que l'algorithme est convergé ou bien que
 $t$ est attend le nombre maximum d'itération.
 
-La première étape de l'algorithme consiste à faire une régréssion régularisé en
+La première étape de l'algorithme consiste à faire une régression régularisé en
 norme $L_{1}$ de la matrice résiduelle 
 \begin{equation}
 \matr{E}^{1}_{t} = \Y - \W_{t-1}
@@ -2261,48 +2264,44 @@ restantes.
 L'algorithme de descente par bloque de coordonnées ne converge pas en général
 vers un minimum quand la fonction n'est pas continûment différentielle, comme
 c'est le cas pour $\Llasso$. Cependant, les théorèmes démontrer dans
-cite:Tseng_2001 permette de démontrer la convergence de l'algorithme
-d'estimation $L_{1}$ dans un cadre plus large qui complique l'extraction des
-résultats intéressants dans notre cas. Pour facilité la compréhension, nous
-proposons de démontrer un théorème plus faible qui s'applique directement à
-notre cas. Pour cela nous introduisons la fonction $f$ définie sur son domaine
+cite:Tseng_2001 dépasse largement le cadre de la convergence de l'algorithme
+d'estimation $L_{1}$ ce qui complique l'extraction des résultats intéressants.
+Pour facilité la compréhension, nous proposons de démontrer un théorème plus
+faible qui s'applique directement à notre cas. Pour cela nous introduisons la
+fonction $f$ définie sur son domaine
 \begin{equation}
 \label{eq:domf}
-X = X_{1} \times X_{2} \times ... \times X_{N}
+A = A_{1} \times A_{2} \times ... \times A_{m}
 \end{equation}
-un produit Cartésien d'ensemble fermé et convexe. L'algorithme de descente par bloque de
-coordonnées est définie par la formule de récurrence suivante :
+un produit Cartésien d'ensemble fermé et convexe. L'algorithme de descente par
+bloque de coordonnées est définie par la formule de récurrence suivante :
 \begin{equation}
 \label{eq:blokAlgo}
-x_{i}^{k+1} \in \mathrm{arg} \min_{\zeta \in X_{i}} f(x_{1}^{k}, ...,x_{i-1}^{k},\zeta,x_{i+1}^{k},..., x_{N}^{k}), ~
+x_{i}^{k+1} \in \mathrm{arg} \min_{\zeta \in X_{i}} f(x_{1}^{k}, ...,x_{i-1}^{k},\zeta,x_{i+1}^{k},..., x_{m}^{k}), ~
 i = 1,..., N.
 \end{equation}
 En nous inspirant des résultats présenté dans cite:Tseng_2001 et de la
 proposition 2.7.1 de cite:Bertsekas_1997 qui montre la convergence de
-l'algorithme de descente par bloque de coordonnées dans le cas différentiable,
-nous démontrons la proposition suivante :
+l'algorithme de descente par bloque de coordonnées dans le cas la fonction
+objectif est différentiable, nous démontrons la proposition suivante :
 #+BEGIN_theorem 
-Si $f$ est continue, convexe et 
+Si $f$ est continue, convexe et tel que
 \begin{equation}
-f(x_{1},..., x_{N}) = g(x_{1}, ..., x_{N}) + \Sum_{i = 1]^{N} f_{i}(x_{i}) 
+f(x_{1},..., x_{m}) = g(x_{1}, ..., x_{m}) + \sum_{i = 1}^{m} f_{i}(x_{i}) 
 \end{equation}
-où g est convexe et différentielle et les fonctions $f_{i}$ sont continues et
-convexes. Nous supposons de plus que pour tout $i \in {1,...,N}$ le minimum
-\begin{equation}
-\min_{\zeta \in X_{1}} f(x_{1}, ...,x_{i-1},\zeta,x_{i+1},..., x_{N})}
-\end{equation}
-est atteint en un point unique. Soit la séquence généré par ${x^{k}}}$ généré
-par eqref:eq:blokAlgo. Alors tout point limite de ${x^{k}}}$ est un point de
-minimum global de $f$.
+où g est convexe et différentiable et les fonctions $f_{i}$ sont continues et
+convexes. Soit $\{x^{k}\}$ la séquence généré par eqref:eq:blokAlgo. Alors tout
+point limite de $\{x^{k}\}$ est un point de minimum global de $f$.
 #+END_theorem
 
 #+BEGIN_proof 
 On note
-\begin{equation}
-\bar{x} = (\bar{x}_{1}, ..., \bar{x}_{N})
-\end{equation}
-un point limite de ${x^{k}}}$, $/bar{x}$ est bien dans $X$ car cette ensemble
-est fermé. Comme $g$ est convexe et différentiable on a pour tout $x \in \X$
+\begin{equation*}
+\bar{x} = (\bar{x}_{1}, ..., \bar{x}_{m})
+\end{equation*}
+un point limite de $\{x^{k}\}$, $\bar{x}$ est bien dans $A$ le domaine de
+définition de $f$ car cet ensemble est fermé. Comme $g$ est convexe et
+différentiable on a pour tout $x \in A$
 \begin{align}
 \label{eq:lassoProof1}
 f(x) - f(\bar{x}) & \geq & \nabla g(\bar{x})(x - \bar{x}) + 
@@ -2310,35 +2309,35 @@ f(x) - f(\bar{x}) & \geq & \nabla g(\bar{x})(x - \bar{x}) +
  & & = \sum_{i = 1}^{N} ( \nabla_{i} g(\bar{x})(x - \bar{x}) + 
  f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
 \end{align}
-où $\nabla g(\bar{x})$ est la dérivé de $g$ en $\bar{x}$ et $\nabla_{i}
-g(\bar{x})$ la dérivé le long de la $i\mathrm{-ieme}$ variable. Or nous savons
-par construction de $\bar{x}$ on a 
+où $\nabla g(\bar{x})$ et $\nabla_{i} g(\bar{x})$ sont respectivement la dérivé
+et la dérivé le long de la $i\mathrm{-ieme}$ variable de $g$ en $\bar{x}$. Or
+nous savons par construction de $\bar{x}$ que
 \begin{equation}
 \label{eq:lassoProof2}
-f(\bar{x}) \leq f(\bar{x}_{1}, ...,x_{i},..., \bar{x}_{N}), \forall x_{i} \in
+f(\bar{x}) \leq f(\bar{x}_{1}, ...,x_{i},..., \bar{x}_{N}), ~ \forall x_{i} \in
 X_{i}.
 \end{equation} 
 On a donc pour chaque variable d'indice $i$
-\begin{align*}
+\begin{align}
 \nabla_{i} g(\bar{x})(x - \bar{x}) + f_{i}(x_{i}) - f_{i}(\bar{x}_{i}) & \geq  (\nabla_{i} g(\bar{x}) + s_{i})(x - \bar{x}) \\
 \label{eq:lassoProof3}
 & \geq 0
-\end{align*}
-où $s_{i}$ est une sous dérivé de la fonction convexe $f_{i}$. L'equation
-ref:eq:lassoProof2 nous permet de dire qu'il existe une sous dérivé $s_{i}$ tel
+\end{align}
+où $s_{i}$ est une sous dérivé de la fonction convexe $f_{i}$. L'équation
+eqref:eq:lassoProof2 nous permet de dire qu'il existe une sous dérivé $s_{i}$ tel
 que 
 \begin{equation}
 \label{eq:3}
 (\nabla_{i} g(\bar{x}) + s_{i}) = 0
 \end{equation}
-d'où l'équation ref:eq:lassoProof3.
-Nous avons donc en utilisant ref:eq:lassoProof3 et ref:eq:lasso1 que $x \in \X$
+d'où l'équation eqref:eq:lassoProof3.
+Nous avons donc en utilisant eqref:eq:lassoProof3 et eqref:eq:lasso1 que pour tout $x \in A$
 \begin{equation}
 f(x) - f(\bar{x}) \geq 0.
 \end{equation}
-
 #+END_proof
-
+Ce résultat démontre que l'algorithme d'estimation $L_{1}$ des paramètres du
+modèle LFMM converge vers un point de minimum global de $\Llasso$.
 **** Complexité des algorithmes
 Dans cette partie nous abordons la complexité des algorithmes d'estimation des
 paramètre que nous avons introduit dans les parties [[sec:estimator_L2]] et
@@ -2562,14 +2561,14 @@ Err = \norm{ \Y^{i}_{(j)} + \X^{(i)}} \B^{(-i)_{(j)} + \U^{(i)}_{(-j)} \V^{(-i)}
   la recalibration par mad + median
 :END:
 
-Jusque ici, nous avons présenté une méthode qui permet d'estimer les variables
-latentes de LFMM. Cependant, l'objectif initial est de trouver la liste des
-variables expliquées associées aux variables explicatives tout en prenant en compte
-les variables latentes. Nous présentons dans cette partie un test d'hypothèse
-corrigé pour les variables latentes.
+Jusque ici, nous avons seulement abordé l'estimation des paramètre de LFMM.
+Cependant, l'objectif initial est de trouver la liste des variables expliquées
+associées aux variables explicatives tout en prenant en compte les variables
+latentes. Nous présentons dans cette partie un test d'hypothèse corrigé pour les
+variables latentes.
 
 Une approche simple consiste a considérer que l'estimation des variables
-latentes $\hat{\U}$ comme les vraies valeurs $/hat{\U}$ et des les utilisé à
+latentes $\hat{\U}$ comme les vraies valeurs $\hat{\U}$ et des les utilisé à
 coté des variable explicative du modèle mis en place réaliser le test
 d'hypothèse. C'est une méthode très courante dans les études d'associations qui
 a montrer de très bon résultats surtout quand il y assez d'observation
