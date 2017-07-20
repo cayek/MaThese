@@ -38,7 +38,6 @@
 \newcommand{\E}{\matr{E}} %% residual error matrix
 \newcommand{\W}{\matr{W}} %% approximation matrix with latent factor/
                           %% approximation matrix
-\newcommand{\obP}{\matr{P}_{\lambda}} %% U row dim
 \newcommand{\Lnoreg}{\mathcal{L}} %% L 
 \newcommand{\Llasso}{\mathcal{L}_{lasso}} %% L lasso 
 \newcommand{\Lridge}{\mathcal{L}_{ridge}} %% L ridge
@@ -58,10 +57,7 @@
 \newcommand{\LfmmLlasso}{%
 \Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 + \lambdaLasso \norm{\B}_{1} + \gamma \norm{\W}_{*}%
 }
-\newcommand{\LfmmP}{%
-\obP = \Id_{\Yrow} - \X (\X^T \X + \lambRidge \Id_{\Xcol})^{-1}
-\X^T%
-}
+
 
 %% tess3 equation
 

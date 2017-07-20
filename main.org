@@ -26,6 +26,7 @@
 #+latex_header: \newtheorem{theorem}{Théoreme}
 #+latex_header: \newtheorem{corollaire}{Corollaire}
 #+latex_header: \newtheorem{proposition}{Proposition}
+#+latex_header: \renewcommand{\proofname}{Preuve}
 
 #  LocalWords:  methylation polymorphism nucleotide Frobenius invertible SNP
 #  LocalWords:  preprocessing dataset RidgeLFMM LassoLFMM hyperparamètre
@@ -1956,7 +1957,7 @@ Pour certaine analyse il est important de scaler les données.
 *** Méthodes 
 **** Modèle 
 <<sec:model>>
-Nous introduisons dans cette partie le modèle et les notations. La plupart des
+Nous introduisons dans cette partie les notations et le modèle. La plupart des
 méthodes d'ajustement pour les facteurs de confusions repose sur le modèle
 suivant  
 \begin{equation}
@@ -1966,17 +1967,18 @@ suivant
 Comme dans cite:frichot13_testin_assoc_between_loci_envir, nous appellerons ce
 modèle le modèle mixte à facteurs latents (LFMM pour latent factor mixed model
 en anglais). Dans cette équation, $\Y$ est la matrice des variables expliquées
-de taille $\Yrow \times \Ycol$, où $\Ycol$ est le variables et $\Yrow$ le nombre
-d'observations. Par exemple, les variables expliquées peuvent être des SNPs ou
-bien des niveau de méthylation. La matrice $\X$ de taille $\Xrox \times \Xcol$
-représente les variables explicatives. Les variables explicatives peuvent être
-par exemple une maladie ou un gradient environnementale comme la température. La
-matrice des effets de taille $\Ycol \times \Xcol$ est notée $\B$. Les matrices
-$\U$ et $\V$ sont respectivement de la matrice des coordonnées de taille $\Urow
-\times \K$ et la matrice des axes factoriels $\Ycol\times\Ucol$. La matrice $\U$
-est la matrice des $\K$ variable latentes et la matrice $\V$ représente les axes
-des facteurs latents. Enfin la matrice $\E$ est la matrice d'erreur résiduelle
-de taille $\Yrow\times\Ycol$.
+de taille $\Yrow \times \Ycol$, où $\Ycol$ est le nombre de variables et $\Yrow$
+le nombre d'observations. Par exemple, les variables expliquées peuvent être des
+SNPs, des niveaux de méthylation ou bien des niveaux d'expression génique . La
+matrice $\X$ de taille $\Xrow \times \Xcol$ représente les variables
+explicatives. Les variables explicatives peuvent être par exemple un phénotype
+comme une maladie ou un gradient environnemental comme la température de
+l'habitat. La matrice des effets de taille $\Ycol \times \Xcol$ est notée $\B$.
+Les matrices $\V$ et $\U$ sont respectivement la matrice des axes factoriels de
+taille $\Ycol\times\Ucol$ et la matrice des coordonnées sur ses axes de taille
+$\Urow \times \K$. La matrice $\U$ est la matrice des $\K$ variable latentes et
+la matrice $\V$ représente les axes des facteurs latents. Enfin la matrice $\E$
+est la matrice d'erreur résiduelle de taille $\Yrow\times\Ycol$.
 
 Nous remarquons dans un premier temps que les matrices $\U$ et $\V$ ne sont pas
 définies de façon unique. Nous posons 
@@ -1984,12 +1986,13 @@ définies de façon unique. Nous posons
 \label{eq:W}
 \W = \U \V^{T} 
 \end{equation}
-la matrice latente. Si l'on suppose qu'il y à $\K$ variables latentes sont
-indépendantes alors la matrice latentes $\W$ est de rang $\K$. Dans la suite
-nous considérerons $\U$ et $\V$ comme étant les matrices uniques obtenues grâce
-à l'analyse en composante principale de la matrice latente $\W$.
+et appelons cette matrice, la matrice latente. Si l'on suppose qu'il y à $\K$
+variables latentes linéairement indépendants cela est équivalent a faire
+l'hypothèse que la matrice latente $\W$ est de rang $\K$. Dans la suite nous
+considérons $\U$ et $\V$ comme étant les matrices uniques obtenues grâce à
+l'analyse en composante principale de la matrice latente $\W$.
 
-**** Estimation des moindres carrées régularisés en norme $L_{2}$
+**** Estimation des moindres carrés régularisée en norme $L_{2}$
 <<sec:estimator_L2>>
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 16:21] \\
@@ -2002,13 +2005,14 @@ nous considérerons $\U$ et $\V$ comme étant les matrices uniques obtenues grâ
 
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres de
 LFMM défini par eqref:eq:model basé sur un problème des moindres carrées
-régularisé en norme $L_{2}$. Nous montrerons que cette algorithme permet de
-calculer un point de minimum global du problème d'optimisation.
+régularisé en norme $L_{2}$. Nous montrons que cette algorithme permet de
+calculer un point de minimum global du problème d'optimisation de moindres
+carrés.
 
 ***** Fonction objectif
 
-Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM nous posons la fonction
-objectif suivante
+Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM nous définissons la
+fonction objectif suivante
 \begin{equation}
 \label{eq:optim_ridge_reg}
 \LfmmLridge
@@ -2017,7 +2021,7 @@ où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2}$ est la norme $L_2$
 et $\lambRidge$ le paramètre de régularisation. 
 
 Le terme premier terme de $\Lridge$ (terme d'attache aux données) correspond à
-l'opposé de la log vraisemblance où la matrice de bruit $\E$ est Gaussienne,
+l'opposé de la log vraisemblance où la matrice de bruit $\E$ est gaussienne,
 isotrope et de moyenne nulle.
 
 Le terme deuxième terme de $\Lridge$ (terme de régularisation) est indispensable
@@ -2030,54 +2034,55 @@ alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a
 \begin{equation*}
 \Lridge(\U - \X \matr{T}, \V^{T}, \B + \V \matr{T}^T}) = \Lridge(\U, \V^{T}, \B).
 \end{equation*}
-Ainsi, les points de minima d'une tel fonction objective ne sont pas pertinent pour
-notre problème.
+Ainsi, les points du minimum d'une telle fonction objective ne sont pas définis
+de manière univoque pour notre problème.
 
 ***** Algorithme
-Afin d'estimer les paramètres de LFMM qui minimise $\Lridge$ nous commençons par
+Afin d'estimer les paramètres de LFMM minimisant $\Lridge$ nous commençons par
 calculer la décomposition en valeurs singulières de la matrice des variables
 explicatives $\X$
 \begin{equation*}
 \X = \matr{Q} \matr{\Sigma} \matr{R}^{T}
 \end{equation*}
-où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, 
-$\matr{R}$ une matrice unitaire de taille $\Xcol \times \Xcol$ et
-$\matr{\Sigma}$ une matrice de taille $\Xrow \times \Xcol$ contenant les valeurs
-singulières $\left \{ \sigma_{j} \left \}_{j = 1..\Xcol}$.
-Les estimations sont calculé de la façon suivante 
+où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, $\matr{R}$
+une matrice unitaire de taille $\Xcol \times \Xcol$ et $\matr{\Sigma}$ une
+matrice de taille $\Xrow \times \Xcol$ contenant les valeurs singulières $\left
+\{ \sigma_{j} \left \}_{j = 1..\Xcol}$ de $\X$. Les estimateurs sont calculés de
+la façon suivante
 \begin{align}
 \label{eq:RidgeLfmmEstomatorW}
 \hat{\U} \hat{\V} & =  \matr{Q} \matr{D}^{-1} \svd_{\K}( \matr{D} \matr{Q}^{T} \Y ) \\
 \label{eq:RidgeLfmmEstomatorB}
-\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}).
+\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}),
 \end{align}
-Où $\svd_{\K}(\matr{A})$ est la meilleur approximation de rang $\K$ de la matrice
+où $\svd_{\K}(\matr{A})$ est la meilleure approximation de rang $\K$ de la matrice
 $\matr{A}$ données par la décomposition en valeurs singulières (SVD pour
 singular value decomposition) et $\Id_{d}$ est la matrice identité de taille $d
 \times d$. La matrice $\matr{D}$ est la matrice diagonale de taille $\Yrow
-\times \Yrow$ qui contient les termes
+\times \Yrow$ qui contient les termes diagonaux
 \begin{equation*}
 \left\{ \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{1}^{2}}}, ..., 
 \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{d}^{2}}}, 
 1, ..., 1 \right\}.
 \end{equation*}
 
-Notons que l'estimation de la matrice latentes $\hat{\U} \hat{\V}$ dans
-eqref:eq:RidgeLfmmEstomatorW fait intervenir la matrice de changement de base
-$\matr{Q}$. Les $\Xcol$ premiers axes de cette nouvelle base forment une base
-orthonormal de l'espace vectoriel engendré par les variables explicatives. La
-matrice diagonal $\matr{D}$ a pour effet de réduire la composante qui appartient
-à l'espace engendré par $\X$. Si $\lambRidge$ vaut zéro la multiplication par
-$\matr{D} \matr{Q}^{T}$ revient à prendre le résidu d'une régression linéaire
-par $\X$, on enlève alors toute la corrélation linéaire avec $\X$. Si $\lambRidge$
-est très grand alors $\obP$ tend vers la matrice identité. Dans ce cas, le
-calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en composante
-principale de la matrice $\Y$. Il est donc important de choisir une valeur de
-$\lambRidge$ qui enlève la bonne proportion de corrélation avec les variables
-explicatives $\X$. Nous expliquons dans la partie [[sec:hyperparametre]] plus en
-détaille comment choisir les hyperparamètres.
+Notons que l'estimation de la matrice latente $\hat{\U} \hat{\V}$ dans
+l'équation eqref:eq:RidgeLfmmEstomatorW fait intervenir la matrice de changement
+de base $\matr{Q}$. Les $\Xcol$ premiers axes de la base canonique transformée
+par $\Q$ forment une base orthonormale de l'espace vectoriel engendré par les
+variables explicatives. La matrice diagonale $\matr{D}$ a pour effet de réduire
+la composante qui appartient à l'espace engendré par $\X$. Si $\lambRidge$ vaut
+zéro la multiplication par $\matr{D} \matr{Q}^{T}$ revient à prendre le résidu
+d'une régression linéaire par $\X$, on enlève alors toute la corrélation
+linéaire avec $\X$. Si $\lambRidge$ est très grand alors $\D$ tend vers la
+matrice identité. Dans ce cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire
+une analyse en composante principale de la matrice $\Y$. Il est donc important
+de choisir une valeur de $\lambRidge$ qui enlève la bonne proportion de
+corrélation avec les variables explicatives $\X$. Nous expliquons dans la partie
+[[sec:hyperparametre]] plus en détail comment choisir l'hyperparamètre
+$\lambRidge$.
 
-L'estimation des paramètres régularisé en norme $\L_{2}$ est justifié par le
+L'estimation des paramètres régularisé en norme $L_{2}$ est justifié par le
 théorème suivant
 #+BEGIN_theorem
 <<ridge_theorem>> 
@@ -2091,13 +2096,16 @@ minimum global de la fonction objective $\Lridge$.
 On veut trouver $ \hat{\U} \in \RR^{\Urow \times \Ucol}$, $\hat{\V} \in
 \RR^{\Vrow \times \Vcol}$ et $\hat{\B} \in \RR^{\Brow \times \Bcol}$ qui soit un
 minimum global de la fonction $\Lridge$. Commençons par remarquer que la
-fonction $\Lridge$ est convexe le long de la variable $\B$ , on peut donc
-trouver le point de minimum global en annulant la dérivé de $\Lridge$ par
+fonction $\Lridge$ est convexe en la variable $\B$ , on peut donc
+trouver le point de minimum global en annulant la dérivée de $\Lridge$ par
 rapport à $\B$
 \begin{equation}
 \hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V).
 \end{equation}
-Il suffit maintenant de minimiser la fonction
+Il s'agit de l'estimateur ridge du modèle de la régression linéaire de $\Y - \U
+\V$ par $\X$.
+
+Il faut maintenant minimiser la fonction
 \begin{align*}
 \mathcal{L}^{'}(\U, \V) & = \Lridge(\U, \V, \hat{\B}).
 \end{align*}
@@ -2111,41 +2119,36 @@ matrice de taille $\Xrow \times \Xcol$ contenant les valeurs singulières $\left
 \{ \sigma_{j} \left \}_{j = 1..\Xcol}$.L'écriture de $\mathcal{L}^{'}$ se
 simplifie comme ceci
 \begin{equation*}
-\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\matr{B} \matr{Q}^{T} (\Y - \U \V^{T})} + 
-\frac{1}{2} \lambRidge \norm{\matr{C} \matr{Q}^{T} (\Y - \U \V^{T})}
+\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\D^{2} \matr{Q}^{T} (\Y - \U \V^{T})} + 
+\frac{1}{2} \lambRidge \norm{\matr{C}_{\lambRidge} \matr{Q}^{T} (\Y - \U \V^{T})}
 \end{equation*}
-où $\matr{C}$ est une matrice de taille $\Xcol \times \Xrow$ remplie de zéro
-sauf sur la première diagonale qui contient les valeurs
+où $\matr{C}_{\lambRidge}$ est une matrice de taille $\Xcol \times \Xrow$
+remplie de zéro sauf sur la première diagonale qui contient les valeurs
 \begin{equation*}
 \left\{ \frac{\sigma_{i}}{\sigma_{i}^{2} + \lambRidge}\right\}_{i = 1..\Xcol}.
 \end{equation*}
-La matrice $\matr{B}$ est une matrice diagonale de taille $\Yrow \times \Xrow$
+La matrice $\D$ est une matrice diagonale de taille $\Yrow \times \Xrow$
 contenant les termes 
-\begin{equation*}
-\left\{ \frac{\lambRidge}{\lambRidge + \sigma_{1}^{2}}, ..., 
-\frac{\lambRidge}{\lambRidge + \sigma_{d}^{2}}, 
-1, ..., 1 \right\}.
-\end{equation*}
-Nous pouvons enfin factoriser $\mathcal{L}^{'}$ de sorte que 
-\begin{equation*}
-\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\matr{D} \matr{Q}^{T} (\Y - \U \V^{T})}
-\end{equation*}
-où $\matr{D}$ est la matrice diagonale contenant les éléments 
 \begin{equation*}
 \left\{ \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{1}^{2}}}, ..., 
 \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{d}^{2}}}, 
 1, ..., 1 \right\}.
 \end{equation*}
-Il s'agit du problème de la meilleur approximation de rang $\K$ de la matrice
+Les matrices $\D$ et $\matr{C}_{\lambRidge}$ étant diagonales, nous pouvons factoriser
+$\mathcal{L}^{'}$ de sorte que 
+\begin{equation*}
+\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\D \matr{Q}^{T} (\Y - \U \V^{T})}
+\end{equation*}
+Enfin, optimiser la fonction objectif $\mathcal{L}^{'}$ est équivalent au
+problème de trouver la meilleur approximation de rang $\K$ de la matrice
 \begin{equation*}
 \matr{D} \matr{Q}^{T} \Y,
 \end{equation*}
-qui est obtenue en tronquant la SVD pour ne garder que les $\K$
-valeurs singulières les plus grandes.
-Nous avons bien montré que
+qui est obtenue en tronquant la SVD pour ne garder que les $\K$ valeurs
+singulières les plus grandes cite:Eckart_1936. Nous avons bien montré que
 \begin{align*}
-\hat{\U} \hat{\V} & =  \matr{Q} \matr{D}^{-1} \svd_{\K}( \matr{D} \matr{Q}^{T} \Y ) \\
-\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (G - \hat{\U} \hat{\V})
+\hat{\U} \hat{\V} & =  \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
+\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V})
 \end{align*}
 est un point de minimum global de $\Lridge$.
 #+END_proof
