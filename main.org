@@ -6,7 +6,7 @@
 
 #+LANGUAGE: fr
 #+STARTUP: overview indent inlineimages logdrawer
-#+OPTIONS: H:5 author:nil email:nil creator:nil timestamp:nil skip:nil toc:nil ^:nil
+#+OPTIONS: H:6 author:nil email:nil creator:nil timestamp:nil skip:nil toc:t ^:nil
 #+TAGS: noexport(n) deprecated(d)
 #+EXPORT_SELECT_TAGS: export
 #+EXPORT_EXCLUDE_TAGS: noexport
@@ -14,8 +14,8 @@
 #+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(D!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
 
 
-# #+LaTeX_CLASS: book
-#+LaTeX_CLASS: article
+#+LaTeX_CLASS: these
+# #+LaTeX_CLASS: article
 #+LATEX_HEADER: \input{notations.tex}
 
 #+HTML_MATHJAX: align: left indent: 5em tagside: left font: Neo-Euler
@@ -31,13 +31,15 @@
 #  LocalWords:  methylation polymorphism nucleotide Frobenius invertible SNP
 #  LocalWords:  preprocessing dataset RidgeLFMM LassoLFMM hyperparamètre
 
-#+BEGIN_QUOTE
-In Code we trust, all others bring data.
-–William Edwards Deming (1900-1993).
-#+END_QUOTE
+# #+BEGIN_QUOTE
+# In Code we trust, all others bring data.
+# –William Edwards Deming (1900-1993).
+# #+END_QUOTE
 
 * Introduction
 :LOGBOOK:
+- State "TODO"       from "TODO"       [2017-07-20 Thu 17:52]
+- State "TODO"       from              [2017-07-20 Thu 17:49]
 - Note taken on [2017-07-18 Tue 15:11] \\
   une remarque en passant: l'intro est pour moi la place pour définir le contexte
   général, les mots du titre, la pbq et le plan qui y répond ! 
@@ -63,7 +65,7 @@ In Code we trust, all others bring data.
   suffisament de données pour se rendre compte que nos test d'hypothèse sont faux
   :D et la on fait le lien avec les tests d'hypothèe multiple....
 :END:
-
+*** COMMENT 
 Cette dernière décennie a été marquée par une accumulation des données dans tous les
 domaines de la sciences. Cette accumulation de données est une aubaine pour les
 scientifiques. Cependant, que faire d'autant de données et comment en tirer
@@ -107,16 +109,18 @@ factorisation de matrice en statistique.
   Kenneth lange, factorisation de matrice = avenir des stat ! a retrouver !
 :END:
 ** Problématique et plan
-* Données                                                          :noexport:
+* Données
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-Nous décrivons dans cette partie les données réelles qui sont analysée dans
-cette thèse. Afin de rendre les analyse le plus possible reproductible
-reproductible, nous décrivons les étapes de pré traitement qui ont été affecté
-sur ces jeux de données. Les scripts sont disponible dans la version de la thèse
-avec le code.
-** 1000 genome
+:LOGBOOK:
+- State "TODO"       from              [2017-07-20 Thu 17:49]
+:END:
+Nous décrivons dans cette partie les données réelles qui sont analysées dans la
+thèse. Afin de rendre les analyses le plus possible reproductibles, nous
+décrivons les étapes de pré traitement qui ont été affectées sur ces jeux de
+données. Les scripts sont disponible dans la version de la thèse avec le code.
+** 1000 genome                                                    :noexport:
 
 ---DECRIRE dataset----
 *** Téléchargement du jeux de données
@@ -1688,9 +1692,9 @@ Il reste certain SNPs avec des données manquantes ($0.7 \%$), nous les avons en
   > dim(G)
   [1]    919 342478
 #+end_example
-** Arabidopsis Thaliana Regional Mapping Lines
-** 1001 genome
-** TODO Celiac GWAS
+** Arabidopsis Thaliana Regional Mapping Lines                    :noexport:
+** 1001 genome                                                    :noexport:
+** TODO Celiac GWAS                                               :noexport:
 :LOGBOOK:
 - Note taken on [2017-07-11 mar. 09:32] \\
   J'ai juste mis la dernière étape pour pouvoir lancer les analyses ! Les autres
@@ -1802,7 +1806,7 @@ CLOSED: [2017-07-12 mer. 17:00]
   ## G.matter <- matter_mat(path = "./Data/ThesisDataset/3Article/Celiac/G.matter.bin", nrow = 15155, ncol = 281122)
   saveRDS(G.matter, "./Data/ThesisDataset/3Article/Celiac/G.matter.rds")
 #+END_SRC
-** AT EWAS
+** AT EWAS                                                        :noexport:
 *** Téléchargement des données
 #+BEGIN_SRC R
   ## try http:// if https:// URLs are not supported
@@ -1938,6 +1942,7 @@ Pour certaine analyse il est important de scaler les données.
 
 * Inférence rapide des coefficients de métissage à l'aide des données géographique
 :LOGBOOK:
+- State "TODO"       from              [2017-07-20 Thu 17:49]
 - Note taken on [2017-07-18 Tue 15:07] \\
   Non je ne vais pas avoir le temps, je vais traduire l'article, étoffer un peu
   et basta. Je mettrais en perspective le traitement des données manquantes pour
@@ -1952,10 +1957,10 @@ Pour certaine analyse il est important de scaler les données.
   analyse mais très proprement :D, y compris pour l'étude stat à la fin
   (recalibration propre !)
 :END:
-* Estimation des facteurs latents pour corriger les test d'association :3Article:
-*** Introduction
-*** Méthodes 
-**** Modèle 
+* Estimation des facteurs latents pour corriger les tests d'association
+** Introduction
+** Méthodes 
+*** Modèle 
 <<sec:model>>
 Nous introduisons dans cette partie les notations et le modèle. La plupart des
 méthodes d'ajustement pour les facteurs de confusions repose sur le modèle
@@ -1992,7 +1997,7 @@ l'hypothèse que la matrice latente $\W$ est de rang $\K$. Dans la suite nous
 considérons $\U$ et $\V$ comme étant les matrices uniques obtenues grâce à
 l'analyse en composante principale de la matrice latente $\W$.
 
-**** Estimation des moindres carrés régularisée en norme $L_{2}$
+*** Estimation des moindres carrés régularisée en norme $L_{2}$
 <<sec:estimator_L2>>
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 16:21] \\
@@ -2009,7 +2014,7 @@ régularisé en norme $L_{2}$. Nous montrons que cette algorithme permet de
 calculer un point de minimum global du problème d'optimisation de moindres
 carrés.
 
-***** Fonction objectif
+**** Fonction objectif
 
 Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM nous définissons la
 fonction objectif suivante
@@ -2037,7 +2042,7 @@ alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a
 Ainsi, les points du minimum d'une telle fonction objective ne sont pas définis
 de manière univoque pour notre problème.
 
-***** Algorithme
+**** Algorithme
 Afin d'estimer les paramètres de LFMM minimisant $\Lridge$ nous commençons par
 calculer la décomposition en valeurs singulières de la matrice des variables
 explicatives $\X$
@@ -2152,148 +2157,155 @@ singulières les plus grandes cite:Eckart_1936. Nous avons bien montré que
 \end{align*}
 est un point de minimum global de $\Lridge$.
 #+END_proof
-**** Estimation des moindres carrées régularisés en norme $L_{1}$  
+*** Estimation des moindres carrées régularisée en norme $L_{1}$  
 <<sec:estimator_L1>>
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 14:47] \\
   Faire le lien avec les methodes de low rank approximation
 :END:
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
-modèle LFMM défini par eqref:eq:model basé sur un problème des moindres carrées
-régularisé en norme $L_{1}$. Nous montrerons que cette algorithme converge vers
+modèle LFMM défini par eqref:eq:model basé sur un problème des moindres carrés
+régularisé en norme $L_{1}$. Nous montrons que cet algorithme converge vers
 un point de minimum global du problème d'optimisation.
 
-***** Fonction objectif
+**** Fonction objectif
 Nous proposons la fonction objective suivante
 \begin{equation}
 \label{eq:optim_lasso_reg}
 \LfmmLlasso
 \end{equation}
 où $\W$ est la matrice latente définie en eqref:eq:W, $\norm{\B}_{1}$ la norme
-$L_1$ de $\B$ et $\norm{\matr{A}}_{*}$ la norme nucléaire de la matrice
-$\matr{A}$ définie comme la somme de ses valeurs singulières.
+$L_1$ de $\B$ et $\norm{\W}_{*}$ la norme nucléaire de la matrice
+$\W$, définie comme la somme de ses valeurs singulières.
 
-Le choix de la norme $L_{1}$ est motivé par le fait que l'on s'attend a ce que
-seulement un certaine proportion de variable expliquées soit associées aux
+Le choix de la norme $L_{1}$ est motivé par le fait que l'on s'attend à ce que
+seulement une certaine proportion de variables expliquées soit associées aux
 variables explicatives. C'est à dire que seulement une certaine proportion des
-lignes de la matrices des effets $\B$ doit être différent de zéro. Or la
-régularisation $\L_{1}$ est connue pour produire des estimations parcimonieuses
+lignes de la matrice des effets $\B$ doivent être non nulles. La régularisation
+$L_{1}$ est connue pour produire des estimateurs parcimonieux de $\B$
 cite:Tibshirani_1996.
 
 La fonction $\Llasso$ fait aussi intervenir une régularisation sur la matrice
-latentes $\W$. Plutôt que d'avoir des contraintes sur le rang de $\W$ nous avons
-choisi d'ajouter une régularisation sur sa norme nucléaire. Ainsi la fonction
-$\Llasso$ est convexe et nous savons le rang de $\hat{\W}$, un point minium de
-$\Llasso$, décroit avec $\gamma$ le paramètre de régularisation devant la norme
-nucléaire cite:bach2008consistency. 
+latente $\W$. Ainsi la fonction $\Llasso$ est convexe et nous savons le rang de
+$\hat{\W}$, point minimum de $\Llasso$, décroît avec $\gamma$ le paramètre de
+régularisation devant la norme nucléaire cite:bach2008consistency.
 
-***** Algorithme
+**** Algorithme
 <<sec:lasso_algo>>
 
-Nous présentons maintenant un algorithme de descente par bloque de coordonnées
-qui permet d'estimer les paramètres de LFMM qui minimise la fonction objective
+Nous présentons maintenant un algorithme de descente par blocs de coordonnées
+qui permet d'estimer les paramètres de LFMM minimisant la fonction objective
 $\Llasso$ définie par eqref:eq:optim_lasso_reg.
 
-Nous commençons avec nulle tel que : 
+Nous initialisons l'algorithme avec des matrices nulles : 
 \begin{align*}
 \W_{t = 0} & = 0 \\
 \B_{t = 0} & = 0.
 \end{align*}
 Nous alternons ensuite les deux étapes suivantes : 
-1. calculer $\B_{t}$ le point minimum de 
+1. Calculer $\B_{t}$ le point minimum de 
    \begin{equation}
    \label{eq:lasso1}
-   \mathcal{L}_{lasso}^{2}(\B) =  \frac{1}{2} ||(\Y - \W_{t-1}) - \X \B^T||_{F}^2 + \lambdaLasso ||\B||_1
+   \mathcal{L}_{lasso}^{2}(\B) =  \frac{1}{2} ||(\Y - \W_{t-1}) - \X \B^T||_{F}^2 + \lambLasso ||\B||_1
    \end{equation}
-2. calculer $\W_{t}$ le point minimum de  
+2. Calculer $\W_{t}$ le point minimum de  
    \begin{equation}
    \label{eq:lasso2}
    \mathcal{L}_{lasso}^{1}(\W) = \frac{1}{2} ||(\Y - \X \B_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}.
    \end{equation}
-Ces deux étapes sont répété jusqu'a ce que l'algorithme est convergé ou bien que
-$t$ est attend le nombre maximum d'itération.
+Ces deux étapes sont répétées jusqu'à ce que l'algorithme est converge ou bien que
+$t$ atteint le nombre maximum d'itérations. Nous allons maintenant expliquer
+plus en détail les deux étapes de l'algorithme.
 
-La première étape de l'algorithme consiste à faire une régression régularisé en
-norme $L_{1}$ de la matrice résiduelle 
+La première étape de l'algorithme consiste à faire une régression linéaire
+régularisée en norme $L_{1}$ de la matrice résiduelle
 \begin{equation}
 \matr{E}^{1}_{t} = \Y - \W_{t-1}
 \end{equation}
-par les variables
-explicatives $\X$. Il existe plusieurs algorithme pour estimer les paramètres de
-la régression régulariser en norme $L_{1}$ comme par exemple l'algorithme de
-descente par coordonnées cite:Friedman_2007. Cependant, si la matrice des
-variables explicatives est tel que
+par les variables explicatives $\X$. Il existe plusieurs algorithmes pour
+estimer les paramètres de cette régression comme par exemple l'algorithme de
+descente par coordonnées cite:Friedman_2007. Dans le cas présent on s'intéresse
+plus à l'estimation des variables latentes, qui permettrons ensuite de faire le
+test d'association (voir la partie [[sec:hypothese]]). Nous pouvons transformer les
+variables explicatives de sorte que
 \begin{equation}
-\X^{T} \X = Id_{n}
+\X^{T} \X = Id_{d}.
 \end{equation}
-alors d'après cite:Tibshirani_1996 on a 
+On a alors d'après cite:Tibshirani_1996 
 \begin{equation}
-\B_{t} = \sign(\bar{\B}_{t}) (\bar{\B}_{t} - \lambdaLasso)_{+}
+\B_{t} = \sign(\bar{\B}_{t}) (\bar{\B}_{t} - \lambLasso)_{+}
 \end{equation}
 où 
 \begin{equation}
 s_{+} = \mathrm{max}(0, s)
 \end{equation}
 $\sign(s)$ est le signe de $s$ et $\bar{\B}_{t}$ est le paramètre de la
-régression linéaire classique données par 
+régression linéaire classique données dans ce cas par 
 \begin{equation*}
-\bar{\B}_{t} = (\X^{T} \X + \lambdaLasso \Id_{d})^{-1} \X^{T} (\matr{E}^{1}_{t}).
+\bar{\B}_{t} = \X^{T} \matr{E}^{1}_{t}.
 \end{equation*}
-Nous avons choisi d'implémenter ce cas particulier car il est possible de rentre
-les variables explicatives indépendantes avant le calcule de l'algorithme présenté
-ici. 
 
 La deuxième étape de l'algorithme est un problème d'approximation de rang faible
 de la matrice résiduelle 
 \begin{equation}
 \matr{E}^{2}_{t} = \Y - \X \B_{t}^{T}
 \end{equation}
-Cette approximation est données grâce à un seuillage des valeurs singulières de
+Cette approximation est donnée grâce à un seuillage des valeurs singulières de
 la matrice $\matr{E}^{2}_{t}$ cite:cai10_singul_value_thres_algor_matrix_compl.
 Pour cela, on commence par calculer la décomposition en valeurs singulières de
-matrice résiduelle :
+la matrice résiduelle :
 \begin{equation}
 \matr{E}^{2}_{t} = \matr{M} \matr{S} \matr{N}^{T}
 \end{equation}
 où $\matr{M}$ une matrice unitaire de taille $\Yrow \times \Yrow$, $\matr{N}$
 une matrice unitaire de taille $\Ycol \times \Ycol$ et $\matr{S}$ une matrice de
 taille $\Yrow \times \Ycol$ contenant les valeurs singulières $\left \{ s_{j}
-\left \}_{j = 1..\Yrow}$. L'approximation est calculée en remplaçant les valeurs
-singulières dans $\matr{S}$ par les valeurs seuillées $\left \{ (s_{j} -
-\gamma)_{+} \left \}_{j = 1..\Yrow}$. Cette seuillage à pour effet de réduire le
-rang de $\matr{E}^{2}_{t}$ et ramène vers zéro ses valeurs singulières
-restantes.
+\left \}_{j = 1..\Yrow}$. On a alors 
+\begin{equation}
+\W_{t} = \matr{M} \bar{\matr{S}} \matr{N}^{T}
+\end{equation}
+où $\bar{\matr{S}}$ est la matrice diagonale formé par les les valeur singulière
+de $\matr{S}$ seuillées. Ainsi les termes diagonaux de $\bar{\matr{S}}$ sont de
+sorte que 
+\begin{equation*}
+\bar{s}_{j} = (s_{j} - \gamma)_{+}, ~ j = 1,...,\Yrow.
+\end{equation*}
+Ce seuillage produit des valeurs nulles et ramène vers zéro les valeurs
+singulières restantes.
 
-L'algorithme de descente par bloque de coordonnées ne converge pas en général
-vers un minimum quand la fonction n'est pas continûment différentielle, comme
-c'est le cas pour $\Llasso$. Cependant, les théorèmes démontrer dans
-cite:Tseng_2001 dépasse largement le cadre de la convergence de l'algorithme
-d'estimation $L_{1}$ ce qui complique l'extraction des résultats intéressants.
-Pour facilité la compréhension, nous proposons de démontrer un théorème plus
-faible qui s'applique directement à notre cas. Pour cela nous introduisons la
-fonction $f$ définie sur son domaine
+L'algorithme de descente par blocs de coordonnées ne converge pas en général
+vers un point minimum quand la fonction n'est pas continûment différentiable,
+comme c'est le cas pour $\Llasso$. On peut trouver dans la littérature des
+résultats sur les algorithmes par blocs de coordonnées dans des cas ou la
+fonction objective n'est pas différentiable cite:Tseng_2001 . Cependant, les
+théorèmes démontrer dans cite:Tseng_2001 dépasse largement le cadre de la
+convergence de l'algorithme d'estimation $L_{1}$ présenté ici ce qui complique
+l'extraction des résultats intéressants. Pour facilité la compréhension, nous
+proposons de démontrer un théorème plus faible qui s'applique directement à
+notre cas. Pour cela nous introduisons quelques notations. Soit la fonction $f$
+définie sur son domaine
 \begin{equation}
 \label{eq:domf}
 A = A_{1} \times A_{2} \times ... \times A_{m}
 \end{equation}
-un produit Cartésien d'ensemble fermé et convexe. L'algorithme de descente par
-bloque de coordonnées est définie par la formule de récurrence suivante :
+un produit cartésien d'ensembles fermés et convexes. L'algorithme de descente par
+blocs de coordonnées est défini par la formule de récurrence suivante :
 \begin{equation}
 \label{eq:blokAlgo}
 x_{i}^{k+1} \in \mathrm{arg} \min_{\zeta \in X_{i}} f(x_{1}^{k}, ...,x_{i-1}^{k},\zeta,x_{i+1}^{k},..., x_{m}^{k}), ~
-i = 1,..., N.
+i = 1,...,m.
 \end{equation}
 En nous inspirant des résultats présenté dans cite:Tseng_2001 et de la
 proposition 2.7.1 de cite:Bertsekas_1997 qui montre la convergence de
-l'algorithme de descente par bloque de coordonnées dans le cas la fonction
-objectif est différentiable, nous démontrons la proposition suivante :
+l'algorithme de descente par bloc de coordonnées dans le cas la fonction
+objectif est différentiable, nous démontrons le théorème suivant :
 #+BEGIN_theorem 
 Si $f$ est continue, convexe et tel que
 \begin{equation}
 f(x_{1},..., x_{m}) = g(x_{1}, ..., x_{m}) + \sum_{i = 1}^{m} f_{i}(x_{i}) 
 \end{equation}
 où g est convexe et différentiable et les fonctions $f_{i}$ sont continues et
-convexes. Soit $\{x^{k}\}$ la séquence généré par eqref:eq:blokAlgo. Alors tout
+convexes. Soit $\{x^{k}\}$ la séquence générée par eqref:eq:blokAlgo. Alors tout
 point limite de $\{x^{k}\}$ est un point de minimum global de $f$.
 #+END_theorem
 
@@ -2309,49 +2321,48 @@ différentiable on a pour tout $x \in A$
 \label{eq:lassoProof1}
 f(x) - f(\bar{x}) & \geq & \nabla g(\bar{x})(x - \bar{x}) + 
 \sum_{i = 1}^{N} (f_{i}(x_{i}) - f_{i}(\bar{x}_{i})) \\
- & & = \sum_{i = 1}^{N} ( \nabla_{i} g(\bar{x})(x - \bar{x}) + 
+ & & = \sum_{i = 1}^{N} ( \nabla_{i} g(\bar{x})(x_{i} - \bar{x}_{i}) + 
  f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
 \end{align}
-où $\nabla g(\bar{x})$ et $\nabla_{i} g(\bar{x})$ sont respectivement la dérivé
-et la dérivé le long de la $i\mathrm{-ieme}$ variable de $g$ en $\bar{x}$. Or
+où $\nabla g(\bar{x})$ et $\nabla_{i} g(\bar{x})$ sont respectivement la dérivée
+et la dérivée par rapport à la $i\text{-ième}$ variable de $g$ en $\bar{x}$. Or
 nous savons par construction de $\bar{x}$ que
 \begin{equation}
 \label{eq:lassoProof2}
-f(\bar{x}) \leq f(\bar{x}_{1}, ...,x_{i},..., \bar{x}_{N}), ~ \forall x_{i} \in
-X_{i}.
+f(\bar{x}) \leq f(\bar{x}_{1}, ...,x_{i},..., \bar{x}_{m}), ~ \forall x_{i} \in
+A_{i}.
 \end{equation} 
 On a donc pour chaque variable d'indice $i$
 \begin{align}
-\nabla_{i} g(\bar{x})(x - \bar{x}) + f_{i}(x_{i}) - f_{i}(\bar{x}_{i}) & \geq  (\nabla_{i} g(\bar{x}) + s_{i})(x - \bar{x}) \\
+\nabla_{i} g(\bar{x})(x - \bar{x}) + f_{i}(x_{i}) - f_{i}(\bar{x}_{i}) & \geq  (\nabla_{i} g(\bar{x}) + r_{i})(x - \bar{x}) \\
 \label{eq:lassoProof3}
 & \geq 0
 \end{align}
-où $s_{i}$ est une sous dérivé de la fonction convexe $f_{i}$. L'équation
-eqref:eq:lassoProof2 nous permet de dire qu'il existe une sous dérivé $s_{i}$ tel
-que 
+où $r_{i}$ est une sous-dérivée de la fonction convexe $f_{i}$. En effet,
+l'équation eqref:eq:lassoProof2 nous permet de dire qu'il existe une
+sous-dérivée $r_{i}$ tel que
 \begin{equation}
 \label{eq:3}
-(\nabla_{i} g(\bar{x}) + s_{i}) = 0
+(\nabla_{i} g(\bar{x}) + r_{i}) = 0
 \end{equation}
-d'où l'équation eqref:eq:lassoProof3.
-Nous avons donc en utilisant eqref:eq:lassoProof3 et eqref:eq:lasso1 que pour tout $x \in A$
+d'où l'équation eqref:eq:lassoProof3. Finalement, nous avons en utilisant
+eqref:eq:lassoProof3 et eqref:eq:lasso1 
 \begin{equation}
-f(x) - f(\bar{x}) \geq 0.
+f(x) - f(\bar{x}) \geq 0, ~ \forall x \in A.
 \end{equation}
 #+END_proof
 Ce résultat démontre que l'algorithme d'estimation $L_{1}$ des paramètres du
 modèle LFMM converge vers un point de minimum global de $\Llasso$.
-**** Complexité des algorithmes
+*** Complexité des algorithmes
 Dans cette partie nous abordons la complexité des algorithmes d'estimation des
-paramètre que nous avons introduit dans les parties [[sec:estimator_L2]] et
-[[sec:estimator_L1]]. On peut distinguer deux grandes étapes présents dans les
-algorithmes d'estimation $L_{1}$ et $L_{2}$. La première est le calcul de la
-décomposition en valeur singulière tronqué (voir le calcule de la matrice
+paramètres présentées dans les parties précédentes. On peut distinguer deux
+grandes étapes dans ces algorithmes. La première est le calcul de la
+décomposition en valeur singulière tronqué (voir le calcul de la matrice
 latente donné par l'équation eqref:eq:RidgeLfmmEstomatorW pour l'estimation
 $L_{2}$ et la résolution du problème d'optimisation de la fonction
 $\mathcal{L}_{lasso}^{1}$ définie par eqref:eq:lasso2 pour l'estimation
-$L_{1}$). La seconde est le calcule de la projection orthogonal sur l'espace
-engendré par les variables explicatives (voir le calcule de $\W$ donné par
+$L_{1}$). La seconde est le calcul de la projection orthogonale sur l'espace
+engendré par les variables explicatives (voir le calcul de $\W$ donné par
 l'équation eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$ et la
 résolution du problème d'optimisation de la fonction $\mathcal{L}_{lasso}^{2}$
 définie par eqref:eq:lasso1 pour l'estimation $L_{1}$).
@@ -2359,33 +2370,36 @@ définie par eqref:eq:lasso1 pour l'estimation $L_{1}$).
 D'après cite:Halko_2011, le calcul des $K$ composantes dominantes de la
 décomposition en valeurs singulières demande $O(\Yrow \Ycol \K)$ opérations.
 Cette complexité temporelle peut même être réduite à $O(\Yrow \Ycol \log(\K))$
-si on utilise une méthode avec projections aléatoires.
+si on utilise une méthode avec projections aléatoires, comme celle présenté dans
+cite:Halko_2011.
 
-La deuxième étape importante des algorithmes que nous avons présenté est l'étape
-de projection du résidu de l'approximation de rang faible sur l'espace engendré
-par $\X$. Si on prend en compte toutes les opérations matricielles, cette étape
-nécessite $O(\Xcol (\Yrow \Ycol + \K (\Yrow + \Ycol) + \Xcol ( \Xcol + \Yrow +
-\Ycol + 1))$.
+La deuxième étape importante consiste en une projection du résidu de
+l'approximation de rang faible sur l'espace engendré par $\X$. Le nombre précis
+d'opération dépend des hypothèses qui sont faites sur la matrice $\X$ (dans
+l'algorithme d'estimation $L_{1}$ aucune inversion de matrice n'est nécessaire
+pour le calcule de $\B_{t}$). Mais dans les deux algorithmes, si on s'intéresse
+seulement au comportement asymptotique par rapport à $\Yrow$, $\Ycol$ et $\Ucol$,
+alors on peut majorer la complexité temporelle par $O(\Ycol \Yrow + \Ucol
+(\Ycol + \Yrow))$.
 
-Finalement, si on considère les opération restantes dans les deux algorithmes,
-le nombre d'opération est de l'ordre de $O(\Yrow \Ycol \K)$. L'algorithme
-d'estimation $L_{1}$ est bien entendu plus long car il réalise plusieurs
-fois (le nombre d'itérations dépend de la vitesse à laquelle
-l'algorithme converge) les opérations de décomposition en valeur
-singulière et de projection alors que l'algorithme ne les réalise qu'une seul
-fois.
+Finalement, pour les deux algorithmes, le nombre d'opération est majoré par
+$O(\Yrow \Ycol \K)$. L'algorithme d'estimation $L_{1}$ est bien entendu plus
+long car il réalise plusieurs fois (le nombre d'itérations dépend de la vitesse
+à laquelle l'algorithme converge) les opérations de décomposition en valeurs
+singulières et de projection alors que l'algorithme d'estimation $L_{2}$ ne les
+réalise qu'une seule fois.
 
 Outre la complexité temporelle il est important d'étudier la complexité
-spatiale, surtout pour ce genres d'algorithme qui prennent en entré des données
-potentielle trop grand pour la mémoire vive de l'ordinateur (RAM). Les
+spatiale, surtout pour ce genres d'algorithme qui prennent en entrée des données
+potentielles trop grandes pour la mémoire vive de l'ordinateur (RAM). Les
 algorithmes d'estimation $L_{1}$ et $L_{2}$ ne nécessite pas de dupliquer la
-matrice des variables explicatives $\Y$. En effet, la matrice $\Y$ est de taille
+matrice des variables explicatives $\Y$. La matrice $\Y$ est de taille
 $\Yrow \times \Ycol$ et donc la dupliquer pourrait poser des problèmes sur des
-ordinateur ne possédant pas assez de RAM. Il est même possible d'envisager de ne
-pas charger la matrice en RAM en accédant au données seulement quand cela est
+ordinateurs ne possédant pas assez de RAM. Il est même possible d'envisager de ne
+pas charger la matrice $\Y$ en RAM et d'accéder au données seulement quand cela est
 nécessaire. 
 
-**** Choix des hyperparamètres 
+*** Choix des hyperparamètres 
 <<sec:hyperparametre>>
 :LOGBOOK:
 - Note taken on [2017-05-25 Thu 11:52] \\
@@ -2401,39 +2415,45 @@ nécessaire.
   l'arrache avant etc...
 :END:
 
-La sélections des hyperparamètres est un problème très fréquents en analyse de
-données. Nous présentons plusieurs approches pratiques pour choisir les
-hyperparamètre qui interviennent dans les algorithmes que nous présenté ici.
-Nous commençons par présenter les différentes approches possible pour choisir le
-nombre de variables latentes $K$. Nous présentons ensuite plusieurs heuristiques
-qui permettent de choisir les paramêtres de régularisation. Enfin nous présentons
-un algorithmes de cross validation adapté aux algorithmes que nous avons
-présentés.
+La sélections des hyperparamètres est un problème commun a de nombreuse méthodes
+en analyse de données. Nous présentons plusieurs approches pratiques pour
+choisir les hyperparamètre qui interviennent dans les algorithmes que nous
+présentés ici. Nous commençons par présenter les différentes approches possibles
+pour choisir le nombre de variables latentes $K$. Nous présentons ensuite
+plusieurs heuristiques qui permettent d'aider le choix des paramètres de
+régularisation. Enfin nous présentons un algorithme de validation croisée adapté
+aux algorithmes que nous avons présentés.
 
-***** Nombre $\K$ de variables latentes
-Nous avons vu dans la section [[sec:estimator_L2]] que la matrice latente peut être
-estimée grâce à l'analyse en composante principale (ACP) de $\D
-\Q^{T} \Y$. Ainsi, nous proposons d'employer les techniques d'estimation
-du nombre variables latentes utilisées pour le modèle de l'ACP sur la matrice
-$\D \Q^{T} \Y$ afin d'estimer le nombre $\K$ de variable latente
-pour le modèle LFMM.
+**** Nombre $\K$ de variables latentes
+Nous avons vu dans la section [[sec:estimator_L2]] que la matrice latente $\W$ peut
+être estimée grâce à l'analyse en composante principale (ACP) de $\D \Q^{T} \Y$.
+Ainsi, afin d'estimer le nombre $\K$ de variable latente pour le modèle LFMM,
+nous proposons d'employer les techniques d'estimation du nombre de variables
+latentes utilisées pour l'ACP sur la matrice $\D \Q^{T} \Y$ .
 
 Il existe de nombreuses approches pour déterminer le nombre de composantes
-principales de l'ACP, celle-ci sont très bien expliqué dans
-cite:jolliffe1986principal. On peut grouper ses approche en trois catégories.
-Les approches subjective comme l'utilisation du scree plot, il s'agit du graphes
-des valeurs singulières. Les approches basé sur une modélisation de la
-distribution des données observées, comme par exemple la méthode présenté dans
-cite:choi2014selecting. Les approches basées sur la validation croisée, comme
-celle que nous détaillons plus loin. 
+principales de l'ACP, celle-ci sont très bien expliquées dans
+cite:jolliffe1986principal. On peut grouper ses approches en trois catégories.
+Les approches subjectives comme l'utilisation du scree plot, il s'agit du graphe
+des valeurs singulières de la matrice des données. Les approches basées sur une
+modélisation de la distribution des données observées, comme par exemple la
+méthode présentée dans cite:choi2014selecting. Les approches basées sur la
+validation croisée, comme celle que nous détaillons plus loin.
 
-Aucune méthode ne s'est imposé comme la référence, et il est préférable d'en
-utiliser plusieurs. Ainsi, l'utilisateur peut utiliser différentes méthodes sur
-la matrice $\D \Q^{T} \Y$ pour différente valeurs de $\lambda$ le paramètre de
-régularisation $L_{2}$. 
+Aucune méthode ne s'est imposée comme la référence, et il est préférable d'en
+utiliser plusieurs. Pour les expériences que nous avons réalisées sur des vraies
+données, le choix du nombre de variables latentes $\K$ du modèle LFMM a été fait à
+partir du scree plot de la matrice $\D \Q^{T} \Y$ pour différente valeurs de
+$\lambRidge$ et de la validation croisée.
 
-***** Paramètre de régularisation $L_{2}$
-Le paramètre de régularisation $L_{2}$ intervient dans le calcule de
+**** TODO Paramètre de régularisation $L_{2}$
+:LOGBOOK:
+- State "TODO"       from              [2017-07-20 Thu 16:55]
+- Note taken on [2017-07-20 Thu 16:54] \\
+  j'y verrai plus claire quand j'aurais choisi lambda pour les vrai data set et
+  une fois que la cross validation marchera ou pas...
+:END:
+Le paramètre de régularisation $L_{2}$ intervient dans le calcul de
 l'estimation de la matrice latente décrit dans la partie [[sec:estimator_L2]] par le
 biais de la matrice diagonal $\D$. Cette matrice permet de réduire la
 corrélation entre les variables expliquées $\Y$ et les variables explicatives
@@ -2453,16 +2473,16 @@ dosage, il doit être ni trop grand ni trop petit. Nous avons remarqué dans les
 expériences que $\lambdaRidge$ petit donne les meilleurs résultats dans de nombreux
 cas.
 
-***** Paramètre de régularisation $L_{1}$
+**** Paramètre de régularisation $L_{1}$
 Le paramètre de régularisation $L_{1}$ à un impacte sur le nombre de ligne non
-nulle dans la matrice des effets $\B$. Nous savons à priori que seulement une
-partie des variable expliqué sont corrélé avec les variables explicatives.
-Ainsi, il est possible d'interpréter la proportion de ligne non nulle dans $\B$
-comme la proportion des variables qui sont corrélé avec $\X$. Ainsi plutôt que
-de choisir le paramètre de régularisation, il est plus simple de choisir la
-proportion de variable expliqué par $\X$. Pour trouver un paramètre de
+nulles dans la matrice des effets $\B$. Nous savons à priori que seulement une
+partie des variables expliquées sont corrélé avec les variables explicatives.
+Ainsi, il est possible d'interpréter la proportion de lignes non nulles dans
+$\B$ comme la proportion des variables qui sont corrélé avec $\X$. Plutôt que de
+choisir le paramètre de régularisation, il est plus simple de choisir la
+proportion de variable expliquées par $\X$. Pour trouver un paramètre de
 régularisation qui correspond à cette proportion nous proposons une heuristique
-basé sur un chemin de régularisation inspiré par
+basée sur un chemin de régularisation inspiré par
 cite:friedman10_regul_paths_gener_linear_model.
 
 Nous commençons par la plus petite valeur du paramètre de régularisation
@@ -2471,36 +2491,34 @@ $\lambLasso$ tel que le vecteur
 \bar{\B}_{t} = (\X^{T} \X + \lambLasso \Id_{d})^{-1} \X^{T} (\matr{E}^{1}_{t = 1})
 \end{equation}
 vaut zéro. Ceci est le résultat de la première étape de l'algorithme
-d'estimation des moindres carré régularisé en norme $L_{1}$ présenté dans la
+d'estimation des moindres carrés régularisée en norme $L_{1}$ présenté dans la
 partie [[sec:estimator_L1]]. Nous notons cette valeur $\lambLasso^{\mathrm{max}}$.
-Ensuite, nous construisons une séquence $m$ valeurs de $\lambLasso$ décroissant
-selon une échelle logarithme depuis $\lambLasso^{\mathrm{max}}$ jusqu'à
+Ensuite, nous construisons une séquence de $m$ valeurs de $\lambLasso$ décroissant
+selon une échelle logarithmique depuis $\lambLasso^{\mathrm{max}}$ jusqu'à
 \begin{equation}
 \lambLasso^{\mathrm{min}} = \epsilon \lambLasso^{\mathrm{max}}.
 \end{equation}
-Nous calculons le nombre de valeurs non nulle dans $\hat{\B}$ l'estimation de la
-matrice des effets et stop si la proportion de valeurs non nulle souhaitée est dépassée.
+Enfin, nous calculons le nombre de valeurs non nulle dans $\hat{\B}$
+l'estimation de la matrice des effets et stoppons si la proportion de valeurs
+non nulle souhaitée est dépassée.
 
 
-***** Paramètre de régularisation de la norme nucléaire
-Le paramètre de régularisation de la norme à une influence sur le rang nucléaire de la
-matrice latente $\W$. Il est plus simple d'un point de vu utilisateur de choisir
-le rang de cette matrice, qui correspond au nombre de variables latentes $K$,
-que de choisir le paramètre de régularisation $\gamma$. En effet cela permet
-d'utiliser la même valeur de $K$ pour l'estimation $L_{1}$ que celle utilisé
-pour l'estimation $L_{2}$. 
+**** Paramètre de régularisation de la norme nucléaire
+Le paramètre de régularisation de la norme nucléaire dans l'algorithme
+d'estimation $L_{1}$ à une influence sur le rang de la matrice latente $\W$. Il
+est plus simple de choisir le rang de cette matrice, qui correspond au nombre de
+variables latentes $K$, que de choisir le paramètre de régularisation $\gamma$.
 
 Nous proposons l'heuristique suivante pour calculer $\gamma$ à partir de $K$.
-Nous commençons par caculer les valeurs singulières de la matrice des variables
-expliquées $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, 
+Nous commençons par calculer les valeurs singulières de la matrice des variables
+expliquées $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, on calcul 
 \begin{equation}
 \gamma = \frac{(\sigma_{\K} + \sigma_{\K + 1})}{2}.
 \end{equation}
 
-
-
-***** Cross validation
+**** TODO Cross validation
 :LOGBOOK:
+- State "TODO"       from              [2017-07-20 Thu 17:00]
 - Note taken on [2017-05-26 Fri 14:46] \\
   cf mon cahier
 :END:
@@ -2511,7 +2529,7 @@ particular on very big data set. Especially since LassoLFMM and RidgeLFMM have
 each two hyper-parameters which can be cross-validated. We propose other procedure
 to assess hyper-parameters that gave good results in our experiments.
 
-****** COMMENT ANNEX Cross validation algorithm
+***** COMMENT ANNEX Cross validation algorithm
 We present here the cross validation algorithm which can be used to assess
 hyper-parameter of LassoLFMM and RidgeLFMM.
 
@@ -2556,7 +2574,8 @@ Finally, we compute the residual error on the test set such as
 Err = \norm{ \Y^{i}_{(j)} + \X^{(i)}} \B^{(-i)_{(j)} + \U^{(i)}_{(-j)} \V^{(-i)}
 \end{equation}
 
-**** Test d'hypothèse
+*** Test d'hypothèse
+<<sec:hypothese>>
 :LOGBOOK:
 - Note taken on [2017-05-25 Thu 11:55] \\
   parler de lm : G ~U + X 
@@ -2564,57 +2583,57 @@ Err = \norm{ \Y^{i}_{(j)} + \X^{(i)}} \B^{(-i)_{(j)} + \U^{(i)}_{(-j)} \V^{(-i)}
   la recalibration par mad + median
 :END:
 
-Jusque ici, nous avons seulement abordé l'estimation des paramètre de LFMM.
+Jusque ici, nous avons seulement abordé l'estimation des paramètres de LFMM.
 Cependant, l'objectif initial est de trouver la liste des variables expliquées
-associées aux variables explicatives tout en prenant en compte les variables
-latentes. Nous présentons dans cette partie un test d'hypothèse corrigé pour les
-variables latentes.
+associées aux variables explicatives tout en prenant en compte les potentielles
+variables latentes. Nous présentons dans cette partie un test d'hypothèse
+corrigé pour les variables latentes.
 
 Une approche simple consiste a considérer que l'estimation des variables
-latentes $\hat{\U}$ comme les vraies valeurs $\hat{\U}$ et des les utilisé à
-coté des variable explicative du modèle mis en place réaliser le test
+latentes $\hat{\U}$ comme les vraies valeurs de $\hat{\U}$ et de les utiliser au
+coté des variables explicatives du modèle mis en place pour réaliser le test
 d'hypothèse. C'est une méthode très courante dans les études d'associations qui
-a montrer de très bon résultats surtout quand il y assez d'observation
+a montrer de très bon résultats surtout quand il y assez d'observations
 cite:gerard2017unifying,Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016.
-Nous avons choisi de réaliser un test d'hypothèse qui repose sur un modèle
-linéaire car cela correspond au modèle LFMM quand on suppose que $\U$ est
-connue, mais l'estimation des variables latentes peuvent être traité comme des
+Nous avons choisi de réaliser un test d'hypothèse qui repose sur le modèle la
+régression linéaire car cela correspond au modèle LFMM quand on suppose que $\U$
+est connue. Mais les estimations des variables latentes peuvent être traitées comme
 variables explicatives dans n'importe quel modèle statistique.
 
-Afin de simplifier les notation et sans perte de généralité, nous supposons
-qu'il n'y a qu'une seul variable explicative, c'est à dire que $\Xcol$ vaut $1$.
+Afin de simplifier les notations et sans perte de généralité, nous supposons
+qu'il n'y a qu'une seule variable explicative, c'est à dire que $\Xcol$ vaut $1$.
 De plus nous rappelons que l'estimation de la matrice des $\K$ variables
-latentes $\hat{\U}$ est défini de façon unique grâce à l'ACP de la matrice
+latentes $\hat{\U}$ est définie de façon unique grâce à l'ACP de la matrice
 $\hat{\W}$. La matrice $\hat{\W}$ est l'estimation $L_{1}$ ou $L_{2}$ de la
 matrice latente du modèle LFMM.
 
-***** Calcul de la statistique de test
-Afin de réaliser le test d'hypothèse le plus général possible nous avons choisi
-d'utiliser le modèle linéaire suivant 
+**** Calcul de la statistique de test
+Pour chaque variable expliquée $j$ nous avons le modèle de régression linéaire
+suivant
 \begin{equation}
-\Y_{j} =  \hat{\U} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{\epsilon_{j}}
+\Y_{j} =  \hat{\U} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{\epsilon_{j}}.
 \end{equation}
-pour chaque variable expliqué $j$. La matrice $\hat{\U}$ est l'estimation
-$L_{1}$ ou $L_{2}$ de la matrice des variables latente du modèle LFMM. On
-suppose que l'erreur $\matr{\epsilon_{j}}$ est Gaussienne de moyen nulle. On
-veut tester l'hypothèse de nullité du coefficient de régression $\beta_{j}$.
-Sous ces hypothèses on peut calculer pour chaque variable expliqué une
-statistique $z_{j}$. Le détail des calculs de la statistique de test est données dans la
-section 3.2 de cite:Hastie_2009. La statistique de test suit sous l'hypothèse
-nulle le loi de Student à $\Yrow - \K - 1$ degrés de liberté. On peut donc
-calculer pour chaque variable expliqué une \pvalue $p_{j}$.
+où la matrice $\hat{\U}$ est l'estimation $L_{1}$ ou $L_{2}$ de la matrice des
+variables latentes du modèle LFMM. On suppose que l'erreur $\matr{\epsilon_{j}}$
+est Gaussienne de moyenne nulle. On veut tester l'hypothèse de nullité du
+coefficient de régression $\beta_{j}$. Sous ces hypothèses on peut calculer pour
+chaque variable expliquée une statistique $z_{j}$. Le détail des calculs de la
+statistique de test est données dans la section 3.2 de cite:Hastie_2009. La
+statistique de test suit sous l'hypothèse nulle le loi de Student à $\Yrow -
+\K - 1$ degrés de liberté. On peut donc calculer pour chaque variable expliquée
+une \pvalue.
 
 
-***** Calibration du test d'hypothèse
+**** Calibration du test d'hypothèse
 Il arrive parfois que la statistique de suive pas la distribution théorique sous
 l'hypothèse nulle. On dit dans ce cas que le test est mal calibré. On peut
 trouver dans cite:Efron_2004 des exemples de situations qui peuvent aboutir à
 des tests mal calibrés. 
 
-Dans les exemples que nous présentons ici ont s'attend a ce que la majorité des
-variables ne soit pas associé avec la variable explicative, ainsi une large
-majorité des statistiques de test sont distribué selon l'hypothèse nulle. Nous
-utilisons l'approche choisi dans cite:Sun_2012, qui consiste à calculer la
+Dans les exemples que nous présentons ici ont s'attend à ce que la majorité des
+variables expliqués ne soit pas associé avec la variable explicative, ainsi une
+large majorité des statistiques de test sont distribuées selon l'hypothèse nulle.
+Nous utilisons l'approche choisi dans cite:Sun_2012, qui consiste à calculer la
 médiane et la déviation absolue à la médiane (MAD pour median absolute
 déviation) directement sur les $z$ statistiques. En effet, la médiane donne une
 estimation robuste de la moyenne et le MAD de l'écart type. On a alors une
@@ -2626,7 +2645,7 @@ nouvelle statistique de test
 Pour calculer les nouvelles \pvalue, on suppose que $\tilde{z_{j}}$ suit une loi
 normal de moyenne nulle et d'écart type 1 sous l'hypothèse nulle.
 
-***** Contrôle du taux de fausse découverte                    :noexport:
+**** Contrôle du taux de fausse découverte                      :noexport:
 :LOGBOOK:
 - Note taken on [2017-07-19 Wed 10:44] \\
   non si je fais une partie la dessus il va falloir que je developpe !! alors que
@@ -2640,22 +2659,22 @@ la variable explicative. Pour choisir cette liste
 Dans le cadre des test d'association multiple 
 
 
-*** Expériences                                                  :noexport:
+** Expériences                                                    :noexport:
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-**** Méthodes comparées
+*** Méthodes comparées
 <<sec:similar_method>>
-***** lm and lm + pca
+**** lm and lm + pca
 We comparared results of our method to two well known method the linear model
 and the linear model with PCA scores. 
-***** cate
+**** cate
 
-***** sva
-***** famt
-**** Simulation et vrai jeux de données
+**** sva
+**** famt
+*** Simulation et vrai jeux de données
 
-***** Generative model simulation
+**** Generative model simulation
 
 We used equation to generate generative model dataset. The latent factor
 scores and loadings $U$ and $V$ were generated using a multivariate gaussian
@@ -2668,7 +2687,7 @@ the mean equal to zero and the standard deviation equal to one such that the
 Pearson linear correlation between $X$ and $U_1$ the first latent score
 matrix equal to $c$.
 
-***** Real data example
+**** Real data example
 In this section we present the real data we used to compare lasso LFMM, ridge
 LFMM with similar methods presented in section [[sec:similar_method]]. To evaluate
 the utility of our methods on several situation we select study where correction
@@ -2678,7 +2697,7 @@ ecological association study (EAS). Before running algorithm $\G$ and $\X$
 matrix was centered and normalized with standard deviation for all the study. We
 now describe preprocessing step for each study.
 
-****** Association study of DNA methylation with rheumatoid arthritis (EWAS)
+***** Association study of DNA methylation with rheumatoid arthritis (EWAS)
 For the EWAS we chose data from a recent association study of DNA methylation with
 rheumatoid arthritis (RA) cite:Liu_2013. We retrieve the RA data from Gene
 Expression Omnibus (GEO) database (accession number GSE42861). Following
@@ -2698,7 +2717,7 @@ status, cell-type composition) are known but we did not use them in methods.
 Thus, we can compare methods output with output of method considering explicitly
 these variables cite:Rahmani_2016,Zou_2014.
 
-****** Association study of genetic variants with Celiac disease (GWAS)
+***** Association study of genetic variants with Celiac disease (GWAS)
 For the GWAS we chose data from an association study of SNPs with Celiac disease
 citep:dubois2010multiple. Before running method we apply classic preprossessing
 step with the software Plink cite:Purcell_2007. Firstly, we keep only individual
@@ -2721,8 +2740,8 @@ which are not correlated. The final dataset was of size $n = $ and $L = $.
 
 We also impute missing value with the sowtware 
 
-****** Étude d'association des variants génétique avec un gradient climatique (EAS)
-******* Preprocessing des données
+***** Étude d'association des variants génétique avec un gradient climatique (EAS)
+****** Preprocessing des données
 Pour cette étude nous avons choisi d'utiliser les données 1000 genome. Après les
 étapes de preprocessing présenter dans la section..., les individus metisse ont
 été exclu. En effet pour une étude d'association à l'environement il n'est pas
@@ -2804,7 +2823,7 @@ qui vivent dans leur un milieu naturel depuis plusieurs générations.
   > 
 #+end_example
 
-******* DONE Calcul du gradient climatique
+****** DONE Calcul du gradient climatique
 CLOSED: [2017-06-27 mar. 17:56]
 :LOGBOOK:
 - State "DONE"       from "STARTED"    [2017-06-27 mar. 17:56]
@@ -2917,8 +2936,8 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_example
 
-**** Description des expériences
-***** DONE Comparaisons numériques sur des simulations
+*** Description des expériences
+**** DONE Comparaisons numériques sur des simulations
 CLOSED: [2017-07-17 Lun 08:13]
 :LOGBOOK:
 - Note taken on [2017-07-17 Lun 08:14] \\
@@ -3048,31 +3067,31 @@ générative.
   [[./OUTPUT/Rplots/validation_numerique_gif.png]]
 #+end_example
 
-***** TODO Influence de lambda sur les estimations
+**** TODO Influence de lambda sur les estimations
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 13:53] \\
   ca va faire des sup mat. C'est pour justifier le choix de lambda petit ! deux
   graphe: err X prop outlier et err X angle
 - State "TODO"       from              [2017-06-29 jeu. 13:48]
 :END:
-***** TODO Influence des valeurs manquantes sur l'estimation des variables latentes
+**** TODO Influence des valeurs manquantes sur l'estimation des variables latentes
 :LOGBOOK:
 - State "TODO"       from              [2017-06-29 jeu. 13:47]
 - State "TODO"       from              [2017-06-29 jeu. 13:45]
 :END:
-***** TODO Influence des hyper paramètres
+**** TODO Influence des hyper paramètres
 :LOGBOOK:
 - Note taken on [2017-07-10 lun. 09:12] \\
   Il faut que je montre comment les estimateur évolue en fonction de K, lambda et
   gamma. Montrer que la cross validation marche aussi !
 - State "TODO"       from              [2017-07-10 lun. 09:12]
 :END:
-***** STARTED EAS
+**** STARTED EAS
 :LOGBOOK:
 - State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - State "TODO"       from              [2017-06-27 mar. 12:06]
 :END:
-****** DONE Scree plot du 1000 genome pour EAS
+***** DONE Scree plot du 1000 genome pour EAS
 CLOSED: [2017-07-11 mar. 12:00]
 :LOGBOOK:
 - Note taken on [2017-07-11 mar. 12:01] \\
@@ -3120,7 +3139,7 @@ CLOSED: [2017-07-11 mar. 12:00]
 [[./OUTPUT/Rplots/EAS_sree_plot.png]]
 
 
-****** DONE Validation croisée du modèle lfmmRidge sur 1000genome
+***** DONE Validation croisée du modèle lfmmRidge sur 1000genome
 CLOSED: [2017-07-11 mar. 14:36]
 :LOGBOOK:
 - State "DONE"       from "RUNNING"    [2017-07-11 mar. 14:36]
@@ -3188,7 +3207,7 @@ CLOSED: [2017-07-11 mar. 14:36]
 [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 [[./OUTPUT/Rplots/eas_CV_K.png]]
 
-****** STARTED Étude du jeu de données
+***** STARTED Étude du jeu de données
 :LOGBOOK:
 - State "STARTED"    from "DONE"       [2017-07-12 mer. 11:10]
 - State "DONE"       from "RUNNING"    [2017-07-12 mer. 09:48]
@@ -3248,12 +3267,12 @@ CLOSED: [2017-07-11 mar. 14:36]
 
 #+end_src
 
-******* Charger l'experience
+****** Charger l'experience
 #+BEGIN_SRC R
   library(MaTheseR)
   expr <- readRDS("./OUTPUT/Expr/EAS_all.rds")
 #+END_SRC
-******* Que donne la calibration ?
+****** Que donne la calibration ?
 #+BEGIN_SRC R
   expr$df.res %>%
     group_by(method) %>%
@@ -3274,7 +3293,7 @@ CLOSED: [2017-07-11 mar. 14:36]
   7       sva 0.7385787 0.53293170
 #+end_example
 
-******* Les qqplots ?
+****** Les qqplots ?
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     mutate(pvalue = calibrated.pvalue) %>%
@@ -3296,7 +3315,7 @@ CLOSED: [2017-07-11 mar. 14:36]
 [[./OUTPUT/Rplots/EAS_qqplots.png]]
 [[./OUTPUT/Rplots/EAS_qqplots2.png]]
 
-******* Le top 15
+****** Le top 15
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
@@ -3310,7 +3329,7 @@ CLOSED: [2017-07-11 mar. 14:36]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_top_inter.png]]
 
-******* Contrôle du FDR à $0.01$
+****** Contrôle du FDR à $0.01$
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
@@ -3324,7 +3343,7 @@ CLOSED: [2017-07-11 mar. 14:36]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_fdr01_inter.png]]
 
-******* Venn diagram
+****** Venn diagram
 #+begin_src R 
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
@@ -3375,7 +3394,7 @@ CLOSED: [2017-07-11 mar. 14:36]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_fdr01_venn.png]]
 
-******* TODO Annotation
+****** TODO Annotation
 :LOGBOOK:
 - State "TODO"       from "DONE"       [2017-07-12 mer. 11:10]
 - State "DONE"       from              [2017-07-12 mer. 11:10]
@@ -3406,7 +3425,7 @@ CLOSED: [2017-07-11 mar. 14:36]
     print.data.frame()
 #+END_SRC
 
-******* TODO manhattan plot
+****** TODO manhattan plot
 :LOGBOOK:
 - State "TODO"       from              [2017-07-12 mer. 11:11]
 :END:
@@ -3421,12 +3440,12 @@ CLOSED: [2017-07-11 mar. 14:36]
     geom_histogram()
 #+end_src
 
-***** STARTED GWAS
+**** STARTED GWAS
 :LOGBOOK:
 - State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - State "TODO"       from              [2017-06-29 jeu. 09:22]
 :END:
-****** STARTED SNPs détecté par d'autre analyse
+***** STARTED SNPs détecté par d'autre analyse
 :LOGBOOK:
 - State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - Note taken on [2017-07-11 mar. 10:04] \\
@@ -3539,7 +3558,7 @@ GRCh38.
    [1] "rs10903122" "rs859637"   "rs13010713" "rs1464510"  "rs1020388" 
    [6] "rs1738074"  "rs653178"   "rs1958589"  "rs1893217"  "rs157640" 
 #+end_example
-****** STARTED Scree plot
+***** STARTED Scree plot
 :LOGBOOK:
 - State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - Note taken on [2017-07-11 mar. 10:03] \\
@@ -3581,7 +3600,7 @@ GRCh38.
 
 On prend K = 9 variables lattentes.
 
-****** TODO Validation croisée avec lfmmRidge
+***** TODO Validation croisée avec lfmmRidge
 :LOGBOOK:
 - Note taken on [2017-07-11 mar. 10:10] \\
   On va voir si ca passe :D
@@ -3618,7 +3637,7 @@ On prend K = 9 variables lattentes.
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_K.png")
 #+end_src
-****** DEBUG Étude du jeu de données 
+***** DEBUG Étude du jeu de données 
 :LOGBOOK:
 - State "DEBUG"      from "DONE"       [2017-07-17 Lun 08:18]
 - State "DONE"       from "RUNNING"    [2017-07-17 Lun 08:18]
@@ -3749,14 +3768,14 @@ On prend K = 9 variables lattentes.
   Expr save in ./OUTPUT/Expr/celiac_all_df.rds
 #+end_example
 
-***** DONE EWAS
+**** DONE EWAS
 CLOSED: [2017-07-11 mar. 11:45]
 :LOGBOOK:
 - State "DONE"       from "STARTED"    [2017-07-11 mar. 11:45]
 - State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - State "TODO"       from              [2017-06-29 jeu. 09:22]
 :END:
-****** Sites candidats detectés dans d'autres études
+***** Sites candidats detectés dans d'autres études
 Les loci relevé par cite:Rahmani_2016
 #+begin_src R :results output :exports both
   rahmani.loci <- c("cg05428452",
@@ -3795,7 +3814,7 @@ candidates
 
 #+RESULTS:
 : [1]  36714  51546 101455 125220 149131
-****** DONE Scree plot 
+***** DONE Scree plot 
 CLOSED: [2017-06-29 jeu. 09:42]
 :LOGBOOK:
 - State "DONE"       from "RUNNING"    [2017-06-29 jeu. 09:42]
@@ -3837,7 +3856,7 @@ CLOSED: [2017-06-29 jeu. 09:42]
   [[./OUTPUT/Rplots/scree_plot_AT.png]]
 #+end_example
 
-****** DONE Validation croisée du modèle lfmmRidge
+***** DONE Validation croisée du modèle lfmmRidge
 CLOSED: [2017-07-03 lun. 16:18]
 :LOGBOOK:
 - State "DONE"       from "RUNNING"    [2017-07-03 lun. 16:18]
@@ -3888,7 +3907,7 @@ CLOSED: [2017-07-03 lun. 16:18]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_lambda.png]]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_K.png]]
 
-****** DONE Étude du jeu de données
+***** DONE Étude du jeu de données
 CLOSED: [2017-07-11 mar. 11:45]
 :LOGBOOK:
 - State "DONE"       from "RUNNING"    [2017-07-11 mar. 11:45]
@@ -3957,13 +3976,13 @@ CLOSED: [2017-07-11 mar. 11:45]
 
 #+end_src
 
-******* Charger l'expérience et les candidats
+****** Charger l'expérience et les candidats
 #+BEGIN_SRC R
   library(MaTheseR)
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
 #+END_SRC
-******* Que donne la calibration ?
+****** Que donne la calibration ?
 #+BEGIN_SRC R
   expr$df.res %>%
     group_by(method) %>%
@@ -3984,7 +4003,7 @@ CLOSED: [2017-07-11 mar. 11:45]
   7       sva 4.003476  2.8316228410
 #+end_example
 
-******* Les qqplots ?
+****** Les qqplots ?
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     mutate(pvalue = calibrated.pvalue) %>%
@@ -4006,7 +4025,7 @@ CLOSED: [2017-07-11 mar. 11:45]
 [[./OUTPUT/Rplots/EWAS_qqplots2.png]]
 [[./OUTPUT/Rplots/EWAS_qqplots.png]]
 
-******* Le top 15
+****** Le top 15
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
@@ -4036,7 +4055,7 @@ CLOSED: [2017-07-11 mar. 11:45]
 7       sva     0
 #+end_example
 
-******* Contrôle du FDR à $0.01$
+****** Contrôle du FDR à $0.01$
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
@@ -4065,7 +4084,7 @@ CLOSED: [2017-07-11 mar. 11:45]
 6       sva     1
 #+end_example
 
-******* Venn diagram
+****** Venn diagram
 #+begin_src R 
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
@@ -4090,14 +4109,14 @@ CLOSED: [2017-07-11 mar. 11:45]
 #+RESULTS:
 [[./OUTPUT/Rplots/ewas_fdr01_venn.png]]
 
-*** Résultats                                                    :noexport:
+** Résultats                                                      :noexport:
 
-*** Discussion                                                   :noexport:
-*** Figures et table
+** Discussion                                                     :noexport:
+** Figures et table
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-**** TODO Comparaisons des méthodes
+*** TODO Comparaisons des méthodes
 :LOGBOOK:
 - Note taken on [2017-07-17 Lun 08:15] \\
   L'experience est fini il faut faire le plot et l'anova !!!
@@ -4131,11 +4150,11 @@ CLOSED: [2017-07-11 mar. 11:45]
 
 [[./OUTPUT/Rplots/method_comp.png]]
 
-**** TODO GWAS
+*** TODO GWAS
 :LOGBOOK:
 - State "TODO"       from              [2017-07-17 Lun 08:16]
 :END:
-**** TODO EWAS
+*** TODO EWAS
 :LOGBOOK:
 - State "TODO"       from              [2017-07-10 lun. 15:49]
 :END:
@@ -4166,18 +4185,14 @@ CLOSED: [2017-07-11 mar. 11:45]
 
 [[./OUTPUT/Rplots/ewas_results_venn.png]]
 
-**** TODO EAS
+*** TODO EAS
 :LOGBOOK:
 - State "TODO"       from              [2017-07-17 Lun 08:16]
 :END:
-*** Références
-
-bibliographystyle:unsrt
-bibliography:../biblio.bib
-
 
 * perspectives : Vers le big data
 :LOGBOOK:
+- State "TODO"       from              [2017-07-20 Thu 17:49]
 - Note taken on [2017-07-18 Tue 15:49] \\
   strategie: il faut que je finisse tout le reste avec les versions actuelles
   (tess3r, et ce que j'ai fait pour le moment d'lfmm). Quand tout sera fini ! Je
@@ -4224,4 +4239,10 @@ bibliography:../biblio.bib
 :END:
 
 * Conclusion 
+:LOGBOOK:
+- State "TODO"       from              [2017-07-20 Thu 17:50]
+:END:
+
+bibliographystyle:unsrt
+bibliography:../biblio.bib
 

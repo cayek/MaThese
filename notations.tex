@@ -5,7 +5,7 @@
 \newcommand{\Ycol}{p} %% Y col dim
 \newcommand{\Id}{\matr{Id}} %% \Id
 \newcommand\norm[1]{\left\lVert#1\right\rVert} %% \norm
-\newcommand{\pvalue}{$p$-valeur} %% \pvalue
+\newcommand{\pvalue}{$p\text{-valeur}$} %% \pvalue
 \newcommand{\Var}{\mathrm{Var}} %% variance
 \newcommand{\sign}{\mathrm{sign}} %% signe
 \newcommand{\RR}{\mathbb{R}} %% real ensemble
@@ -55,7 +55,7 @@
 \Lnoreg(\U, \V, \B) =  \frac{1}{2} \norm{\Y - \U \V^T - \X \B^T}_{F}^2 %
 }
 \newcommand{\LfmmLlasso}{%
-\Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 + \lambdaLasso \norm{\B}_{1} + \gamma \norm{\W}_{*}%
+\Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 + \lambLasso \norm{\B}_{1} + \gamma \norm{\W}_{*}%
 }
 
 
