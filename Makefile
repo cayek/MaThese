@@ -28,14 +28,18 @@ MaTheseR_check:
 	R -e 'devtools::check(pkg = "./Rpackage")'
 
 ## krakenator
+krakenator_con_jupyter:
+	ssh -L 8786:localhost:8786 -t cayek@krakenator.imag.fr 
 
 krakenator_install_all: krakenator_install_ExpRiment krakenator_install_MatrixFactorizationR krakenator_deploy
 
 krakenator_install_ExpRiment:
-	ssh -t cayek@krakenator.imag.fr "cd ~/Projects/Thesis/ExpRiment/; git pull; make ExpRiment_install"
+	cd ~/Projects/Thesis/ExpRiment/; git status
+	ssh -t cayek@krakenator.imag.fr "source activate MaThese; cd ~/Projects/Thesis/ExpRiment/; git pull; make ExpRiment_install"
 
 krakenator_install_MatrixFactorizationR:
-	ssh -t cayek@krakenator.imag.fr "cd ~/Projects/Thesis/MatrixFactorizationR/; git pull; make MatrixFactorizationR_install"
+	cd ~/Projects/Thesis/MatrixFactorizationR/; git status
+	ssh -t cayek@krakenator.imag.fr "source activate MaThese; cd ~/Projects/Thesis/MatrixFactorizationR/; git pull; make MatrixFactorizationR_install"
 
 krakenator_push_hook:
 	scp ./hooks/post-receive.sh cayek@krakenator:/home/cayek/Gits/2017/MaThese.git/hooks/post-receive
@@ -44,9 +48,6 @@ krakenator_deploy:
 	git status
 	git commit --allow-empty -am "deploy on krakenator"
 	git push krakenator master
-
-krakenator_R: 
-	ssh -X -t cayek@krakenator "cd ~/Projects/Thesis/MaThese; screen R"
 
 ## Data/
 krakenator_mount_data:
@@ -70,16 +71,4 @@ krakenator_umount_OUTPUT:
 	if [ $(HOSTNAME) == "timc-bcm-15.imag.fr" ] ; then \
 		sudo umount OUTPUT; \
 	fi
-
-# patator
-patator_push_hook:
-	scp ./hooks/post-receive.sh cayek@patator:/home/cayek/Gits/2017/MaThese.git/hooks/post-receive
-
-patator_deploy:
-	git status
-	git commit --allow-empty -am "deploy on patator"
-	git push patator master
-
-patator_R: 
-	ssh -X -t cayek@patator "cd ~/Projects/Thesis/MaThese; screen R"
 
