@@ -31,18 +31,13 @@ MaTheseR_check:
 krakenator_con_jupyter:
 	ssh -L 8786:localhost:8786 -t cayek@krakenator.imag.fr 
 
-krakenator_install_all: krakenator_install_ExpRiment krakenator_install_MatrixFactorizationR krakenator_deploy
-
-krakenator_install_ExpRiment:
-	cd ~/Projects/Thesis/ExpRiment/; git status
-	ssh -t cayek@krakenator.imag.fr "source activate MaThese; cd ~/Projects/Thesis/ExpRiment/; git pull; make ExpRiment_install"
-
-krakenator_install_MatrixFactorizationR:
-	cd ~/Projects/Thesis/MatrixFactorizationR/; git status
-	ssh -t cayek@krakenator.imag.fr "source activate MaThese; cd ~/Projects/Thesis/MatrixFactorizationR/; git pull; make MatrixFactorizationR_install"
-
 krakenator_push_hook:
 	scp ./hooks/post-receive.sh cayek@krakenator:/home/cayek/Gits/2017/MaThese.git/hooks/post-receive
+
+krakenator_deploy_all:
+	cd ../MatrixFactorizationR/; make krakenator_deploy
+	cd ../ExpRiment/; make krakenator_deploy
+	make krakenator_deploy
 
 krakenator_deploy:
 	git status
