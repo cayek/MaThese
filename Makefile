@@ -41,7 +41,7 @@ krakenator_deploy_all:
 
 krakenator_deploy:
 	git status
-	git commit --allow-empty -am "deploy on krakenator"
+# git commit --allow-empty -am "deploy on krakenator"
 	git push krakenator master
 
 ## Data/
