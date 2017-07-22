@@ -36,6 +36,41 @@
 # –William Edwards Deming (1900-1993).
 # #+END_QUOTE
 
+
+* Workenv                                                          :noexport:
+** R
+#+BEGIN_SRC R
+  ## CRAN
+  install.packages("tidyverse")
+  install.packages("Devtools")
+  install.packages("testthat")
+  install.packages("foreach")
+  install.packages("RSpectra")
+  install.packages("doParallel")
+  install.packages("DescTools")
+  install.packages("roxygen2")
+    ## bioconductor
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("matter")
+  biocLite("qvalue")
+  biocLite("biomaRt")
+  biocLite("LEA")
+  biocLite("impute")
+  biocLite("sva")
+
+  install.packages("cate")
+  install.packages("FAMT")
+  install.packages("xgboost")
+  install.packages("knitr")
+
+
+  ## github
+  devtools::install_github("privefl/bigsnpr")
+#+END_SRC
+** Ligne de commande
+*** ms
+*** plink
+** python
 * Introduction
 :LOGBOOK:
 - State "TODO"       from "TODO"       [2017-07-20 Thu 17:52]
