@@ -51,12 +51,12 @@
   install.packages("roxygen2")
     ## bioconductor
   source("https://bioconductor.org/biocLite.R")
-  biocLite("matter")
-  biocLite("qvalue")
-  biocLite("biomaRt")
-  biocLite("LEA")
-  biocLite("impute")
-  biocLite("sva")
+  biocLite("matter", ask = FALSE)
+  biocLite("qvalue",ask = FALSE)
+  biocLite("biomaRt",ask = FALSE)
+  biocLite("LEA",ask = FALSE)
+  biocLite("impute",ask = FALSE)
+  biocLite("sva",ask = FALSE)
 
   install.packages("cate")
   install.packages("FAMT")
@@ -1840,6 +1840,30 @@ CLOSED: [2017-07-12 mer. 17:00]
   paths(G.matter) <- "./Data/ThesisDataset/3Article/Celiac/G.matter.bin"
   ## G.matter <- matter_mat(path = "./Data/ThesisDataset/3Article/Celiac/G.matter.bin", nrow = 15155, ncol = 281122)
   saveRDS(G.matter, "./Data/ThesisDataset/3Article/Celiac/G.matter.rds")
+#+END_SRC
+*** CANCELLED Conversion au format =bigmatrix=
+CLOSED: [2017-07-23 Sun 15:46]
+:LOGBOOK:
+- Note taken on [2017-07-23 Sun 15:46] \\
+  MDRRRRR: 
+  Error in SetMatrixElements(x@address, as.double(j), as.double(i), as.double(value)) : 
+  long vectors not supported yet: ../../src/include/Rinlinedfuns.h:138
+  In addition: Warning message:
+  In filebacked.big.matrix(nrow = nrow, ncol = ncol, type = type,  :
+  No descriptor file given, it will be named G.big.bin.desc
+- State "CANCELLED"  from              [2017-07-23 Sun 15:46]
+- State "TODO"       from              [2017-07-23 Sun 15:29]
+:END:
+#+BEGIN_SRC R
+  library(bigmemory)
+
+  G <- readRDS("./Data/ThesisDataset/3Article/Celiac/G.rds")
+  G.big <- as.big.matrix(G,
+                         backingpath = "./Data/ThesisDataset/3Article/Celiac/",
+                         backingfile = "G.big.bin")
+  colnames(G.big) <- colnames(G)
+  rownames(G.big) <- rownames(G)
+  saveRDS(G.big, "./Data/ThesisDataset/3Article/Celiac/G.big.rds")
 #+END_SRC
 ** AT EWAS                                                        :noexport:
 *** Téléchargement des données
@@ -3672,8 +3696,12 @@ On prend K = 9 variables lattentes.
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_K.png")
 #+end_src
-***** DEBUG Étude du jeu de données 
+***** RUNNING Étude du jeu de données 
 :LOGBOOK:
+- Note taken on [2017-07-23 Sun 16:13] \\
+  C'est reparti !! sur krakenator en dehors de annaconda biensur !! pour que
+  matter marche (pour avoir R 3.4)
+- State "RUNNING"    from "DEBUG"      [2017-07-23 Sun 16:13]
 - State "DEBUG"      from "DONE"       [2017-07-17 Lun 08:18]
 - State "DONE"       from "RUNNING"    [2017-07-17 Lun 08:18]
 - Note taken on [2017-07-17 Lun 08:18] \\
