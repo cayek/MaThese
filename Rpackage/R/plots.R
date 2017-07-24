@@ -1,3 +1,4 @@
+##' @export
 compute_auc <- function(df) {
   ## compute AUC
   toplot <- df %>%
@@ -6,6 +7,7 @@ compute_auc <- function(df) {
   toplot
 }
 
+##' @export
 compute_gif <- function(df) {
   aux.f <- function(pvalue) {
     score2 <- qchisq(pvalue, lower.tail = FALSE, df = 1)
@@ -293,3 +295,4 @@ plot_venn <- function(sets) {
   }
   out
 }
+

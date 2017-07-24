@@ -4193,28 +4193,63 @@ CLOSED: [2017-07-11 mar. 11:45]
   expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
 
   ## by prop outlier
-  toplot <- expr$df.res %>%
+  toplot.h1 <- expr$df.res %>%
     dplyr::filter(pvalue.index == "pvalue1") %>%
     dplyr::mutate(x = prop.outlier)
-  h1.gif.pl <- plot_gif(toplot, "proportion of H1")
-  h1.auc.pl <- plot_AUC(toplot, "proportion of H1")
+
+  ## C
+  h1.gif.pl <- plot_gif(toplot.h1, "proportion of H1") +
+      theme(legend.position = "none")
+
+  ## A
+  h1.auc.pl <- plot_AUC(toplot.h1, "proportion of H1") +
+    theme(legend.position = "none")
+
 
   ## by rho.c
-  toplot <- expr$df.res %>%
+  toplot.rho <- expr$df.res %>%
     dplyr::filter(pvalue.index == "pvalue1") %>%
     dplyr::mutate(x = rho.c)
-  rho.gif.pl <- plot_gif(toplot, "rho")
-  rho.auc.pl <- plot_AUC(toplot, "rho")
+
+  ## D
+  rho.gif.pl <- plot_gif(toplot.rho, "rho") + 
+      theme(legend.position = "none")
+
+  ## B
+  rho.auc.pl <- plot_AUC(toplot.rho, "rho") +
+      theme(legend.position = "none")
 
   pl <- cowplot::plot_grid(h1.auc.pl,
-                           h1.gif.pl,
                            rho.auc.pl,
+                           h1.gif.pl,
                            rho.gif.pl,
                            ncol = 2, labels = c("A", "B", "C", "D"))
+  pl +
+    MaTheseR.env$gtheme
   save_plot_png(pl, filename = "method_comp.png")
 #+end_src
 
 [[./OUTPUT/Rplots/method_comp.png]]
+
+**** Test statistique
+#+begin_src R 
+  require(MaTheseR)
+  expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
+
+
+
+  ## AUC By prop of outlier
+  toplot.p.auc <- expr$df.res %>%
+    dplyr::filter(pvalue.index == "pvalue1") %>%
+    dplyr::mutate(x = prop.outlier, method = as.factor(method)) %>%
+    compute_auc()
+  lm.p.auc <- lm(AUC~method, data = toplot.h1)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+#+end_example
 
 *** TODO GWAS
 :LOGBOOK:

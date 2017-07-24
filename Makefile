@@ -31,11 +31,11 @@ MaTheseR_check:
 krakenator_con_jupyter:
 	ssh -L 8786:localhost:8786 -t cayek@krakenator.imag.fr 
 
-krakenator_shell:
-	ssh -X -t cayek@krakenator "cd ~/Projects/Thesis/MaThese; screen -S ${S} "
+krakenator_log_shell:
+	ssh -X -t cayek@krakenator "cd ~/Projects/Thesis/MaThese; log_screen ${S} bash"
 
-krakenator_R:
-	ssh -X -t cayek@krakenator "cd ~/Projects/Thesis/MaThese; screen -S ${S} R"
+krakenator_log_R:
+	ssh -X -t cayek@krakenator "cd ~/Projects/Thesis/MaThese; log_screen ${S} R"
 
 krakenator_push_hook:
 	scp ./hooks/post-receive.sh cayek@krakenator:/home/cayek/Gits/2017/MaThese.git/hooks/post-receive

@@ -27,6 +27,20 @@ save_plot_png <- function(pl, filename = NULL, width = 600, height = 400) {
   cat(paste0("[[./OUTPUT/Rplots/",filename,"]]\n"))
 }
 
+##' @export
+save_plot_svg <- function(pl, filename = NULL, width = 7, height = 7) {
+
+  path.dir = "~/Projects/Thesis/MaThese/OUTPUT/Rplots/"
+  output.file <- make_output_file(filename, "svg", path.dir)
+
+  svg(output.file, width = width, height = height)
+  grid::grid.draw(pl)
+  dev.off()
+
+  filename <- base::basename(output.file)
+
+  cat(paste0("[[./OUTPUT/Rplots/",filename,"]]\n"))
+}
 
 ##' @export
 save_expr <- function(expr, filename = NULL) {

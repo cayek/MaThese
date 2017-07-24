@@ -1,3 +1,5 @@
+MaTheseR.params <- new.env()
+
 #' R package with functions a use for ma thesis
 #'
 #'
@@ -14,4 +16,10 @@
 #' @import tibble
 #' @import RcppEigen
 NULL
+
+#########
+## plots
+
+MaTheseR.params$gtheme <- theme_bw(base_size = 11) +
+  theme(strip.background = element_rect(fill = NA))
 
