@@ -11,7 +11,7 @@
 #+EXPORT_SELECT_TAGS: export
 #+EXPORT_EXCLUDE_TAGS: noexport
 #+COLUMNS: %25ITEM %TODO %3PRIORITY %TAGS
-#+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(D!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
+#+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(g!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
 
 
 #+LaTeX_CLASS: these
@@ -3696,8 +3696,10 @@ On prend K = 9 variables lattentes.
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_K.png")
 #+end_src
-***** RUNNING Étude du jeu de données 
+***** DEBUG Étude du jeu de données 
 :LOGBOOK:
+- State "DEBUG"      from "DONE"       [2017-07-24 Mon 06:58]
+- State "DONE"       from "RUNNING"    [2017-07-24 Mon 06:58]
 - Note taken on [2017-07-23 Sun 16:13] \\
   C'est reparti !! sur krakenator en dehors de annaconda biensur !! pour que
   matter marche (pour avoir R 3.4)

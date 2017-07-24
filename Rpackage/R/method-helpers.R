@@ -3,8 +3,10 @@ method_main <- function(m, dat, main.fun, hp.func = NULL) {
   ## mask data
   if (!is.null(m$col.mask)) {
     message("mask data")
-    Y <- dat$Y
-    dat$Y <- dat$Y[,col.mask]
+    dat.masked <- LfmmDat(Y = NULL, X = dat$X, missing = FALSE)
+    dat.unmasked <- dat
+    dat.masked$Y <- dat.unmasked$Y[,col.mask]
+    dat <- dat.masked
   }
 
   ## run main
@@ -26,8 +28,8 @@ method_main <- function(m, dat, main.fun, hp.func = NULL) {
   ## unmask
   if (!is.null(m$col.mask)) {
     message("unmask data")
-    dat$Y <- Y
-    rm(Y)
+    dat <- dat.unmasked
+    rm(dat.masked)
     gc()
   }
 
