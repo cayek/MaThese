@@ -1,5 +1,13 @@
 MaTheseR.params <- new.env()
 
+#' Return MaThese params 
+#'
+#' @export
+get_MaTheseRparams<- function() {
+  MaTheseR.params
+}
+
+
 #' R package with functions a use for ma thesis
 #'
 #'

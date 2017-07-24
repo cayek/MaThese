@@ -4204,15 +4204,15 @@ CLOSED: [2017-07-11 mar. 11:45]
     legend <- tmp$grobs[[leg]]
     return(legend)}
 
+  #################
   ## by prop outlier
   toplot.h1 <- expr$df.res %>%
     dplyr::filter(pvalue.index == "pvalue1") %>%
     dplyr::mutate(x = prop.outlier)
 
   ## C
-  h1.gif.pl <- plot_gif(toplot.h1, "proportion of H1") +
-      theme(legend.position = "botton")
-  mylegend < -g_legend(h1.gif.pl)
+  h1.gif <- plot_gif(toplot.h1, "proportion of H1", test = TRUE)
+  mylegend <- g_legend(h1.gif$pl)
   h1.gif.pl <- h1.gif.pl +
       theme(legend.position = "none")
 
@@ -4220,7 +4220,7 @@ CLOSED: [2017-07-11 mar. 11:45]
   h1.auc.pl <- plot_AUC(toplot.h1, "proportion of H1") +
     theme(legend.position = "none")
 
-
+  ###########
   ## by rho.c
   toplot.rho <- expr$df.res %>%
     dplyr::filter(pvalue.index == "pvalue1") %>%
@@ -4260,7 +4260,7 @@ CLOSED: [2017-07-11 mar. 11:45]
 :LOGBOOK:
 - State "TODO"       from              [2017-07-10 lun. 15:49]
 :END:
-
+**** Diagramme de Veinn
 #+BEGIN_SRC R
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
@@ -4286,11 +4286,35 @@ CLOSED: [2017-07-11 mar. 11:45]
 #+END_SRC
 
 [[./OUTPUT/Rplots/ewas_results_venn.png]]
+**** Quantiles-Quantiles plot
+
+#+BEGIN_SRC R
+  expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
+
+  toplot <- expr$df.res %>%
+    mutate(pvalue = calibrated.pvalue) %>%
+    dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
+  pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
+    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
+    geom_abline(slope = 1, intercept = 0) +
+    MaTheseR.params$gtheme
+  pll
+
+  save_plot_png(pll, "ewas_results_qqplot.png")
+#+END_SRC
+
+#+CAPTION: Plot quantiles-quantiles
+#+NAME: fig:ewas_results_qqplot
+#+ATTR_LATEX: :placement [H]
+[[./OUTPUT/Rplots/ewas_results_qqplot.png]]
 
 *** TODO EAS
 :LOGBOOK:
 - State "TODO"       from              [2017-07-17 Lun 08:16]
 :END:
+
+
 
 * perspectives : Vers le big data
 :LOGBOOK:
