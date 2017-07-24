@@ -23,24 +23,34 @@ compute_gif <- function(df) {
 
 
 ##' @export
-plot_AUC <- function(df, x.name) {
+plot_AUC <- function(df, x.name, test = FALSE) {
+
+  res <- list()
 
   toplot <- df %>%
+    mutate(method = as.factor(method)) %>%
     group_by(method, x, rep.sampler, rep.method) %>%
     compute_auc()
+
+  ## test
+  if (test) {
+    res$lm.res <- lm(auc ~ method, data = toplot)
+  }
 
   ## compute mean
   toplot <- toplot %>%
     group_by(method, x) %>%
     summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N))
 
-  ggplot(toplot, aes(x = x, y = auc.mean, color = method)) +
+  res$pl <- ggplot(toplot, aes(x = x, y = auc.mean, color = method)) +
     geom_errorbar(aes(ymin = auc.mean - se,
                       ymax = auc.mean + se,
                       width = (max(x) - min(x)) * 0.05)) +
     geom_line() +
     geom_point() +
     xlab(x.name)
+
+  res
 
 }
 
@@ -101,17 +111,26 @@ plot_CV_ridgeLFMM <- function(df, major = c('K', 'lambda')) {
 }
 
 ##' @export
-plot_gif <- function(df, x.label) {
+plot_gif <- function(df, x.label, test = FALSE) {
+
+  res <- list()
+
   toplot <- df %>%
+    mutate(method = as.factor(method)) %>%
     group_by(method, x, rep.sampler, rep.method) %>%
     compute_gif()
+
+  ## test
+  if (test) {
+    res$lm.res <- lm(gif ~ method, data = toplot)
+  }
 
   ## compute mean
   toplot <- toplot %>%
     group_by(method, x) %>%
     summarise(gif.mean = mean(gif), N = length(gif), sd = sd(gif), se = sd / sqrt(N))
 
-  ggplot(toplot, aes(x = x, y = gif.mean, color = method)) +
+  res$pl <- ggplot(toplot, aes(x = x, y = gif.mean, color = method)) +
     geom_errorbar(aes(ymin = gif.mean - se,
                       ymax = gif.mean + se,
                       width = (max(x) - min(x)) * 0.05)) +
@@ -119,6 +138,7 @@ plot_gif <- function(df, x.label) {
     geom_point() +
     xlab(x.label)
 
+  res
 }
 
 ##' @export

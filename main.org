@@ -4188,9 +4188,21 @@ CLOSED: [2017-07-11 mar. 11:45]
   L'experience est fini il faut faire le plot et l'anova !!!
 - State "TODO"       from              [2017-07-06 jeu. 15:24]
 :END:
+
 #+begin_src R
   require(MaTheseR)
+  library(gridExtra)
+
   expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
+
+  ## helpers
+  #extract legend
+  #https://github.com/hadley/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs
+  g_legend<-function(a.gplot){
+    tmp <- ggplot_gtable(ggplot_build(a.gplot))
+    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+    legend <- tmp$grobs[[leg]]
+    return(legend)}
 
   ## by prop outlier
   toplot.h1 <- expr$df.res %>%
@@ -4199,6 +4211,9 @@ CLOSED: [2017-07-11 mar. 11:45]
 
   ## C
   h1.gif.pl <- plot_gif(toplot.h1, "proportion of H1") +
+      theme(legend.position = "botton")
+  mylegend < -g_legend(h1.gif.pl)
+  h1.gif.pl <- h1.gif.pl +
       theme(legend.position = "none")
 
   ## A
@@ -4226,30 +4241,16 @@ CLOSED: [2017-07-11 mar. 11:45]
                            ncol = 2, labels = c("A", "B", "C", "D"))
   pl +
     MaTheseR.env$gtheme
+
+  ## add legend
+  pl.leg <- grid.arrange(pl,
+                         mylegend, nrow=2, heights=c(10, 1))
+
   save_plot_png(pl, filename = "method_comp.png")
+  save_plot_svd(pl, filename = "method_comp.svd")
 #+end_src
 
 [[./OUTPUT/Rplots/method_comp.png]]
-
-**** Test statistique
-#+begin_src R 
-  require(MaTheseR)
-  expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
-
-
-
-  ## AUC By prop of outlier
-  toplot.p.auc <- expr$df.res %>%
-    dplyr::filter(pvalue.index == "pvalue1") %>%
-    dplyr::mutate(x = prop.outlier, method = as.factor(method)) %>%
-    compute_auc()
-  lm.p.auc <- lm(AUC~method, data = toplot.h1)
-#+end_src
-
-#+RESULTS:
-#+begin_example
-
-#+end_example
 
 *** TODO GWAS
 :LOGBOOK:

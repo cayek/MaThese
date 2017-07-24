@@ -68,9 +68,9 @@ test_that("validation numerique article 3 sur un petit sample", {
     dplyr::mutate(x = prop.outlier)
   plot_pvalue_grid(toplot)
   plot_precision_recall(toplot)
-  plot_gif(toplot, "prop.outlier")
-  plot_AUC(toplot, "prop.outlier")
-
+  res.gif <- plot_gif(toplot, "prop.outlier", test = TRUE)
+  res.auc <- plot_AUC(toplot, "prop.outlier", test = TRUE)
+  summary(res.auc$lm.res)
 
   ## by rho.c
   toplot <- expr$df.res %>%
