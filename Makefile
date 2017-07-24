@@ -32,10 +32,10 @@ krakenator_con_jupyter:
 	ssh -L 8786:localhost:8786 -t cayek@krakenator.imag.fr 
 
 krakenator_shell:
-	ssh -X -t cayek@krakenator "cd ~/Projects/Thesis/; screen"
+	ssh -X -t cayek@krakenator "cd ~/Projects/Thesis/MaThese; screen"
 
 krakenator_R:
-	ssh -X -t cayek@krakenator "cd ~/Projects/Thesis/; screen R"
+	ssh -X -t cayek@krakenator "cd ~/Projects/Thesis/MaThese; screen R"
 
 krakenator_push_hook:
 	scp ./hooks/post-receive.sh cayek@krakenator:/home/cayek/Gits/2017/MaThese.git/hooks/post-receive
