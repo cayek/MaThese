@@ -49,6 +49,7 @@
   install.packages("doParallel")
   install.packages("DescTools")
   install.packages("roxygen2")
+  install.packages("VennDiagram")
     ## bioconductor
   source("https://bioconductor.org/biocLite.R")
   biocLite("matter", ask = FALSE)
@@ -4182,8 +4183,13 @@ CLOSED: [2017-07-11 mar. 11:45]
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-*** TODO Comparaisons des méthodes
+*** DEBUG Comparaisons des méthodes
 :LOGBOOK:
+- State "DEBUG"      from "TODO"       [2017-07-24 lun. 17:32]
+- Note taken on [2017-07-24 lun. 17:31] \\
+  Je sais pas ce j'ai foutu mais c'est super lourd !! ca doit être les test, faut
+  que je les enleve du coup ! je vais le faire à part ! Et ca n'a pas exporter les
+  bon res. ca plot pas les bonnes choses !
 - Note taken on [2017-07-17 Lun 08:15] \\
   L'experience est fini il faut faire le plot et l'anova !!!
 - State "TODO"       from              [2017-07-06 jeu. 15:24]
@@ -4224,7 +4230,7 @@ CLOSED: [2017-07-11 mar. 11:45]
   save_expr(auc.prop, filename = "auc.rho.rds")
 #+end_src
 
-#+begin_src R
+#+begin_src R 
   ## arrange plots
 
   require(MaTheseR)
@@ -4283,7 +4289,6 @@ CLOSED: [2017-07-11 mar. 11:45]
 :LOGBOOK:
 - State "TODO"       from              [2017-07-10 lun. 15:49]
 :END:
-**** Diagramme de Veinn
 #+BEGIN_SRC R
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
@@ -4305,9 +4310,12 @@ CLOSED: [2017-07-11 mar. 11:45]
 
   out <- plot_venn(sets[2:5])
 
-  save_plot_png(out, "ewas_results_venn.png")
+  save_plot_MaTheseR(out, "ewas_results_venn.png")
 #+END_SRC
 
+#+CAPTION: Diagramme de Venn pour l'ewas
+#+NAME: fig:ewas_results_venn
+#+ATTR_LATEX: :placement [H]
 [[./OUTPUT/Rplots/ewas_results_venn.png]]
 **** Quantiles-Quantiles plot
 
@@ -4327,7 +4335,7 @@ CLOSED: [2017-07-11 mar. 11:45]
     MaTheseR.params$gtheme
   pll
 
-  save_plot_png(pll, "ewas_results_qqplot.png")
+  save_plot_MaTheseR(pll, "ewas_results_qqplot.png")
 #+END_SRC
 
 #+CAPTION: Plot quantiles-quantiles
@@ -4397,4 +4405,5 @@ CLOSED: [2017-07-11 mar. 11:45]
 
 bibliographystyle:unsrt
 bibliography:../biblio.bib
+
 
