@@ -3696,8 +3696,9 @@ On prend K = 9 variables lattentes.
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_K.png")
 #+end_src
-***** DEBUG Étude du jeu de données 
+***** RUNNING Étude du jeu de données 
 :LOGBOOK:
+- State "RUNNING"    from "DEBUG"      [2017-07-24 Mon 07:35]
 - State "DEBUG"      from "DONE"       [2017-07-24 Mon 06:58]
 - State "DONE"       from "RUNNING"    [2017-07-24 Mon 06:58]
 - Note taken on [2017-07-23 Sun 16:13] \\
