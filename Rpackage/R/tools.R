@@ -67,3 +67,19 @@ TestRequiredPkg <- function(pkg) {
   }
 }
 
+##' @export
+save_plot_MaTheseR <- function(pl, filename = NULL, height = 29.7, width = height / sqrt(2),
+                               units = "cm", res = 300) {
+
+  path.dir = "~/Projects/Thesis/MaThese/OUTPUT/Rplots/"
+  output.file <- make_output_file(filename, "png", path.dir)
+
+  png(output.file, width = width, height = height, units = units, res = res)
+  grid::grid.draw(pl)
+  dev.off()
+
+  filename <- base::basename(output.file)
+
+  cat(paste0("[[./OUTPUT/Rplots/",filename,"]]\n"))
+}
+

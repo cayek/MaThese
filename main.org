@@ -4190,10 +4190,51 @@ CLOSED: [2017-07-11 mar. 11:45]
 :END:
 
 #+begin_src R
+  ## Compute plot !
   require(MaTheseR)
-  library(gridExtra)
 
   expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
+
+  #################
+  ## by prop outlier
+  toplot.prop <- expr$df.res %>%
+    dplyr::filter(pvalue.index == "pvalue1") %>%
+    dplyr::mutate(x = prop.outlier)
+
+  ## gif
+  gif.prop <- plot_gif(toplot.prop, "proportion of H1", test = TRUE)
+  save_expr(gif.prop, filename = "gif.prop.rds")
+
+  ## auc
+  auc.prop <- plot_AUC(toplot.prop, "proportion of H1", test = TRUE)
+  save_expr(auc.prop, filename = "auc.prop.rds")
+
+  ###########
+  ## by rho.c
+  toplot.rho <- expr$df.res %>%
+    dplyr::filter(pvalue.index == "pvalue1") %>%
+    dplyr::mutate(x = rho.c)
+
+  ## gif
+  gif.rho <- plot_gif(toplot.rho, "rho", test = TRUE)
+  save_expr(auc.prop, filename = "gif.rho.rds")
+
+  ## auc
+  auc.rho <- plot_AUC(toplot.rho, "rho", test = TRUE)
+  save_expr(auc.prop, filename = "auc.rho.rds")
+#+end_src
+
+#+begin_src R
+  ## arrange plots
+
+  require(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  library(gridExtra)
+
+  gif.prop <- readRDS("./OUTPUT/Expr/gif.prop.rds")
+  gif.rho <- readRDS("./OUTPUT/Expr/gif.rho.rds")
+  auc.prop <- readRDS("./OUTPUT/Expr/auc.prop.rds")
+  auc.rho <- readRDS("./OUTPUT/Expr/auc.rho.rds")
 
   ## helpers
   #extract legend
@@ -4204,50 +4245,32 @@ CLOSED: [2017-07-11 mar. 11:45]
     legend <- tmp$grobs[[leg]]
     return(legend)}
 
-  #################
-  ## by prop outlier
-  toplot.h1 <- expr$df.res %>%
-    dplyr::filter(pvalue.index == "pvalue1") %>%
-    dplyr::mutate(x = prop.outlier)
-
   ## C
-  h1.gif <- plot_gif(toplot.h1, "proportion of H1", test = TRUE)
-  mylegend <- g_legend(h1.gif$pl)
-  h1.gif.pl <- h1.gif.pl +
+  C.pl <- gif.prop$pl +
+    theme(legend.position = "bottom")
+  mylegend <- g_legend(C.pl)
+  C.pl <- C.pl + 
       theme(legend.position = "none")
-
   ## A
-  h1.auc.pl <- plot_AUC(toplot.h1, "proportion of H1") +
+  A.pl <- auc.prop$pl +
+    theme(legend.position = "none")
+  ## D
+  D.pl <- gif.rho$pl +
+    theme(legend.position = "none")
+  ## B
+  B.pl <- auc.rho$pl +
     theme(legend.position = "none")
 
-  ###########
-  ## by rho.c
-  toplot.rho <- expr$df.res %>%
-    dplyr::filter(pvalue.index == "pvalue1") %>%
-    dplyr::mutate(x = rho.c)
 
-  ## D
-  rho.gif.pl <- plot_gif(toplot.rho, "rho") + 
-      theme(legend.position = "none")
-
-  ## B
-  rho.auc.pl <- plot_AUC(toplot.rho, "rho") +
-      theme(legend.position = "none")
-
-  pl <- cowplot::plot_grid(h1.auc.pl,
-                           rho.auc.pl,
-                           h1.gif.pl,
-                           rho.gif.pl,
+  pl <- cowplot::plot_grid(A.pl,B.pl,C.pl,D.pl,
                            ncol = 2, labels = c("A", "B", "C", "D"))
-  pl +
-    MaTheseR.env$gtheme
 
   ## add legend
   pl.leg <- grid.arrange(pl,
-                         mylegend, nrow=2, heights=c(10, 1))
+                         mylegend, nrow=2, heights=c(10, 1)) +
+    MaTheseR.params$gtheme
 
-  save_plot_png(pl, filename = "method_comp.png")
-  save_plot_svd(pl, filename = "method_comp.svd")
+  save_plot_png(pl.leg, filename = "method_comp.png")
 #+end_src
 
 [[./OUTPUT/Rplots/method_comp.png]]
@@ -4289,6 +4312,9 @@ CLOSED: [2017-07-11 mar. 11:45]
 **** Quantiles-Quantiles plot
 
 #+BEGIN_SRC R
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
 
