@@ -4183,8 +4183,9 @@ CLOSED: [2017-07-11 mar. 11:45]
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-*** DEBUG Comparaisons des méthodes
+*** RUNNING Comparaisons des méthodes
 :LOGBOOK:
+- State "RUNNING"    from "DEBUG"      [2017-07-25 mar. 10:57]
 - State "DEBUG"      from "TODO"       [2017-07-24 lun. 17:32]
 - Note taken on [2017-07-24 lun. 17:31] \\
   Je sais pas ce j'ai foutu mais c'est super lourd !! ca doit être les test, faut
@@ -4195,6 +4196,8 @@ CLOSED: [2017-07-11 mar. 11:45]
 - State "TODO"       from              [2017-07-06 jeu. 15:24]
 :END:
 
+#+NAME: code:num_val_plots
+#+CAPTION: Depend de 
 #+begin_src R
   ## Compute plot !
   require(MaTheseR)
@@ -4208,12 +4211,12 @@ CLOSED: [2017-07-11 mar. 11:45]
     dplyr::mutate(x = prop.outlier)
 
   ## gif
-  gif.prop <- plot_gif(toplot.prop, "proportion of H1", test = TRUE)
-  save_expr(gif.prop, filename = "gif.prop.rds")
+  gif.prop.pl <- plot_gif(toplot.prop, "proportion of H1")
+  save_expr(gif.prop.pl, filename = "gif.prop.pl.rds")
 
   ## auc
-  auc.prop <- plot_AUC(toplot.prop, "proportion of H1", test = TRUE)
-  save_expr(auc.prop, filename = "auc.prop.rds")
+  auc.prop.pl <- plot_AUC(toplot.prop, "proportion of H1")
+  save_expr(auc.prop.pl, filename = "auc.prop.pl.rds")
 
   ###########
   ## by rho.c
@@ -4222,14 +4225,16 @@ CLOSED: [2017-07-11 mar. 11:45]
     dplyr::mutate(x = rho.c)
 
   ## gif
-  gif.rho <- plot_gif(toplot.rho, "rho", test = TRUE)
-  save_expr(auc.prop, filename = "gif.rho.rds")
+  gif.rho.pl <- plot_gif(toplot.rho, "rho", test = TRUE)
+  save_expr(gif.rho.pl, filename = "gif.rho.pl.rds")
 
   ## auc
-  auc.rho <- plot_AUC(toplot.rho, "rho", test = TRUE)
-  save_expr(auc.prop, filename = "auc.rho.rds")
+  auc.rho.pl <- plot_AUC(toplot.rho, "rho", test = TRUE)
+  save_expr(auc.rho.pl, filename = "auc.rho.pl.rds")
 #+end_src
 
+#+NAME: code:num_val_display
+#+CAPTION: Depend de [[code:num_val_plots]]
 #+begin_src R 
   ## arrange plots
 
@@ -4237,10 +4242,10 @@ CLOSED: [2017-07-11 mar. 11:45]
   MaTheseR.params <- get_MaTheseRparams()
   library(gridExtra)
 
-  gif.prop <- readRDS("./OUTPUT/Expr/gif.prop.rds")
-  gif.rho <- readRDS("./OUTPUT/Expr/gif.rho.rds")
-  auc.prop <- readRDS("./OUTPUT/Expr/auc.prop.rds")
-  auc.rho <- readRDS("./OUTPUT/Expr/auc.rho.rds")
+  gif.prop.pl <- readRDS("./OUTPUT/Expr/gif.prop.pl.rds")
+  gif.rho.pl <- readRDS("./OUTPUT/Expr/gif.rho.pl.rds")
+  auc.prop.pl <- readRDS("./OUTPUT/Expr/auc.prop.pl.rds")
+  auc.rho.pl <- readRDS("./OUTPUT/Expr/auc.rho.pl.rds")
 
   ## helpers
   #extract legend
@@ -4252,21 +4257,27 @@ CLOSED: [2017-07-11 mar. 11:45]
     return(legend)}
 
   ## C
-  C.pl <- gif.prop$pl +
+  C.pl <- gif.prop.pl +
     theme(legend.position = "bottom")
   mylegend <- g_legend(C.pl)
   C.pl <- C.pl + 
-      theme(legend.position = "none")
-  ## A
-  A.pl <- auc.prop$pl +
-    theme(legend.position = "none")
-  ## D
-  D.pl <- gif.rho$pl +
-    theme(legend.position = "none")
-  ## B
-  B.pl <- auc.rho$pl +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    xlab("auc moyen")
 
+  ## A
+  A.pl <- auc.prop.pl +
+    theme(legend.position = "none",
+          axis.title.x = element_blank()) +
+    ylab("auc moyen")
+  ## D
+  D.pl <- gif.rho.pl +
+    theme(legend.position = "none",
+          axis.title.y = element_blank()) +
+    xlab("")
+  ## B
+  B.pl <- auc.rho.pl +
+    theme(legend.position = "none",
+          axis.title = element_blank())
 
   pl <- cowplot::plot_grid(A.pl,B.pl,C.pl,D.pl,
                            ncol = 2, labels = c("A", "B", "C", "D"))
@@ -4279,7 +4290,9 @@ CLOSED: [2017-07-11 mar. 11:45]
   save_plot_png(pl.leg, filename = "method_comp.png")
 #+end_src
 
+#+CAPTION: Comparaison des méthodes sur des simulations numériques. 
 [[./OUTPUT/Rplots/method_comp.png]]
+
 
 *** TODO GWAS
 :LOGBOOK:

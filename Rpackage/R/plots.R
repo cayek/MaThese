@@ -23,7 +23,7 @@ compute_gif <- function(df) {
 
 
 ##' @export
-plot_AUC <- function(df, x.name, test = FALSE) {
+plot_AUC <- function(df, x.name) {
 
 
   toplot <- df %>%
