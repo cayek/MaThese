@@ -1976,6 +1976,9 @@ Nour avons reproduit le preprocessing expliqué dans cite:Zou_2014.
 #+END_SRC
 *** Scaling des données
 Pour certaine analyse il est important de scaler les données. 
+
+#+NAME: code:ewas_G_X
+#+CAPTION: Dépend de 
 #+begin_src R :results output :exports both
   library(MaTheseR)
 
@@ -3647,12 +3650,12 @@ GRCh38.
 - State "TODO"       from              [2017-07-11 mar. 10:03]
 :END:
 
-#+NAME: code:ewas_screeplot
+#+NAME: code:gwas_screeplot
 #+CAPTION: Dépend de 
 #+begin_src R  
   library(MaTheseR)
 
-  Y <- "./Data/ThesisDataset/3Article/Celiac/G.rds"
+  Y <- "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds"
   X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
 
   lambdas <- c(1e-5, 1.0, 1e10)
@@ -3661,7 +3664,7 @@ GRCh38.
   samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
 
   ## methods
-  methods <- method_PCA(scale = FALSE) * param(lambda = lambdas)
+  methods <- method_PCA(scale = FALSE, K = 500) * param(lambda = lambdas)
 
   ## expr
   expr <- ExpR(rep.nb.sampler = 1,
@@ -3682,40 +3685,6 @@ GRCh38.
 
   save_plot_png(pl, "gwas_screeplot.png")
 
-#+end_src
-
-
-#+NAME: code:screeplot_expr
-#+CAPTION: Dépend de 
-#+begin_src R :results output :exports both
-  library(ThesisRpackage)
-
-  ## we keep only disease.state
-  X <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/X.rds")
-  head(X)
-
-  s <- TrueSampler(G.file = "~/Projects/Thesis/Data/ThesisDataset/3Article/Celiac/G_clumped.rds",
-                   X.file = X,
-                   outlier.file = NULL,
-                   n = NULL,
-                   L = NULL)
-  expr <- PCAExperiment(s = s,
-                        description = "celiac clumped PCA")
-  expr <- runExperiment(expr)
-  dumpExperiment(expr)
-#+end_src
-
-#+NAME: code:screeplot_plot
-#+CAPTION: Dépend de [[code:screeplot_expr]]
-#+begin_src R :results output graphics :file Rplots/celiac_pca.png :exports both :width 600 :height 400 
-  expr <- retrieveExperiment(124)
-  expr$description
-  variances <- expr$res.df$sdev / sum(expr$res.df$sdev)
-  ## plot
-  pl <- qplot(x = seq_along(variances), y = variances, geom='line') +
-    geom_point() +
-    coord_cartesian(xlim = c(1,100))
-  pl
 #+end_src
 
 #+RESULTS:
@@ -3924,6 +3893,8 @@ Ceux de cite:Zou_2014
 #+end_src
 
 On retrouve les 3 mêmes. On va prend cela  
+#+NAME: code:ewas_candidates
+#+CAPTION: Dépend de [[code:ewas_G_X]]
 #+begin_src R :results output :exports both :session *ssh krakenator*
   G <- readRDS("./Data/ThesisDataset/3Article/GSE42861/G.rds")
   Zou.loci <- c("cg05428452",
@@ -3958,7 +3929,7 @@ CLOSED: [2017-07-25 mar. 18:05]
 :END:
 
 #+NAME: code:ewas_screeplot
-#+CAPTION: Dépend de 
+#+CAPTION: Dépend de [[code:ewas_G_X]] 
 #+begin_src R  
   library(MaTheseR)
 
@@ -4011,6 +3982,8 @@ CLOSED: [2017-07-03 lun. 16:18]
 - State "TODO"       from              [2017-06-29 jeu. 09:44]
 :END:
 
+#+NAME: code:ewas_CV
+#+CAPTION: Dépend de [[code:ewas_G_X]] [[code:ewas_candidates]]
 #+begin_src R 
   library(MaTheseR)
 
@@ -4063,6 +4036,8 @@ CLOSED: [2017-07-11 mar. 11:45]
 - State "RUNNING"    from "TODO"       [2017-07-07 ven. 13:59]
 - State "TODO"       from              [2017-06-29 jeu. 11:17]
 :END:
+#+NAME: code:ewas_expr
+#+CAPTION: Dépend de [[code:ewas_G_X]] [[code:ewas_candidates]]
 #+begin_src R
   library(MaTheseR)
 
