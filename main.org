@@ -5,7 +5,7 @@
 #+AUTHOR:      Kevin Caye
 
 #+LANGUAGE: fr
-#+STARTUP: overview indent inlineimages logdrawer
+#+STARTUP: overview indent logdrawer
 #+OPTIONS: H:6 author:nil email:nil creator:nil timestamp:nil skip:nil toc:t ^:nil
 #+TAGS: noexport(n) deprecated(d)
 #+EXPORT_SELECT_TAGS: export
@@ -42,6 +42,7 @@
 #+BEGIN_SRC R
   ## CRAN
   install.packages("tidyverse")
+  install.packages("extrafont")
   install.packages("Devtools")
   install.packages("testthat")
   install.packages("foreach")
@@ -3033,6 +3034,8 @@ Afin de valider la méthodes et son implémentation nous avons comparé ridgeLFM
 et lassoLFMM aux autres méthodes de la littérature sur des simulations
 générative. 
 
+#+NAME: code:num_val_sampler
+#+CAPTION: Le sampler pour les comparaisons d'experience. Dépend de 
 #+begin_src R 
   library(MaTheseR)
   ### The sampler
@@ -3056,6 +3059,8 @@ générative.
 [[./OUTPUT/Rplots/file42874c17dae9.png]]
 #+end_example
 
+#+NAME: code:num_val_expr
+#+CAPTION: Dépend de [[code:num_val_sampler]]
 #+begin_src R 
   library(MaTheseR)
 
@@ -4225,11 +4230,11 @@ CLOSED: [2017-07-11 mar. 11:45]
     dplyr::mutate(x = rho.c)
 
   ## gif
-  gif.rho.pl <- plot_gif(toplot.rho, "rho", test = TRUE)
+  gif.rho.pl <- plot_gif(toplot.rho, "rho")
   save_expr(gif.rho.pl, filename = "gif.rho.pl.rds")
 
   ## auc
-  auc.rho.pl <- plot_AUC(toplot.rho, "rho", test = TRUE)
+  auc.rho.pl <- plot_AUC(toplot.rho, "rho")
   save_expr(auc.rho.pl, filename = "auc.rho.pl.rds")
 #+end_src
 
@@ -4258,41 +4263,95 @@ CLOSED: [2017-07-11 mar. 11:45]
 
   ## C
   C.pl <- gif.prop.pl +
+    MaTheseR.params$gtheme +
     theme(legend.position = "bottom")
   mylegend <- g_legend(C.pl)
-  C.pl <- C.pl + 
+  C.pl <- C.pl +
     theme(legend.position = "none") +
-    xlab("auc moyen")
+    xlab("Proportion d'outlier") +
+    ylab("Gif moyen")
 
   ## A
   A.pl <- auc.prop.pl +
-    theme(legend.position = "none",
-          axis.title.x = element_blank()) +
-    ylab("auc moyen")
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none") +
+    xlab("") +
+    ylab("Auc moyen")
   ## D
   D.pl <- gif.rho.pl +
-    theme(legend.position = "none",
-          axis.title.y = element_blank()) +
-    xlab("")
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none") +
+    xlab("Corrélation") + 
+    ylab("") 
   ## B
   B.pl <- auc.rho.pl +
-    theme(legend.position = "none",
-          axis.title = element_blank())
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none") +
+    xlab("") +
+    ylab("")
 
   pl <- cowplot::plot_grid(A.pl,B.pl,C.pl,D.pl,
                            ncol = 2, labels = c("A", "B", "C", "D"))
 
   ## add legend
-  pl.leg <- grid.arrange(pl,
-                         mylegend, nrow=2, heights=c(10, 1)) +
-    MaTheseR.params$gtheme
+  pl.leg <- drawable(function() {
+    grid.arrange(pl,
+                 mylegend, nrow=2, heights=c(10, 1))
+  })
 
   save_plot_png(pl.leg, filename = "method_comp.png")
+  save_plot_MaTheseR(pl.leg, filename = "method_comp.pdf.png", height = 20, width = 14)
 #+end_src
 
 #+CAPTION: Comparaison des méthodes sur des simulations numériques. 
-[[./OUTPUT/Rplots/method_comp.png]]
+#+ATTR_LATEX: :width 14cm :height 20cm
+[[./OUTPUT/Rplots/method_comp.pdf.png]]
 
+#+NAME: code:num_val_tests_df
+#+CAPTION: Dépend de [[code:num_val_expr]]
+#+begin_src R
+  require(MaTheseR)
+
+  expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
+
+  auc.df <- expr$df.res %>%
+    group_by(method, prop.outlier, rho.c, rep.sampler, rep.method) %>%
+    compute_auc()
+  save_expr(auc.df, "auc.df.rds")
+
+  gif.df <- expr$df.res %>%
+    group_by(method, prop.outlier, rho.c, rep.sampler, rep.method) %>%
+    compute_gif()
+  save_expr(gif.df, "gif.df.rds")
+#+end_src
+
+#+NAME: code:num_val_tests
+#+CAPTION: Dépend de [[code:num_val_tests_df]]
+#+begin_src R 
+  require(MaTheseR)
+  library(broom)
+  library(ggplot2)
+  library(knitr)
+
+  auc.df <- readRDS("./OUTPUT/Expr/auc.df.rds")
+  gif.df <- readRDS("./OUTPUT/Expr/gif.df.rds")
+
+  lm.res <- auc.df %>%
+    mutate(method = as.factor(method)) %>%
+    group_by(prop.outlier) %>%
+    do(tidy(lm(auc ~ method, data = .))) %>%
+    ungroup()
+
+
+  lm.res <- lm.res %>%
+    dplyr::filter(term != "(Intercept)") %>%
+    transmute(method = term, `-log10(p.value)` = -log10(p.value),
+                estimate = estimate, prop.outlier = prop.outlier)
+  kable(lm.res)
+
+  ggplot(lm.res, ggplot2::aes(x = prop.outlier, y = p.value, color = as.factor(method))) +
+    geom_boxplot()
+#+end_src
 
 *** TODO GWAS
 :LOGBOOK:
@@ -4302,10 +4361,18 @@ CLOSED: [2017-07-11 mar. 11:45]
 :LOGBOOK:
 - State "TODO"       from              [2017-07-10 lun. 15:49]
 :END:
+
+#+NAME: code:ewas_qqplot_venn
+#+CAPTION: Dépend de 
 #+BEGIN_SRC R
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
 
+
+  ## venn
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
@@ -4324,6 +4391,17 @@ CLOSED: [2017-07-11 mar. 11:45]
   out <- plot_venn(sets[2:5])
 
   save_plot_MaTheseR(out, "ewas_results_venn.png")
+
+  ## qqplot
+  toplot <- expr$df.res %>%
+      mutate(pvalue = calibrated.pvalue) %>%
+      dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
+    pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
+      stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
+      geom_abline(slope = 1, intercept = 0) +
+      MaTheseR.params$gtheme
+    pll
+
 #+END_SRC
 
 #+CAPTION: Diagramme de Venn pour l'ewas

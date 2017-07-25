@@ -83,3 +83,14 @@ save_plot_MaTheseR <- function(pl, filename = NULL, height = 29.7, width = heigh
   cat(paste0("[[./OUTPUT/Rplots/",filename,"]]\n"))
 }
 
+##' @export
+drawable <- function(pl.func) {
+  res <- list(pl.func = pl.func)
+  class(res) <- "drawable"
+  res
+}
+
+##' @export
+grid.draw.drawable <- function(d) {
+  d$pl.func()
+}

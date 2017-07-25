@@ -28,6 +28,6 @@ NULL
 #########
 ## plots
 
-MaTheseR.params$gtheme <- theme_bw(base_size = 11) +
+MaTheseR.params$gtheme <- theme_bw(base_size = 12, base_family = "serif") +
   theme(strip.background = element_rect(fill = NA))
 
