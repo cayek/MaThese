@@ -4406,4 +4406,3 @@ CLOSED: [2017-07-11 mar. 11:45]
 bibliographystyle:unsrt
 bibliography:../biblio.bib
 
-
