@@ -13,7 +13,7 @@ test_that("test pca", {
   dat$Y <- preprocessing_filter_na(dat$Y)
 
   ## methods
-  methods <- method_PCA(scale = TRUE) * param(lambda = c(1e-5,1,1e5))
+  methods <- method_PCA(scale = TRUE, K = 50) * param(lambda = c(1e-5,1,1e5))
   m <- methods[[1]]
   m <- ExpRmouline(m, dat)
 

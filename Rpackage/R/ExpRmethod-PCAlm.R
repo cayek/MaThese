@@ -1,7 +1,8 @@
 ##' @export
-method_PCA <- function(scale = FALSE, lambda = NULL) {
+method_PCA <- function(scale = FALSE, lambda = NULL, K = NULL) {
   args <- list(scale = scale,
-               lambda = lambda)
+               lambda = lambda,
+               K = K)
   args$name = "PCA"
   res <- do.call(ExpRmethod, args)
   class(res) <- c("method_PCA", class(res))
@@ -25,7 +26,12 @@ ExpRmouline.method_PCA <- function(m, dat) {
     dat$Y <- P.list$sqrt.P %*% dat$Y
   }
 
-  res <- svd(dat$Y, 0, 0)
+  if (is.null(m$K)) {
+    res <- svd(dat$Y, 0, 0)
+  } else {
+    message("Using RSpectra")
+    res <- RSpectra::svds(dat$Y, m$K)
+  }
 
   m$d <- res$d / sum(res$d)
   m

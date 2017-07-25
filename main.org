@@ -3156,9 +3156,14 @@ générative.
 - State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - State "TODO"       from              [2017-06-27 mar. 12:06]
 :END:
-***** DONE Scree plot du 1000 genome pour EAS
-CLOSED: [2017-07-11 mar. 12:00]
+***** TODO Scree plot du 1000 genome pour EAS
 :LOGBOOK:
+- Note taken on [2017-07-25 mar. 17:52] \\
+  faut que je reance avec lambda
+- State "TODO"       from "RUNNING"    [2017-07-25 mar. 17:49]
+- Note taken on [2017-07-25 mar. 17:46] \\
+  tail -f /home/cayek/tmp/Logfiles/ewas_screeplot.y2017_m07_d25_17h_37.log
+- State "RUNNING"    from "DONE"       [2017-07-25 mar. 17:46]
 - Note taken on [2017-07-11 mar. 12:01] \\
   K = 7 ca semple bien :D
 - State "DONE"       from "RUNNING"    [2017-07-11 mar. 12:00]
@@ -3172,18 +3177,21 @@ CLOSED: [2017-07-11 mar. 12:00]
 - State "TODO"       from              [2017-06-27 mar. 16:42]
 :END:
 
-#+NAME: code:ewas_screeplot
+#+NAME: code:eas_screeplot
 #+CAPTION: Dépend de 
 #+begin_src R 
   library(MaTheseR)
 
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds"
+  X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds"
 
   ## samplers
   samplers <- ExpRsampler_trueData(Y = Y, X = NULL, outlier = NULL) * param()
 
+  lambda <- c(1e-5, 1.0, 1e8)
+
   ## methods
-  methods <- method_PCA(scale = FALSE) * param()
+  methods <- method_PCA(scale = FALSE) * param(lambda = lambda)
 
   ## expr
   expr <- ExpR(rep.nb.sampler = 1,
@@ -3196,8 +3204,9 @@ CLOSED: [2017-07-11 mar. 12:00]
 
   save_expr(expr)
 
-  pl <- ExpRplot_sing_values(expr) + 
-  coord_cartesian(xlim = c(1,100))
+    pl <- ggplot(expr$df.res, aes(x = index, y = singular.value, color = lambda)) +
+      geom_point() + 
+      coord_cartesian(xlim = c(1,100))
 
   save_plot_png(pl, "EAS_sree_plot.png")
 
@@ -3626,14 +3635,55 @@ GRCh38.
    [1] "rs10903122" "rs859637"   "rs13010713" "rs1464510"  "rs1020388" 
    [6] "rs1738074"  "rs653178"   "rs1958589"  "rs1893217"  "rs157640" 
 #+end_example
-***** STARTED Scree plot
+***** RUNNING Scree plot
 :LOGBOOK:
+- State "RUNNING"    from "STARTED"    [2017-07-25 mar. 18:21]
+- Note taken on [2017-07-25 mar. 18:19] \\
+  tail -f /home/cayek/tmp/Logfiles/gwas_screeplot.y2017_m07_d25.log
 - State "STARTED"    from "TODO"       [2017-07-11 mar. 10:26]
 - Note taken on [2017-07-11 mar. 10:03] \\
   J'utilise ThesisRpackage, il faudra changer ca si je veux que la thèse soit
   stand alone
 - State "TODO"       from              [2017-07-11 mar. 10:03]
 :END:
+
+#+NAME: code:ewas_screeplot
+#+CAPTION: Dépend de 
+#+begin_src R  
+  library(MaTheseR)
+
+  Y <- "./Data/ThesisDataset/3Article/Celiac/G.rds"
+  X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
+
+  lambdas <- c(1e-5, 1.0, 1e10)
+
+  ## samplers
+  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
+
+  ## methods
+  methods <- method_PCA(scale = FALSE) * param(lambda = lambdas)
+
+  ## expr
+  expr <- ExpR(rep.nb.sampler = 1,
+               samplers = samplers,
+               rep.nb.method = 1,
+               methods = methods,
+               preprocessors = NULL,
+               extractor = ExpRextractor_sing_values)
+  expr <- ExpRmouline(expr)
+
+  save_expr(expr, "gwas_screeplot_expr.rds")
+
+  toplot <- expr$df.res %>%
+    mutate(lambda = as.factor(lambda))
+  pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+    geom_point() +
+    coord_cartesian(xlim = c(1,100))
+
+  save_plot_png(pl, "gwas_screeplot.png")
+
+#+end_src
+
 
 #+NAME: code:screeplot_expr
 #+CAPTION: Dépend de 
@@ -3671,7 +3721,7 @@ GRCh38.
 #+RESULTS:
 [[file:../Rplots/celiac_pca.png]]
 
-On prend K = 9 variables lattentes.
+On prend K = 9 variables latentes.
 
 ***** TODO Validation croisée avec lfmmRidge
 :LOGBOOK:
@@ -3897,23 +3947,33 @@ candidates
 #+RESULTS:
 : [1]  36714  51546 101455 125220 149131
 ***** DONE Scree plot 
-CLOSED: [2017-06-29 jeu. 09:42]
+CLOSED: [2017-07-25 mar. 18:05]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-07-25 mar. 18:05]
+- Note taken on [2017-07-25 mar. 17:56] \\
+  tail -f ewas_screeplot.y2017_m07_d25_krakenatorh_juil..log
+- State "RUNNING"    from "DONE"       [2017-07-25 mar. 17:51]
 - State "DONE"       from "RUNNING"    [2017-06-29 jeu. 09:42]
 - State "RUNNING"    from              [2017-06-29 jeu. 09:36]
 :END:
+
+#+NAME: code:ewas_screeplot
+#+CAPTION: Dépend de 
 #+begin_src R  
- library(MaTheseR)
+  library(MaTheseR)
 
   Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
+  X <- "./Data/ThesisDataset/3Article/GSE42861/X.rds"
+
+  lambdas <- c(1e-5, 1.0, 1e10)
 
   ## samplers
-  samplers <- ExpRsampler_trueData(Y = Y, X = NULL, outlier = NULL) * param()
+  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
 
   ## methods
-  methods <- method_PCA(scale = FALSE) * param()
+  methods <- method_PCA(scale = FALSE) * param(lambda = lambdas)
 
-  ## exp r
+  ## expr
   expr <- ExpR(rep.nb.sampler = 1,
                samplers = samplers,
                rep.nb.method = 1,
@@ -3922,21 +3982,20 @@ CLOSED: [2017-06-29 jeu. 09:42]
                extractor = ExpRextractor_sing_values)
   expr <- ExpRmouline(expr)
 
-  save_expr(expr)
+  save_expr(expr, "ewas_screeplot_expr.rds")
 
-  pl <- ExpRplot_sing_values(expr) + 
+  toplot <- expr$df.res %>%
+    mutate(lambda = as.factor(lambda))
+  pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+    geom_point() +
     coord_cartesian(xlim = c(1,300))
 
-  save_plot_png(pl, "scree_plot_AT.png")
+  save_plot_png(pl, "ewas_screeplot.png")
 
 #+end_src
 
 #+RESULTS:
-[[./OUTPUT/Rplots/scree_plot_AT.png]]
-#+begin_example
-  > save_plot_png(pl, "scree_plot_AT.png")
-  [[./OUTPUT/Rplots/scree_plot_AT.png]]
-#+end_example
+[[./OUTPUT/Rplots/ewas_screeplot.png]]
 
 ***** DONE Validation croisée du modèle lfmmRidge
 CLOSED: [2017-07-03 lun. 16:18]
@@ -4436,6 +4495,36 @@ CLOSED: [2017-07-11 mar. 11:45]
 :LOGBOOK:
 - State "TODO"       from              [2017-07-10 lun. 15:49]
 :END:
+
+#+NAME: code:ewas_screeplot_plot
+#+CAPTION: Dépend de [[code:ewas_screeplot]]
+#+begin_src R 
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+
+  expr <- readRDS("./OUTPUT/Expr/ewas_screeplot_expr.rds")
+  toplot <- expr$df.res %>%
+      mutate(lambda = as.factor(lambda))
+  pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+    geom_point() +
+    coord_cartesian(xlim = c(1,300)) +
+    xlab("K") +
+    ylab("Proportion de la variance totale") +
+    MaTheseR.params$gtheme
+
+  save_plot_MaTheseR(pl, "ewas_screeplot.pdf.png", height = 7, width = 14)
+
+#+end_src
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics[with=14cm, height=7cm]{./OUTPUT/Rplots/ewas_screeplot.pdf.png}
+\caption{Choix des paramètres}
+\label{fig:ewas_params}
+\end{figure}
+#+END_EXPORT
 
 #+NAME: code:ewas_qqplot_venn
 #+CAPTION: Dépend de 
