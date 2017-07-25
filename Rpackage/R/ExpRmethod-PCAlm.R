@@ -1,6 +1,7 @@
 ##' @export
-method_PCA <- function(scale = FALSE) {
-  args <- list(scale = scale)
+method_PCA <- function(scale = FALSE, lambda = NULL) {
+  args <- list(scale = scale,
+               lambda = lambda)
   args$name = "PCA"
   res <- do.call(ExpRmethod, args)
   class(res) <- c("method_PCA", class(res))
@@ -17,6 +18,11 @@ ExpRmouline.method_PCA <- function(m, dat) {
   if (m$scale) {
     message("==Scaling")
     dat$Y <- scale(dat$Y)
+  }
+
+  if (!is.null(m$lambda)) {
+    P.list <- MatrixFactorizationR::compute_P(dat$X, m$lambda)
+    dat$Y <- P.list$sqrt.P %*% dat$Y
   }
 
   res <- svd(dat$Y, 0, 0)

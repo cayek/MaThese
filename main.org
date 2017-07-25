@@ -5,7 +5,7 @@
 #+AUTHOR:      Kevin Caye
 
 #+LANGUAGE: fr
-#+STARTUP: overview indent logdrawer
+#+STARTUP: overview indent inlineimages logdrawer
 #+OPTIONS: H:6 author:nil email:nil creator:nil timestamp:nil skip:nil toc:t ^:nil
 #+TAGS: noexport(n) deprecated(d)
 #+EXPORT_SELECT_TAGS: export
@@ -3171,6 +3171,9 @@ CLOSED: [2017-07-11 mar. 12:00]
 - State "STARTED"    from "TODO"       [2017-06-27 mar. 16:42]
 - State "TODO"       from              [2017-06-27 mar. 16:42]
 :END:
+
+#+NAME: code:ewas_screeplot
+#+CAPTION: Dépend de 
 #+begin_src R 
   library(MaTheseR)
 
@@ -3631,6 +3634,9 @@ GRCh38.
   stand alone
 - State "TODO"       from              [2017-07-11 mar. 10:03]
 :END:
+
+#+NAME: code:screeplot_expr
+#+CAPTION: Dépend de 
 #+begin_src R :results output :exports both
   library(ThesisRpackage)
 
@@ -3649,6 +3655,8 @@ GRCh38.
   dumpExperiment(expr)
 #+end_src
 
+#+NAME: code:screeplot_plot
+#+CAPTION: Dépend de [[code:screeplot_expr]]
 #+begin_src R :results output graphics :file Rplots/celiac_pca.png :exports both :width 600 :height 400 
   expr <- retrieveExperiment(124)
   expr$description
@@ -3722,6 +3730,8 @@ On prend K = 9 variables lattentes.
 - State "TODO"       from              [2017-07-11 mar. 11:37]
 :END:
 
+#+NAME: code:gwas_expr
+#+CAPTION: Dépend de 
 #+begin_src R
   library(MaTheseR)
   library(MatrixFactorizationR)
@@ -4188,8 +4198,9 @@ CLOSED: [2017-07-11 mar. 11:45]
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-*** RUNNING Comparaisons des méthodes
+*** STARTED Comparaisons des méthodes
 :LOGBOOK:
+- State "STARTED"    from "RUNNING"    [2017-07-25 mar. 16:35]
 - State "RUNNING"    from "DEBUG"      [2017-07-25 mar. 10:57]
 - State "DEBUG"      from "TODO"       [2017-07-24 lun. 17:32]
 - Note taken on [2017-07-24 lun. 17:31] \\
@@ -4303,9 +4314,15 @@ CLOSED: [2017-07-11 mar. 11:45]
   save_plot_MaTheseR(pl.leg, filename = "method_comp.pdf.png", height = 20, width = 14)
 #+end_src
 
-#+CAPTION: Comparaison des méthodes sur des simulations numériques. 
-#+ATTR_LATEX: :width 14cm :height 20cm
-[[./OUTPUT/Rplots/method_comp.pdf.png]]
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics[with=14cm, height=20cm]{./OUTPUT/Rplots/method_comp.pdf.png}
+\caption{Comparaison des méthodes sur des simulations numériques.}
+\label{fig:method_comp}
+\end{figure}
+#+END_EXPORT
 
 #+NAME: code:num_val_tests_df
 #+CAPTION: Dépend de [[code:num_val_expr]]
@@ -4353,10 +4370,68 @@ CLOSED: [2017-07-11 mar. 11:45]
     geom_boxplot()
 #+end_src
 
-*** TODO GWAS
+*** STARTED GWAS
 :LOGBOOK:
+- State "STARTED"    from "DONE"       [2017-07-25 mar. 16:37]
+- State "DONE"       from "TODO"       [2017-07-25 mar. 16:37]
 - State "TODO"       from              [2017-07-17 Lun 08:16]
 :END:
+#+NAME: code:gwas_qqplot_venn
+#+CAPTION: Dépend de [[code:gwas_expr]]
+#+BEGIN_SRC R
+  library(MaTheseR)
+  library(gridExtra)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  celiac.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+
+
+  ## venn
+  toplot <- celiac.df %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_threshold(0.01) %>%
+    ungroup()
+
+
+  sets <- list(lm = toplot$index[toplot$method == "lm"],
+               cate = toplot$index[toplot$method == "cate"],
+               ## lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"]
+               )
+
+
+  out <- plot_venn(sets[1:4])
+  save_plot_png(out, filename = "gwas_venn.png")
+  save_plot_MaTheseR(out, filename = "gwas_venn.pdf.png", height = 10, width = 14)
+
+  ## qqplot
+  toplot <- celiac.df %>%
+    mutate(pvalue = calibrated.pvalue) %>%
+    dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lm"))
+  pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
+    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
+    geom_abline(slope = 1, intercept = 0) +
+    MaTheseR.params$gtheme + 
+    theme(legend.position = "bottom") 
+  ## pll
+  save_plot_png(pll, filename = "gwas_qqplot.png")
+  save_plot_MaTheseR(pll, filename = "gwas_qqplot.pdf.png", height = 10, width = 14)
+
+#+END_SRC
+
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics[with=14cm, height=10cm]{./OUTPUT/Rplots/gwas_venn.pdf.png}
+\includegraphics[with=14cm, height=10cm]{./OUTPUT/Rplots/gwas_qqplot.pdf.png}
+\caption{Diagramme de Venn et qqplot pour la GWAS}
+\label{fig:gwas_venn_qqplot}
+\end{figure}
+#+END_EXPORT
+
 *** TODO EWAS
 :LOGBOOK:
 - State "TODO"       from              [2017-07-10 lun. 15:49]
@@ -4366,6 +4441,7 @@ CLOSED: [2017-07-11 mar. 11:45]
 #+CAPTION: Dépend de 
 #+BEGIN_SRC R
   library(MaTheseR)
+  library(gridExtra)
   MaTheseR.params <- get_MaTheseRparams()
 
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
@@ -4389,50 +4465,33 @@ CLOSED: [2017-07-11 mar. 11:45]
 
 
   out <- plot_venn(sets[2:5])
-
-  save_plot_MaTheseR(out, "ewas_results_venn.png")
+  save_plot_png(out, filename = "ewas_venn.png")
+  save_plot_MaTheseR(out, filename = "ewas_venn.pdf.png", height = 10, width = 14)
 
   ## qqplot
-  toplot <- expr$df.res %>%
-      mutate(pvalue = calibrated.pvalue) %>%
-      dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
-    pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
-      stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
-      geom_abline(slope = 1, intercept = 0) +
-      MaTheseR.params$gtheme
-    pll
-
-#+END_SRC
-
-#+CAPTION: Diagramme de Venn pour l'ewas
-#+NAME: fig:ewas_results_venn
-#+ATTR_LATEX: :placement [H]
-[[./OUTPUT/Rplots/ewas_results_venn.png]]
-**** Quantiles-Quantiles plot
-
-#+BEGIN_SRC R
-  library(MaTheseR)
-  MaTheseR.params <- get_MaTheseRparams()
-
-  expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
-  candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
-
   toplot <- expr$df.res %>%
     mutate(pvalue = calibrated.pvalue) %>%
     dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
   pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
     stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
     geom_abline(slope = 1, intercept = 0) +
-    MaTheseR.params$gtheme
+    MaTheseR.params$gtheme + 
+    theme(legend.position = "none") 
   pll
+  save_plot_png(pll, filename = "ewas_qqplot.png")
+  save_plot_MaTheseR(pll, filename = "ewas_qqplot.pdf.png", height = 10, width = 14)
 
-  save_plot_MaTheseR(pll, "ewas_results_qqplot.png")
 #+END_SRC
 
-#+CAPTION: Plot quantiles-quantiles
-#+NAME: fig:ewas_results_qqplot
-#+ATTR_LATEX: :placement [H]
-[[./OUTPUT/Rplots/ewas_results_qqplot.png]]
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics[with=14cm, height=10cm]{./OUTPUT/Rplots/ewas_venn.pdf.png}
+\includegraphics[with=14cm, height=10cm]{./OUTPUT/Rplots/ewas_qqplot.pdf.png}
+\caption{Diagramme de Venn et qqplot pour l'EWAS}
+\label{fig:ewas_venn_qqplot}
+\end{figure}
+#+END_EXPORT
 
 *** TODO EAS
 :LOGBOOK:

@@ -106,7 +106,8 @@ ExpRextractor_sing_values <- function(dat, m, rep.sampler, rep.method) {
 df <- tibble::tibble(rep.sampler = rep.sampler,
                      rep.method = rep.method,
                      singular.value= m$d,
-                     index = seq_along(m$d))
+                     index = seq_along(m$d),
+                     lambda = ifelse(!is.null(m$lambda), m$lambda, NA))
   print.data.frame(df[1,])
   df
 }

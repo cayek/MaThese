@@ -2,18 +2,18 @@ library(testthat)
 context("PCA")
 
 test_that("test pca", {
-
+  
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA_samplep1000n100.rds"
   skip_if_not(file.exists(Y))
 
   ## samplers
-  samplers <- ExpRsampler_trueData(Y = Y, X = NULL, outlier = NULL) * param()
+  samplers <- ExpRsampler_fromTrueData(Y = Y, K = 5, prop.outlier = 0.1)* param()
   s <- samplers[[1]]
   dat <- ExpRmouline(s)
   dat$Y <- preprocessing_filter_na(dat$Y)
 
   ## methods
-  methods <- method_PCA(K = 50, scale = TRUE) * param()
+  methods <- method_PCA(scale = TRUE) * param(lambda = c(1e-5,1,1e5))
   m <- methods[[1]]
   m <- ExpRmouline(m, dat)
 
