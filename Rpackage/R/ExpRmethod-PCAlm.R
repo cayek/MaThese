@@ -24,13 +24,26 @@ ExpRmouline.method_PCA <- function(m, dat) {
   if (!is.null(m$lambda)) {
     P.list <- MatrixFactorizationR::compute_P(dat$X, m$lambda)
     dat$Y <- P.list$sqrt.P %*% dat$Y
+  } else {
+    P.list <- list(sqrt.P = diag(1, nrow(dat$Y)))
   }
 
   if (is.null(m$K)) {
     res <- svd(dat$Y, 0, 0)
   } else {
     message("Using RSpectra")
-    res <- RSpectra::svds(dat$Y, m$K)
+    Af <- function(x, args) {
+      P.list$sqrt.P %*% dat$productY(x)
+    }
+    Atransf <- function(x, args) {
+      dat$productYt(t(P.list$sqrt.P) %*% x)
+    }
+    res <- RSpectra::svds(A = Af,
+                          Atrans = Atransf,
+                          k = m$K,
+                          nu = m$K, nv = m$K,
+                          opts = list(tol = 10e-10),
+                          dim = c(nrow(dat$Y), ncol(dat$Y)))
   }
 
   m$d <- res$d / sum(res$d)
