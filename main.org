@@ -1869,6 +1869,9 @@ CLOSED: [2017-07-23 Sun 15:46]
 #+END_SRC
 ** AT EWAS                                                        :noexport:
 *** Téléchargement des données
+
+#+NAME: code:ewas_ddl
+#+CAPTION: Dépend de 
 #+BEGIN_SRC R
   ## try http:// if https:// URLs are not supported
   source("https://bioconductor.org/biocLite.R")
@@ -1906,6 +1909,8 @@ CLOSED: [2017-07-23 Sun 15:46]
   expmat861 <- exprs(obj861[[1]])
 #+END_SRC
 *** Formatage
+#+NAME: code:ewas_format
+#+CAPTION: Dépend de [[code:ewas_ddl]]
 #+BEGIN_SRC R
   setwd("./Data/GSE42861/")
 
@@ -1939,6 +1944,8 @@ CLOSED: [2017-07-23 Sun 15:46]
 #+END_SRC
 *** Preprocessing
 Nour avons reproduit le preprocessing expliqué dans cite:Zou_2014.
+#+NAME: code:ewas_prepross
+#+CAPTION: Dépend de [[code:ewas_format]]
 #+BEGIN_SRC R
   setwd("./Data/GSE42861/")
   X <- readRDS("X.rds")
@@ -1978,7 +1985,7 @@ Nour avons reproduit le preprocessing expliqué dans cite:Zou_2014.
 Pour certaine analyse il est important de scaler les données. 
 
 #+NAME: code:ewas_G_X
-#+CAPTION: Dépend de 
+#+CAPTION: Dépend de [[code:ewas_prepross]]
 #+begin_src R :results output :exports both
   library(MaTheseR)
 
@@ -3968,9 +3975,11 @@ CLOSED: [2017-07-25 mar. 18:05]
 #+RESULTS:
 [[./OUTPUT/Rplots/ewas_screeplot.png]]
 
-***** DONE Validation croisée du modèle lfmmRidge
-CLOSED: [2017-07-03 lun. 16:18]
+***** RUNNING Validation croisée du modèle lfmmRidge
 :LOGBOOK:
+- Note taken on [2017-07-26 mer. 17:56] \\
+  On va relancer... il y avait des bug dans la CV...
+- State "RUNNING"    from "DONE"       [2017-07-26 mer. 17:56]
 - State "DONE"       from "RUNNING"    [2017-07-03 lun. 16:18]
 - State "RUNNING"    from "DONE"       [2017-07-03 lun. 14:42]
 - State "DONE"       from "RUNNING"    [2017-06-29 jeu. 14:35]
@@ -3989,17 +3998,17 @@ CLOSED: [2017-07-03 lun. 16:18]
 
   ## samplers
   dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/GSE42861/G.rds",
-                                   X = "./Data/ThesisDataset/3Article/GSE42861/X.rds",
+                              X = "./Data/ThesisDataset/3Article/GSE42861/X.rds",
                               outlier = "./Data/ThesisDataset/3Article/GSE42861/candidates.rds") %>%
     ExpRmouline()
 
   n <- nrow(dat$Y)
 
-  lambdas <- c(1e-5, 1.0, 1e10) / n
+  lambdas <- c(1e-5, 1.0, 1e10)
   nb.cluster <- 10
   cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
                             lambdas = lambdas,
-                            Ks = c(1,2,5,10,25, 50, 100))
+                            Ks = c(1,2,5,10,20, 25,30, 50, 100))
 
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
