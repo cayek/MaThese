@@ -36,7 +36,6 @@
 # –William Edwards Deming (1900-1993).
 # #+END_QUOTE
 
-
 * Workenv                                                          :noexport:
 ** R
 #+BEGIN_SRC R
@@ -153,6 +152,7 @@ factorisation de matrice en statistique.
 :LOGBOOK:
 - State "TODO"       from              [2017-07-20 Thu 17:49]
 :END:
+
 Nous décrivons dans cette partie les données réelles qui sont analysées dans la
 thèse. Afin de rendre les analyses le plus possible reproductibles, nous
 décrivons les étapes de pré traitement qui ont été affectées sur ces jeux de
@@ -160,9 +160,16 @@ données. Les scripts sont disponible dans la version de la thèse avec le code.
 ** 1000 genome                                                    :noexport:
 
 ---DECRIRE dataset----
-*** Téléchargement du jeux de données
+*** DONE Téléchargement du jeux de données
+CLOSED: [2017-07-26 mer. 18:17]
+:LOGBOOK:
+- State "DONE"       from              [2017-07-26 mer. 18:17]
+:END:
 Nous avons téléchargé la dernière version du 1000 genome, il s'agit à
 ce jour de la phase 3.
+
+#+NAME: code:1000g_ddl
+#+CAPTION: Dépend de 
 #+BEGIN_SRC R
   setwd("./Data/1000Genomes/Phase3")
   ids <- 1:22
@@ -171,1180 +178,80 @@ ce jour de la phase 3.
   system(paste("curl -O",url))
   }
 #+END_SRC
-*** Contrôle qualité
+*** RUNNING Contrôle qualité
+:LOGBOOK:
+- Note taken on [2017-07-26 mer. 19:35] \\
+  tail -f /home/cayek/tmp/Logfiles/1000g.y2017_m07_d26.log
+- Note taken on [2017-07-26 mer. 18:42] \\
+  faudra recuperer la sortie dans emacs
+- State "RUNNING"    from "TODO"       [2017-07-26 mer. 18:41]
+- State "TODO"       from              [2017-07-26 mer. 18:30]
+:END:
 
 Tout le pré traitement a été fait avec le logicielle =plink= cite:Purcell_2007.
 Le jeux de données a d'abord été filtrer avec les opérations suivantes: 
 - on ne garde que les SNPs ayant une fréquence d'allele supérieur à $0.05$
 - ... voir doc de plink
 
-#+begin_src R :results output :exports both
-  ## file list
-  setwd("./Data/1000Genomes/Phase3/")
-
-  file.pattern <- "ALL.chr[0-9]*.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz$"
-  files <- list.files()
-  files <- grep(file.pattern, files, value = TRUE)
-
-  maf <- 0.05
-  mind <- 0.05
-  hwe <- 1e-10
-  geno <- 0.05
-  for (f in files) {
-    cmd <- paste("plink",
-                 "--vcf", f,
-                 "--maf", maf,
-                 "--mind", mind,
-                 "--geno", geno,
-                 "--hwe", hwe,
-                 "--snps-only",
-                 "--autosome",
-                 "--make-bed",
-                 "--out", paste0("./plink/", sub(".vcf.gz", "",f)),
-                 ">> plink_GC.out")
-
-    system("rm -f plink_QC.out")
-    system(cmd)
-  }
-#+end_src
-
-#+begin_src shell :session *ssh krakenator* :results output :exports both 
-  cd ~/Projects/Thesis/Data/1000Genomes/Phase3/plink/
-  for f in ALL.chr*.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log
+#+NAME: code:1000g_CQ
+#+CAPTION: Dépend de [[code:1000g_ddl]]
+#+begin_src shell :session *ssh krakenator* :result output
+  cd ~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3
+  for file in ALL.chr[0-9]*.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
   do
-      echo "=====FILE:$f====="
-      cat "$f"
+      echo "===== $file ====="
+      plink --vcf $file --maf 0.05 --mind 0.05 --geno 0.05 --hwe 1e-10 --snps-only --autosome --make-bed --out `basename $file .vcf.gz`_CQ
   done
 #+end_src
 
-#+RESULTS:
+#+RESULTS: code:1000g_CQ
 #+begin_example
 
-> > > > =====FILE:ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 16:51:39 2017
-
-Random number seed: 1495032699
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-3837178 out of 3992219 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999945.
-806 variants removed due to missing genotype data (--geno).
---hwe: 75986 variants removed due to Hardy-Weinberg exact test.
-3481563 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-278823 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 16:55:55 2017
-=====FILE:ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 16:55:55 2017
-
-Random number seed: 1495032955
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-3891530 out of 4045628 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999947.
-747 variants removed due to missing genotype data (--geno).
---hwe: 74342 variants removed due to Hardy-Weinberg exact test.
-3548109 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-268332 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:00:10 2017
-=====FILE:ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:00:10 2017
-
-Random number seed: 1495033210
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-3710299 out of 3868428 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999954.
-657 variants removed due to missing genotype data (--geno).
---hwe: 73200 variants removed due to Hardy-Weinberg exact test.
-3377092 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-259350 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:04:16 2017
-=====FILE:ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:04:16 2017
-
-Random number seed: 1495033456
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-2737034 out of 2857916 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999951.
-497 variants removed due to missing genotype data (--geno).
---hwe: 52494 variants removed due to Hardy-Weinberg exact test.
-2484161 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-199882 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:07:18 2017
-=====FILE:ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:07:18 2017
-
-Random number seed: 1495033638
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-2548064 out of 2655067 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999952.
-479 variants removed due to missing genotype data (--geno).
---hwe: 53291 variants removed due to Hardy-Weinberg exact test.
-2320025 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-174269 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:10:07 2017
-=====FILE:ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:10:07 2017
-
-Random number seed: 1495033807
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-2328557 out of 2424689 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999948.
-434 variants removed due to missing genotype data (--geno).
---hwe: 51148 variants removed due to Hardy-Weinberg exact test.
-2123668 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-153307 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:12:41 2017
-=====FILE:ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:12:41 2017
-
-Random number seed: 1495033961
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-2607034 out of 2697949 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999947.
-518 variants removed due to missing genotype data (--geno).
---hwe: 51346 variants removed due to Hardy-Weinberg exact test.
-2387326 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-167844 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:15:30 2017
-=====FILE:ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:15:30 2017
-
-Random number seed: 1495034130
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-2234710 out of 2329288 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999951.
-413 variants removed due to missing genotype data (--geno).
---hwe: 46649 variants removed due to Hardy-Weinberg exact test.
-2044443 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-143205 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:17:58 2017
-=====FILE:ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:17:58 2017
-
-Random number seed: 1495034278
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-2178759 out of 2267185 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999949.
-392 variants removed due to missing genotype data (--geno).
---hwe: 39690 variants removed due to Hardy-Weinberg exact test.
-1980142 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-158535 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:20:20 2017
-=====FILE:ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:20:20 2017
-
-Random number seed: 1495034420
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-1758443 out of 1832506 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999942.
-402 variants removed due to missing genotype data (--geno).
---hwe: 36837 variants removed due to Hardy-Weinberg exact test.
-1591671 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-129533 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:22:17 2017
-=====FILE:ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 16:44:50 2017
-
-Random number seed: 1495032290
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-6216035 out of 6468094 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999953.
-1033 variants removed due to missing genotype data (--geno).
---hwe: 128213 variants removed due to Hardy-Weinberg exact test.
-5676255 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-410534 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 16:51:39 2017
-=====FILE:ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:29:40 2017
-
-Random number seed: 1495034980
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-1745171 out of 1812841 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999959.
-278 variants removed due to missing genotype data (--geno).
---hwe: 35426 variants removed due to Hardy-Weinberg exact test.
-1592817 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-116650 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:31:43 2017
-=====FILE:ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:31:43 2017
-
-Random number seed: 1495035103
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-1058549 out of 1105538 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999928.
-279 variants removed due to missing genotype data (--geno).
---hwe: 23191 variants removed due to Hardy-Weinberg exact test.
-956556 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-78523 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:32:53 2017
-=====FILE:ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:32:53 2017
-
-Random number seed: 1495035173
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-1059735 out of 1103547 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999946.
-222 variants removed due to missing genotype data (--geno).
---hwe: 25833 variants removed due to Hardy-Weinberg exact test.
-960163 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-73517 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:34:01 2017
-=====FILE:ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:22:17 2017
-
-Random number seed: 1495034537
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-6808742 out of 7081600 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999954.
-1184 variants removed due to missing genotype data (--geno).
---hwe: 138884 variants removed due to Hardy-Weinberg exact test.
-6233305 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-435369 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:29:40 2017
-=====FILE:ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:34:01 2017
-
-Random number seed: 1495035241
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-5603261 out of 5832276 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999949.
-1069 variants removed due to missing genotype data (--geno).
---hwe: 111493 variants removed due to Hardy-Weinberg exact test.
-5104864 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-385835 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:40:14 2017
-=====FILE:ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:40:14 2017
-
-Random number seed: 1495035614
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-5500093 out of 5732585 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999948.
-1080 variants removed due to missing genotype data (--geno).
---hwe: 115329 variants removed due to Hardy-Weinberg exact test.
-4985272 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-398412 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:46:21 2017
-=====FILE:ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:46:21 2017
-
-Random number seed: 1495035981
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-5055536 out of 5265763 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999953.
-909 variants removed due to missing genotype data (--geno).
---hwe: 91958 variants removed due to Hardy-Weinberg exact test.
-4620648 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-342021 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:51:47 2017
-=====FILE:ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:51:47 2017
-
-Random number seed: 1495036307
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-4816881 out of 5024119 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999935.
-1292 variants removed due to missing genotype data (--geno).
---hwe: 101026 variants removed due to Hardy-Weinberg exact test.
-4346787 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-367776 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 17:57:03 2017
-=====FILE:ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 17:57:03 2017
-
-Random number seed: 1495036623
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-4533180 out of 4716715 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.99995.
-842 variants removed due to missing genotype data (--geno).
---hwe: 87612 variants removed due to Hardy-Weinberg exact test.
-4119828 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-324898 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 18:01:58 2017
-=====FILE:ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 18:01:58 2017
-
-Random number seed: 1495036918
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-4434371 out of 4597105 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999944.
-921 variants removed due to missing genotype data (--geno).
---hwe: 90154 variants removed due to Hardy-Weinberg exact test.
-4048413 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-294883 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 18:06:48 2017
-=====FILE:ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.log=====
-PLINK v1.90b4.3 64-bit (9 May 2017)
-Options in effect:
-  --autosome
-  --geno 0.05
-  --hwe 1e-10
-  --maf 0.05
-  --make-bed
-  --mind 0.05
-  --out ./plink/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes
-  --snps-only
-  --vcf ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-
-Hostname: krakenator.imag.fr
-Working directory: /home/cayek/Projects/Thesis/Data/1000Genomes/Phase3
-Start time: Wed May 17 18:06:48 2017
-
-Random number seed: 1495037208
-193793 MB RAM detected; reserving 96896 MB for main workspace.
---vcf:
-./plink/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bed
-+
-./plink/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.bim
-+
-./plink/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes-temporary.fam
-written.
-3427241 out of 3560687 variants loaded from .bim file.
-2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
-Ambiguous sex IDs written to
-./plink/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.nosex
-.
-0 people removed due to missing genotype data (--mind).
-Using 1 thread (no multithreaded calculations invoked).
-Before main variant filters, 2504 founders and 0 nonfounders present.
-Calculating allele frequencies... done.
-Total genotyping rate is 0.999948.
-689 variants removed due to missing genotype data (--geno).
---hwe: 68557 variants removed due to Hardy-Weinberg exact test.
-3121045 variants removed due to minor allele threshold(s)
-(--maf/--max-maf/--mac/--max-mac).
-236950 variants and 2504 people pass filters and QC.
-Note: No phenotypes present.
---make-bed to
-./plink/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
-+
-./plink/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bim
-+
-./plink/ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.fam
-... done.
-
-End time: Wed May 17 18:10:32 2017
+> > > \n===== ALL.chr10.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr11.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr12.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr13.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr14.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr15.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr17.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr18.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr19.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr20.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr21.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr3.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr4.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr7.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr8.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
+\n===== ALL.chr9.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz =====
 #+end_example
-*** Fusion de tous les chromosomes
-Ensuite, nous avons enlever 
+
+*** TODO Fusion de tous les chromosomes
+:LOGBOOK:
+- State "TODO"       from              [2017-07-26 mer. 18:17]
+:END:
+Ensuite, nous avons enlever les doublons
+#+NAME: code:1000g_rm
+#+CAPTION: Dépend de [[code:1000g_CQ]]
+#+begin_src shell :session *ssh krakenator* :result output
+  cd ~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3
+
+  ## snp to remove
+  echo "rs6658405\n.\nrs145926341\nrs141927528" > excluded_variant.txt
+
+  for file in ALL.chr[0-9]*.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.bed
+  do
+      echo "===== $file ====="
+      plink --bfile $file --exclude excluded_variant.txt --make_bed --out `basename $file .vcf.gz`_excluded
+  done
+#+end_src
+
+
 #+begin_src R :results output :exports both
   setwd("./Data/1000Genomes/Phase3/plink/")
 
@@ -1367,6 +274,9 @@ Ensuite, nous avons enlever
   }
 #+end_src
 
+Vérification
+#+NAME: code:1000g_test
+#+CAPTION: Dépend de [[code:1000g_rm]]
 #+begin_src shell :session *ssh krakenator* :results output :exports both 
   grep "rs6658405" -R *_excluded.bim
   grep "\." -R *_excluded.bim
@@ -1378,8 +288,11 @@ Ensuite, nous avons enlever
 : ALL.chr16.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes_excluded.bim:16	rs66584058	0	25445314	G	A
 : ALL.chr5.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes_excluded.bim:5	rs66584056	0	36516119	T	A
 
-#+begin_src R :results output :exports both
-  setwd("./Data/1000Genomes/Phase3/plink/")
+On concatène les genomes en 1 seul fichier. 
+#+NAME: code:1000g_concat
+#+CAPTION: Dépend de [[code:1000g_rm]]
+#+begin_src R :results output :exports both :session *ssh krakenator*
+  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
 
   ## list prefix
   file.pattern <- "ALL.chr[0-9]*.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes_excluded.bed$"
@@ -1444,7 +357,12 @@ Note: No phenotypes present.
 
 End time: Thu May 18 09:57:32 2017
 #+end_example
-*** Filtrage des individus trop apparenté
+*** TODO Filtrage des individus trop apparenté
+:LOGBOOK:
+- Note taken on [2017-07-26 mer. 19:21] \\
+  c'est la que ca commence !! il faut que je remplace par les vrais appel de plink !!!
+- State "TODO"       from              [2017-07-26 mer. 18:17]
+:END:
 #+begin_src R :results output :exports both
   library(bigsnpr)
   setwd("~/Projects/Thesis/Data/1000Genomes/Phase3/plink")
@@ -1512,7 +430,10 @@ End time: Thu May 18 09:57:32 2017
   --make-bed to 1000GenomePhase3_QC_norel.bed + 1000GenomePhase3_QC_norel.bim +
   1000GenomePhase3_QC_norel.fam ... done.
 #+end_example
-*** Élagage 
+*** TODO Élagage 
+:LOGBOOK:
+- State "TODO"       from              [2017-07-26 mer. 18:17]
+:END:
 
 Il est bien connue qu'il y a une forte corrélation en les SNPs que l'on appel
 déséquilibre de liaision CITE. c'est un problème pour l'acp ect... cite 
@@ -1602,7 +523,10 @@ Note: No phenotypes present.
 ... done.
 
 #+end_example
-*** Conversion dans format utilisable en R
+*** TODO Conversion dans format utilisable en R
+:LOGBOOK:
+- State "TODO"       from              [2017-07-26 mer. 18:17]
+:END:
 
 Nous avons utilisé le package bigsnpr pour convertir les données du format
 =.bed= à un format de matrice R.
@@ -3647,6 +2571,13 @@ GRCh38.
 #+end_example
 ***** RUNNING Scree plot
 :LOGBOOK:
+- State "RUNNING"    from "DEBUG"      [2017-07-26 mer. 18:09]
+- Note taken on [2017-07-26 mer. 18:09] \\
+  tail -f /home/cayek/tmp/Logfiles/gwas_screeplot.y2017_m07_d26.log
+- Note taken on [2017-07-26 mer. 18:07] \\
+  On va relancer sans Rspectra, ca prend trop de temps !!!!
+- State "DEBUG"      from "DONE"       [2017-07-26 mer. 18:06]
+- State "DONE"       from "RUNNING"    [2017-07-26 mer. 18:06]
 - State "RUNNING"    from "STARTED"    [2017-07-25 mar. 18:21]
 - Note taken on [2017-07-25 mar. 18:19] \\
   tail -f /home/cayek/tmp/Logfiles/gwas_screeplot.y2017_m07_d25.log
@@ -3671,7 +2602,7 @@ GRCh38.
   samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
 
   ## methods
-  methods <- method_PCA(scale = FALSE, K = 500) * param(lambda = lambdas)
+  methods <- method_PCA(scale = FALSE) * param(lambda = lambdas)
 
   ## expr
   expr <- ExpR(rep.nb.sampler = 1,
@@ -3736,8 +2667,9 @@ On prend K = 9 variables latentes.
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_K.png")
 #+end_src
-***** RUNNING Étude du jeu de données 
+***** DEBUG Étude du jeu de données 
 :LOGBOOK:
+- State "DEBUG"      from "RUNNING"    [2017-07-26 mer. 18:06]
 - State "RUNNING"    from "DEBUG"      [2017-07-24 Mon 07:35]
 - State "DEBUG"      from "DONE"       [2017-07-24 Mon 06:58]
 - State "DONE"       from "RUNNING"    [2017-07-24 Mon 06:58]
@@ -3975,8 +2907,14 @@ CLOSED: [2017-07-25 mar. 18:05]
 #+RESULTS:
 [[./OUTPUT/Rplots/ewas_screeplot.png]]
 
-***** RUNNING Validation croisée du modèle lfmmRidge
+***** DONE Validation croisée du modèle lfmmRidge
+CLOSED: [2017-07-27 jeu. 10:49]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-07-27 jeu. 10:49]
+- Note taken on [2017-07-26 mer. 19:36]
+- Note taken on [2017-07-26 mer. 18:05] \\
+  tail -f /home/cayek/tmp/Logfiles/ewas_cv_lambda.y2017_m07_d26.log
+  tail -f /home/cayek/tmp/Logfiles/ewas_cv.y2017_m07_d26.log
 - Note taken on [2017-07-26 mer. 17:56] \\
   On va relancer... il y avait des bug dans la CV...
 - State "RUNNING"    from "DONE"       [2017-07-26 mer. 17:56]
@@ -4030,9 +2968,60 @@ CLOSED: [2017-07-25 mar. 18:05]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_lambda.png]]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_K.png]]
 
+#+NAME: code:ewas_CV_lambda
+#+CAPTION: Dépend de [[code:ewas_G_X]] [[code:ewas_candidates]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## samplers
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/GSE42861/G.rds",
+                              X = "./Data/ThesisDataset/3Article/GSE42861/X.rds",
+                              outlier = "./Data/ThesisDataset/3Article/GSE42861/candidates.rds") %>%
+    ExpRmouline()
+
+  n <- nrow(dat$Y)
+
+  lambdas <- c(1e-10, 1e-5, 1.0, 1e5, 1e10)
+  nb.cluster <- 5
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
+                            lambdas = lambdas,
+                            Ks = c(10))
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  res.cv <- ExpRmouline(cv, dat)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## save expr
+  save_expr(res.cv, "ewas_CV_lambda_lfmm.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  pl
+  save_plot_png(pl, "ewas_CV_lambda_lfmm_lambda.png")
+
+  ## plot smooth
+  pl <- ggplot(res.cv$errs, aes(y = err, x = log(lambda))) +
+    geom_smooth()
+  pl
+  save_plot_png(pl, "ewas_CV_lambda_lfmm_lambda_smooth.png")
+
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/ewas_CV_lambda_lfmm_lambda_smooth.png]]
+[[./OUTPUT/Rplots/ewas_CV_lambda_lfmm_lambda.png]]
+
 ***** DONE Étude du jeu de données
-CLOSED: [2017-07-11 mar. 11:45]
+CLOSED: [2017-07-27 jeu. 11:01]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-07-27 jeu. 11:01]
+- Note taken on [2017-07-26 mer. 19:44] \\
+  Du coup j'ai relancé avec K = 10 et le bon lasso !!!!!! on va voir
+- Note taken on [2017-07-26 mer. 19:43] \\
+  tail -f /home/cayek/tmp/Logfiles/ewas_run.y2017_m07_d26.log
+- State "RUNNING"    from "DONE"       [2017-07-26 mer. 19:43]
 - State "DONE"       from "RUNNING"    [2017-07-11 mar. 11:45]
 - Note taken on [2017-07-11 mar. 10:25] \\
   c'est reparti :D
@@ -4045,13 +3034,14 @@ CLOSED: [2017-07-11 mar. 11:45]
 - State "RUNNING"    from "TODO"       [2017-07-07 ven. 13:59]
 - State "TODO"       from              [2017-06-29 jeu. 11:17]
 :END:
+
 #+NAME: code:ewas_expr
 #+CAPTION: Dépend de [[code:ewas_G_X]] [[code:ewas_candidates]]
 #+begin_src R
   library(MaTheseR)
 
   ## param
-  K.method <- 25
+  K.method <- 10
   nb.cluster <- 4
   lambda <- 1e-5
   nozero.prop <- 0.01
@@ -4101,35 +3091,447 @@ CLOSED: [2017-07-11 mar. 11:45]
 
 #+end_src
 
-****** Charger l'expérience et les candidats
-#+BEGIN_SRC R
+#+NAME: code:ewas_expr_log
+#+CAPTION: Dépend de [[code:ewas_expr]]
+#+begin_src shell :session *ssh krakenator* :results output 
+  cat /home/cayek/tmp/Logfiles/ewas_run.y2017_m07_d26.log
+#+end_src
+
+#+RESULTS: code:ewas_expr_log
+#+begin_example
+  R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+  Copyright (C) 2017 The R Foundation for Statistical Computing
+  Platform: x86_64-redhat-linux-gnu (64-bit)
+  
+  R est un logiciel libre livré sans AUCUNE GARANTIE.
+  Vous pouvez le redistribuer sous certaines conditions.
+  Tapez 'license()' ou 'licence()' pour plus de détails.
+  
+  R est un projet collaboratif avec de nombreux contributeurs.
+  Tapez 'contributors()' pour plus d'information et
+  'citation()' pour la façon de le citer dans les publications.
+  
+  Tapez 'demo()' pour des démonstrations, 'help()' pour l'aide
+  en ligne ou 'help.start()' pour obtenir l'aide au format HTML.
+  Tapez 'q()' pour quitter R.
+  
+  Loading tidyverse: ggplot2
+  Loading tidyverse: tibble
+  Loading tidyverse: tidyr
+  Loading tidyverse: readr
+  Loading tidyverse: purrr
+  Loading tidyverse: dplyr
+  Conflicts with tidy packages ---------------------------------------------------
+  (): 
+  
+  Attachement du package : ‘testthat’
+  
+  The following object is masked from ‘package:dplyr’:
+  
+      matches
+  
+  The following object is masked from ‘package:purrr’:
+  
+      is_null
+  
+  Le chargement a nécessité le package : ExpRiment
+  Le chargement a nécessité le package : MaTheseR
+  Le chargement a nécessité le package : foreach
+  foreach: simple, scalable parallel programming from Revolution Analytics
+  Use Revolution R for scalability, fault tolerance and more.
+  http://www.revolutionanalytics.com
+  
+  Attachement du package : ‘foreach’
+  
+  The following objects are masked from ‘package:purrr’:
+  
+      accumulate, when
+  
+  Le chargement a nécessité le package : magrittr
+  
+  Attachement du package : ‘magrittr’
+  
+  The following objects are masked from ‘package:testthat’:
+  
+      equals, is_less_than, not
+  
+  The following object is masked from ‘package:purrr’:
+  
+      set_names
+  
+  The following object is masked from ‘package:tidyr’:
+  
+      extract
+  library(MaTheseR)
+
+  ## param
+  K.method <- 10
+  nb.cluster <- 4
+  lambda <- 1e-5
+  nozero.prop <- 0.01
+
+  ## sampler
+  Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
+  X <- readRDS("./Data/ThesisDataset/3Article/GSE42861/X.rds")
+  X <- X[,1, drop = FALSE]
+  head(X)
+             disease.state
+  GSM1051525     0.9720875
+  GSM1051526     0.9720875
+  GSM1051527     0.9720875
+  GSM1051528     0.9720875
+  GSM1051529     0.9720875
+  GSM1051530     0.9720875
+  outlier <- "./Data/ThesisDataset/3Article/GSE42861/candidates.rds"
+  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = outlier) * param()
+
+  ## methods
+  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
+  +                             lambda.K = 25, relative.err.epsilon = 1e-6)
+  m.lm <- method_lm()
+  m.pca <- method_PCAlm(K = K.method)
+  m.cate <- method_cate(K = K.method)
+  m.famt <- method_famt(K.method)
+  m.sva <- method_sva(K.method)
+
+  methods <- m.ridgeLfmm * param() +
+  +   m.lm * param() +
+  +   m.pca * param() +
+  +   m.cate * param() +
+  +   m.famt * param() +
+  +   m.sva * param() +
+  +   m.lasso * param()
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  Loading tidyverse: ggplot2
+  Loading tidyverse: tibble
+  Loading tidyverse: tidyr
+  Loading tidyverse: readr
+  Loading tidyverse: purrr
+  Loading tidyverse: dplyr
+  Conflicts with tidy packages ---------------------------------------------------
+  (): 
+  
+  Attachement du package : ‘testthat’
+  
+  The following object is masked from ‘package:dplyr’:
+  
+      matches
+  
+  The following object is masked from ‘package:purrr’:
+  
+      is_null
+  
+  Le chargement a nécessité le package : ExpRiment
+  Le chargement a nécessité le package : MaTheseR
+  Le chargement a nécessité le package : foreach
+  
+  Attachement du package : ‘foreach’
+  
+  The following objects are masked from ‘package:purrr’:
+  
+      accumulate, when
+  
+  Le chargement a nécessité le package : magrittr
+  
+  Attachement du package : ‘magrittr’
+  
+  The following objects are masked from ‘package:testthat’:
+  
+      equals, is_less_than, not
+  
+  The following object is masked from ‘package:purrr’:
+  
+      set_names
+  
+  The following object is masked from ‘package:tidyr’:
+  
+      extract
+  
+  starting worker pid=9528 on localhost:11939 at 19:35:29.343
+  Loading tidyverse: ggplot2
+  Loading tidyverse: tibble
+  Loading tidyverse: tidyr
+  Loading tidyverse: readr
+  Loading tidyverse: purrr
+  Loading tidyverse: dplyr
+  Conflicts with tidy packages ---------------------------------------------------
+  (): 
+  
+  Attachement du package : ‘testthat’
+  
+  The following object is masked from ‘package:dplyr’:
+  
+      matches
+  
+  The following object is masked from ‘package:purrr’:
+  
+      is_null
+  
+  Le chargement a nécessité le package : ExpRiment
+  Le chargement a nécessité le package : MaTheseR
+  Le chargement a nécessité le package : foreach
+  
+  Attachement du package : ‘foreach’
+  
+  The following objects are masked from ‘package:purrr’:
+  
+      accumulate, when
+  
+  Le chargement a nécessité le package : magrittr
+  
+  Attachement du package : ‘magrittr’
+  
+  The following objects are masked from ‘package:testthat’:
+  
+      equals, is_less_than, not
+  
+  The following object is masked from ‘package:purrr’:
+  
+      set_names
+  
+  The following object is masked from ‘package:tidyr’:
+  
+      extract
+  
+  starting worker pid=9538 on localhost:11939 at 19:35:33.199
+  Loading tidyverse: ggplot2
+  Loading tidyverse: tibble
+  Loading tidyverse: tidyr
+  Loading tidyverse: readr
+  Loading tidyverse: purrr
+  Loading tidyverse: dplyr
+  Conflicts with tidy packages ---------------------------------------------------
+  (): 
+  
+  Attachement du package : ‘testthat’
+  
+  The following object is masked from ‘package:dplyr’:
+  
+      matches
+  
+  The following object is masked from ‘package:purrr’:
+  
+      is_null
+  
+  Le chargement a nécessité le package : ExpRiment
+  Le chargement a nécessité le package : MaTheseR
+  Le chargement a nécessité le package : foreach
+  
+  Attachement du package : ‘foreach’
+  
+  The following objects are masked from ‘package:purrr’:
+  
+      accumulate, when
+  
+  Le chargement a nécessité le package : magrittr
+  
+  Attachement du package : ‘magrittr’
+  
+  The following objects are masked from ‘package:testthat’:
+  
+      equals, is_less_than, not
+  
+  The following object is masked from ‘package:purrr’:
+  
+      set_names
+  
+  The following object is masked from ‘package:tidyr’:
+  
+      extract
+  
+  starting worker pid=9548 on localhost:11939 at 19:35:37.112
+  Loading tidyverse: ggplot2
+  Loading tidyverse: tibble
+  Loading tidyverse: tidyr
+  Loading tidyverse: readr
+  Loading tidyverse: purrr
+  Loading tidyverse: dplyr
+  Conflicts with tidy packages ---------------------------------------------------
+  (): 
+  
+  Attachement du package : ‘testthat’
+  
+  The following object is masked from ‘package:dplyr’:
+  
+      matches
+  
+  The following object is masked from ‘package:purrr’:
+  
+      is_null
+  
+  Le chargement a nécessité le package : ExpRiment
+  Le chargement a nécessité le package : MaTheseR
+  Le chargement a nécessité le package : foreach
+  
+  Attachement du package : ‘foreach’
+  
+  The following objects are masked from ‘package:purrr’:
+  
+      accumulate, when
+  
+  Le chargement a nécessité le package : magrittr
+  
+  Attachement du package : ‘magrittr’
+  
+  The following objects are masked from ‘package:testthat’:
+  
+      equals, is_less_than, not
+  
+  The following object is masked from ‘package:purrr’:
+  
+      set_names
+  
+  The following object is masked from ‘package:tidyr’:
+  
+      extract
+  
+  starting worker pid=9558 on localhost:11939 at 19:35:41.000
+  doParallel::registerDoParallel(cl)
+  expr <- ExpR(rep.nb.sampler = 1,
+  +              samplers = samplers,
+  +              preprocessors = NULL,
+  +              rep.nb.method = 1,
+  +              methods = methods,
+  +              extractor = ExpRextractor_pvalue1_calibrated)
+  expr <- ExpRmouline(expr)
+  === Sampling data.
+  loaded ExpRiment and set parent environment
+  loaded ExpRiment and set parent environment
+  loaded ExpRiment and set parent environment
+  loaded ExpRiment and set parent environment
+  === Main loop.
+  loaded ExpRiment and set parent environment
+  loaded ExpRiment and set parent environment
+  loaded ExpRiment and set parent environment
+  loaded ExpRiment and set parent environment
+  Computing latent variables
+  Computing latent variables
+  running hp
+          pvalue    colname index outlier     score rep.sampler rep.method method
+  1 3.208532e-08 cg00000029     1   FALSE -5.593741           1          1     lm
+    method.K method.lambda
+  1       NA            NA
+  Computing latent variables
+  Computing latent variables
+  Loading required package: impute
+  running hp
+  `Rows with missing values`
+  integer(0)
+  `Columns with missing values`
+  integer(0)
+  
+  running hp
+       pvalue    colname index outlier      score rep.sampler rep.method
+  1 0.6757066 cg00000029     1   FALSE -0.4185102           1          1
+       method method.K method.lambda
+  1 ridgeLFMM       10         1e-04
+       pvalue    colname index outlier      score rep.sampler rep.method method
+  1 0.9531602 cg00000029     1   FALSE 0.05876053           1          1  PCAlm
+    method.K method.lambda
+  1       10            NA
+  Number of significant surrogate variables is:  10 
+  Computing latent variables
+  It = 1/100, err2 = 0.998548621190457
+  It = 2/100, err2 = 0.652592023099809
+  It = 3/100, err2 = 0.652018379539831
+  [1] "Fitting Factor Analysis Model with 10 factors"
+  It = 4/100, err2 = 0.651990819329085
+  It = 5/100, err2 = 0.65201511610208
+  Iteration (out of 5 ):It = 6/100, err2 = 0.65202139222764
+  It = 7/100, err2 = 0.652022747619974
+  === lambda = 0.184666840535516, no zero B proportion = 0.00564682358459127
+  It = 1/100, err2 = 0.652023080891458
+  It = 2/100, err2 = 0.651977189044589
+       pvalue    colname index outlier      score rep.sampler rep.method method
+  1 0.6618566 cg00000029     1   FALSE -0.4373513           1          1   cate
+    method.K method.lambda
+  1       10            NA
+  It = 3/100, err2 = 0.651967304634796
+  It = 4/100, err2 = 0.651964288072884
+  It = 5/100, err2 = 0.65196318471777
+  === lambda = 0.138480594373303, no zero B proportion = 0.0549685876152507
+  running hp
+       pvalue    colname index outlier     score rep.sampler rep.method    method
+  1 0.8961906 cg00000029     1   FALSE -0.130524           1          1 lassoLFMM
+    method.K method.lambda
+  1       10            NA
+  1  2  [1] "Fitting Factor Analysis Model with 10 factors"
+  3         pvalue    colname index outlier    score rep.sampler rep.method method
+  1 1.13824e-05 cg00000029     1   FALSE 19.55117           1          1   famt
+    method.K method.lambda
+  1       10            NA
+  4  5         pvalue    colname index outlier    score rep.sampler rep.method method
+  1 3.94329e-12 cg00000029     1   FALSE 49.94426           1          1    sva
+    method.K method.lambda
+  1       10            NA
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## save expr
+  save_expr(expr, "EWAS_all.rds")
+  Expr save in ./OUTPUT/Expr/EWAS_all.rds
+
+
+  >
+#+end_example
+
+****** DONE Charger l'expérience et les candidats
+CLOSED: [2017-07-27 jeu. 11:32]
+:LOGBOOK:
+- State "DONE"       from              [2017-07-27 jeu. 11:32]
+:END:
+
+#+NAME: code:ewas_load_res
+#+CAPTION: Dépend de [[code:ewas_expr]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   library(MaTheseR)
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
-#+END_SRC
-****** Que donne la calibration ?
-#+BEGIN_SRC R
+#+end_src
+
+#+RESULTS: code:ewas_load_res
+
+****** DONE Que donne la calibration ?
+CLOSED: [2017-07-27 jeu. 11:32]
+:LOGBOOK:
+- State "DONE"       from              [2017-07-27 jeu. 11:32]
+:END:
+
+
+#+NAME: code:ewas_calibration
+#+CAPTION: Dépend de [[code:ewas_load_res]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   expr$df.res %>%
     group_by(method) %>%
     summarise(mad = mad[1], median = median[1])
-#+END_SRC
+#+end_src
 
-#+RESULTS:
+#+RESULTS: code:ewas_calibration
 #+begin_example
-  # A tibble: 7 x 3
-       method      mad        median
-        <chr>    <dbl>         <dbl>
-  1      cate 1.220559  0.0143364030
-  2      famt 5.798501  3.9801590213
-  3 lassoLFMM 1.138814 -0.0017840118
-  4        lm 4.212716  0.0453431462
-  5     PCAlm 1.135042  0.0002846393
-  6 ridgeLFMM 1.193740  0.0135590474
-  7       sva 4.003476  2.8316228410
+# A tibble: 7 x 3
+     method       mad     median
+      <chr>     <dbl>      <dbl>
+1      cate  1.287086 0.04677596
+2      famt  6.265929 4.33328808
+3 lassoLFMM  1.238778 0.02799659
+4        lm  4.212716 0.04534315
+5     PCAlm  1.226813 0.03996082
+6 ridgeLFMM  1.274570 0.04853927
+7       sva 10.841806 7.58318108
 #+end_example
 
-****** Les qqplots ?
-#+BEGIN_SRC R
+****** DONE Les qqplots ?
+CLOSED: [2017-07-27 jeu. 11:32]
+:LOGBOOK:
+- State "DONE"       from              [2017-07-27 jeu. 11:32]
+:END:
+
+#+NAME: code:ewas_qqplots
+#+CAPTION: Dépend de [[code:ewas_load_res]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   toplot <- expr$df.res %>%
     mutate(pvalue = calibrated.pvalue) %>%
     dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
@@ -4144,18 +3546,27 @@ CLOSED: [2017-07-11 mar. 11:45]
     geom_abline(slope = 1, intercept = 0)
   save_plot_png(pll, "EWAS_qqplots2.png")
   pll
-#+END_SRC
+#+end_src
 
-#+RESULTS:
-[[./OUTPUT/Rplots/EWAS_qqplots2.png]]
-[[./OUTPUT/Rplots/EWAS_qqplots.png]]
+#+RESULTS: code:ewas_qqplots
+ [[./OUTPUT/Rplots/EWAS_qqplots.png]]
+ [[./OUTPUT/Rplots/EWAS_qqplots2.png]]
 
-****** Le top 15
-#+BEGIN_SRC R
+
+****** DONE Le top 
+CLOSED: [2017-07-27 jeu. 11:35]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-07-27 jeu. 11:35]
+- State "TODO"       from              [2017-07-27 jeu. 11:32]
+:END:
+
+#+NAME: code:ewas_top
+#+CAPTION: Dépend de [[code:ewas_load_res]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
-    filter_candidates_top(15)
+    filter_candidates_top(30)
 
   ## candidats
   toplot %>% group_by(method) %>%
@@ -4163,25 +3574,33 @@ CLOSED: [2017-07-11 mar. 11:45]
 
   pl <- plot_intersection(toplot, by = "colname", plot = "tile")
   save_plot_png(pl, "ewas_top_inter.png")
-#+END_SRC
+#+end_src
 
-#+RESULTS:
-[[./OUTPUT/Rplots/ewas_top_inter.png]]
+#+RESULTS: code:ewas_top
 #+begin_example
 # A tibble: 7 x 2
      method power
       <chr> <dbl>
-1      cate     1
-2      famt     0
-3 lassoLFMM     1
-4        lm     0
-5     PCAlm     1
-6 ridgeLFMM     1
-7       sva     0
+1      cate   0.8
+2      famt   0.0
+3 lassoLFMM   1.0
+4        lm   0.0
+5     PCAlm   1.0
+6 ridgeLFMM   1.0
+7       sva   0.0
+[[./OUTPUT/Rplots/ewas_top_inter.png]]
 #+end_example
 
-****** Contrôle du FDR à $0.01$
-#+BEGIN_SRC R
+****** DONE Contrôle du FDR à $0.01$
+CLOSED: [2017-07-27 jeu. 11:37]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-07-27 jeu. 11:37]
+- State "TODO"       from              [2017-07-27 jeu. 11:32]
+:END:
+
+#+NAME: code:ewas_fdr
+#+CAPTION: Dépend de [[code:ewas_load_res]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
@@ -4193,24 +3612,32 @@ CLOSED: [2017-07-11 mar. 11:45]
 
   pl <- plot_intersection(toplot, by = "colname", plot = "point")
   save_plot_png(pl, "ewas_fdr01_inter.png")
-#+END_SRC
+#+end_src
 
-#+RESULTS:
+#+RESULTS: code:ewas_fdr
 [[./OUTPUT/Rplots/ewas_fdr01_inter.png]]
 #+begin_example
 # A tibble: 6 x 2
      method power
       <chr> <dbl>
-1      cate     1
-2      famt     1
-3 lassoLFMM     1
-4     PCAlm     1
-5 ridgeLFMM     1
-6       sva     1
+1      cate   1.0
+2      famt   1.0
+3 lassoLFMM   1.0
+4     PCAlm   1.0
+5 ridgeLFMM   1.0
+6       sva   0.6
 #+end_example
 
-****** Venn diagram
-#+begin_src R 
+****** DONE Venn diagram
+CLOSED: [2017-07-27 jeu. 11:39]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-07-27 jeu. 11:39]
+- State "TODO"       from              [2017-07-27 jeu. 11:32]
+:END:
+
+#+NAME: code:ewas_venn
+#+CAPTION: Dépend de [[ewas_load_res]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
@@ -4231,7 +3658,7 @@ CLOSED: [2017-07-11 mar. 11:45]
   save_plot_png(out, "ewas_fdr01_venn.png")
 #+end_src
 
-#+RESULTS:
+#+RESULTS: code:ewas_venn
 [[./OUTPUT/Rplots/ewas_fdr01_venn.png]]
 
 ** Résultats                                                      :noexport:
@@ -4241,7 +3668,7 @@ CLOSED: [2017-07-11 mar. 11:45]
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-*** STARTED Comparaisons des méthodes
+*** STARTED Comparaisons des méthodes                            :noexport:
 :LOGBOOK:
 - State "STARTED"    from "RUNNING"    [2017-07-25 mar. 16:35]
 - State "RUNNING"    from "DEBUG"      [2017-07-25 mar. 10:57]
@@ -4361,7 +3788,7 @@ CLOSED: [2017-07-11 mar. 11:45]
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics[with=14cm, height=20cm]{./OUTPUT/Rplots/method_comp.pdf.png}
+\includegraphics[width=14cm, height=20cm]{./OUTPUT/Rplots/method_comp.pdf.png}
 \caption{Comparaison des méthodes sur des simulations numériques.}
 \label{fig:method_comp}
 \end{figure}
@@ -4413,7 +3840,7 @@ CLOSED: [2017-07-11 mar. 11:45]
     geom_boxplot()
 #+end_src
 
-*** STARTED GWAS
+*** STARTED GWAS                                                 :noexport:
 :LOGBOOK:
 - State "STARTED"    from "DONE"       [2017-07-25 mar. 16:37]
 - State "DONE"       from "TODO"       [2017-07-25 mar. 16:37]
@@ -4468,50 +3895,92 @@ CLOSED: [2017-07-11 mar. 11:45]
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics[with=14cm, height=10cm]{./OUTPUT/Rplots/gwas_venn.pdf.png}
-\includegraphics[with=14cm, height=10cm]{./OUTPUT/Rplots/gwas_qqplot.pdf.png}
+\includegraphics[width=14cm, height=10cm]{./OUTPUT/Rplots/gwas_venn.pdf.png}
+\includegraphics[width=14cm, height=10cm]{./OUTPUT/Rplots/gwas_qqplot.pdf.png}
 \caption{Diagramme de Venn et qqplot pour la GWAS}
 \label{fig:gwas_venn_qqplot}
 \end{figure}
 #+END_EXPORT
 
-*** TODO EWAS
+*** STARTED EWAS
 :LOGBOOK:
+- State "STARTED"    from "TODO"       [2017-07-27 jeu. 11:40]
 - State "TODO"       from              [2017-07-10 lun. 15:49]
 :END:
 
-#+NAME: code:ewas_screeplot_plot
-#+CAPTION: Dépend de [[code:ewas_screeplot]]
+#+NAME: code:ewas_screeplot_
+#+CAPTION: Dépend de [[code:ewas_screeplot]] [[code:ewas_CV]] [[code:ewas_CV_lambda]]
 #+begin_src R 
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
 
 
+  ## screeplot
   expr <- readRDS("./OUTPUT/Expr/ewas_screeplot_expr.rds")
   toplot <- expr$df.res %>%
       mutate(lambda = as.factor(lambda))
   pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
     geom_point() +
-    coord_cartesian(xlim = c(1,300)) +
+    coord_cartesian(xlim = c(1,100)) +
     xlab("K") +
     ylab("Proportion de la variance totale") +
     MaTheseR.params$gtheme
 
   save_plot_MaTheseR(pl, "ewas_screeplot.pdf.png", height = 7, width = 14)
 
+
+  ## cross validation K
+  expr <- readRDS("./OUTPUT/Expr/ewas_CV_lfmm.rds")
+  toplot <- expr$errs %>%
+    mutate(lambda = as.factor(lambda)) %>%
+    group_by(lambda, K) %>%
+    summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
+    ungroup()
+  pl <- ggplot(toplot, aes(x = K, y = err.mean, color = lambda)) +
+    geom_point() + 
+    geom_errorbar(aes(ymin = err.mean - se,
+                      ymax = err.mean + se,
+                      width = 1)) +
+    geom_line() +
+    xlab("Nombre de variables latentes (K)") +
+    ylab("Erreur de prédiction") +
+    MaTheseR.params$gtheme
+  pl
+  save_plot_MaTheseR(pl, "ewas_CV_K.pdf.png", height = 7, width = 14)
+
+  ## cross validation lambda
+  expr <- readRDS("./OUTPUT/Expr/ewas_CV_lambda_lfmm.rds")
+  toplot <- expr$errs %>%
+    mutate(K = as.factor(K)) %>%
+    group_by(lambda, K) %>%
+    summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
+    ungroup()
+  pl <- ggplot(toplot, aes(x = log(lambda), y = err.mean, color = K)) +
+    geom_point() + 
+    geom_errorbar(aes(ymin = err.mean - se,
+                      ymax = err.mean + se,
+                      width = 1)) +
+    geom_line() +
+    xlab("Paramètre de regularisation en échelle logarithmique (lambda)") +
+    ylab("Erreur de prédiction") +
+    MaTheseR.params$gtheme
+  pl
+  save_plot_MaTheseR(pl, "ewas_CV_lambda.pdf.png", height = 7, width = 14)
 #+end_src
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics[with=14cm, height=7cm]{./OUTPUT/Rplots/ewas_screeplot.pdf.png}
+\includegraphics[width=14cm, height=7cm]{./OUTPUT/Rplots/ewas_screeplot.pdf.png}
+\includegraphics[width=14cm, height=7cm]{./OUTPUT/Rplots/ewas_CV_K.pdf.png}
+\includegraphics[width=14cm, height=7cm]{./OUTPUT/Rplots/ewas_CV_lambda.pdf.png}
 \caption{Choix des paramètres}
 \label{fig:ewas_params}
 \end{figure}
 #+END_EXPORT
 
 #+NAME: code:ewas_qqplot_venn
-#+CAPTION: Dépend de 
+#+CAPTION: Dépend de [[code:ewas_run]]
 #+BEGIN_SRC R
   library(MaTheseR)
   library(gridExtra)
@@ -4559,8 +4028,8 @@ CLOSED: [2017-07-11 mar. 11:45]
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics[with=14cm, height=10cm]{./OUTPUT/Rplots/ewas_venn.pdf.png}
-\includegraphics[with=14cm, height=10cm]{./OUTPUT/Rplots/ewas_qqplot.pdf.png}
+\includegraphics[width=14cm, height=10cm]{./OUTPUT/Rplots/ewas_venn.pdf.png}
+\includegraphics[width=14cm, height=10cm]{./OUTPUT/Rplots/ewas_qqplot.pdf.png}
 \caption{Diagramme de Venn et qqplot pour l'EWAS}
 \label{fig:ewas_venn_qqplot}
 \end{figure}

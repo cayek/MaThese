@@ -30,4 +30,5 @@ NULL
 
 MaTheseR.params$gtheme <- theme_bw(base_size = 12, base_family = "serif") +
   theme(strip.background = element_rect(fill = NA))
-
+MaTheseR.params$textheightcm <- 19.4028
+MaTheseR.params$textwidthcm <- 12.1708
