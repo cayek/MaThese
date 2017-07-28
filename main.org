@@ -50,6 +50,9 @@
   install.packages("DescTools")
   install.packages("roxygen2")
   install.packages("VennDiagram")
+  install.packages("ggmap")
+  install.packages("rvest")
+  install.packages("raster")
     ## bioconductor
   source("https://bioconductor.org/biocLite.R")
   biocLite("matter", ask = FALSE)
@@ -2305,7 +2308,11 @@ On filtre les individus trop apparenté (voir [[https://www.cog-genomics.org/pli
 
 #+end_example
 
-**** On visualise la proportion d'IBD
+*** On visualise la proportion d'IBD
+:LOGBOOK:
+- Note taken on [2017-07-28 ven. 14:37] \\
+  RMK: le dataframe ne contient bien pas les apparentement symétrique !!!
+:END:
 #+NAME: code:1000g_ibd_visu
 #+CAPTION: Dépend de [[code:1000g_ibd_visu]]
 #+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -2337,7 +2344,7 @@ On filtre les individus trop apparenté (voir [[https://www.cog-genomics.org/pli
 On va filter les pour une proportion d'ibd à 0.125 (ca correspond à cousin au 3
 ième degré).
 
-**** On filtre les individus trop apparenté
+**** On filtre les individus trop apparentés
 
 #+NAME: code:1000g_ibd_filter
 #+CAPTION: Dépend de [[code:1000g_ibd_visu]]
@@ -2475,7 +2482,7 @@ CLOSED: [2017-07-27 jeu. 17:17]
 :END:
 
 #+NAME: code:1000g_G_prunned_bigsnpr
-#+CAPTION: Dépend de [[code:1000g_ibd_filter]]
+#+CAPTION: On converti les données prunnées en un format R. Dépend de [[code:1000g_ibd_filter]]
 #+BEGIN_SRC R
   library(bigsnpr)
   setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
@@ -2500,6 +2507,10 @@ CLOSED: [2017-07-27 jeu. 17:17]
   G.r <- readRDS("G_prunned.rds")
   G.numVal <- G.r[,in.id]
   saveRDS(G.numVal, "G_prunned_chr12.rds")
+
+
+  ## save indiv data frame
+  saveRDS(G$fam, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/G_indiv_df.rds")
   #+END_SRC
 
 
@@ -2531,21 +2542,34 @@ CLOSED: [2017-07-27 jeu. 17:26]
   proportion of removed loci = 0.00686677318724797
 #+end_example
 
-**** TODO Données pour 
+**** DONE Données prunnées
+CLOSED: [2017-07-28 ven. 11:01]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-07-28 ven. 11:01]
 - State "TODO"       from              [2017-07-27 jeu. 17:29]
 :END:
-Pour certaine analyse il est important de scaler les données. 
 
-#+begin_src R :results output :exports both
+#+NAME: code:1000g_G_prunned_scaling
+#+CAPTION: On scale et enlève les données manquantes. Dépend de [[code:1000g_G_prunned_bigsnpr]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   library(MaTheseR)
-  G <- readRDS("./Data/1000Genomes/Phase3/plink/1000GenomePhase3_QC_norel_prunned.rds")
+  G <- readRDS("./Data/1000Genomes/Phase3/G_prunned.rds")
   anyNA(G)
   G.noNa <- preprocessing_filter_na(G)
   anyNA(G.noNa)
   G.scale <- scale(G.noNa)
-  saveRDS(G.scale, "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled.rds")
+  saveRDS(G.scale, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/G_prunned.rds")
 #+end_src
+
+#+RESULTS: code:1000g_G_prunned_scaling
+: [1] TRUE
+: proportion of removed loci = 0.00785647245264041
+: [1] FALSE
+
+**** TODO Données non prunnées 
+:LOGBOOK:
+- State "TODO"       from              [2017-07-28 ven. 10:34]
+:END:
 ** TODO Arabidopsis Thaliana Regional Mapping Lines               :noexport:
 :LOGBOOK:
 - State "TODO"       from              [2017-07-27 jeu. 17:02]
@@ -3640,7 +3664,12 @@ which are not correlated. The final dataset was of size $n = $ and $L = $.
 We also impute missing value with the sowtware 
 
 ***** Étude d'association des variants génétique avec un gradient climatique (EAS)
-****** Preprocessing des données
+****** DONE Preprocessing des données
+CLOSED: [2017-07-28 ven. 14:18]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-07-28 ven. 14:18]
+- State "TODO"       from              [2017-07-28 ven. 11:46]
+:END:
 Pour cette étude nous avons choisi d'utiliser les données 1000 genome. Après les
 étapes de preprocessing présenter dans la section..., les individus metisse ont
 été exclu. En effet pour une étude d'association à l'environement il n'est pas
@@ -3648,20 +3677,27 @@ pertinent de travailler avec individu issu du metissage de plusieurs
 populations. Pour cette étude nous ne gardons que les individus pour lesquels
 qui vivent dans leur un milieu naturel depuis plusieurs générations.
 
-#+begin_src R :results output :exports both
+#+NAME: code:eas_prepross
+#+CAPTION: Dépend de [[code:1000g_G_prunned_scaling]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   library(MaTheseR)
-  G <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA.rds")
-  indiv.df <- readRDS("./Data/1000Genomes/Phase3/indiv_df.rds")
+
+  G <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/G_prunned.rds")
+  indiv.df <- readRDS("./Data/1000Genomes/Phase3/indiv_df.rds") %>% as_tibble()
+  indiv.df
 
   ## keep only indiv in G
   indiv.df <- indiv.df %>%
     dplyr::filter(sample %in% rownames(G))
+  indiv.df
+
+  ## retrieve pop
 
   ## indiv metadata
   indiv.df <- indiv.df %>%
     dplyr::filter(super_pop %in% c("EUR", "SAS", "AFR", "EAS"))
   indiv.df <- indiv.df %>%
-    dplyr::filter(!(pop %in% c("ASW")))
+    dplyr::filter(!(pop %in% c("ASW", "ACB")))
   indiv.df
 
   ## remove indiv
@@ -3679,52 +3715,67 @@ qui vivent dans leur un milieu naturel depuis plusieurs générations.
   anyNA(G)
 
   saveRDS(G, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds")
-  saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
+  saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv_df.rds")
 #+end_src
 
-#+RESULTS:
+#+RESULTS: code:eas_prepross
 #+begin_example
-  > indiv.df
-  # A tibble: 670 x 4
-      sample   pop super_pop gender
-       <chr> <chr>     <chr>  <chr>
-   1 HG01527   IBS       EUR   male
-   2 HG01531   IBS       EUR female
-   3 HG01583   PJL       SAS   male
-   4 HG01586   PJL       SAS   male
-   5 HG01589   PJL       SAS   male
-   6 HG01593   PJL       SAS female
-   7 HG01625   IBS       EUR   male
-   8 HG01628   IBS       EUR female
-   9 HG01630   IBS       EUR   male
-  10 HG01679   IBS       EUR female
-  # ... with 660 more rows
-  > 
-  > ## remove indiv
-  > G <- G[indiv.df$sample,]
-  > dim(G)
-  [1]    670 342478
-  > 
-  > ## filter sd, there are snps without variance !!
-  > sds <- apply(G, 2, sd)
-  > quantile(sds, 0.000001)
-  0.0001% 
-        0 
-  > G <- preprocessing_filter_sd(G, 0.0)
-  proportion of removed loci = 5.83979116906779e-06
-  > dim(G)
-  [1]    670 342476
-  > 
-  > ## scale G
-  > G <- scale(G)
-  > anyNA(G)
-  [1] FALSE
-  > 
+# A tibble: 2,504 x 4
+    sample   pop super_pop gender
+     <chr> <chr>     <chr>  <chr>
+ 1 HG00096   GBR       EUR   male
+ 2 HG00097   GBR       EUR female
+ 3 HG00099   GBR       EUR female
+ 4 HG00100   GBR       EUR female
+ 5 HG00101   GBR       EUR   male
+ 6 HG00102   GBR       EUR female
+ 7 HG00103   GBR       EUR   male
+ 8 HG00105   GBR       EUR   male
+ 9 HG00106   GBR       EUR female
+10 HG00107   GBR       EUR   male
+# ... with 2,494 more rows
+# A tibble: 1,758 x 4
+    sample   pop super_pop gender
+     <chr> <chr>     <chr>  <chr>
+ 1 HG00096   GBR       EUR   male
+ 2 HG00097   GBR       EUR female
+ 3 HG00099   GBR       EUR female
+ 4 HG00100   GBR       EUR female
+ 5 HG00101   GBR       EUR   male
+ 6 HG00102   GBR       EUR female
+ 7 HG00105   GBR       EUR   male
+ 8 HG00106   GBR       EUR female
+ 9 HG00107   GBR       EUR   male
+10 HG00108   GBR       EUR   male
+# ... with 1,748 more rows
+# A tibble: 1,409 x 4
+    sample   pop super_pop gender
+     <chr> <chr>     <chr>  <chr>
+ 1 HG00096   GBR       EUR   male
+ 2 HG00097   GBR       EUR female
+ 3 HG00099   GBR       EUR female
+ 4 HG00100   GBR       EUR female
+ 5 HG00101   GBR       EUR   male
+ 6 HG00102   GBR       EUR female
+ 7 HG00105   GBR       EUR   male
+ 8 HG00106   GBR       EUR female
+ 9 HG00107   GBR       EUR   male
+10 HG00108   GBR       EUR   male
+# ... with 1,399 more rows
+[1]   1409 339324
+0.0001% 
+      0
+proportion of removed loci = 8.84110761396188e-06
+[1]   1409 339321
+[1] FALSE
 #+end_example
 
+
 ****** DONE Calcul du gradient climatique
-CLOSED: [2017-06-27 mar. 17:56]
+CLOSED: [2017-07-28 ven. 15:58]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-07-28 ven. 15:58]
+- State "TODO"       from "DONE"       [2017-07-28 ven. 11:46]
 - State "DONE"       from "STARTED"    [2017-06-27 mar. 17:56]
 - Note taken on [2017-06-27 mar. 12:02] \\
   On va ajouter les html widget a l'export html :D, voir: http://rmarkdown.rstudio.com/developer_html_widgets.html
@@ -3733,7 +3784,12 @@ CLOSED: [2017-06-27 mar. 17:56]
 
 Afin de calculer un gradient climatique avec partir des positions géographique
 des individus nous avons choisi d'utiliser la base wordclim
-#+begin_src R :results output :exports both
+#+NAME: code:eas_climatic_gradient
+#+CAPTION: Dépend de [[code:eas_prepross]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  library(tidyverse)
+  library(MaTheseR)
+
   ## get pop information
   library(rvest)
 
@@ -3749,10 +3805,11 @@ des individus nous avons choisi d'utiliser la base wordclim
   ## pop location
   library(ggmap)
 
-  indiv.df <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
+  indiv.df <- readRDS( "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv_df.rds") %>% as_tibble()
   indiv.df <-indiv.df %>% inner_join(pop.tbl)
 
   indiv.df
+
 
   ## match pop localisation
   indiv.df <- indiv.df %>%
@@ -3772,6 +3829,16 @@ des individus nous avons choisi d'utiliser la base wordclim
   indiv.df[indiv.df$pop == "YRI",]$citie = "Nigeria"
   indiv.df[indiv.df$pop == "TSI",]$citie = "Italia"
   indiv.df[indiv.df$pop == "GIH",]$citie = "Gujarat"
+  indiv.df[indiv.df$pop == "ESN",]$citie = "Nigeria"
+  indiv.df[indiv.df$pop == "FIN",]$citie = "Finland"
+  indiv.df[indiv.df$pop == "GBR",]$citie = "England"
+
+  ## cities
+  indiv.df %>%
+    dplyr::select(pop, `Population Description`, citie) %>%
+    group_by(pop, `Population Description`, citie) %>%
+    summarise() %>%
+    print.data.frame()
 
 
   ## get location
@@ -3782,12 +3849,26 @@ des individus nous avons choisi d'utiliser la base wordclim
   cities <- cbind(cities, geocode(cities$citie))
 
   ## plot with leaflet
-  library(leaflet)
-  m <- leaflet() %>%
-    addTiles() %>%  # Add default OpenStreetMap map tiles
-    addMarkers(lng = cities$lon, lat = cities$lat, popup = cities$`Population Description`)
-  m  # Print the map
+  ## library(leaflet)
+  ## m <- leaflet() %>%
+  ##   addTiles() %>%  # Add default OpenStreetMap map tiles
+  ##   addMarkers(lng = cities$lon, lat = cities$lat, popup = cities$`Population Description`)
+  ## ## m  # Print the map
+  ## ## to render in rstudio....
+  ## save_expr(m, "eas_map.rds")
+  ## ## save widget
+  ## library(htmlwidgets)
+  ## saveWidget(m, "~/Projects/Thesis/MaThese/OUTPUT/Rplots/eas_map.html", selfcontained = FALSE)
 
+  ## plot map
+  mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
+  ggplot() + 
+  map.world <- get_map(location = "world")
+  pl <- ggplot(cities, aes(x = lon, y = lat, color = `Population Description`)) +
+    mapWorld + 
+    geom_point() +
+    theme(legend.position='bottom')
+  save_plot_png(pl, "eas_map_ggplot.png", 1000, 600)
 
   ## compute X
   library(raster)
@@ -3810,13 +3891,14 @@ des individus nous avons choisi d'utiliser la base wordclim
   X.eas <- as.matrix(indiv.df$X)
   dim(X.eas)
 
-  ## save 
+  ## save
   saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
   saveRDS(X.eas, "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds")
 
   ## plot X
   indiv.df <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
   pl <- ggplot(indiv.df, aes(x = lon, y = lat, color = X, size = X, text = `Population Description`)) +
+    mapWorld + 
     geom_point()
   pl
   save_plot_png(pl, "X_eas.png")
@@ -3828,16 +3910,19 @@ des individus nous avons choisi d'utiliser la base wordclim
 #+end_src
 
 #+RESULTS:
+[[./OUTPUT/Rplots/eas_map_ggplot.png]]
 [[./OUTPUT/Rplots/X_eas.png]]
 #+begin_example
   >   dim(X.eas)
-  [1] 670   1
+  [1] 1409   1
 
 #+end_example
 
 *** Description des expériences
 **** RUNNING Comparaisons numériques sur des simulations
 :LOGBOOK:
+- Note taken on [2017-07-28 ven. 09:38] \\
+  tail -f /home/cayek/tmp/Logfiles/valNum.y2017_m07_d28.log
 - Note taken on [2017-07-27 jeu. 17:40] \\
   la premiere etape est en train de tourner !!
 - State "RUNNING"    from "STARTED"    [2017-07-27 jeu. 17:40]
@@ -3876,7 +3961,7 @@ et lassoLFMM aux autres méthodes de la littérature sur des simulations
 générative. 
 
 #+NAME: code:num_val_sampler
-#+CAPTION: Le sampler pour les comparaisons d'experience. Dépend de [[code:1000g_G_valNum]]
+#+CAPTION: Le sampler pour les comparaisons d'experience et le screeplot de la matrice de génotype. Dépend de [[code:1000g_G_valNum]]
 #+begin_src R 
   library(MaTheseR)
   ### The sampler
@@ -3888,21 +3973,23 @@ générative.
   sv <- s$load.env$svd$d
   var <- sv / sum(sv)
 
-  pl <- qplot(seq_along(var), var)
+  pl <- qplot(seq_along(var), var) +
+    coord_cartesian(xlim = c(1,100))
   pl
   save_plot_png(pl, "valNum_screePlot.png")
 #+end_src
 
 #+RESULTS:
+[[./OUTPUT/Rplots/valNum_screePlot.png]]
 
 #+NAME: code:num_val_expr
-#+CAPTION: Dépend de [[code:num_val_sampler]]
+#+CAPTION: Expérience de comparaison des méthodes sur les simulations. Dépend de [[code:num_val_sampler]]
 #+begin_src R 
   library(MaTheseR)
 
   ## param
   K.method <- 5
-  nb.cluster <- 8
+  nb.cluster <- 4
   rep.nb.sampler <- 5
 
   ## sampler
@@ -4014,7 +4101,7 @@ générative.
 :END:
 
 #+NAME: code:eas_screeplot
-#+CAPTION: Dépend de 
+#+CAPTION: Dépend de [[code:eas_prepross]] [[code:eas_climatic_gradient]]
 #+begin_src R 
   library(MaTheseR)
 
@@ -4569,8 +4656,10 @@ On prend K = 9 variables latentes.
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_K.png")
 #+end_src
-***** RUNNING Étude du jeu de données 
+***** DONE Étude du jeu de données 
+CLOSED: [2017-07-28 ven. 09:25]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-07-28 ven. 09:25]
 - Note taken on [2017-07-27 jeu. 13:50] \\
   tail -f /home/cayek/tmp/Logfiles/gwas_run.y2017_m07_d27.log
 - State "RUNNING"    from "DEBUG"      [2017-07-27 jeu. 13:50]
@@ -4594,7 +4683,7 @@ On prend K = 9 variables latentes.
 :END:
 
 #+NAME: code:gwas_expr
-#+CAPTION: Dépend de 
+#+CAPTION: Etude d'association des données Celiac avec cate ridgeLFMM LassoLFMM LM et LMPCAS. Dépend de 
 #+begin_src R
   library(MaTheseR)
   library(MatrixFactorizationR)
@@ -4667,6 +4756,93 @@ On prend K = 9 variables latentes.
   save_expr(res.df, "celiac_all_df.rds")
 #+end_src
 
+#+RESULTS:
+#+begin_example
+  =============== lassoLFMM
+  Running method
+  mask data
+  Computing latent variables
+  It = 1/100, err2 = 0.999934015123588
+  It = 2/100, err2 = 0.994766206506411
+  === lambda = 0.130189891797758, no zero B proportion = 0.00059261140565309
+  It = 1/100, err2 = 0.994766373173339
+  === lambda = 0.0976286459727577, no zero B proportion = 0.000878334761950115
+  It = 1/100, err2 = 0.994765532716069
+  === lambda = 0.0732111562799394, no zero B proportion = 0.00126988158354233
+  It = 1/100, err2 = 0.994764638534954
+  === lambda = 0.05490062215286, no zero B proportion = 0.00164026371207552
+  It = 1/100, err2 = 0.994763845022762
+  === lambda = 0.0411696586411789, no zero B proportion = 0.0020106458406087
+  It = 1/100, err2 = 0.994763196094342
+  === lambda = 0.0308728886152139, no zero B proportion = 0.00292072764214737
+  It = 1/100, err2 = 0.994762606837317
+  It = 2/100, err2 = 0.99476121574158
+  === lambda = 0.0231514003979148, no zero B proportion = 0.0106352582621671
+  Saving intermediate res into./OUTPUT/Expr/celiac_inter_lassolfmm.rds
+  unmask data
+  running hp
+       pvalue   colname index outlier    score rep.sampler rep.method    method
+  1 0.5255378 rs3934834     1   FALSE 0.634847           1          1 lassoLFMM
+    method.K method.lambda
+  1        9            NA
+  Saving output in celiac_df_lassoLFMM.rds
+  Expr save in ./OUTPUT/Expr/celiac_df_lassoLFMM.rds
+
+#+end_example
+****** Que donne la calibration
+
+#+NAME: code:gwas_expr_calibration
+#+CAPTION: Dépend de [[code:gwas_expr]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  expr <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+
+  expr %>%
+    group_by(method) %>%
+    summarise(mad = mad[1], median = median[1])
+#+end_src
+
+#+RESULTS: code:gwas_expr_calibration
+: # A tibble: 5 x 3
+:      method      mad       median
+:       <chr>    <dbl>        <dbl>
+: 1      cate 1.052221  0.011781682
+: 2 lassoLFMM 1.045186  0.012433327
+: 3        lm 1.201294 -0.023610211
+: 4     PCAlm 1.037876  0.009601749
+: 5 ridgeLFMM 1.061488  0.007643094
+****** Gwas catalogue et controle du fdr
+
+#+NAME: code:gwas_expr_fdr
+#+CAPTION: Dépend de [[code:gwas_expr]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  expr <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+
+  toplot <- expr %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_threshold(0.05)
+
+  ## candidats
+  toplot %>% group_by(method) %>%
+    summarise(power = mean(candidates %in% index))
+
+  pl <- plot_intersection(toplot, by = "colname", plot = "point")
+  save_plot_png(pl, "gwas_fdr01_inter.png")
+#+end_src
+
+#+RESULTS: code:gwas_expr_fdr
+[[./OUTPUT/Rplots/gwas_fdr01_inter.png]]
+: # A tibble: 5 x 2
+:      method     power
+:       <chr>     <dbl>
+: 1      cate 0.7755102
+: 2 lassoLFMM 0.7959184
+: 3        lm 0.5714286
+: 4     PCAlm 0.5102041
+: 5 ridgeLFMM 0.7346939
 
 **** DONE EWAS
 CLOSED: [2017-07-11 mar. 11:45]
@@ -5528,7 +5704,7 @@ CLOSED: [2017-07-27 jeu. 11:39]
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-*** STARTED Comparaisons des méthodes                            :noexport:
+*** STARTED Comparaisons des méthodes
 :LOGBOOK:
 - State "STARTED"    from "RUNNING"    [2017-07-25 mar. 16:35]
 - State "RUNNING"    from "DEBUG"      [2017-07-25 mar. 10:57]
@@ -5542,8 +5718,32 @@ CLOSED: [2017-07-27 jeu. 11:39]
 - State "TODO"       from              [2017-07-06 jeu. 15:24]
 :END:
 
+#+NAME: code:num_val_auc_gif_df
+#+CAPTION: Dépend de [[code:num_val_expr]]
+#+begin_src R
+  require(MaTheseR)
+
+  expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
+
+  auc.df <- expr$df.res %>%
+    group_by(method, prop.outlier, rho.c, rep.sampler, rep.method) %>%
+    compute_auc()
+  save_expr(auc.df, "auc.df.rds")
+
+  gif.df <- expr$df.res %>%
+    group_by(method, prop.outlier, rho.c, rep.sampler, rep.method) %>%
+    compute_gif()
+  save_expr(gif.df, "gif.df.rds")
+#+end_src
+
+
+**** TODO Plots
+:LOGBOOK:
+- State "TODO"       from              [2017-07-28 ven. 16:06]
+:END:
+
 #+NAME: code:num_val_plots
-#+CAPTION: Depend de 
+#+CAPTION: Depend de [[code:num_val_expr]]
 #+begin_src R
   ## Compute plot !
   require(MaTheseR)
@@ -5645,35 +5845,40 @@ CLOSED: [2017-07-27 jeu. 11:39]
 #+end_src
 
 
+#+NAME: code:num_val_plotbar
+#+CAPTION: Dépend de [[code:num_val_auc_gif_df]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  auc.df <- readRDS("./OUTPUT/Expr/auc.df.rds")
+
+  ## by prop outlier
+  toplot <- auc.df %>%
+    group_by(method, prop.outlier) %>%
+    summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N))
+  pl <- ggplot(toplot, aes(x = as.factor(prop.outlier), y = auc.mean, fill = method)) +
+    geom_bar(position = "dodge", stat = "identity") +
+    geom_errorbar(aes(ymin = auc.mean - se,
+                      ymax = auc.mean + se),
+                  width = 0.9,
+                  position = "dodge")
+  pl
+
+#+end_src
+
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics[width=14cm, height=20cm]{./OUTPUT/Rplots/method_comp.pdf.png}
+\includegraphics{./OUTPUT/Rplots/method_comp.pdf.png}
 \caption{Comparaison des méthodes sur des simulations numériques.}
 \label{fig:method_comp}
 \end{figure}
 #+END_EXPORT
-
-#+NAME: code:num_val_tests_df
-#+CAPTION: Dépend de [[code:num_val_expr]]
-#+begin_src R
-  require(MaTheseR)
-
-  expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
-
-  auc.df <- expr$df.res %>%
-    group_by(method, prop.outlier, rho.c, rep.sampler, rep.method) %>%
-    compute_auc()
-  save_expr(auc.df, "auc.df.rds")
-
-  gif.df <- expr$df.res %>%
-    group_by(method, prop.outlier, rho.c, rep.sampler, rep.method) %>%
-    compute_gif()
-  save_expr(gif.df, "gif.df.rds")
-#+end_src
+**** TODO Tests d'hypothèse
+:LOGBOOK:
+- State "TODO"       from              [2017-07-28 ven. 16:06]
+:END:
 
 #+NAME: code:num_val_tests
-#+CAPTION: Dépend de [[code:num_val_tests_df]]
+#+CAPTION: Dépend de [[code:num_auc_gif_df]]
 #+begin_src R 
   require(MaTheseR)
   library(broom)
@@ -5683,11 +5888,16 @@ CLOSED: [2017-07-27 jeu. 11:39]
   auc.df <- readRDS("./OUTPUT/Expr/auc.df.rds")
   gif.df <- readRDS("./OUTPUT/Expr/gif.df.rds")
 
-  lm.res <- auc.df %>%
+  auc.lm.res <- auc.df %>%
     mutate(method = as.factor(method)) %>%
     group_by(prop.outlier) %>%
     do(tidy(lm(auc ~ method, data = .))) %>%
     ungroup()
+  toplot <- auc.lm.res %>%
+    dplyr::filter(term != "(Intercept)")
+  ggplot(toplot, aes(x = as.factor(prop.outlier),
+                         color = p.value < 1e-5, y = estimate, fill = term)) +
+    geom_bar(stat = "identity", position = "dodge")
 
 
   lm.res <- lm.res %>%
@@ -5700,7 +5910,7 @@ CLOSED: [2017-07-27 jeu. 11:39]
     geom_boxplot()
 #+end_src
 
-*** STARTED GWAS                                                 :noexport:
+*** STARTED GWAS
 :LOGBOOK:
 - State "STARTED"    from "DONE"       [2017-07-25 mar. 16:37]
 - State "DONE"       from "TODO"       [2017-07-25 mar. 16:37]
@@ -5726,20 +5936,22 @@ CLOSED: [2017-07-27 jeu. 11:39]
 
   sets <- list(lm = toplot$index[toplot$method == "lm"],
                cate = toplot$index[toplot$method == "cate"],
-               ## lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
                ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
                PCAlm = toplot$index[toplot$method == "PCAlm"]
                )
 
 
-  out <- plot_venn(sets[1:4])
+  out <- plot_venn(sets)
   save_plot_png(out, filename = "gwas_venn.png")
-  save_plot_MaTheseR(out, filename = "gwas_venn.pdf.png", height = 10, width = 14)
+  save_plot_MaTheseR(out, filename = "gwas_venn.pdf.png",
+                     height = 0.4 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
 
   ## qqplot
   toplot <- celiac.df %>%
     mutate(pvalue = calibrated.pvalue) %>%
-    dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lm"))
+    dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lm", "lassoLFMM"))
   pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
     stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
     geom_abline(slope = 1, intercept = 0) +
@@ -5747,7 +5959,10 @@ CLOSED: [2017-07-27 jeu. 11:39]
     theme(legend.position = "bottom") 
   ## pll
   save_plot_png(pll, filename = "gwas_qqplot.png")
-  save_plot_MaTheseR(pll, filename = "gwas_qqplot.pdf.png", height = 10, width = 14)
+  save_plot_MaTheseR(pll, filename = "gwas_qqplot.pdf.png",
+                     height = 0.4 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
+
 
 #+END_SRC
 
@@ -5755,8 +5970,8 @@ CLOSED: [2017-07-27 jeu. 11:39]
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics[width=14cm, height=10cm]{./OUTPUT/Rplots/gwas_venn.pdf.png}
-\includegraphics[width=14cm, height=10cm]{./OUTPUT/Rplots/gwas_qqplot.pdf.png}
+\includegraphics{./OUTPUT/Rplots/gwas_venn.pdf.png}
+\includegraphics{./OUTPUT/Rplots/gwas_qqplot.pdf.png}
 \caption{Diagramme de Venn et qqplot pour la GWAS}
 \label{fig:gwas_venn_qqplot}
 \end{figure}
