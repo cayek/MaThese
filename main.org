@@ -3465,19 +3465,19 @@ explicative (les lignes des matrices $\Y$ et $\X$) en une partie d'entraînement
 et une partie de test. Nous notons $I$ l'ensemble des indices des observations
 choisies pour estimer l'erreur de prédiction. On estime à partir des
 observations d'apprentissage la matrice des axes factoriels que l'on note
-$\hat{\V}^{-I}$ et la matrice des effets que l'on note $\hat{\B}^{-I}$. Ensuite,
+$\hat{\V}_{-I}$ et la matrice des effets que l'on note $\hat{\B}_{-I}$. Ensuite,
 nous retirons aux observation de test une partie des variable expliqué (les
 colones de la matrice $\Y$) afin d'estimer les variables latentes pour les
 observations de test. On notera $J$ l'ensemble des indices de expliquée que l'on 
 retire pour l'estimation de la matrice des variable latentes calculé de
 la façon suivante
 \begin{equation}
-\hat{\U}^{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}^{-I}[J,])^{T}) (\hat{\V}^{-I}[-J,])^{T}.
+\hat{\U}_{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}_{-I}[J,])^{T}) \hat{\V}_{-I}[-J,]^{T}.
 \end{equation}
 Enfin, on peut calculer l'erreur de prédiction comme ceci
 \begin{equation}
 \label{eq:2}
-\mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\U}^{-J} (\hat{\V}^{-I}[J,])^{T} - \X[I, ] (\hat{\B}^{-I}[J,])^{T}}_{F}
+\mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\U}^{-J} \hat{\V}_{-I}[J,]^{T} - \X[I, ] \hat{\B}_{-I}[J,]^{T} }_{F}.
 \end{equation}
 
 
