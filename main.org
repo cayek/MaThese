@@ -3439,63 +3439,47 @@ expliquées $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, on c
 \gamma = \frac{(\sigma_{\K} + \sigma_{\K + 1})}{2}.
 \end{equation}
 
-**** TODO Cross validation
+**** Validation croisée
 :LOGBOOK:
 - State "TODO"       from              [2017-07-20 Thu 17:00]
 - Note taken on [2017-05-26 Fri 14:46] \\
   cf mon cahier
 :END:
-Cross validation is a classic method to select hyper-parameter in factor
-analysis cite:Owen_2009,Bro_2008. The cross validation algorithm we used is
-explained in detail in annex. Cross validation procedure can be long to run in
-particular on very big data set. Especially since LassoLFMM and RidgeLFMM have
-each two hyper-parameters which can be cross-validated. We propose other procedure
-to assess hyper-parameters that gave good results in our experiments.
 
-***** COMMENT ANNEX Cross validation algorithm
-We present here the cross validation algorithm which can be used to assess
-hyper-parameter of LassoLFMM and RidgeLFMM.
+La validation croisée est une méthode d'évaluation d'un modèle très utilisé en
+apprentissage statistique. Le principe est de séparé les observation en une partie
+d'apprentissage et une partie de test. Les observations d'apprentissage sont utilisées
+pour estimer les paramètres du modèle. On mesure ensuite l'erreur de prédiction
+à l'aide des observations de tests. Pour que la validation croisée fonctionne il est
+très important que les observations de test ne soit pas utilisées pour estimer les
+paramètres du modèle. Dans le cas des modèles à facteurs latents, les observations
+d'apprentissage ne permettent pas de calculer les variables latentes pour les
+observation de tests (la matrice $\U$ dans pour LFMM). Le plus simple est de séparer
+les variables expliquées des observations de test et d'en utiliser une partie pour estimer
+les variables latentes et l'autre partie pour calculer l'erreur de prédiction
+cite:Bro_2008. Nous présentons maintenant plus formellement notre procédure de
+validation croisée.
 
-We first split the observation output matrix into 
-$$
-\Y^{(-I)}
-$$
-and 
-$$
-\Y^{(I)}
-$$ where matrices are respectively compose of 
-
-
-. We write the training
-data matrices $$ \Y^{(-i)}$$ and $$\X^{(-i)}.$$ These matrices are compose of
-random lines of the observed output matrix and the primary matrix. Then we
-compute (with RidgeLFMM or LassoLFMM) latent factor matrices $$\U^{(-i)}$$ and
-$$\V^{(-i)}$$ and the primary effect matrix $$\B^{(-i)}.$$
-
-In a second step we want to compute an estimation of test output matrix
-$$\Y^{(i)}$$. However, to predict the output matrix with LFMM model
-eqref:eq:model we must estimate the latent score matrix 
-$$\U^{(i)}$$ 
-for this the test data.
-To avoid using test observation for the prediction, we split the test data
-by selecting a random set of variables of the observed output matrix which we
-note $$\Y^{(i)_{(-j}}$$. 
-
-Then, if we assume that we know the primary effect size
-matrix and the latent factor loading matrix for staying variables we write 
-
+Nous commençons par séparer les observations des variables expliquées et
+explicative (les lignes des matrices $\Y$ et $\X$) en une partie d'entraînement
+et une partie de test. Nous notons $I$ l'ensemble des indices des observations
+choisies pour estimer l'erreur de prédiction. On estime à partir des
+observations d'apprentissage la matrice des axes factoriels que l'on note
+$\hat{\V}^{-I}$ et la matrice des effets que l'on note $\hat{\B}^{-I}$. Ensuite,
+nous retirons aux observation de test une partie des variable expliqué (les
+colones de la matrice $\Y$) afin d'estimer les variables latentes pour les
+observations de test. On notera $J$ l'ensemble des indices de expliquée que l'on 
+retire pour l'estimation de la matrice des variable latentes calculé de
+la façon suivante
 \begin{equation}
-\label{eq:cvU}
-U^{(i)}_{(-j)} = (\Y^{i}_{(-j)} - \X^{(i)}} \B^{(-j)}) \V_{(-j)}^{T}.
+\hat{\U}^{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}^{-I}[J,])^{T}) (\hat{\V}^{-I}[-J,])^{T}.
+\end{equation}
+Enfin, on peut calculer l'erreur de prédiction comme ceci
+\begin{equation}
+\label{eq:2}
+\mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\U}^{-J} (\hat{\V}^{-I}[J,])^{T} - \X[I, ] (\hat{\B}^{-I}[J,])^{T}}_{F}
 \end{equation}
 
-The equation eqref:eq:cvU is given by optimal solution of $L$
-ref:eq:optim_no_reg when $V$ and $B$ are fixed.
-
-Finally, we compute the residual error on the test set such as 
-\begin{equation}
-Err = \norm{ \Y^{i}_{(j)} + \X^{(i)}} \B^{(-i)_{(j)} + \U^{(i)}_{(-j)} \V^{(-i)}
-\end{equation}
 
 *** Test d'hypothèse
 <<sec:hypothese>>
@@ -4558,8 +4542,12 @@ GRCh38.
    [1] "rs10903122" "rs859637"   "rs13010713" "rs1464510"  "rs1020388" 
    [6] "rs1738074"  "rs653178"   "rs1958589"  "rs1893217"  "rs157640" 
 #+end_example
-***** RUNNING Scree plot
+***** DONE Scree plot
+CLOSED: [2017-07-30 Sun 11:28]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-07-30 Sun 11:28]
+- Note taken on [2017-07-30 Sun 11:27] \\
+  c'est fait mais la projection change rien !!
 - State "RUNNING"    from "DEBUG"      [2017-07-26 mer. 18:09]
 - Note taken on [2017-07-26 mer. 18:09] \\
   tail -f /home/cayek/tmp/Logfiles/gwas_screeplot.y2017_m07_d26.log
@@ -4616,11 +4604,15 @@ GRCh38.
 
 #+RESULTS:
 [[file:../Rplots/celiac_pca.png]]
+[[./OUTPUT/Rplots/gwas_screeplot.png]]
 
 On prend K = 9 variables latentes.
 
-***** TODO Validation croisée avec lfmmRidge
+***** RUNNING Validation croisée avec lfmmRidge
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-07-30 Sun 11:31]
+- Note taken on [2017-07-30 Sun 11:31] \\
+  c'est parti : tail -f /home/cayek/tmp/Logfiles/gwas_CV.y2017_m07_d30.log
 - Note taken on [2017-07-11 mar. 10:10] \\
   On va voir si ca passe :D
 - State "TODO"       from              [2017-07-11 mar. 10:10]
@@ -4635,26 +4627,21 @@ On prend K = 9 variables latentes.
                               outlier = NULL) %>% ExpRmouline()
   n <- nrow(dat$Y)
 
-  lambdas <- c(1e-5, 1.0, 1e5) / n
-  nb.cluster <- 1
+  lambdas <- c(1e-5, 1.0, 1e10)
   cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
                             lambdas = lambdas,
-                            Ks = c(1,2,3,7,10,15))
+                            Ks = c(1,2,3,7,10,15, 30))
 
   ## run
-  cl <- parallel::makeCluster(nb.cluster, outfile = "")
-  doParallel::registerDoParallel(cl)
   res.cv <- ExpRmouline(cv, dat)
-  doParallel::stopImplicitCluster()
-  parallel::stopCluster(cl)
 
   ## save expr
   save_expr(res.cv, "gwas_CV_lfmm.rds")
 
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
-  save_plot_png(pl, "gwas_CV_lambda.png")
+  save_plot_png(pl, "gwas_CV_lfmm_lambda.png")
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
-  save_plot_png(pl, "gwas_CV_K.png")
+  save_plot_png(pl, "gwas_CV_lfmm_K.png")
 #+end_src
 ***** DONE Étude du jeu de données 
 CLOSED: [2017-07-28 ven. 09:25]
@@ -5737,65 +5724,95 @@ CLOSED: [2017-07-27 jeu. 11:39]
 #+end_src
 
 
-**** TODO Plots
+**** STARTED Plots
 :LOGBOOK:
+- Note taken on [2017-07-30 Sun 12:28] \\
+  on attend que l'expr soit finis !!
+- State "STARTED"    from "DONE"       [2017-07-30 Sun 12:28]
+- State "DONE"       from "TODO"       [2017-07-30 Sun 12:28]
+- Note taken on [2017-07-30 Sun 12:28] \\
+  avec les barplot c'est pas mal !!
 - State "TODO"       from              [2017-07-28 ven. 16:06]
 :END:
 
-#+NAME: code:num_val_plots
-#+CAPTION: Depend de [[code:num_val_expr]]
+#+NAME: code:num_val_plot
+#+CAPTION: Depend de [[code:num_val_auc_gif_df]]
 #+begin_src R
   ## Compute plot !
-  require(MaTheseR)
-
-  expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
-
-  #################
-  ## by prop outlier
-  toplot.prop <- expr$df.res %>%
-    dplyr::filter(pvalue.index == "pvalue1") %>%
-    dplyr::mutate(x = prop.outlier)
-
-  ## gif
-  gif.prop.pl <- plot_gif(toplot.prop, "proportion of H1")
-  save_expr(gif.prop.pl, filename = "gif.prop.pl.rds")
-
-  ## auc
-  auc.prop.pl <- plot_AUC(toplot.prop, "proportion of H1")
-  save_expr(auc.prop.pl, filename = "auc.prop.pl.rds")
-
-  ###########
-  ## by rho.c
-  toplot.rho <- expr$df.res %>%
-    dplyr::filter(pvalue.index == "pvalue1") %>%
-    dplyr::mutate(x = rho.c)
-
-  ## gif
-  gif.rho.pl <- plot_gif(toplot.rho, "rho")
-  save_expr(gif.rho.pl, filename = "gif.rho.pl.rds")
-
-  ## auc
-  auc.rho.pl <- plot_AUC(toplot.rho, "rho")
-  save_expr(auc.rho.pl, filename = "auc.rho.pl.rds")
-#+end_src
-
-#+NAME: code:num_val_display
-#+CAPTION: Depend de [[code:num_val_plots]]
-#+begin_src R 
-  ## arrange plots
-
   require(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
   library(gridExtra)
 
-  gif.prop.pl <- readRDS("./OUTPUT/Expr/gif.prop.pl.rds")
-  gif.rho.pl <- readRDS("./OUTPUT/Expr/gif.rho.pl.rds")
-  auc.prop.pl <- readRDS("./OUTPUT/Expr/auc.prop.pl.rds")
-  auc.rho.pl <- readRDS("./OUTPUT/Expr/auc.rho.pl.rds")
+  auc.df <- readRDS("./OUTPUT/Expr/auc.df.rds") 
+  auc.df <- auc.df %>%
+    dplyr::filter(!(rho.c %in% c(1)),
+                                     !(prop.outlier %in% c(0.2)))
+  gif.df <- readRDS("./OUTPUT/Expr/gif.df.rds") 
+  gif.df <- gif.df %>%
+    dplyr::filter(!(rho.c %in% c(1)),
+                  !(prop.outlier %in% c(0.2)))
 
+
+  #################
+  ## by prop outlier
+
+  ## auc
+  toplot <- auc.df %>%
+    group_by(method, prop.outlier) %>%
+    summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N))
+  auc.prop.pl <- ggplot(toplot, aes(x = as.factor(prop.outlier), y = auc.mean, fill = method)) +
+    geom_bar(position = "dodge", stat = "identity") +
+    geom_errorbar(aes(ymin = auc.mean - se,
+                      ymax = auc.mean + se),
+                  width = 0.9,
+                  position = "dodge")
+  save_plot_png(auc.prop.pl, "num_val_auc_prop.png")
+
+  ## gif
+  toplot <- gif.df %>%
+    group_by(method, prop.outlier) %>%
+    summarise(gif.mean = mean(gif), N = length(gif), sd = sd(gif), se = sd / sqrt(N))
+  gif.prop.pl <- ggplot(toplot, aes(x = as.factor(prop.outlier), y = gif.mean, fill = method)) +
+    geom_bar(position = "dodge", stat = "identity") +
+    geom_errorbar(aes(ymin = gif.mean - se,
+                      ymax = gif.mean + se),
+                  width = 0.9,
+                  position = "dodge")
+  save_plot_png(gif.prop.pl, "num_val_gif_prop.png")
+
+
+  #################
+  ## by rho
+
+  ## auc
+  toplot <- auc.df %>%
+    group_by(method, rho.c) %>%
+    summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N))
+  auc.rho.pl <- ggplot(toplot, aes(x = as.factor(rho.c), y = auc.mean, fill = method)) +
+    geom_bar(position = "dodge", stat = "identity") +
+    geom_errorbar(aes(ymin = auc.mean - se,
+                      ymax = auc.mean + se),
+                  width = 0.9,
+                  position = "dodge")
+  save_plot_png(auc.rho.pl, "num_val_auc_rho.png")
+
+  ## gif
+  toplot <- gif.df %>%
+    group_by(method, rho.c) %>%
+    summarise(gif.mean = mean(gif), N = length(gif), sd = sd(gif), se = sd / sqrt(N))
+  gif.rho.pl <- ggplot(toplot, aes(x = as.factor(rho.c), y = gif.mean, fill = method)) +
+    geom_bar(position = "dodge", stat = "identity") +
+    geom_errorbar(aes(ymin = gif.mean - se,
+                      ymax = gif.mean + se),
+                  width = 0.9,
+                  position = "dodge")
+  save_plot_png(gif.rho.pl, "num_val_gif_rho.png")
+
+
+  ## plot for pdf
   ## helpers
-  #extract legend
-  #https://github.com/hadley/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs
+  ## https://github.com/hadley/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs
+  ## extract legend
   g_legend<-function(a.gplot){
     tmp <- ggplot_gtable(ggplot_build(a.gplot))
     leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
@@ -5812,29 +5829,29 @@ CLOSED: [2017-07-27 jeu. 11:39]
     xlab("Proportion d'outlier") +
     ylab("Gif moyen")
 
-  ## A
-  A.pl <- auc.prop.pl +
-    MaTheseR.params$gtheme +
-    theme(legend.position = "none") +
-    xlab("") +
-    ylab("Auc moyen")
-  ## D
-  D.pl <- gif.rho.pl +
-    MaTheseR.params$gtheme +
-    theme(legend.position = "none") +
-    xlab("Corrélation") + 
-    ylab("") 
-  ## B
-  B.pl <- auc.rho.pl +
-    MaTheseR.params$gtheme +
-    theme(legend.position = "none") +
-    xlab("") +
-    ylab("")
+    ## A
+    A.pl <- auc.prop.pl +
+      MaTheseR.params$gtheme +
+      theme(legend.position = "none") +
+      xlab("") +
+      ylab("Auc moyen")
+    ## D
+    D.pl <- gif.rho.pl +
+      MaTheseR.params$gtheme +
+      theme(legend.position = "none") +
+      xlab("Corrélation") + 
+      ylab("") 
+    ## B
+    B.pl <- auc.rho.pl +
+      MaTheseR.params$gtheme +
+      theme(legend.position = "none") +
+      xlab("") +
+      ylab("")
 
-  pl <- cowplot::plot_grid(A.pl,B.pl,C.pl,D.pl,
-                           ncol = 2, labels = c("A", "B", "C", "D"))
+    pl <- cowplot::plot_grid(A.pl,B.pl,C.pl,D.pl,
+                             ncol = 2, labels = c("A", "B", "C", "D"))
 
-  ## add legend
+    ## add legend
   pl.leg <- drawable(function() {
     grid.arrange(pl,
                  mylegend, nrow=2, heights=c(10, 1))
@@ -5844,36 +5861,23 @@ CLOSED: [2017-07-27 jeu. 11:39]
   save_plot_MaTheseR(pl.leg, filename = "method_comp.pdf.png", height = 20, width = 14)
 #+end_src
 
-
-#+NAME: code:num_val_plotbar
-#+CAPTION: Dépend de [[code:num_val_auc_gif_df]
-#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
-  auc.df <- readRDS("./OUTPUT/Expr/auc.df.rds")
-
-  ## by prop outlier
-  toplot <- auc.df %>%
-    group_by(method, prop.outlier) %>%
-    summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N))
-  pl <- ggplot(toplot, aes(x = as.factor(prop.outlier), y = auc.mean, fill = method)) +
-    geom_bar(position = "dodge", stat = "identity") +
-    geom_errorbar(aes(ymin = auc.mean - se,
-                      ymax = auc.mean + se),
-                  width = 0.9,
-                  position = "dodge")
-  pl
-
-#+end_src
-
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/method_comp.pdf.png}
-\caption{Comparaison des méthodes sur des simulations numériques.}
+\caption{Comparaison des méthodes sur des simulations faites a partir du jeux de
+  données 1000Genomes. A-B) Aire sous la source precision-recall en fonction
+  respectivement de la proportion d'outlier dans la simulation et la corrélation
+  de la varrable explicative et les variables latentes. C-D) Facteur d'inflation
+  génomique calculé sur les variable nulles en fonction respectivement de la
+  proportion d'outlier et de la corrélation entre les variable explicatives et
+  les variables latentes.}
 \label{fig:method_comp}
 \end{figure}
 #+END_EXPORT
-**** TODO Tests d'hypothèse
+**** STARTED Tests d'hypothèse
 :LOGBOOK:
+- State "STARTED"    from "TODO"       [2017-07-30 Sun 12:28]
 - State "TODO"       from              [2017-07-28 ven. 16:06]
 :END:
 
@@ -6056,7 +6060,15 @@ CLOSED: [2017-07-27 jeu. 13:43]
 \includegraphics{./OUTPUT/Rplots/ewas_screeplot.pdf.png}
 \includegraphics{./OUTPUT/Rplots/ewas_CV_K.pdf.png}
 \includegraphics{./OUTPUT/Rplots/ewas_CV_lambda.pdf.png}
-\caption{Choix des paramètres}
+\caption{Choix des paramètres pour l'étude d'association entre des mesure de
+  niveaux de méthylation et la maladie polyarthrite. A) valeurs singulières de
+  la matrices des variable expliquées partiellement décorrélé avec les variables
+  explicatives. Le resultats est présenté pour plusieurs valeurs du paramètre de
+  régularisation de l'estimateur ridge. Ce paramètre rêgle a quelle point les
+  variables expliquées sont décorélé avec les variable expliqué (voir ...) B)C)
+  Erreur de prédiction calculé grace a la validation croisé présenté de
+  l'estimateur $L_{2}$ pour défférente valeurs du paramètre de régularisation
+  et du nombre variable lattentes.}
 \label{fig:ewas_params}
 \end{figure}
 #+END_EXPORT
@@ -6117,7 +6129,9 @@ CLOSED: [2017-07-27 jeu. 13:43]
 \centering
 \includegraphics{./OUTPUT/Rplots/ewas_venn.pdf.png}
 \includegraphics{./OUTPUT/Rplots/ewas_qqplot.pdf.png}
-\caption{Diagramme de Venn et qqplot pour l'EWAS}
+\caption{A) Diagramme de Venn de la liste de candidats controlé à au taux de
+  fausses de découvertes à 1 \%. B) Quantille-quantille plot des \pvaleur
+  renvoyé par chaques méthodes.}
 \label{fig:ewas_venn_qqplot}
 \end{figure}
 #+END_EXPORT
@@ -6131,6 +6145,8 @@ CLOSED: [2017-07-27 jeu. 13:43]
 
 * perspectives : Vers le big data
 :LOGBOOK:
+- Note taken on [2017-07-30 Sun 13:56] \\
+  matrice de dosage
 - State "TODO"       from              [2017-07-20 Thu 17:49]
 - Note taken on [2017-07-18 Tue 15:49] \\
   strategie: il faut que je finisse tout le reste avec les versions actuelles
