@@ -2863,7 +2863,7 @@ Pour certaine analyse il est important de scaler les données.
   saveRDS(X, "./Data/ThesisDataset/3Article/GSE42861/X.rds")
 #+end_src
 
-* Inférence rapide des coefficients de métissage à l'aide des données géographique
+* Inférence des coefficients de métissage à l'aide de données géographiques
 :LOGBOOK:
 - State "TODO"       from              [2017-07-20 Thu 17:49]
 - Note taken on [2017-07-18 Tue 15:07] \\
@@ -2880,8 +2880,36 @@ Pour certaine analyse il est important de scaler les données.
   analyse mais très proprement :D, y compris pour l'étude stat à la fin
   (recalibration propre !)
 :END:
-* Estimation des facteurs latents pour corriger les tests d'association
+* Estimation de facteurs latents pour corriger les tests d'association
 ** Introduction
+*** Les études d'association
+Au cours de la dernière décennie, les études d'association à grande échelle ont
+été largement utilisées pour identifier les gènes candidats associés à une
+maladie particulière ou un trait phénotypique d'intérêt. Selon le type de
+marqueurs moléculaires examinés dans les génomes ou dans cellules, plusieurs
+catégories d'études d'association ont été menées pour détecter des corrélations
+significatives de ses marqueurs avec le phénotype. Par exemple, les études
+d'association à l'échelle du génome (GWAS genome-wide association studies) se
+concentrent sur les polymorphismes à un seul nucléotide (SNP pour
+single-nucleotide polymorphisms) en examinant des variants génétiques chez
+différents individus (Balding 2006). Les GWAS ont été étendus à des études
+d'association à l'échelle de l'épigenome (EWAS pour epigenome-wide association
+studies) qui mesurent les niveaux de méthylation de l'ADN chez différents
+individus pour des associations entre la variation épigénétique et les
+phénotypes (Rakyan et al., 2011). Des approches similaires ont été appliquées à
+la caractérisation de la variation transcriptionnelle par rapport à différents
+environnements, traitements, phénotypes ou maladies (Slonim, 2002). D'autres
+exemples d'études d'association incluent des études d'association
+génétique-environnement (GEAS) dans lesquelles les loci génétiques sont testés
+pour leur corrélation avec des gradients écologiques afin de détecter les
+signatures de sélection naturelle (Savolainen et al., 2012). Dans un court laps
+de temps, les études d'association ont permis des progrès considérables dans
+l'identification des variantes de gènes qui confèrent une susceptibilité aux
+maladies ainsi qu'une compréhension plus approfondie de l'évolution des génomes
+en réponse à la sélection naturelle.
+
+
+
 ** Méthodes 
 *** Modèle 
 <<sec:model>>
@@ -6145,6 +6173,12 @@ CLOSED: [2017-07-27 jeu. 13:43]
 
 * perspectives : Vers le big data
 :LOGBOOK:
+- Note taken on [2017-07-31 lun. 10:20] \\
+  on va parler de : 
+  - vers le big data ? (valeurs manquantes, données pas loadé en mémoire)
+  - est ce que le modèle est polygénique ?
+  - théorie stat (cf cate)
+  - matrice de dosage
 - Note taken on [2017-07-30 Sun 13:56] \\
   matrice de dosage
 - State "TODO"       from              [2017-07-20 Thu 17:49]
