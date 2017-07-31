@@ -2886,30 +2886,134 @@ Pour certaine analyse il est important de scaler les données.
 Au cours de la dernière décennie, les études d'association à grande échelle ont
 été largement utilisées pour identifier les gènes candidats associés à une
 maladie particulière ou un trait phénotypique d'intérêt. Selon le type de
-marqueurs moléculaires examinés dans les génomes ou dans cellules, plusieurs
+marqueurs moléculaires examinés dans les génomes ou dans les cellules, plusieurs
 catégories d'études d'association ont été menées pour détecter des corrélations
 significatives de ses marqueurs avec le phénotype. Par exemple, les études
 d'association à l'échelle du génome (GWAS genome-wide association studies) se
 concentrent sur les polymorphismes à un seul nucléotide (SNP pour
 single-nucleotide polymorphisms) en examinant des variants génétiques chez
-différents individus (Balding 2006). Les GWAS ont été étendus à des études
+différents individus cite:Balding_2006. Les GWAS ont été étendus à des études
 d'association à l'échelle de l'épigenome (EWAS pour epigenome-wide association
 studies) qui mesurent les niveaux de méthylation de l'ADN chez différents
 individus pour des associations entre la variation épigénétique et les
-phénotypes (Rakyan et al., 2011). Des approches similaires ont été appliquées à
-la caractérisation de la variation transcriptionnelle par rapport à différents
-environnements, traitements, phénotypes ou maladies (Slonim, 2002). D'autres
+phénotypes cite:Rakyan_2011. Des approches similaires ont été appliquées à la
+caractérisation de la variation observé dans l'ARN par rapport à différents
+environnements, traitements, phénotypes ou maladies cite:Slonim_2002. D'autres
 exemples d'études d'association incluent des études d'association
-génétique-environnement (GEAS) dans lesquelles les loci génétiques sont testés
+génétique-environnement (GEAS) dans lesquelles les sites génétiques sont testés
 pour leur corrélation avec des gradients écologiques afin de détecter les
-signatures de sélection naturelle (Savolainen et al., 2012). Dans un court laps
-de temps, les études d'association ont permis des progrès considérables dans
-l'identification des variantes de gènes qui confèrent une susceptibilité aux
-maladies ainsi qu'une compréhension plus approfondie de l'évolution des génomes
-en réponse à la sélection naturelle.
+signatures de sélection naturelle cite:rellstab15_pract_guide_to_envir_assoc.
+Dans un court laps de temps, les études d'association ont permis des progrès
+considérables dans l'identification des variantes de gènes qui confèrent une
+susceptibilité aux maladies ainsi qu'une compréhension plus approfondie de
+l'évolution des génomes en réponse à la sélection naturelle.
 
+*** Les facteurs confusions
+Basée sur l'analyse de la corrélation, les études d'association sont confrontées
+aux problèmes des facteurs de confusion et de causalité. Nous appelons ici
+"variables primaire", les variables qui sont explicitement modélisées dans
+l'analyse et pour lesquelles les corrélations avec les variables que l'on
+souhaite expliquer sont étudiées. Les variables primaires correspondent
+généralement à un état pathologique, à un trait phénotypique ou à gradient
+environnementale. La confusion surviennent lorsqu'il existe une ou plusieurs
+variables latentes, c'est à dire non observées, qui sont corrélées à la fois aux
+variables primaires et aux variables expliquées (fréquences de SNP, expression
+génique ou profils de méthylation de l'ADN). Ainsi un facteur latent devient un
+facteur de confusion pour une étude d'association quand il y a un lien de
+causalité entre le facteur latent et les variable expliquées et primaire mais
+qu'il n'y a pas relation de causalité en les variables primaire et expliquées,
+cette situation est résumé pas la figure [[graph:conf_factor]]. Si les facteurs de
+confusion ne sont pris en compte dans l'étude d'association cela peut induire de
+la corrélation entre les statistiques de test utilisées pour détecter la
+corrélation entre les variables primaires et les variables expliquées. Mais
+surtout les facteurs de confusion peuvent faire apparaître certaines variables
+expliquées comme étant significativement corrélées avec les variables primaires
+à cause du facteur de confusion qui n'est pas pris en compte
+cite:wang2015confounder. Le problème des facteurs de confusion est connue depuis
+longtemps. En effet, on le retrouve déjà dans l'ouvrage *The Design of
+Experiement* de Ronald Fisher qui introduisit entre autre le concept de
+d'hypothèse nulle en statistique cite:fisher1937design. Depuis les facteurs de
+confusion ont reçu différentes dénominations comme celle des "facteurs latents"
+(la dénomination que nous utilisons ici)
+cite:wang2015confounder,frichot13_testin_assoc_between_loci_envir; les
+"variables de substitution" cite:Chen_2017,article_Leek_Storey_2007; et la
+"variation indésirable" cite:Gagnon_Bartsch_2011,gerard2017unifying.
 
+#+NAME: graph:conf_factor
+#+CAPTION: Graphe de corrélation entre la variable expliqué $y$ la variable primaire $x$ et le facteur de confusion u. Dans cette situation la variable primaire n'a pas d'effet sur la variable expliqué ...
+#+BEGIN_SRC dot :file conf_factor.png :exports results
+  graph { u -> y u -> x }
+#+END_SRC
 
+*** Source de confusion
+Les sources de confusion peuvent varier selon les différentes catégories
+d'études d'association. Dans les GWAS et les GEAS, la confusion englobe
+des différences systématiques dans l'ascendance génétique entre les individus
+échantillonnés cite:Price_2006. Une autre source de confusion dans
+ces études peut également découler d'interactions épistatiques entre les gènes
+cite:Vilhj_lmsson_2012. 
+
+ICI
+
+Dans les études de profil d'expression des
+gènes, les facteurs latents comprennent les conditions expérimentales, l'âge et
+le sexe des patients, leurs facteurs génétiques et l'hétérogénéité des
+échantillons de tissus (Lazar et al., 2013). Dans EWAS, la confusion peut être
+due à des mélanges cellulaires lorsque les cellules cibles purifiées ne sont pas
+disponibles (Jaffe & amp; Irizarry 2013). Dans chaque catégorie, les facteurs
+latents peuvent être confondus avec les variables primaires en raison de la
+nature observatoire de l'étude.
+*** Méthodes de correction pour les facteurs latents
+Une quantité importante de travaux antérieurs considère le problème de confusion
+en utilisant un cadre statistique commun basé sur des modèles de régression, et
+plusieurs méthodes ont été proposées pour l'ajustement des facteurs de confusion
+dans ce cadre (Wang et al., 2017). Dans la génétique des populations, l'analyse
+des composants principaux est largement utilisée pour estimer les facteurs de
+confusion (EIGENSTRAT, Price et al., 2006). La procédure EIGENSTRAT supprime les
+plus importants composants principaux de leurs données génotypiques SNP. Une
+amélioration de la méthode EIGENSTRAT considère les modèles linéaires mixtes,
+dans lesquels une matrice de similarité génétique est incorporée dans le modèle
+pour inclure des effets aléatoires (EMMAX, Kang et al., 2010). Un inconvénient
+de l'analyse des composantes principales ou des approches de modèles mixtes est
+que les principaux composants principaux peuvent également être en corrélation
+avec la variable primaire. Ainsi, l'élimination directe des effets principaux
+des composants peut entraîner une perte de puissance statistique. En revanche,
+les modèles de facteurs latents gagnent de l'énergie en supprimant la partie de
+la variation génétique qui ne s'explique pas par la variable primaire (Frichot
+et al., 2013). Les modèles de facteurs latents ont d'abord été introduits pour
+l'ajustement des facteurs de confusion dans les études d'expression des gènes
+(Leek & amp; Storey 2007, Carvalho et al., 2008, Friguet et al., 2009, Sun et
+al., 2012). Des modèles de régression de facteurs latents ont également été
+utilisés avant la montée de grands ensembles de données moléculaires (par
+exemple, Sammel & Ryan 1996). Ces modèles sont des exemples particuliers de
+modèles d'équations structurelles (Muthen 2002) dont les idées remontent au
+travail sur l'analyse de chemin de S. Wright (Wright 1921). Dans la génétique
+des populations, les modèles de facteurs latents ont été considérés à la fois
+pour l'analyse génomique intégrative et GEAS (Zhou et al., 2016, Frichot et al.,
+2013). Dans EWAS, des modèles de facteurs latents ont été introduits pour
+l'ajustement sans référence des mélanges cellulaires (REF-FREE-EWAS, Houseman et
+al. 2014, REFACTOR, Rahmani et al., 2016). Bien que le contexte de l'application
+soit parfois différent, les méthodes dérivées dans ces champs distincts
+répondent au problème de confusion d'une manière similaire. Les modèles
+statistiques sont basés sur un cadre commun qui inclut des effets fixes et des
+facteurs latents dans un modèle de régression linéaire. Nous nous référons
+également aux modèles en tant que modèles mixtes à facteur latent (LFMM).
+*** Problématique et plan
+Dans cette étude, nous proposons des algorithmes rapides et efficaces pour
+estimer les facteurs latents et pour tester la signification des effets
+primaires dans les MGF. Comme les méthodes décrites dans l'introduction, notre
+algorithme utilise une transformation des données qui découple l'estimation des
+facteurs latents de l'estimation des effets fixes (Wang et al., 2017). Notre
+procédure d'inférence utilise d'abord une projection oblique des données
+génétiques sur le sous-espace orthogonal de la variable primaire pour estimer
+les facteurs latents par les moindres carrés ordinaires. Ensuite, il effectue
+une régression régulière de la variation résiduelle sur la variable primaire.
+Notre procédure est directement comparable à SVA (Leek & amp; Storey 2007, Chen
+et al. 2017), ce qui correspond à un cas dégénéré, et CATE (Wang et al., 2017),
+qui repose sur la décomposition QR au lieu d'une projection oblique. Nous
+démontrons que notre algorithme fournit une solution exacte à l'estimation
+minimale des effets fixes et latents, et nous comparons ses performances aux
+méthodes récentes introduites dans les exemples GWAS, EWAS et GEAS.
 ** Méthodes 
 *** Modèle 
 <<sec:model>>
