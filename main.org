@@ -36,6 +36,11 @@
 # –William Edwards Deming (1900-1993).
 # #+END_QUOTE
 
+#+BEGIN_EXPORT latex
+%% to review
+\baselineskip 0.8cm
+#+END_EXPORT
+
 * Workenv                                                          :noexport:
 ** R
 #+BEGIN_SRC R
@@ -2911,27 +2916,27 @@ l'évolution des génomes en réponse à la sélection naturelle.
 *** Les facteurs confusions
 Basée sur l'analyse de la corrélation, les études d'association sont confrontées
 aux problèmes des facteurs de confusion et de causalité. Nous appelons ici
-"variables primaire", les variables qui sont explicitement modélisées dans
+"variables explicative", les variables qui sont explicitement modélisées dans
 l'analyse et pour lesquelles les corrélations avec les variables que l'on
-souhaite expliquer sont étudiées. Les variables primaires correspondent
+souhaite expliquer sont étudiées. Les variables explicative correspondent
 généralement à un état pathologique, à un trait phénotypique ou à gradient
-environnementale. La confusion surviennent lorsqu'il existe une ou plusieurs
+environnementale. La confusion surviennent lorsque il existe une ou plusieurs
 variables latentes, c'est à dire non observées, qui sont corrélées à la fois aux
-variables primaires et aux variables expliquées (fréquences de SNP, expression
+variables explicatives et aux variables expliquées (fréquences de SNP, expression
 génique ou profils de méthylation de l'ADN). Ainsi un facteur latent devient un
 facteur de confusion pour une étude d'association quand il y a un lien de
-causalité entre le facteur latent et les variable expliquées et primaire mais
+causalité entre le facteur latent et les variable expliquées et explicatives mais
 qu'il n'y a pas relation de causalité en les variables primaire et expliquées,
 cette situation est résumé pas la figure [[graph:conf_factor]]. Si les facteurs de
 confusion ne sont pris en compte dans l'étude d'association cela peut induire de
 la corrélation entre les statistiques de test utilisées pour détecter la
-corrélation entre les variables primaires et les variables expliquées. Mais
+corrélation entre les variables explicatives et les variables expliquées. Mais
 surtout les facteurs de confusion peuvent faire apparaître certaines variables
-expliquées comme étant significativement corrélées avec les variables primaires
+expliquées comme étant significativement corrélées avec les variables explicatives
 à cause du facteur de confusion qui n'est pas pris en compte
 cite:wang2015confounder. Le problème des facteurs de confusion est connue depuis
-longtemps. En effet, on le retrouve déjà dans l'ouvrage *The Design of
-Experiement* de Ronald Fisher qui introduisit entre autre le concept de
+longtemps. En effet, on le retrouve déjà dans l'ouvrage /The Design of
+Experiement/ de Ronald Fisher qui introduisit entre autre le concept de
 d'hypothèse nulle en statistique cite:fisher1937design. Depuis les facteurs de
 confusion ont reçu différentes dénominations comme celle des "facteurs latents"
 (la dénomination que nous utilisons ici)
@@ -2939,118 +2944,175 @@ cite:wang2015confounder,frichot13_testin_assoc_between_loci_envir; les
 "variables de substitution" cite:Chen_2017,article_Leek_Storey_2007; et la
 "variation indésirable" cite:Gagnon_Bartsch_2011,gerard2017unifying.
 
-#+NAME: graph:conf_factor
-#+CAPTION: Graphe de corrélation entre la variable expliqué $y$ la variable primaire $x$ et le facteur de confusion u. Dans cette situation la variable primaire n'a pas d'effet sur la variable expliqué ...
-#+BEGIN_SRC dot :file conf_factor.png :exports results
-  graph { u -> y u -> x }
+#+NAME: code:conf_factor
+#+BEGIN_SRC dot :file conf_factor.png :exports results :eval no-export
+  graph {
+    graph [fontname = "serif"];
+    node [fontname = "serif"];
+    edge [fontname = "serif"];
+    u -- y;
+    u -- x;
+  }
 #+END_SRC
+
+#+NAME: graph:conf_factor
+#+CAPTION: Graphe de corrélation entre la variable expliqué $y$ la variable explicative $x$ et le facteur de confusion u. Dans cette situation la variable explicative n'a pas d'effet sur la variable expliqué ...
+#+ATTR_LATEX: :width 5cm
+#+RESULTS: code:conf_factor
+[[file:conf_factor.png]]
 
 *** Source de confusion
 Les sources de confusion peuvent varier selon les différentes catégories
-d'études d'association. Dans les GWAS et les GEAS, la confusion englobe
-des différences systématiques dans l'ascendance génétique entre les individus
-échantillonnés cite:Price_2006. Une autre source de confusion dans
-ces études peut également découler d'interactions épistatiques entre les gènes
-cite:Vilhj_lmsson_2012. 
-
-ICI
-
-Dans les études de profil d'expression des
-gènes, les facteurs latents comprennent les conditions expérimentales, l'âge et
-le sexe des patients, leurs facteurs génétiques et l'hétérogénéité des
-échantillons de tissus (Lazar et al., 2013). Dans EWAS, la confusion peut être
-due à des mélanges cellulaires lorsque les cellules cibles purifiées ne sont pas
-disponibles (Jaffe & amp; Irizarry 2013). Dans chaque catégorie, les facteurs
+d'études d'association. Dans les GWAS et les GEAS, la confusion englobe des
+différences systématiques dans l'ascendance génétique entre les individus
+échantillonnés cite:Price_2006. Une autre source de confusion dans ces études
+peut également découler d'interactions épistatiques entre les gènes
+cite:Vilhj_lmsson_2012. Dans les études de profils d'expression des gènes, les
+facteurs latents peuvent être les conditions expérimentales, l'âge et le sexe
+des patients, leurs facteurs génétiques et l'hétérogénéité des échantillons de
+tissus cite:Lazar_2012. Dans les EWAS, la confusion peut être due à des mélanges
+cellulaires lorsque les cellules cibles purifiées ne sont pas disponibles
+cite:jaffe14_accoun_cellul_heter_is_critic. Dans chaque catégorie, les facteurs
 latents peuvent être confondus avec les variables primaires en raison de la
 nature observatoire de l'étude.
 *** Méthodes de correction pour les facteurs latents
-Une quantité importante de travaux antérieurs considère le problème de confusion
-en utilisant un cadre statistique commun basé sur des modèles de régression, et
-plusieurs méthodes ont été proposées pour l'ajustement des facteurs de confusion
-dans ce cadre (Wang et al., 2017). Dans la génétique des populations, l'analyse
-des composants principaux est largement utilisée pour estimer les facteurs de
-confusion (EIGENSTRAT, Price et al., 2006). La procédure EIGENSTRAT supprime les
-plus importants composants principaux de leurs données génotypiques SNP. Une
-amélioration de la méthode EIGENSTRAT considère les modèles linéaires mixtes,
-dans lesquels une matrice de similarité génétique est incorporée dans le modèle
-pour inclure des effets aléatoires (EMMAX, Kang et al., 2010). Un inconvénient
-de l'analyse des composantes principales ou des approches de modèles mixtes est
-que les principaux composants principaux peuvent également être en corrélation
-avec la variable primaire. Ainsi, l'élimination directe des effets principaux
-des composants peut entraîner une perte de puissance statistique. En revanche,
-les modèles de facteurs latents gagnent de l'énergie en supprimant la partie de
-la variation génétique qui ne s'explique pas par la variable primaire (Frichot
-et al., 2013). Les modèles de facteurs latents ont d'abord été introduits pour
-l'ajustement des facteurs de confusion dans les études d'expression des gènes
-(Leek & amp; Storey 2007, Carvalho et al., 2008, Friguet et al., 2009, Sun et
-al., 2012). Des modèles de régression de facteurs latents ont également été
-utilisés avant la montée de grands ensembles de données moléculaires (par
-exemple, Sammel & Ryan 1996). Ces modèles sont des exemples particuliers de
-modèles d'équations structurelles (Muthen 2002) dont les idées remontent au
-travail sur l'analyse de chemin de S. Wright (Wright 1921). Dans la génétique
-des populations, les modèles de facteurs latents ont été considérés à la fois
-pour l'analyse génomique intégrative et GEAS (Zhou et al., 2016, Frichot et al.,
-2013). Dans EWAS, des modèles de facteurs latents ont été introduits pour
-l'ajustement sans référence des mélanges cellulaires (REF-FREE-EWAS, Houseman et
-al. 2014, REFACTOR, Rahmani et al., 2016). Bien que le contexte de l'application
-soit parfois différent, les méthodes dérivées dans ces champs distincts
-répondent au problème de confusion d'une manière similaire. Les modèles
-statistiques sont basés sur un cadre commun qui inclut des effets fixes et des
-facteurs latents dans un modèle de régression linéaire. Nous nous référons
-également aux modèles en tant que modèles mixtes à facteur latent (LFMM).
+:LOGBOOK:
+- Note taken on [2017-08-01 mar. 18:14] \\
+  un exemple ici ?? lm, lm + PCA, lm + les facteurs latents comme dans stephens et
+  2017 dans son intro,
+:END:
+Le cadre méthodologique le plus utilisé en étude d'association est celui des
+modèle de régression linéaire. Il s'agit d'un cadre très commun en statistique
+que nous pouvons formaliser de la façon suivante
+\begin{equation}
+\label{eq:statReg}
+\Y = f(\X \B^{T}) + \E
+\end{equation}
+où $\Y$ est la matrice des variables expliquées de taille $\Yrow \times \Ycol$,
+où $\Yrow$ est le nombre d'observations des $\Ycol$ variables expliquées. La
+matrice $\X$ de taille $\Xrow \times \Xcol$ est la matrice les variables
+explicatives et la matrice $\B$ représente les effets de chacune des variables
+explicative sur les variables expliquées. La matrice $\E$ est la matrice des
+erreurs. Enfin la fonction $f$ est la fonction de lien entre les variables
+expliquées et les variables explicatives. L'objectif est de trouver les
+coefficients $b_{j,l}$ qui sont significativement différents de zéro. Dans ce
+cas cela veut dire que la variable explicative $l$ à un effet sur la variable
+expliquée $j$. Comme nous l'avons évoqué dans la parti précédente avec ce genre
+d'approche il est possible qu'une variable non observé soit corrélé à la fois au
+variable expliquées et au variables explicatives (Figure [[graph:conf_factor]]). 
+
+graphe ou pas? 
+
+**** Estimation des facteurs latent à priori
+En génétiques des populations, une méthodes il est courant d'estimer les
+variables latentes a priori. Par exemple la méthode EIGENSTRAT consiste en une
+analyse en composante principale (ACP) de la matrice des données génétiques
+cite:Price_2006. L'objectif est alors de capter la structure de population qui
+est confondante pour les études d'association. On ajoute ensuite la matrice des
+coordonnées sur $K$ axes choisi au coté des variables explicative du modèle de
+régression
+\begin{equation}
+\Y = f(\X \B^{T} + \bar{\U} \V ) + \E
+\end{equation}
+où $\bare{\U}$ est la matrice des coordonnées calculé par l'analyse en composante
+principale. Plus récemment le même principe à été utilisé pour faire un étude
+d'association entre des données méthylation de l'adn avec la maladie polyartrite
+rumatoide cite:Rahmani_2016.
+**** Les modèles mixes
+Une autres approche de correction pour facteurs de confusion est le modèle mixe.
+Dans un tel modèle modèle ajoute un effet aléatoire à la régression 
+\begin{equation}
+\Y = f(\X \B^{T} + \U) + \E
+\end{equation}
+où $\U$ est la matrice des effets aléatoires à estimer. Ce genre de modèle à été
+largement utilisé dans les GWAS cite:Kang_2008,Zhou_2014. Classiquement, afin
+d'estimer la fois la matrice des effet $\B$ et la matrice des effet aléatoire
+$\U$, on fait l'hypothèse que la covariance des effets aléatoires est connue.
+Pour les GWAS, cette matrice de covariance est en général estimé à priori sur
+les données génétique.
+**** Les modèles mixes à facteurs latents (LFMM, latent factor mixed model en anglais)
+Nous introduisons maintenant les modèles mixes a facteurs latents. L'équation de
+régression peut s'écrire comme ceci : 
+\begin{equation}
+\label{eq:glfmm}
+\Y = f(\X \B^{T} + \U \V^{T}) + \E.
+\end{equation}
+Dans cette équation $\U$ est la matrice des variables latentes et $\V$ est la
+matrice des axes des facteurs latents. A la différence des modèles mixes, il
+n'est pas nécessaire de faire une hypothèse sur la structure de covariance des
+matrices $\U$ et $\V$. Parmi les différentes méthodes d'estimation des
+paramètres du modèle mixes à facteurs latents, on distingue des approche qui
+repose sur des algorithmes de Monte Carlo
+cite:frichot13_testin_assoc_between_loci_envir,carvalho08_high_dimen_spars_factor_model;
+des approches qui repose des algorithme EM (Expectation Maximixation)
+cite:friguet09_factor_model_approac_to_multip,agarwal09_regres,zhou16_spars_multiv_factor_analy_regres;
+et enfin les approche qui repose sur une estimation des variables latentes à
+partir d'une transformation de $\Y$ qui a pour but de séparer la variabilité 
+expliquées par les variable latentes de celle expliqué par les variables
+explicative cite:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007.
+Parmi les méthodes qui estime les facteurs latents sur une transformation de la
+matrice des données, on distingue des autres les méthodes dites à contrôles
+négatifs qui suppose que connait un sous ensemble de variables expliquées qui ne
+sont pas associées avec les variables explicatives. Ces méthodes utilisent donc
+les variables dites nulles pour estimer les variables latentes.
+
 *** Problématique et plan
-Dans cette étude, nous proposons des algorithmes rapides et efficaces pour
-estimer les facteurs latents et pour tester la signification des effets
-primaires dans les MGF. Comme les méthodes décrites dans l'introduction, notre
-algorithme utilise une transformation des données qui découple l'estimation des
-facteurs latents de l'estimation des effets fixes (Wang et al., 2017). Notre
-procédure d'inférence utilise d'abord une projection oblique des données
-génétiques sur le sous-espace orthogonal de la variable primaire pour estimer
-les facteurs latents par les moindres carrés ordinaires. Ensuite, il effectue
-une régression régulière de la variation résiduelle sur la variable primaire.
-Notre procédure est directement comparable à SVA (Leek & amp; Storey 2007, Chen
-et al. 2017), ce qui correspond à un cas dégénéré, et CATE (Wang et al., 2017),
-qui repose sur la décomposition QR au lieu d'une projection oblique. Nous
-démontrons que notre algorithme fournit une solution exacte à l'estimation
-minimale des effets fixes et latents, et nous comparons ses performances aux
-méthodes récentes introduites dans les exemples GWAS, EWAS et GEAS.
+Comme nous l'avons vu dans la parti précédente l'estimation des variable
+latentes pour corriger les études d'association est un problème très vaste et
+aucune méthode ne s'est imposée comme référence. Nous proposons ici, deux
+méthodes d'estimation rapides et efficaces des paramètres du modèle LFMM
+introduit par l'équation eqref:eq:glfmm dans le cas où la fonction de lien $f$
+est l'identité. Nos deux méthodes d'estimation consiste à a séparer isolé le
+plus possible la variabilité expliqué de façon systématique par les variable
+latentes de celle expliqué par les variables explicatives. Elles sont donc
+directement comparable à SVA cite:article_Leek_Storey_2007 et CATE
+cite:wang2015confounder. Chacun des algorithmes que nous présentons découle de
+l'optimisation d'une fonction objectif pour lesquelles nous montrons qu'ilx
+converge vers le point de minimum global. Enfin, nous comparons nos méthodes à
+SVA et CATE sur des simulations numériques ainsi que des exemples de GWAS, EWAS
+et GEA.
+
 ** Méthodes 
 *** Modèle 
 <<sec:model>>
-Nous introduisons dans cette partie les notations et le modèle. La plupart des
-méthodes d'ajustement pour les facteurs de confusions repose sur le modèle
-suivant  
+Dans cette partie nous introduisons les notations du modèle mixes à facteurs
+latents que nous utilisons pour corriger les test d'association : 
 \begin{equation}
 \label{eq:model}
 \Y = \X \B^T + \U \V^T + \E.
 \end{equation}
-Comme dans cite:frichot13_testin_assoc_between_loci_envir, nous appellerons ce
-modèle le modèle mixte à facteurs latents (LFMM pour latent factor mixed model
-en anglais). Dans cette équation, $\Y$ est la matrice des variables expliquées
-de taille $\Yrow \times \Ycol$, où $\Ycol$ est le nombre de variables et $\Yrow$
-le nombre d'observations. Par exemple, les variables expliquées peuvent être des
-SNPs, des niveaux de méthylation ou bien des niveaux d'expression génique . La
-matrice $\X$ de taille $\Xrow \times \Xcol$ représente les variables
-explicatives. Les variables explicatives peuvent être par exemple un phénotype
-comme une maladie ou un gradient environnemental comme la température de
-l'habitat. La matrice des effets de taille $\Ycol \times \Xcol$ est notée $\B$.
-Les matrices $\V$ et $\U$ sont respectivement la matrice des axes factoriels de
-taille $\Ycol\times\Ucol$ et la matrice des coordonnées sur ses axes de taille
-$\Urow \times \K$. La matrice $\U$ est la matrice des $\K$ variable latentes et
-la matrice $\V$ représente les axes des facteurs latents. Enfin la matrice $\E$
-est la matrice d'erreur résiduelle de taille $\Yrow\times\Ycol$.
+Dans cette équation, $\Y$ est la matrice des variables expliquées de taille
+$\Yrow \times \Ycol$, où $\Yrow$ est le nombre d'observations des $\Ycol$ de
+variables expliquée. Par exemple, les variables expliquées peuvent être des
+SNPs, des niveaux de méthylation ou bien des niveaux d'expression génique. La
+matrice $\X$, de taille $\Xrow \times \Xcol$, représente les variables
+explicatives. Les variables explicatives peuvent être par exemple un phénotype,
+comme une maladie, ou un gradient environnemental, comme la température d'un
+habitat. La matrice des effets de taille $\Ycol \times \Xcol$ est notée $\B$. Si
+l'on suppose qu'il y a $K$ variable latentes alors la matrice $\U$ est la
+matrice des $\K$ variable latentes et $\V$ représente les axes des facteurs
+latents. Les matrices $\V$ et $\U$ sont respectivement la matrice des axes
+factoriels, de taille $\Ycol\times\Ucol$, et la matrice des coordonnées sur ses
+axes, de taille $\Urow \times \K$. Enfin la matrice $\E$ est la matrice d'erreur
+résiduelle, de taille $\Yrow\times\Ycol$.
 
-Nous remarquons dans un premier temps que les matrices $\U$ et $\V$ ne sont pas
-définies de façon unique. Nous posons 
+Dans un premier temps, nous remarquons que les matrices $\U$ et $\V$ ne sont pas
+définies de façon unique. En effet, comme ces deux matrice sont
+multiplié entre elle dans l'équation eqref:eq:model, les matrices $\U$ et
+$\V$ sont définie a une matrice inversible puisque
+\begin{equation}
+\U \V = \U \matr{R} \matr{R}^{-1} \V^{T}
+\end{equation}
+où $\matr{R}$ est une matrice inversible de taille $\K \times \K$. Nous posons alors
 \begin{equation}
 \label{eq:W}
 \W = \U \V^{T} 
 \end{equation}
-et appelons cette matrice, la matrice latente. Si l'on suppose qu'il y à $\K$
-variables latentes linéairement indépendants cela est équivalent a faire
+et nous appelons la matrice $\W$ la matrice latente. Si l'on suppose qu'il y a $\K$
+variables latentes linéairement indépendantes cela est équivalent a faire
 l'hypothèse que la matrice latente $\W$ est de rang $\K$. Dans la suite nous
 considérons $\U$ et $\V$ comme étant les matrices uniques obtenues grâce à
-l'analyse en composante principale de la matrice latente $\W$.
+l'analyse en composantes principales de la matrice latente $\W$.
 
 *** Estimation des moindres carrés régularisée en norme $L_{2}$
 <<sec:estimator_L2>>
@@ -6283,6 +6345,7 @@ CLOSED: [2017-07-27 jeu. 13:43]
   - est ce que le modèle est polygénique ?
   - théorie stat (cf cate)
   - matrice de dosage
+  - lien autre que linéaire ? (lien logistique)
 - Note taken on [2017-07-30 Sun 13:56] \\
   matrice de dosage
 - State "TODO"       from              [2017-07-20 Thu 17:49]
@@ -6336,6 +6399,6 @@ CLOSED: [2017-07-27 jeu. 13:43]
 - State "TODO"       from              [2017-07-20 Thu 17:50]
 :END:
 
-bibliographystyle:unsrt
+bibliographystyle:apalike
 bibliography:../biblio.bib
 
