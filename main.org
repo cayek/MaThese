@@ -2480,6 +2480,7 @@ CLOSED: [2017-08-02 mer. 16:51]
 #+NAME: code:1000g_G_matter
 #+CAPTION: Dépend de [[code:1000g_G_bigsnpr]]
 #+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
   library(matter)
   G.matter <- matter_mat(nrow = 1758,
                          ncol = 5398440)
@@ -2491,13 +2492,15 @@ CLOSED: [2017-08-02 mer. 16:51]
   rownames(G.matter) <- G.bigsnpr$fam$sample.ID
   colnames(G.matter) <- G.bigsnpr$map$marker.ID
   file.copy(paths(G.matter), "~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/G.matter.bin")
-  paths(G.matter) <- "~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/G.matter.bin"
+  paths(G.matter) <- "/home/cayek/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/G.matter.bin"
   saveRDS(G.matter, "G.matter.rds")
 
-  ## data
-  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
+  ## copy data
   G <- readRDS("G.rds")
-
+  for(i in 1:nrow(G)) {
+    message("row ",i)
+    G.matter[i,] = G[i,]
+  }
 #+end_src
 
 **** DONE Données prunnées
@@ -3245,7 +3248,7 @@ défini par l'équation eqref:eq:model basé sur un problème des moindres carr�
 régularisé en norme $L_{2}$. Nous montrons que cet algorithme permet de calculer
 un minimum global du problème d'optimisation des moindres carrés.
 
-**** Fonction objectif
+**** Fonction objectif 
 
 Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM, nous définissons la
 fonction objectif de type ridge suivante
@@ -3271,12 +3274,12 @@ Les points du minimum de la fonction objective ne sont pas définis de
 manière univoque pour notre problème quand le paramètre de régularisation est
 nulle. 
 
-**** Algorithme
+**** Algorithme de minimisation de la fonction objectif $\Lridge$
 Afin d'estimer les paramètres de LFMM minimisant $\Lridge$ nous commençons par
 calculer la décomposition en valeurs singulières de la matrice des variables
-explicatives $\X$
+explicatives
 \begin{equation*}
-\X = \matr{Q} \matr{\Sigma} \matr{R}^{T}
+\X = \matr{Q} \matr{\Sigma} \matr{R}^{T},
 \end{equation*}
 où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, $\matr{R}$
 une matrice unitaire de taille $\Xcol \times \Xcol$ et $\matr{\Sigma}$ une
@@ -3285,28 +3288,29 @@ matrice de taille $\Xrow \times \Xcol$ contenant les valeurs singulières $\left
 la façon suivante
 \begin{align}
 \label{eq:RidgeLfmmEstomatorW}
-\hat{\U} \hat{\V} & =  \matr{Q} \matr{D}^{-1} \svd_{\K}( \matr{D} \matr{Q}^{T} \Y ) \\
+\hat{\U} \hat{\V}^{T} & =  \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
 \label{eq:RidgeLfmmEstomatorB}
-\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}),
+\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}^{T}),
 \end{align}
 où $\svd_{\K}(\matr{A})$ est la meilleure approximation de rang $\K$ de la matrice
-$\matr{A}$ données par la décomposition en valeurs singulières (SVD pour
-singular value decomposition) et $\Id_{d}$ est la matrice identité de taille $d
-\times d$. La matrice $\matr{D}$ est la matrice diagonale de taille $\Yrow
-\times \Yrow$ qui contient les termes diagonaux
+$\matr{A}$, donnée par la décomposition en valeurs singulières (SVD,
+singular value décomposition en anglais) et $\Id_{d}$ est la matrice identité de taille $d
+\times d$. La matrice $\D$ est la matrice diagonale de taille $\Yrow
+\times \Yrow$ qui contient les termes diagonaux suivants
 \begin{equation*}
+\left\{ \D_{,i,i}\right\}_{i = 1..n} = 
 \left\{ \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{1}^{2}}}, ..., 
 \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{d}^{2}}}, 
 1, ..., 1 \right\}.
 \end{equation*}
 
-Notons que l'estimation de la matrice latente $\hat{\U} \hat{\V}$ dans
+Notons que l'estimation de la matrice latente $\hat{\U} \hat{\V}^{T}$ dans
 l'équation eqref:eq:RidgeLfmmEstomatorW fait intervenir la matrice de changement
 de base $\matr{Q}$. Les $\Xcol$ premiers axes de la base canonique transformée
 par $\Q$ forment une base orthonormale de l'espace vectoriel engendré par les
-variables explicatives. La matrice diagonale $\matr{D}$ a pour effet de réduire
+variables explicatives. La matrice diagonale $\D$ a pour effet de réduire
 la composante qui appartient à l'espace engendré par $\X$. Si $\lambRidge$ vaut
-zéro la multiplication par $\matr{D} \matr{Q}^{T}$ revient à prendre le résidu
+zéro la multiplication par $\D \matr{Q}^{T}$ revient à prendre le résidu
 d'une régression linéaire par $\X$, on enlève alors toute la corrélation
 linéaire avec $\X$. Si $\lambRidge$ est très grand alors $\D$ tend vers la
 matrice identité. Dans ce cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire
@@ -3376,7 +3380,7 @@ $\mathcal{L}^{'}$ de sorte que
 Enfin, optimiser la fonction objectif $\mathcal{L}^{'}$ est équivalent au
 problème de trouver la meilleur approximation de rang $\K$ de la matrice
 \begin{equation*}
-\matr{D} \matr{Q}^{T} \Y,
+\D \matr{Q}^{T} \Y,
 \end{equation*}
 qui est obtenue en tronquant la SVD pour ne garder que les $\K$ valeurs
 singulières les plus grandes cite:Eckart_1936. Nous avons bien montré que
@@ -3397,7 +3401,7 @@ modèle LFMM défini par eqref:eq:model basé sur un problème des moindres carr
 régularisé en norme $L_{1}$. Nous montrons que cet algorithme converge vers
 un point de minimum global du problème d'optimisation.
 
-**** Fonction objectif
+**** Fonction objectif 
 Nous proposons la fonction objective suivante
 \begin{equation}
 \label{eq:optim_lasso_reg}
@@ -3419,7 +3423,7 @@ latente $\W$. Ainsi la fonction $\Llasso$ est convexe et nous savons le rang de
 $\hat{\W}$, point minimum de $\Llasso$, décroît avec $\gamma$ le paramètre de
 régularisation devant la norme nucléaire cite:bach2008consistency.
 
-**** Algorithme
+**** Algorithme de minimisation de la fonction objectif $\Llasso$
 <<sec:lasso_algo>>
 
 Nous présentons maintenant un algorithme de descente par blocs de coordonnées
