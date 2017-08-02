@@ -152,7 +152,7 @@ factorisation de matrice en statistique.
 - Note taken on [2017-07-18 Tue 08:55] \\
   Kenneth lange, factorisation de matrice = avenir des stat ! a retrouver !
 :END:
-** Problématique et plan
+** Problématique et objectifs de la thèse
 * Données
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
@@ -2430,6 +2430,15 @@ Nous avons utilisé le package bigsnpr pour convertir les données du format
 - State "TODO"       from              [2017-07-13 jeu. 08:59]
 :END:
 
+***** DONE Format .rds
+CLOSED: [2017-08-02 mer. 16:51]
+:LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-02 mer. 16:51]
+- Note taken on [2017-08-02 mer. 16:11] \\
+  il ne veux pas mettre de nom au ligne et colonnes .... je sais pas pk mais c'est
+  pas si grave !!
+- State "RUNNING"    from              [2017-08-02 mer. 15:59]
+:END:
 #+NAME: code:1000g_G_bigsnpr
 #+CAPTION: Dépend de [[code:1000g_ibd_filter]]
 #+BEGIN_SRC R
@@ -2458,24 +2467,36 @@ Nous avons utilisé le package bigsnpr pour convertir les données du format
   > G <- snp_attach("bigsnpr_G/G.rds")
   > dim(G$genotypes)
   [1]    1758 5398440
+  > rownames(G.r) <- G$fam$sample.ID
+  Erreur : impossible d'allouer un vecteur de taille 70.7 Go
+  > colnames(G.r) <- G$map$marker.ID
+  Erreur : impossible d'allouer un vecteur de taille 70.7 Go
 #+end_example
 
+***** TODO Format =Matter=
+:LOGBOOK:
+- State "TODO"       from              [2017-08-02 mer. 15:59]
+:END:
 #+NAME: code:1000g_G_matter
 #+CAPTION: Dépend de [[code:1000g_G_bigsnpr]]
 #+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
-  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
-  G <- readRDS("G.rds")
+  library(matter)
+  G.matter <- matter_mat(nrow = 1758,
+                         ncol = 5398440)
+
+  ## for col and row names
+  G.bigsnpr <- readRDS("bigsnpr_G/G.rds")
 
   ## convert in matter format
-  library(matter)
-  G.matter <- matter_mat(G,
-                         nrow = nrow(G),
-                         ncol = ncol(G))
-  colnames(G.matter) <- colnames(G)
-  rownames(G.matter) <- rownames(G)
+  rownames(G.matter) <- G.bigsnpr$fam$sample.ID
+  colnames(G.matter) <- G.bigsnpr$map$marker.ID
   file.copy(paths(G.matter), "~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/G.matter.bin")
   paths(G.matter) <- "~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/G.matter.bin"
   saveRDS(G.matter, "G.matter.rds")
+
+  ## data
+  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
+  G <- readRDS("G.rds")
 
 #+end_src
 
@@ -2922,24 +2943,25 @@ souhaite expliquer sont étudiées. Les variables explicative correspondent
 généralement à un état pathologique, à un trait phénotypique ou à gradient
 environnementale. La confusion surviennent lorsque il existe une ou plusieurs
 variables latentes, c'est à dire non observées, qui sont corrélées à la fois aux
-variables explicatives et aux variables expliquées (fréquences de SNP, expression
-génique ou profils de méthylation de l'ADN). Ainsi un facteur latent devient un
-facteur de confusion pour une étude d'association quand il y a un lien de
-causalité entre le facteur latent et les variable expliquées et explicatives mais
-qu'il n'y a pas relation de causalité en les variables primaire et expliquées,
-cette situation est résumé pas la figure [[graph:conf_factor]]. Si les facteurs de
-confusion ne sont pris en compte dans l'étude d'association cela peut induire de
-la corrélation entre les statistiques de test utilisées pour détecter la
-corrélation entre les variables explicatives et les variables expliquées. Mais
-surtout les facteurs de confusion peuvent faire apparaître certaines variables
-expliquées comme étant significativement corrélées avec les variables explicatives
-à cause du facteur de confusion qui n'est pas pris en compte
-cite:wang2015confounder. Le problème des facteurs de confusion est connue depuis
-longtemps. En effet, on le retrouve déjà dans l'ouvrage /The Design of
-Experiement/ de Ronald Fisher qui introduisit entre autre le concept de
-d'hypothèse nulle en statistique cite:fisher1937design. Depuis les facteurs de
-confusion ont reçu différentes dénominations comme celle des "facteurs latents"
-(la dénomination que nous utilisons ici)
+variables explicatives et aux variables expliquées (fréquences de SNP,
+expression génique ou profils de méthylation de l'ADN).
+Ainsi un facteur latent devient un facteur de confusion pour une étude
+d'association quand il y a un lien de causalité entre le facteur latent et les
+variable expliquées et explicatives mais qu'il n'y a pas relation de causalité
+en les variables expliquées et explicatives, cette situation est résumé pas la
+figure [[graph:conf_factor]]. Si les facteurs de confusion ne sont pris en compte
+dans l'étude d'association cela peut induire de la corrélation entre les
+statistiques de test utilisées pour détecter la corrélation entre les variables
+explicatives et les variables expliquées. Mais surtout les facteurs de confusion
+peuvent faire apparaître certaines variables expliquées comme étant
+significativement corrélées avec les variables explicatives à cause du facteur
+de confusion qui n'est pas pris en compte cite:wang2015confounder. Le problème
+des facteurs de confusion est connue depuis longtemps. En effet, on le retrouve
+déjà dans l'ouvrage /The Design of Experiement/ de Ronald Fisher qui introduisit
+entre autre le concept de d'hypothèse nulle en statistique
+cite:fisher1937design. Depuis les facteurs de confusion ont reçu différentes
+dénominations comme celle des "facteurs latents" (la dénomination que nous
+utilisons ici)
 cite:wang2015confounder,frichot13_testin_assoc_between_loci_envir; les
 "variables de substitution" cite:Chen_2017,article_Leek_Storey_2007; et la
 "variation indésirable" cite:Gagnon_Bartsch_2011,gerard2017unifying.
@@ -2981,9 +3003,9 @@ nature observatoire de l'étude.
   un exemple ici ?? lm, lm + PCA, lm + les facteurs latents comme dans stephens et
   2017 dans son intro,
 :END:
-Le cadre méthodologique le plus utilisé en étude d'association est celui des
-modèle de régression linéaire. Il s'agit d'un cadre très commun en statistique
-que nous pouvons formaliser de la façon suivante
+Nous nous plaçons dans le cadre méthodologique des modèles de régression
+linéaire. Il s'agit d'un cadre très utilisé en étude d'association que nous
+pouvons formaliser de la façon suivante
 \begin{equation}
 \label{eq:statReg}
 \Y = f(\X \B^{T}) + \E
@@ -2992,44 +3014,48 @@ où $\Y$ est la matrice des variables expliquées de taille $\Yrow \times \Ycol$
 où $\Yrow$ est le nombre d'observations des $\Ycol$ variables expliquées. La
 matrice $\X$ de taille $\Xrow \times \Xcol$ est la matrice les variables
 explicatives et la matrice $\B$ représente les effets de chacune des variables
-explicative sur les variables expliquées. La matrice $\E$ est la matrice des
+explicatives sur les variables expliquées. La matrice $\E$ est la matrice des
 erreurs. Enfin la fonction $f$ est la fonction de lien entre les variables
 expliquées et les variables explicatives. L'objectif est de trouver les
 coefficients $b_{j,l}$ qui sont significativement différents de zéro. Dans ce
-cas cela veut dire que la variable explicative $l$ à un effet sur la variable
-expliquée $j$. Comme nous l'avons évoqué dans la parti précédente avec ce genre
-d'approche il est possible qu'une variable non observé soit corrélé à la fois au
-variable expliquées et au variables explicatives (Figure [[graph:conf_factor]]). 
-
-graphe ou pas? 
+cas cela veut dire que la variable expliquée $j$ est potentiellement associée à
+la variable explicative $l$. Comme nous l'avons évoqué dans la partie précédente
+avec ce genre d'approche il est possible qu'une variable non observée soit
+corrélé à la fois aux variables expliquées et aux variables explicatives. Dans
+ce cas on pourrait une situation un très grand nombre de variables expliquées
+sont significativement corrélées avec les variables explicatives (voir partie
+[[sec:simu_conf]] pour une simulation de cette situation). Nous allons maintenant
+présenter les différentes approches qui prennent en compte les facteurs de
+confusions.
 
 **** Estimation des facteurs latent à priori
-En génétiques des populations, une méthodes il est courant d'estimer les
-variables latentes a priori. Par exemple la méthode EIGENSTRAT consiste en une
-analyse en composante principale (ACP) de la matrice des données génétiques
-cite:Price_2006. L'objectif est alors de capter la structure de population qui
-est confondante pour les études d'association. On ajoute ensuite la matrice des
-coordonnées sur $K$ axes choisi au coté des variables explicative du modèle de
-régression
+En génétiques des populations, il est courant d'estimer les variables latentes à
+priori. Par exemple la méthode EIGENSTRAT consiste en une analyse en composante
+principale (ACP) de la matrice des données génétiques cite:Price_2006 et
+d'inclure ensuite les scores de l'analyse dans un modèle de regression linéaire.
+L'objectif est alors de capter la structure de population qui est confondante
+pour les études d'association. On ajoute ensuite la matrice des coordonnées sur
+$K$ axes choisi au coté des variables explicatives du modèle de régression
 \begin{equation}
 \Y = f(\X \B^{T} + \bar{\U} \V ) + \E
 \end{equation}
-où $\bare{\U}$ est la matrice des coordonnées calculé par l'analyse en composante
+où $\bare{\U}$ est la matrice des coordonnées calculée par l'analyse en composante
 principale. Plus récemment le même principe à été utilisé pour faire un étude
-d'association entre des données méthylation de l'adn avec la maladie polyartrite
+d'association entre des données de méthylation de l'adn et la maladie polyartrite
 rumatoide cite:Rahmani_2016.
 **** Les modèles mixes
-Une autres approche de correction pour facteurs de confusion est le modèle mixe.
-Dans un tel modèle modèle ajoute un effet aléatoire à la régression 
+Une autres approche de correction pour les facteurs de confusions est le modèle
+mixe. Dans un tel modèle on ajoute un effet aléatoire à la régression
 \begin{equation}
-\Y = f(\X \B^{T} + \U) + \E
+\Y = f(\X \B^{T} + \W) + \E
 \end{equation}
-où $\U$ est la matrice des effets aléatoires à estimer. Ce genre de modèle à été
-largement utilisé dans les GWAS cite:Kang_2008,Zhou_2014. Classiquement, afin
-d'estimer la fois la matrice des effet $\B$ et la matrice des effet aléatoire
-$\U$, on fait l'hypothèse que la covariance des effets aléatoires est connue.
-Pour les GWAS, cette matrice de covariance est en général estimé à priori sur
-les données génétique.
+où $\W$ est la matrice des effets aléatoires à estimer. Ce genre de modèle à été
+largement utilisé dans les GWAS cite:Kang_2008,Zhou_2014. Dans les GWAS, l'effet
+aléatoire permet d'expliquer la variabilité qui est du à la structure de
+population. Classiquement, afin d'estimer la fois la matrice des effet $\B$ et
+la matrice des effet aléatoire $\W$, on fait l'hypothèse que la covariance de
+chaque colonnes des effets aléatoires est connue à priori. Pour les GWAS, cette
+matrice de covariance est en général estimé à priori sur les données génétique.
 **** Les modèles mixes à facteurs latents (LFMM, latent factor mixed model en anglais)
 Nous introduisons maintenant les modèles mixes a facteurs latents. L'équation de
 régression peut s'écrire comme ceci : 
@@ -3039,38 +3065,127 @@ régression peut s'écrire comme ceci :
 \end{equation}
 Dans cette équation $\U$ est la matrice des variables latentes et $\V$ est la
 matrice des axes des facteurs latents. A la différence des modèles mixes, il
-n'est pas nécessaire de faire une hypothèse sur la structure de covariance des
-matrices $\U$ et $\V$. Parmi les différentes méthodes d'estimation des
-paramètres du modèle mixes à facteurs latents, on distingue des approche qui
-repose sur des algorithmes de Monte Carlo
-cite:frichot13_testin_assoc_between_loci_envir,carvalho08_high_dimen_spars_factor_model;
-des approches qui repose des algorithme EM (Expectation Maximixation)
-cite:friguet09_factor_model_approac_to_multip,agarwal09_regres,zhou16_spars_multiv_factor_analy_regres;
-et enfin les approche qui repose sur une estimation des variables latentes à
-partir d'une transformation de $\Y$ qui a pour but de séparer la variabilité 
-expliquées par les variable latentes de celle expliqué par les variables
-explicative cite:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007.
-Parmi les méthodes qui estime les facteurs latents sur une transformation de la
-matrice des données, on distingue des autres les méthodes dites à contrôles
-négatifs qui suppose que connait un sous ensemble de variables expliquées qui ne
-sont pas associées avec les variables explicatives. Ces méthodes utilisent donc
-les variables dites nulles pour estimer les variables latentes.
+n'est pas nécessaire de faire supposer connue la covariance des matrices $\U$ et
+$\V$. Alors pour les modèles mixe la matrice des effets aléatoires à pour but
+d'expliquer une variabilité connu a priori, l'objectif de LFMM est d'apprendre
+la variabilité systématique observé dans les variables expliquées grâce aux
+paramètres $\U$ et $\V$. Il existe différentes méthodes pour estimer les
+paramètres de LFMM. On distingue d'abord des approches qui reposent sur des
+algorithmes de Monte Carlo
+cite:frichot13_testin_assoc_between_loci_envir,carvalho08_high_dimen_spars_factor_model.
+Ces approches repose sur une modélisation bayésienne de LFMM qui
+d'échantillonner les lois a posteriori des paramètres. L'avantage de ces
+méthodes est quelles permettent d'estimer la variance du paramètre $\B$. Cela
+permet de faire un test de significativité statistique. Il y a aussi des
+approches qui reposent sur des algorithme EM (Expectation Maximixation)
+cite:friguet09_factor_model_approac_to_multip,agarwal09_regres,zhou16_spars_multiv_factor_analy_regres.
+Ces approches sont plus rapide que les méthodes utilisant des algorithmes de
+Monte Carlo. Enfin, il y a les approches qui reposent sur une estimation des
+variables latentes à partir d'une transformation de $\Y$
+cite:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007. Cette
+transformation qui a pour but de séparer la variabilité expliquée par les
+variables latentes de celle expliquée par les variables explicatives. Parmi
+cette dernière catégorie de méthodes, on distingue des autres les méthodes dites
+à contrôles négatifs qui suppose connu un sous ensemble de variables expliquées
+qui ne sont pas associées avec les variables explicatives. Ainsi, les méthodes a
+contrôles négatifs utilisent donc les variables dites nulles pour estimer les
+variables latentes.
 
-*** Problématique et plan
-Comme nous l'avons vu dans la parti précédente l'estimation des variable
+
+**** Simulation numérique d'une association avec facteurs de confusions
+Dans cette partie nous proposons de montrer l'intérêt de prendre en
+considération les facteurs de confusion dans les études d'association. Pour cela
+nous simulation une variable explicative et une variable latente de sorte que
+leur corrélation vaille $0.6$. Nous simulons ensuite une matrice de bruit
+gaussien afin de calculer la matrice des variable expliqué grâce à l'équation
+eqref:eq:glfmm du modèle mixe à facteur latent en considérant $f$ comme étant
+l'identité. La matrice des effets $\B$ est simulé de sorte que $1 \%$ de ses
+lignes soit non nulle. Cette simulation correspond a une situation où 1 \% des
+variables expliquées sont associé avec les variables explicative et la variable
+latente est facteur de confusion pour cette étude d'association. Afin de
+détecter les variables expliquées associés à la variables explicative, nous
+avons réalisé une régression linéaire avec seulement la variable explicative
+$\X$ en covariable de régression. Nous effectuons une autre régression linéaire
+avec cette fois la variable explicative $\X$ ainsi que la variable latente $\U$
+comme covariable. Nous avons ensuite réalisé un test de Student pour tester la
+nullité des coefficient associé à la variable explicative dans chacune des deux
+régressions. La figure ref:fig:simu_intro montre que quand on ne prend pas en
+compte la variable latente plus de 40 \% des \pvalues sont proche de zéro, on
+détecte alors beaucoup de candidat pour l'association avec la variable
+explicative. Alors que quand on prend en compte les facteurs latent la
+distribution des \pvalues est bien uniforme. On s'attend bien a une distribution
+uniforme car la majorité variable expliquées ne sont pas associé avec la
+variable explicative. Dans le cas de cette simulation il est impossible de ne
+pas prendre en compte la variable latente, sans celle-ci on détecte presque la
+moitié des variables expliquée comme étant associé à la variable explicative.
+
+<<sec:simu_conf>>
+
+#+NAME: code:confusion_plot
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  library(scales)
+
+  dat <- ExpRsampler_generativeData(n = 200,
+                                    p = 5000,
+                                    K = 1,
+                                    outlier.prop = 0.01,
+                                    cs = c(0.6)) %>%
+    ExpRmouline()
+
+  ## lm
+  lm.res <- method_lm() %>% ExpRmouline(dat)
+  toplot <- data.frame(Régression = "Y ~ X",
+                   pvalue = lm.res$pvalue)
+
+  ## lm with U
+  oracle.res <- method_oracle() %>% ExpRmouline(dat)
+
+
+  ## qqplot
+  toplot <- data.frame(Régression = "Y ~ X + U",
+                       pvalue = oracle.res$pvalue) %>%
+    rbind(toplot)
+  toplot <- as_tibble(toplot)
+  pl <- ggplot(toplot, aes(pvalue, fill = Régression)) +
+    geom_histogram(position = "dodge", aes(y = (..count..)/sum(..count..))) +
+    MaTheseR.params$gtheme +
+    xlab("P-valeur") +
+    ylab("Pourcentage") +
+    scale_y_continuous(labels=percent)
+  save_plot_MaTheseR(pl, "simu_intro.png",
+                     height = 0.3 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
+#+end_src
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/simu_intro.png}
+\caption{Histogramme des \pvalues du test de nullité des coefficients
+  de régression de la régression sans et avec le facteur de
+  confusion.}
+\label{fig:simu_intro}
+\end{figure}
+#+END_EXPORT
+
+*** Plan du chapitre
+Comme nous l'avons vu dans la partie précédente l'estimation des variables
 latentes pour corriger les études d'association est un problème très vaste et
 aucune méthode ne s'est imposée comme référence. Nous proposons ici, deux
-méthodes d'estimation rapides et efficaces des paramètres du modèle LFMM
-introduit par l'équation eqref:eq:glfmm dans le cas où la fonction de lien $f$
-est l'identité. Nos deux méthodes d'estimation consiste à a séparer isolé le
-plus possible la variabilité expliqué de façon systématique par les variable
-latentes de celle expliqué par les variables explicatives. Elles sont donc
-directement comparable à SVA cite:article_Leek_Storey_2007 et CATE
-cite:wang2015confounder. Chacun des algorithmes que nous présentons découle de
-l'optimisation d'une fonction objectif pour lesquelles nous montrons qu'ilx
-converge vers le point de minimum global. Enfin, nous comparons nos méthodes à
-SVA et CATE sur des simulations numériques ainsi que des exemples de GWAS, EWAS
-et GEA.
+méthodes d'estimation rapides et efficaces des paramètres du modèle LFMM dans le
+cas où la fonction de lien $f$ est l'identité. Nos deux méthodes d'estimation
+consiste à isolé la variabilité expliquée par les variables latentes de celle
+expliqué par les variables explicatives. Elles sont donc directement comparable
+à SVA cite:article_Leek_Storey_2007 et CATE cite:wang2015confounder qui procède
+d'une façon très similaire, nous décrivons plus en détail ces méthodes dans la
+partie [[sec:similar_method]]. Chacun des algorithmes que nous présentons découle de
+l'optimisation d'une fonction objectif. Nous montrons montrons que nos
+algorithmes d'estimation convergent vers le point de minimum global de leur
+fonction objectif respective. Enfin, nous comparons nos méthodes à SVA et CATE
+sur des simulations numériques ainsi que des exemples de GWAS, EWAS et GEA.
 
 ** Méthodes 
 *** Modèle 
@@ -3126,38 +3241,35 @@ l'analyse en composantes principales de la matrice latente $\W$.
 :END:
 
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres de
-LFMM défini par eqref:eq:model basé sur un problème des moindres carrées
-régularisé en norme $L_{2}$. Nous montrons que cette algorithme permet de
-calculer un point de minimum global du problème d'optimisation de moindres
-carrés.
+défini par l'équation eqref:eq:model basé sur un problème des moindres carrées
+régularisé en norme $L_{2}$. Nous montrons que cet algorithme permet de calculer
+un minimum global du problème d'optimisation des moindres carrés.
 
 **** Fonction objectif
 
-Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM nous définissons la
-fonction objectif suivante
+Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM, nous définissons la
+fonction objectif de type ridge suivante
 \begin{equation}
 \label{eq:optim_ridge_reg}
 \LfmmLridge
 \end{equation}
 où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2}$ est la norme $L_2$
-et $\lambRidge$ le paramètre de régularisation. 
-
-Le terme premier terme de $\Lridge$ (terme d'attache aux données) correspond à
-l'opposé de la log vraisemblance où la matrice de bruit $\E$ est gaussienne,
-isotrope et de moyenne nulle.
-
-Le terme deuxième terme de $\Lridge$ (terme de régularisation) est indispensable
-pour distinguer l'effet des variables latentes de celui des variables
-explicatives. En effet, si
+et $\lambRidge$ le paramètre de régularisation.Le terme premier terme de
+$\Lridge$ (terme d'attache aux données) correspond à l'opposé de la log
+vraisemblance pour un modèle où la matrice de bruit $\E$ est gaussienne,
+isotrope et de moyenne nulle. Le terme deuxième terme de $\Lridge$ (terme de
+régularisation) est indispensable pour séparer la variabilité expliqué par les
+variables latentes de celle expliqué des variables explicatives. En effet, si
 \begin{equation*}
-\lambRidge = 0 
+\lambRidge = 0, 
 \end{equation*}
-alors pour toutes matrices $\matr{T}$ de taille $\Xcol \times \Ycol$ on a 
+alors pour toute matrice $\matr{P}$, de taille $\Xcol \times \Ycol$, nous avons
 \begin{equation*}
-\Lridge(\U - \X \matr{T}, \V^{T}, \B + \V \matr{T}^T}) = \Lridge(\U, \V^{T}, \B).
+\Lridge(\U - \X \matr{P}, \V^{T}, \B + \V \matr{P}^T}) = \Lridge(\U, \V^{T}, \B).
 \end{equation*}
-Ainsi, les points du minimum d'une telle fonction objective ne sont pas définis
-de manière univoque pour notre problème.
+Les points du minimum de la fonction objective ne sont pas définis de
+manière univoque pour notre problème quand le paramètre de régularisation est
+nulle. 
 
 **** Algorithme
 Afin d'estimer les paramètres de LFMM minimisant $\Lridge$ nous commençons par
@@ -3760,7 +3872,7 @@ la variable explicative. Pour choisir cette liste
 Dans le cadre des test d'association multiple 
 
 
-** Expériences                                                    :noexport:
+** Expériences
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
@@ -3773,7 +3885,7 @@ and the linear model with PCA scores.
 
 **** sva
 **** famt
-*** Simulation et vrai jeux de données
+*** Simulation et vrai jeux de données                           :noexport:
 
 **** Generative model simulation
 
@@ -4096,9 +4208,12 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_example
 
-*** Description des expériences
-**** RUNNING Comparaisons numériques sur des simulations
+*** Description des expériences                                  :noexport:
+**** DEBUG Comparaisons numériques sur des simulations
 :LOGBOOK:
+- State "DEBUG"      from "RUNNING"    [2017-08-02 mer. 15:53]
+- Note taken on [2017-08-02 mer. 15:53] \\
+  Ca a bugué :( ca prend une semaine.....
 - Note taken on [2017-07-28 ven. 09:38] \\
   tail -f /home/cayek/tmp/Logfiles/valNum.y2017_m07_d28.log
 - Note taken on [2017-07-27 jeu. 17:40] \\
@@ -4167,18 +4282,16 @@ générative.
 
   ## param
   K.method <- 5
-  nb.cluster <- 4
+  nb.cluster <- 16
   rep.nb.sampler <- 5
-
-  ## sampler
-  s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
-  s$rho.B <- 3.0
-  sampler.env <- s$load.env
-  samplers <-  s * param(prop.outlier = c(0.01, 0.05, 0.1, 0.15, 0.2), rho.c = c(0.1, 0.3, 0.5, 0.8, 1.0))
+  prop.outlier <- c(0.01, 0.05, 0.1, 0.15)
+  rho.B <- 3
+  rho.c <- c(0.1, 0.3, 0.5, 0.8)
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
-  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.K = 100, relative.err.epsilon = 1e-6)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.K = 100,
+                              relative.err.epsilon = 1e-6)
   m.lm <- method_lm()
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
@@ -4195,7 +4308,14 @@ générative.
     m.lasso * param() +
     m.oracle * param()
 
-  ## run
+  ######################################################################
+  ## 1
+  ## sampler
+  s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
+  s$rho.B <- rho.B
+  sampler.env <- s$load.env
+  samplers <-  s * param(prop.outlier = prop.outlier[1:2], rho.c =rho.c)
+  ##run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
   doParallel::registerDoParallel(cl)
   expr <- ExpR(rep.nb.sampler = rep.nb.sampler,
@@ -4208,9 +4328,48 @@ générative.
   expr <- ExpRmouline(expr)
   doParallel::stopImplicitCluster()
   parallel::stopCluster(cl)
+  ## checkpoint 
+  save_expr(expr, "validation_numerique_1.rds")
+  rm(expr)
+  gc()
+  message("=================== step 1 OK =============================")
+  ######################################################################
+  ## 2
+  ## sampler
+  s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
+  s$rho.B <- rho.B
+  sampler.env <- s$load.env
+  samplers <-  s * param(prop.outlier = prop.outlier[3:4], rho.c =rho.c)
+  ##run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  expr <- ExpR(rep.nb.sampler = rep.nb.sampler,
+               samplers = samplers,
+               preprocessors = NULL,
+               rep.nb.method = 1,
+               methods = methods,
+               extractor = ExpRextractor_fdr,
+               sampler.env = sampler.env)
+  expr <- ExpRmouline(expr)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+  ## checkpoint 
+  save_expr(expr, "validation_numerique_2.rds")
+  rm(expr)
+  gc()
+  message("=================== step 2 OK =============================")
 
-  ## save expr
+
+  ## retrieve expr
+  expr1 <- readRDS("OUTPUT/Expr/validation_numerique_1.rds")
+  expr2 <- readRDS("OUTPUT/Expr/validation_numerique_2.rds")
+  expr <- list(df.res =
+                 rbind(expr1$df.res, expr2$df.res)
+    )
   save_expr(expr, "validation_numerique.rds")
+  rm(expr1)
+  rm(expr2)
+  gc()
 
   ## plot auc
   toplot <- expr$df.res %>%
@@ -5012,6 +5171,7 @@ CLOSED: [2017-07-28 ven. 09:25]
 
   pl <- plot_intersection(toplot, by = "colname", plot = "point")
   save_plot_png(pl, "gwas_fdr01_inter.png")
+
 #+end_src
 
 #+RESULTS: code:gwas_expr_fdr
@@ -6056,7 +6216,7 @@ CLOSED: [2017-07-27 jeu. 11:39]
 #+end_src
 
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{sidewaysfigure}[ht]
 \centering
 \includegraphics{./OUTPUT/Rplots/method_comp.pdf.png}
 \caption{Comparaison des méthodes sur des simulations faites a partir du jeux de
@@ -6067,7 +6227,7 @@ CLOSED: [2017-07-27 jeu. 11:39]
   proportion d'outlier et de la corrélation entre les variable explicatives et
   les variables latentes.}
 \label{fig:method_comp}
-\end{figure}
+\end{sidewaysfigure}
 #+END_EXPORT
 **** STARTED Tests d'hypothèse
 :LOGBOOK:
