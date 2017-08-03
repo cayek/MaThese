@@ -2496,7 +2496,11 @@ CLOSED: [2017-08-02 mer. 16:51]
   saveRDS(G.matter, "G.matter.rds")
 
   ## copy data
+  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
+  library(matter)
+  G.matter <- readRDS('G.matter.rds')
   G <- readRDS("G.rds")
+  G.matter[,] <- G[,]
   for(i in 1:nrow(G)) {
     message("row ",i)
     G.matter[i,] = G[i,]
