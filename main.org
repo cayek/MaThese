@@ -2501,6 +2501,7 @@ CLOSED: [2017-08-02 mer. 16:51]
   G.matter <- readRDS('G.matter.rds')
   G <- readRDS("G.rds")
   G.matter[,] <- G[,]
+
   for(i in 1:nrow(G)) {
     message("row ",i)
     G.matter[i,] = G[i,]
