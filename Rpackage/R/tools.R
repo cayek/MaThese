@@ -94,3 +94,11 @@ drawable <- function(pl.func) {
 grid.draw.drawable <- function(d) {
   d$pl.func()
 }
+
+##' @export
+save_as_bin <- function(m, file) {
+  con <- file(file, 'wb')
+  on.exit(close(con))
+  writeBin(c(m), con) 
+  flush(con)
+}

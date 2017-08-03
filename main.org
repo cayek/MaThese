@@ -2410,16 +2410,20 @@ ième degré).
   1000GenomePhase3_CQ_norel.fam ... done.
 #+end_example
 
-*** TODO Conversion dans format utilisable en R
+*** DONE Conversion dans format utilisable en R
+CLOSED: [2017-08-03 jeu. 11:37]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-03 jeu. 11:37]
 - State "TODO"       from              [2017-07-26 mer. 18:17]
 :END:
 
 Nous avons utilisé le package bigsnpr pour convertir les données du format
 =.bed= à un format de matrice R. 
 
-**** STARTED Données non prunnées
+**** DONE Données non prunnées
+CLOSED: [2017-08-03 jeu. 11:31]
 :LOGBOOK:
+- State "DONE"       from "STARTED"    [2017-08-03 jeu. 11:31]
 - State "STARTED"    from "RUNNING"    [2017-07-13 jeu. 12:29]
 - Note taken on [2017-07-13 jeu. 11:57] \\
   Après ca on va creer la matrice matter par block !! Et il faudra calculer les
@@ -2430,9 +2434,12 @@ Nous avons utilisé le package bigsnpr pour convertir les données du format
 - State "TODO"       from              [2017-07-13 jeu. 08:59]
 :END:
 
-***** DONE Format .rds
-CLOSED: [2017-08-02 mer. 16:51]
+***** TODO Format .rds
 :LOGBOOK:
+- Note taken on [2017-08-03 jeu. 14:14] \\
+  ca a bugger le pense ...a voir.
+- State "TODO"       from "RUNNING"    [2017-08-03 jeu. 14:14]
+- State "RUNNING"    from "DONE"       [2017-08-03 jeu. 13:26]
 - State "DONE"       from "RUNNING"    [2017-08-02 mer. 16:51]
 - Note taken on [2017-08-02 mer. 16:11] \\
   il ne veux pas mettre de nom au ligne et colonnes .... je sais pas pk mais c'est
@@ -2449,11 +2456,16 @@ CLOSED: [2017-08-02 mer. 16:51]
   snp_readBed(bedfile, "G", backingpath = "bigsnpr_G")
 
   G <- snp_attach("bigsnpr_G/G.rds")
+  ## G <- readRDS("bigsnpr_G/G.rds")
   dim(G$genotypes)
 
+  ## G.r <- readRDS("G.rds")
   G.r <- attach.BM(G$genotypes)[,]
-  rownames(G.r) <- G$fam$sample.ID
-  colnames(G.r) <- G$map$marker.ID
+  ## rownames(G.r) <- G$fam$sample.ID
+  attr(G.r, "rownames") <- G$fam$sample.ID
+  ## colnames(G.r) <- G$map$marker.ID
+  attr(G.r, "colnames") <- G$map$marker.ID
+
   saveRDS(G.r, "G.rds")
   #+END_SRC
 
@@ -2472,41 +2484,6 @@ CLOSED: [2017-08-02 mer. 16:51]
   > colnames(G.r) <- G$map$marker.ID
   Erreur : impossible d'allouer un vecteur de taille 70.7 Go
 #+end_example
-
-***** TODO Format =Matter=
-:LOGBOOK:
-- State "TODO"       from              [2017-08-02 mer. 15:59]
-:END:
-#+NAME: code:1000g_G_matter
-#+CAPTION: Dépend de [[code:1000g_G_bigsnpr]]
-#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
-  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
-  library(matter)
-  G.matter <- matter_mat(nrow = 1758,
-                         ncol = 5398440)
-
-  ## for col and row names
-  G.bigsnpr <- readRDS("bigsnpr_G/G.rds")
-
-  ## convert in matter format
-  rownames(G.matter) <- G.bigsnpr$fam$sample.ID
-  colnames(G.matter) <- G.bigsnpr$map$marker.ID
-  file.copy(paths(G.matter), "~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/G.matter.bin")
-  paths(G.matter) <- "/home/cayek/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/G.matter.bin"
-  saveRDS(G.matter, "G.matter.rds")
-
-  ## copy data
-  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
-  library(matter)
-  G.matter <- readRDS('G.matter.rds')
-  G <- readRDS("G.rds")
-  G.matter[,] <- G[,]
-
-  for(i in 1:nrow(G)) {
-    message("row ",i)
-    G.matter[i,] = G[i,]
-  }
-#+end_src
 
 **** DONE Données prunnées
 CLOSED: [2017-07-27 jeu. 17:17]
@@ -2547,7 +2524,7 @@ CLOSED: [2017-07-27 jeu. 17:17]
   saveRDS(G$fam, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/G_indiv_df.rds")
   #+END_SRC
 
-
+  
 *** TODO Scaling des données et valeurs manquantes
 :LOGBOOK:
 - State "TODO"       from              [2017-07-13 jeu. 12:29]
@@ -2604,6 +2581,45 @@ CLOSED: [2017-07-28 ven. 11:01]
 :LOGBOOK:
 - State "TODO"       from              [2017-07-28 ven. 10:34]
 :END:
+
+***** TODO Missing data and export to =matter=
+:LOGBOOK:
+- State "TODO"       from              [2017-08-03 jeu. 11:37]
+:END:
+#+NAME: code:1000g_G_noNA
+#+CAPTION: Dépend de [[code:1000g_G_bigsnpr]]
+#+begin_src R 
+  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
+  G <- readRDS("G.rds")
+  n <- nrow(G)
+
+  ## NA mu sds
+  nas <- 1:ncol(G)
+  for(j in 1:ncol(G)) {
+    nas[j] <- mean(is.na(G[,j]))
+  }
+
+  ## export to bin
+  con <- file("~/Projects/Thesis/Data/1000Genomes/Phase3/G_noNA.bin", 'wb')
+  notNA.ids <- which(nas != 0.0)
+  for(j in notNA.ids {
+    writeBin(G[,j], con)
+  }
+  flush(con)
+  close(con)
+
+  ## matter matrix
+  G.matter <- matter_mat(paths="/home/cayek/Projects/Thesis/Data/1000Genomes/Phase3/G_noNA.bin",
+                         ncol = length(notNA.ids),
+                         nrow = n, datamode = "double")
+  colnames(G.matter) <- attr(G, "colnames")[nas.bool]
+  rownames(G.matter) <- attr(G, "rownames")
+  ## test
+  mean(G[,notNA.ids[length(notNA.ids)]] == G.matter[,length(notNA.ids)])
+
+  saveRDS(G.matter, "G_noNA.matter.rds")
+
+#+end_src
 ** TODO Arabidopsis Thaliana Regional Mapping Lines               :noexport:
 :LOGBOOK:
 - State "TODO"       from              [2017-07-27 jeu. 17:02]
@@ -3059,7 +3075,7 @@ mixe. Dans un tel modèle on ajoute un effet aléatoire à la régression
 \end{equation}
 où $\W$ est la matrice des effets aléatoires à estimer. Ce genre de modèle à été
 largement utilisé dans les GWAS cite:Kang_2008,Zhou_2014. Dans les GWAS, l'effet
-aléatoire permet d'expliquer la variabilité qui est du à la structure de
+aléatoire permet d'expliquer la variance qui est du à la structure de
 population. Classiquement, afin d'estimer la fois la matrice des effet $\B$ et
 la matrice des effet aléatoire $\W$, on fait l'hypothèse que la covariance de
 chaque colonnes des effets aléatoires est connue à priori. Pour les GWAS, cette
@@ -3186,14 +3202,15 @@ aucune méthode ne s'est imposée comme référence. Nous proposons ici, deux
 méthodes d'estimation rapides et efficaces des paramètres du modèle LFMM dans le
 cas où la fonction de lien $f$ est l'identité. Nos deux méthodes d'estimation
 consiste à isolé la variabilité expliquée par les variables latentes de celle
-expliqué par les variables explicatives. Elles sont donc directement comparable
-à SVA cite:article_Leek_Storey_2007 et CATE cite:wang2015confounder qui procède
-d'une façon très similaire, nous décrivons plus en détail ces méthodes dans la
-partie [[sec:similar_method]]. Chacun des algorithmes que nous présentons découle de
-l'optimisation d'une fonction objectif. Nous montrons montrons que nos
-algorithmes d'estimation convergent vers le point de minimum global de leur
-fonction objectif respective. Enfin, nous comparons nos méthodes à SVA et CATE
-sur des simulations numériques ainsi que des exemples de GWAS, EWAS et GEA.
+expliquée par les variables explicatives. Les méthodes que nous présentons sont
+comparable à SVA cite:article_Leek_Storey_2007 et CATE cite:wang2015confounder
+qui procède d'une façon très similaire, nous décrivons plus en détail les
+méthodes CATE et SVA dans la partie [[sec:similar_method]]. Chacun des algorithmes
+que nous présentons découle de l'optimisation d'une fonction objectif. Nous
+montrons montrons que nos algorithmes d'estimation convergent vers le point de
+minimum global de leur fonction objectif respective. Enfin, nous comparons nos
+méthodes à SVA et CATE sur des simulations numériques ainsi que des exemples de
+GWAS, EWAS et GEA.
 
 ** Méthodes 
 *** Modèle 
@@ -3266,7 +3283,7 @@ et $\lambRidge$ le paramètre de régularisation.Le terme premier terme de
 $\Lridge$ (terme d'attache aux données) correspond à l'opposé de la log
 vraisemblance pour un modèle où la matrice de bruit $\E$ est gaussienne,
 isotrope et de moyenne nulle. Le terme deuxième terme de $\Lridge$ (terme de
-régularisation) est indispensable pour séparer la variabilité expliqué par les
+régularisation) est indispensable pour séparer la variance expliqué par les
 variables latentes de celle expliqué des variables explicatives. En effet, si
 \begin{equation*}
 \lambRidge = 0, 
@@ -3880,20 +3897,19 @@ méthode obtenir une liste de variable expliqué candidat pour l'association ave
 la variable explicative. Pour choisir cette liste 
 Dans le cadre des test d'association multiple 
 
+** Méthodes comparées
+<<sec:similar_method>>
+*** lm and lm + pca
+We comparared results of our method to two well known method the linear model
+and the linear model with PCA scores. 
+*** cate
 
+*** sva
+*** famt
 ** Expériences
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
-*** Méthodes comparées
-<<sec:similar_method>>
-**** lm and lm + pca
-We comparared results of our method to two well known method the linear model
-and the linear model with PCA scores. 
-**** cate
-
-**** sva
-**** famt
 *** Simulation et vrai jeux de données                           :noexport:
 
 **** Generative model simulation
@@ -4218,8 +4234,11 @@ des individus nous avons choisi d'utiliser la base wordclim
 #+end_example
 
 *** Description des expériences                                  :noexport:
-**** DEBUG Comparaisons numériques sur des simulations
+**** RUNNING Comparaisons numériques sur des simulations
 :LOGBOOK:
+- Note taken on [2017-08-03 jeu. 14:08] \\
+  tail -f /home/cayek/tmp/Logfiles/valNum.y2017_m08_d03.log
+- State "RUNNING"    from "DEBUG"      [2017-08-03 jeu. 14:07]
 - State "DEBUG"      from "RUNNING"    [2017-08-02 mer. 15:53]
 - Note taken on [2017-08-02 mer. 15:53] \\
   Ca a bugué :( ca prend une semaine.....
@@ -4291,7 +4310,7 @@ générative.
 
   ## param
   K.method <- 5
-  nb.cluster <- 16
+  nb.cluster <- 8
   rep.nb.sampler <- 5
   prop.outlier <- c(0.01, 0.05, 0.1, 0.15)
   rho.B <- 3
@@ -4970,8 +4989,30 @@ CLOSED: [2017-07-30 Sun 11:28]
 
 On prend K = 9 variables latentes.
 
-***** RUNNING Validation croisée avec lfmmRidge
+***** DEBUG Validation croisée avec lfmmRidge
 :LOGBOOK:
+- State "DEBUG"      from "RUNNING"    [2017-08-03 jeu. 14:17]
+- Note taken on [2017-08-03 jeu. 14:16] \\
+  ca buggé, le processus c'est fait tuer. Il en était a au bout de 5 jours...
+  > res.cv <- ExpRmouline(cv, dat)
+  === params
+    lambda K
+  1  1e-05 1
+  === params
+    lambda K
+  2      1 1
+  === params
+    lambda K
+  3  1e+10 1
+  === params
+    lambda K
+  4  1e-05 2
+  === params
+    lambda K
+  5      1 2
+  === params
+    lambda K
+  6  1e+10 2
 - State "RUNNING"    from "TODO"       [2017-07-30 Sun 11:31]
 - Note taken on [2017-07-30 Sun 11:31] \\
   c'est parti : tail -f /home/cayek/tmp/Logfiles/gwas_CV.y2017_m07_d30.log
@@ -6047,8 +6088,38 @@ CLOSED: [2017-07-27 jeu. 11:39]
 #+RESULTS: code:ewas_venn
 [[./OUTPUT/Rplots/ewas_fdr01_venn.png]]
 
-** Résultats                                                      :noexport:
+** Résultats
+Dans cette partie, nous présentons les expériences numériques que nous avons
+réalisées pour évaluer la performance de nos algorithmes de correction pour les
+facteurs confusions dans les études d'associations qui repose sur une estimation
+$\L1$ et $\L2$ des paramètres de LFMM. Ces deux nouveaux algorithmes algorithmes
+ont été implémenté dans le langage de programmation R et seront appelé
+respectivement ridgeLFMM pour l'estimation $\L2$ et lassoLFMM pour l'estimation
+$\L1$. Nous nous sommes comparé aux méthodes que nous avons présenté dans la
+partie [[sec:similar_method]]. Les méthodes de régression linéaires avec et sans les
+scores de l'ACP ont été implémenté dans le langage R et sont respectivement
+appelé lm et PCAlm. Pour les méthodes CATE et sva nous avons respectivement
+utilisé les implémentation R de ces méthodes mis à disposition par leur auteur.
+*** Comparaison des méthodes sur des données simulées
+**** Simulation
+:LOGBOOK:
+- Note taken on [2017-08-03 jeu. 16:10] \\
+  [[file:Rpackage/R/ExpRsampler-fromTrueData.R::ExpRmouline.ExpRsampler_fromTrueData%20<-%20function(s)%20{][La fonction sampler]]
+:END:
+Afin de comparer la performance des méthodes sur une étude d'association pour
+laquelle nous connaissons la vérité, nous avons réalisé des simulation à partir
+de vrai jeux de données. Pour cela nous réalisons une analyse en composante
+principale de la matrice des variables expliquée $\Y$ et ne gardons que les $\K$
+composantes choisies en fonction du nombre $\K$ de facteurs de confusion que
+l'on souhaites simuler. Cette étape permet d'obtenir la matrice des axes principaux
+orthonormé, que l'on note $\bar{\V}$, ainsi que la matrice des coordonnées sur
+ces axes, que l'on note $\bar{U}$. Nous simulons ensuite 
+**** Mesure de comparaison des performances
+**** Résultats
 
+*** Etude d'association entre les données d'expression et la maladie (EWAS)
+
+*** Etude d'.............
 ** Discussion                                                     :noexport:
 ** Figures et table
 :PROPERTIES:

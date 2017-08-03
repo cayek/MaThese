@@ -19,3 +19,14 @@ test_that("save_plot_MaTheseR", {
   save_plot_MaTheseR(pl, "test1.png")
 
 })
+
+test_that("save_plot_MaTheseR", {
+
+  skip_if_not_installed("matter")
+  library(matter)
+
+  m <- matrix(as.double(1:100), 10,10)
+  save_as_bin(m, "test.bin")
+
+  m.matter <- matter_mat(paths="test.bin", ncol = 10, nrow = 10, datamode = "double")
+})
