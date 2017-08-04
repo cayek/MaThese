@@ -539,8 +539,8 @@ dans l'étude d'association.
     graph [fontname = "serif"];
     node [fontname = "serif"];
     edge [fontname = "serif"];
-    u -- y;
-    u -- x;
+    U -- Y;
+    U -- X;
   }
 #+END_SRC
 
@@ -558,31 +558,30 @@ nous simulation une variable $\X$ et une variable latente de sorte que leur
 corrélation vaille $0.6$. Nous simulons ensuite une matrice de bruit gaussien
 $\E$. La matrice des effets de la variable latente sur $\Y$ est aussi calculé a
 l'aide de la loi normale, nous notons cette matrice $\V$. La matrice des effets
-de $\X$ sur $\Y$, noté $\B$, est simulé de sorte que $1 \%$ de ses lignes soit
-non nulle. Enfin, \Y est calculé tel que 
+de $\X$ sur $\Y$, noté $\B$, est simulée de sorte que $1 \%$ de ses lignes soit
+non nulle. Enfin, les variables \Y sont calculées telles que 
 \begin{equation} 
 \Y = \U \V^{T} + \X \B^{T} + \E. 
 \end{equation} 
-Cette simulation correspond a une situation où 1 \% des variables $\Y$ sont
+Cette simulation correspond à une situation où 1 \% des variables $\Y$ sont
 associé avec $\X$ et la variable latente est bien facteur de confusion pour
 cette étude d'association car $\U$ est corrélé avec $\X$. Afin de détecter les
 variables expliquées associés à la variables explicative, nous avons réalisé une
-régression linéaire classique avec seulement la variable $\X$ en variable
-explicative de la régression. Nous effectuons une autre régression linéaire avec
-cette fois la variable $\X$ ainsi que la variable latente $\U$ comme variable
-explicatives de la régression. Nous avons ensuite réalisé un test de Student
-pour tester la nullité des coefficient associé à la variable $\X$ dans chacune
-des deux régressions. La figure ref:fig:simu_intro montre que quand on ne prend
-pas en compte la variable latente plus de 40 \% des \pvalues sont proche de
-zéro, on détecte alors beaucoup de candidats pour l'association avec la variable
-explicative. Alors que quand on prend en compte les facteurs latents la
-distribution des \pvalues est bien uniforme comme on s'y attend. On s'attend
-bien a une distribution uniforme des \pvaleur car la majorité des variables $\Y$
-ne sont pas associé avec la variable $\X$. Dans le cas de cette simulation il
-est impossible de ne pas prendre en compte la variable latente, sans celle-ci on
-détecte presque la moitié des variables expliquée comme étant associé à $\X$.
-
-<<sec:simu_conf>>
+régression linéaire avec seulement la variable $\X$ en variable explicative de
+la régression. Nous effectuons une autre régression linéaire avec cette fois la
+variable $\X$ ainsi que la variable latente $\U$ comme variable explicatives de
+la régression. Nous avons ensuite réalisé un test de Student pour tester la
+nullité des coefficient associé à la variable $\X$ dans chacune des deux
+régressions. La figure ref:fig:simu_intro montre que quand on ne prend pas en
+compte la variable latente plus de 40 \% des \pvalues sont proches de zéro, on
+détecte alors beaucoup de candidats pour l'association avec la variable $\X$.
+Alors que quand on prend en compte les facteurs latents la distribution des
+\pvalues est bien uniforme comme on s'y attend. On s'attend a une distribution
+uniforme des \pvaleur car la majorité des variables $\Y$ ne sont pas associées
+avec la variable $\X$, seulement 1\% par simulation. Dans le cas de cette
+simulation il est impossible de ne pas prendre en compte la variable latente,
+sans celle-ci on détecte presque la moitié des variables $\Y comme étant
+associées à $\X$.
 
 #+NAME: code:confusion_plot
 #+CAPTION: Dépend de 
@@ -648,7 +647,7 @@ pouvons formaliser de la façon suivante
 \label{eq:statReg}
 \Y_{j} = \X b_{j} + \E_{j}
 \end{equation}
-où $\Y_{j}$ est la matrice des observation de la variable d'indice $j$ sur
+où $\Y_{j}$ est la matrice des observations de la variable d'indice $j$ sur
 $\Yrow$ individus. Le coefficient $b_{j}$ représente l'effet de $\X$ sur
 $\Y_{j}$. La matrice $\E_{j}$ est la matrice de l'erreur résiduelle. Il arrive
 parfois que l'on fasse la régression dans l'autre sens, la régression s'écrit
@@ -657,24 +656,30 @@ alors
 \label{eq:statRegRevers}
 \X = \Y_{j} a_{j} + \E^{'}_{j},
 \end{equation}
-où $\a_{j}$ représente l'effet de $\Y_{j}$ sur $\X$. De plus, si nous avons
-observé des variables supplémentaires qui sont des facteurs de confusion pour
-notre étude, celle si sont ajoutées au coté des variables explicatives du modèle
-de régression. Dans la suite nous ne parlerons de régression que dans le sens de
-l'équation eqref:eq:statReg. L'objectif est de trouver les coefficients $b_{j}$
-qui sont significativement différents de zéro. Dans ce cas on peut dire que
-$\Y_{j}$ est potentiellement associée à $\X$. Comme nous l'avons évoqué dans la
-partie précédente avec ce genre d'approche il est possible qu'une variable non
-observée soit corrélé à la fois à $\Y$ et à $\X$. Dans ce cas, nous détectons
-qu'un grand nombre de variable $\Y_{j}$ sont significativement corrélées à $\X$.
-Mais cela est du à la variable latentes qui est corrélé a la fois à $\X$ et aux
-variables $\Y$ (voir partie [[sec:simu_conf]] pour une simulation qui illustre de
-cette situation).
+où $\a_{j}$ représente l'effet de $\Y_{j}$ sur $\X$. Dans la suite nous ne
+parlerons de régression que dans le sens de l'équation eqref:eq:statReg. Aussi
+$\X$ peut contenir plusieurs variable d'intérêt pour l'étude d'association. De
+plus, sxi nous avons observé des variables supplémentaires qui sont des facteurs
+de confusion pour notre étude, celle si sont être ajouté au coté des variables
+explicatives du modèle de régression. Dans cette partie on considère le cas
+simple d'une association avec une seul variable et autres observation de
+variables de confusions. L'objectif est de trouver les coefficients $b_{j}$ qui
+sont significativement différents de zéro. Dans ce cas on peut dire que $\Y_{j}$
+est associée à $\X$. Comme nous l'avons évoqué dans la partie précédente avec
+cette approche il est possible qu'une ou plusieurs variables latentes soit
+corrélée à la fois à $\Y$ et à $\X$. Dans ce cas, si l'on ne considère les
+variables latentes comme variables explicatives de la régression nous détectons
+qu'un grand nombre de variables $\Y_{j}$ sont significativement corrélées à
+$\X$, comme nous l'avons illustré par une simulation numérique dans la partie
+précédente. Nous allons maintenant présenter les différentes approches possible
+pour corriger les études d'association pour les facteurs de confusion.
+
 **** Estimation des facteurs latent à priori
 Une première approche consiste à trouver les variables latentes en faisant une
-analyse factorielle de la matrice $\Y$ et sans prendre en compte la variable
-$\X$. Les variables latentes sont ensuite ajoutées au modèle de régression au
-coté des autres variables explicatives
+analyse factorielle de la matrice $\Y$. On fait l'analyse factorielle à priori
+et sans prendre en compte la variable $\X$. Les variables latentes sont ensuite
+ajoutées au modèle de régression au coté des autres variables explicatives de
+sorte que
 \begin{equation}
 \Y_{j} = \X b_{j} + \bar{\U} \V_{j}^{T} + \E_{j}
 \end{equation}
@@ -689,27 +694,27 @@ mixe. Dans un tel modèle on ajoute un effet aléatoire à la régression
 \Y_{j} = \X \B^{T} + \matr{\Gamma}_{j} + \E_{j}
 \end{equation}
 où $\matr{\Gamma}_{j}$ est la matrice des effets aléatoires à estimer. Dans les
-modèles on s'suppose de plus que la matrice de covariance de l'effet aléatoire
-est connue. Dans le cadre des modèle mixe on parle d'effet aléatoire mais il
-s'agit en faite du facteur de confusion dont à parlé jusque ici. Ainsi, la
-matrice de covariance doit correspondre à la variance du facteur de confusion,
-elle est en générale à partir de la matrice $\Y$. Les modèle mixes ont été
-largement utilisé pour les GWAS cite:Kang_2008,Zhou_2014. Dans ce cas des GWAS,
-l'effet aléatoire permet d'expliquer la variation de $\Y_{j}$ qui est dû à la
-structure de population. Dans ce cas la matrice de covariance est estimé à
-priori sur les données génétiques.
-**** Les modèles mixes à facteurs latents (LFMM, latent factor mixed model en anglais)
+modèles mixes on suppose de plus que la matrice de covariance de l'effet
+aléatoire est connue. On parle d'effet aléatoire mais il s'agit en faite du
+facteur de confusion dont à parlé jusque ici. Ainsi, la matrice de covariance
+doit correspondre à la variance du facteur de confusion, elle est en générale
+calculé à partir de la matrice $\Y$. Les modèles mixes ont été largement utilisés
+pour les GWAS cite:Kang_2008,Zhou_2014. Dans le cas des GWAS, l'effet aléatoire
+permet d'expliquer la variation de $\Y_{j}$ qui est dû à la structure de
+population. Dans ce cas la matrice de covariance est estimé à priori sur les
+données génétiques.
+**** Les modèles mixes à facteurs latents (LFMM latent factor mixed model)
 Nous introduisons maintenant les modèles mixes à facteurs latents. L'équation de
 régression peut s'écrire comme ceci : 
 \begin{equation}
 \label{eq:glfmm}
-\Y = f(\X \B^{T} + \U \V^{T}) + \E.
+\Y = \X \B^{T} + \U \V^{T} + \E.
 \end{equation}
 Dans cette équation $\U$ est la matrice des variables latentes et $\V$ est la
 matrice des axes des facteurs latents. La différence majeur de LFMM avec les
 autres modèles est qu'on ne suppose rien a priori sur les facteurs de confusion.
-Dans les modèles dont nous avons parlé précédemment on estime à priori soit les
-variables latentes directement soir leur matrice de covariance. l'objectif de
+Dans les modèles dont nous avons parlés précédemment on estime à priori soit les
+variables latentes directement soir leurs matrice de covariance. l'objectif de
 LFMM est d'apprendre la variation systématique observées dans les variables $\Y$
 grâce aux paramètres $\U$ et $\V$ tout en prenant en compte la variable $\X$. Il
 existe différentes méthodes pour estimer les paramètres de LFMM. On distingue
@@ -719,17 +724,17 @@ Ces approches repose sur une modélisation bayésienne de LFMM qui permet
 d'échantillonner les lois à posteriori des paramètres. L'avantage de ces
 méthodes est qu'elles permettent d'estimer la variance du paramètre $\B$. Cela
 permet de faire un test de significativité statistique. Il y a aussi des
-approches qui reposent sur des algorithme EM (Expectation Maximixation)
+approches qui reposent sur des algorithmes EM (Expectation Maximisation)
 cite:friguet09_factor_model_approac_to_multip,agarwal09_regres,zhou16_spars_multiv_factor_analy_regres.
 Ces approches sont plus rapides que les méthodes utilisant des algorithmes de
 Monte Carlo. Enfin, il y a les approches qui reposent sur une estimation des
 variables latentes à partir d'une transformation de $\Y$
 cite:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007. Cette
-transformation a pour but de séparer les variations de $\Y$ expliquée par les
+transformation a pour but de séparer la variation de $\Y$ expliquée par les
 variables latentes de celle expliquée par $\X$. Parmi cette dernière catégorie
 de méthodes, on distingue des autres les méthodes dites à contrôles négatifs qui
 suppose connu un sous ensemble de variable $\Y_{j}$ qui ne sont pas associées
-avec $\X$. Ainsi, les méthodes a contrôles négatifs utilisent donc les variables
+avec $\X$. Les méthodes a contrôles négatifs utilisent donc les variable
 dites nulles pour estimer les variables latentes. 
 
 
@@ -756,18 +761,17 @@ nature observatoire de l'étude.
 Comme nous l'avons vu dans la partie précédente l'estimation des variables
 latentes pour corriger les études d'association est un problème très vaste et
 aucune méthode ne s'est imposée comme référence. Nous proposons ici, deux
-méthodes d'estimation rapides et efficaces des paramètres du modèle LFMM dans le
-cas où la fonction de lien $f$ est l'identité. Nos deux méthodes d'estimation
-consiste à isolé la variabilité expliquée par les variables latentes de celle
-expliquée par les variables explicatives. Les méthodes que nous présentons sont
-comparable à SVA cite:article_Leek_Storey_2007 et CATE cite:wang2015confounder
-qui procède d'une façon très similaire, nous décrivons plus en détail les
-méthodes CATE et SVA dans la partie [[sec:similar_method]]. Chacun des algorithmes
-que nous présentons découle de l'optimisation d'une fonction objectif. Nous
-montrons montrons que nos algorithmes d'estimation convergent vers le point de
-minimum global de leur fonction objectif respective. Enfin, nous comparons nos
-méthodes à SVA et CATE sur des simulations numériques ainsi que des exemples de
-GWAS, EWAS et GEA.
+méthodes d'estimation rapides et efficaces des paramètres du modèle LFMM. Nos
+deux méthodes d'estimation consiste à isolé la variation de $\Y$ expliquée par
+les variables latentes de celle expliquée par les variables explicatives. Les
+méthodes que nous présentons sont comparable à SVA cite:article_Leek_Storey_2007;
+et CATE cite:wang2015confounder; qui procède d'une façon très similaire, nous
+décrivons plus en détail les méthodes CATE et SVA dans la partie
+[[sec:similar_method]]. Chacun des algorithmes que nous présentons découle de
+l'optimisation d'une fonction objectif. Nous montrons que nos algorithmes
+d'estimation convergent vers le point de minimum global de leur fonction
+objectif respective. Enfin, nous comparons nos méthodes à SVA et CATE sur des
+simulations numériques ainsi que des exemples de GWAS, EWAS et GEA.
 
 ** Méthodes 
 *** Modèle 
