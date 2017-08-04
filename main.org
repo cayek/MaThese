@@ -777,32 +777,34 @@ simulations numériques ainsi que des exemples de GWAS, EWAS et GEA.
 *** Modèle 
 <<sec:model>>
 Dans cette partie nous introduisons les notations du modèle mixes à facteurs
-latents que nous utilisons pour corriger les test d'association : 
+latents que nous utilisons pour corriger les tests d'association : 
 \begin{equation}
 \label{eq:model}
 \Y = \X \B^T + \U \V^T + \E.
 \end{equation}
-Dans cette équation, $\Y$ est la matrice des variables expliquées de taille
-$\Yrow \times \Ycol$, où $\Yrow$ est le nombre d'observations des $\Ycol$ de
-variables expliquée. Par exemple, les variables expliquées peuvent être des
-SNPs, des niveaux de méthylation ou bien des niveaux d'expression génique. La
-matrice $\X$, de taille $\Xrow \times \Xcol$, représente les variables
-explicatives. Les variables explicatives peuvent être par exemple un phénotype,
-comme une maladie, ou un gradient environnemental, comme la température d'un
-habitat. La matrice des effets de taille $\Ycol \times \Xcol$ est notée $\B$. Si
-l'on suppose qu'il y a $K$ variable latentes alors la matrice $\U$ est la
-matrice des $\K$ variable latentes et $\V$ représente les axes des facteurs
-latents. Les matrices $\V$ et $\U$ sont respectivement la matrice des axes
-factoriels, de taille $\Ycol\times\Ucol$, et la matrice des coordonnées sur ses
-axes, de taille $\Urow \times \K$. Enfin la matrice $\E$ est la matrice d'erreur
-résiduelle, de taille $\Yrow\times\Ycol$.
+Dans cette équation, $\Y$ est la matrice, de taille $\Yrow \times \Ycol$, qui
+rassemble les observations de $\Ycol$ variables sur $\Yrow$ individus. Par
+exemple, les variables $\Y$ peuvent être des SNPs, des niveaux de méthylation ou
+bien des niveaux d'expression génique. La matrice $\X$, de taille $\Xrow \times
+\Xcol$, regroupe toutes les variables explicatives. Les variable $\X$ sont les
+variables d'intérêt pour l'association, c'est à dire les variable pour
+lesquelles on souhaite trouver les associations avec $\Y$. Les variables $\X$
+peuvent être par exemple un phénotype, comme une maladie, ou un gradient
+environnemental, comme la température d'un habitat. La matrice des effets de
+$\X$ sur $\Y$ de taille $\Ycol \times \Xcol$ est notée $\B$. Si l'on suppose
+qu'il y a $K$ variable latentes alors la matrice $\U$ est la matrice des $\K$
+variable latentes et $\V$ représente les axes des facteurs latents. Les matrices
+$\V$ et $\U$ sont respectivement la matrice des axes factoriels, de taille
+$\Ycol\times\Ucol$, et la matrice des coordonnées sur ses axes, de taille $\Urow
+\times \K$. Enfin la matrice $\E$ est la matrice d'erreur résiduelle, de taille
+$\Yrow\times\Ycol$.
 
 Dans un premier temps, nous remarquons que les matrices $\U$ et $\V$ ne sont pas
-définies de façon unique. En effet, comme ces deux matrice sont
-multiplié entre elle dans l'équation eqref:eq:model, les matrices $\U$ et
-$\V$ sont définie a une matrice inversible puisque
+définies de façon unique. En effet, comme ces deux matrices sont
+multipliées entre elle dans l'équation eqref:eq:model, les matrices $\U$ et
+$\V$ sont définies à une matrice inversible prêt puisque
 \begin{equation}
-\U \V = \U \matr{R} \matr{R}^{-1} \V^{T}
+\U \V^{T} = \U \matr{R} \matr{R}^{-1} \V^{T}
 \end{equation}
 où $\matr{R}$ est une matrice inversible de taille $\K \times \K$. Nous posons alors
 \begin{equation}
@@ -810,7 +812,7 @@ où $\matr{R}$ est une matrice inversible de taille $\K \times \K$. Nous posons 
 \W = \U \V^{T} 
 \end{equation}
 et nous appelons la matrice $\W$ la matrice latente. Si l'on suppose qu'il y a $\K$
-variables latentes linéairement indépendantes cela est équivalent a faire
+variables latentes linéairement indépendantes cela est équivalent à faire
 l'hypothèse que la matrice latente $\W$ est de rang $\K$. Dans la suite nous
 considérons $\U$ et $\V$ comme étant les matrices uniques obtenues grâce à
 l'analyse en composantes principales de la matrice latente $\W$.
@@ -826,10 +828,11 @@ l'analyse en composantes principales de la matrice latente $\W$.
   mettre lasso estimator et ridge estimator.
 :END:
 
-Dans cette partie, nous présentons un algorithme d'estimation des paramètres de
-défini par l'équation eqref:eq:model basé sur un problème des moindres carrées
-régularisé en norme $L_{2}$. Nous montrons que cet algorithme permet de calculer
-un minimum global du problème d'optimisation des moindres carrés.
+Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
+modèle défini par l'équation eqref:eq:model. L'algorithme d'estimation est basé
+sur un problème des moindres carrées régularisé en norme $L_{2}$. Nous montrons
+que cet algorithme calcule un minimum global du problème d'optimisation des
+moindres carrés régularisé en norme $\L2$.
 
 **** Fonction objectif 
 
@@ -840,12 +843,12 @@ fonction objectif de type ridge suivante
 \LfmmLridge
 \end{equation}
 où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2}$ est la norme $L_2$
-et $\lambRidge$ le paramètre de régularisation.Le terme premier terme de
-$\Lridge$ (terme d'attache aux données) correspond à l'opposé de la log
-vraisemblance pour un modèle où la matrice de bruit $\E$ est gaussienne,
-isotrope et de moyenne nulle. Le terme deuxième terme de $\Lridge$ (terme de
-régularisation) est indispensable pour séparer la variance expliqué par les
-variables latentes de celle expliqué des variables explicatives. En effet, si
+et $\lambRidge$ le paramètre de régularisation. Le premier terme de $\Lridge$,
+le terme d'attache aux données, correspond à l'opposé de la log vraisemblance si
+l'on suppose que la matrice de bruit $\E$ est gaussienne, isotrope et de moyenne
+nulle. Le deuxième terme de $\Lridge$, le terme de régularisation, est
+indispensable pour séparer la variation de $\Y$ expliquée par les variables
+latentes de celle expliquée des variables explicatives. En effet, si
 \begin{equation*}
 \lambRidge = 0, 
 \end{equation*}
@@ -855,12 +858,11 @@ alors pour toute matrice $\matr{P}$, de taille $\Xcol \times \Ycol$, nous avons
 \end{equation*}
 Les points du minimum de la fonction objective ne sont pas définis de
 manière univoque pour notre problème quand le paramètre de régularisation est
-nulle. 
+nulle.
 
 **** Algorithme de minimisation de la fonction objectif $\Lridge$
 Afin d'estimer les paramètres de LFMM minimisant $\Lridge$ nous commençons par
-calculer la décomposition en valeurs singulières de la matrice des variables
-explicatives
+calculer la décomposition en valeurs singulières de $\X$
 \begin{equation*}
 \X = \matr{Q} \matr{\Sigma} \matr{R}^{T},
 \end{equation*}
@@ -873,13 +875,13 @@ la façon suivante
 \label{eq:RidgeLfmmEstomatorW}
 \hat{\U} \hat{\V}^{T} & =  \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
 \label{eq:RidgeLfmmEstomatorB}
-\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}^{T}),
+\hat{\B}^{T} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}^{T}),
 \end{align}
-où $\svd_{\K}(\matr{A})$ est la meilleure approximation de rang $\K$ de la matrice
-$\matr{A}$, donnée par la décomposition en valeurs singulières (SVD,
-singular value décomposition en anglais) et $\Id_{d}$ est la matrice identité de taille $d
-\times d$. La matrice $\D$ est la matrice diagonale de taille $\Yrow
-\times \Yrow$ qui contient les termes diagonaux suivants
+où $\svd_{\K}(\matr{A})$ est la meilleure approximation de rang $\K$ de la
+matrice $\matr{A}$, donnée par la décomposition en valeurs singulières et
+$\Id_{d}$ est la matrice identité de taille $d \times d$. La matrice $\D$ est la
+matrice diagonale de taille $\Yrow \times \Yrow$ qui contient les termes
+diagonaux suivants
 \begin{equation*}
 \left\{ \D_{,i,i}\right\}_{i = 1..n} = 
 \left\{ \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{1}^{2}}}, ..., 
@@ -891,85 +893,87 @@ Notons que l'estimation de la matrice latente $\hat{\U} \hat{\V}^{T}$ dans
 l'équation eqref:eq:RidgeLfmmEstomatorW fait intervenir la matrice de changement
 de base $\matr{Q}$. Les $\Xcol$ premiers axes de la base canonique transformée
 par $\Q$ forment une base orthonormale de l'espace vectoriel engendré par les
-variables explicatives. La matrice diagonale $\D$ a pour effet de réduire
-la composante qui appartient à l'espace engendré par $\X$. Si $\lambRidge$ vaut
-zéro la multiplication par $\D \matr{Q}^{T}$ revient à prendre le résidu
-d'une régression linéaire par $\X$, on enlève alors toute la corrélation
-linéaire avec $\X$. Si $\lambRidge$ est très grand alors $\D$ tend vers la
-matrice identité. Dans ce cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire
-une analyse en composante principale de la matrice $\Y$. Il est donc important
-de choisir une valeur de $\lambRidge$ qui enlève la bonne proportion de
-corrélation avec les variables explicatives $\X$. Nous expliquons dans la partie
-[[sec:hyperparametre]] plus en détail comment choisir l'hyperparamètre
-$\lambRidge$.
+variable explicatives $\X$. La matrice diagonale $\D$ a pour effet de ramener
+vers zéro la composante qui appartient à l'espace engendré par $\X$. Si
+$\lambRidge$ tend vers zéro multiplier $\Y$ par $\D \matr{Q}^{T}$ revient à
+prendre le résidu d'une régression linéaire de $\Y$ par $\X$, on enlève alors
+toute la part de variance expliquée par $\X$. Mais $\D$ n'est plus inversible.
+Si $\lambRidge$ est très grand alors $\D$ tend vers la matrice identité. Dans ce
+cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en composante
+principale de la matrice $\Y$. Nous expliquons dans la partie [[sec:hyperparametre]]
+plus en détail comment choisir l'hyperparamètre $\lambRidge$.
 
-L'estimation des paramètres régularisé en norme $L_{2}$ est justifié par le
+L'estimation des paramètres régularisé en norme $L_{2}$ est justifier par le
 théorème suivant
 #+BEGIN_theorem
 <<ridge_theorem>> 
 Pour $\lambRidge$ strictement supérieur à zéro, l'estimation des
 paramètres de LFMM régularisé en norme $L_{2}$, définie par
-eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, défini un point de
+eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, défini un 
 minimum global de la fonction objective $\Lridge$.
 #+END_theorem
 
 #+BEGIN_proof
-On veut trouver $ \hat{\U} \in \RR^{\Urow \times \Ucol}$, $\hat{\V} \in
-\RR^{\Vrow \times \Vcol}$ et $\hat{\B} \in \RR^{\Brow \times \Bcol}$ qui soit un
-minimum global de la fonction $\Lridge$. Commençons par remarquer que la
-fonction $\Lridge$ est convexe en la variable $\B$ , on peut donc
-trouver le point de minimum global en annulant la dérivée de $\Lridge$ par
-rapport à $\B$
+On veut trouver $\hat{\U} \in \RR^{\Urow \times \Ucol}$, $\hat{\V} \in
+\RR^{\Vrow \times \Vcol}$ et $\hat{\B} \in \RR^{\Brow \times \Bcol}$
+correspondant à un minimum global de la fonction $\Lridge$. Commençons par
+remarquer que la fonction $\Lridge$ est convexe en la variable $\B$ , on peut
+donc trouver le point de minimum global en annulant la dérivée de $\Lridge$ par
+rapport à $\B$. Cela conduit a l'équation suivante
 \begin{equation}
-\hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V).
+\hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V^{T}).
 \end{equation}
 Il s'agit de l'estimateur ridge du modèle de la régression linéaire de $\Y - \U
-\V$ par $\X$.
+\V^{T}$ par $\X$, en supposant que $\U$ et $\V$ sont connues.
 
 Il faut maintenant minimiser la fonction
 \begin{align*}
 \mathcal{L}^{'}(\U, \V) & = \Lridge(\U, \V, \hat{\B}).
 \end{align*}
-Considérons la décomposition en valeur singulière de $\X$ tel que 
+Considérons la décomposition en valeurs singulières de $\X$ telle que 
 \begin{equation*}
-\X = \matr{Q} \matr{\Sigma} \matr{R}^{T}
+\X = \matr{Q} \matr{\Sigma} \matr{R}^{T},
 \end{equation*}
 où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, $\matr{R}$
 une matrice unitaire de taille $\Xcol \times \Xcol$ et $\matr{\Sigma}$ une
 matrice de taille $\Xrow \times \Xcol$ contenant les valeurs singulières $\left
-\{ \sigma_{j} \left \}_{j = 1..\Xcol}$.L'écriture de $\mathcal{L}^{'}$ se
+\{ \sigma_{j} \left \}_{j = 1..\Xcol}$. L'écriture de $\mathcal{L}^{'}$ se
 simplifie comme ceci
 \begin{equation*}
-\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\D^{2} \matr{Q}^{T} (\Y - \U \V^{T})} + 
-\frac{1}{2} \lambRidge \norm{\matr{C}_{\lambRidge} \matr{Q}^{T} (\Y - \U \V^{T})}
+\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\D^{2} \matr{Q}^{T} (\Y - \U \V^{T})}^{2}_{F} + 
+\frac{1}{2} \lambRidge \norm{\matr{C}_{\lambRidge} \matr{Q}^{T} (\Y - \U \V^{T})}_{F}^{2}
 \end{equation*}
 où $\matr{C}_{\lambRidge}$ est une matrice de taille $\Xcol \times \Xrow$
 remplie de zéro sauf sur la première diagonale qui contient les valeurs
 \begin{equation*}
+\left\{ \matr{C}_{\lambRidge, i, i} \right\}_{i = 1..d} = 
 \left\{ \frac{\sigma_{i}}{\sigma_{i}^{2} + \lambRidge}\right\}_{i = 1..\Xcol}.
 \end{equation*}
 La matrice $\D$ est une matrice diagonale de taille $\Yrow \times \Xrow$
 contenant les termes 
 \begin{equation*}
+\left\{ \matr{D}_{\lambRidge, i, i} \right\}_{i = 1..n} = 
 \left\{ \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{1}^{2}}}, ..., 
 \sqrt{\frac{\lambRidge}{\lambRidge + \sigma_{d}^{2}}}, 
 1, ..., 1 \right\}.
 \end{equation*}
-Les matrices $\D$ et $\matr{C}_{\lambRidge}$ étant diagonales, nous pouvons factoriser
-$\mathcal{L}^{'}$ de sorte que 
-\begin{equation*}
-\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\D \matr{Q}^{T} (\Y - \U \V^{T})}
-\end{equation*}
+Les matrices $\D$ et $\matr{C}_{\lambRidge}$ étant diagonales, par le calcule il
+est possible de montrer que
+\begin{align*}
+\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\sqrt{(\D^{2} + 
+\matr{C}_{\lambRidge}^{2})} \matr{Q}^{T} (\Y - \U \V^{T})}_{F}^{2} \\ 
+& = \frac{1}{2} \norm{ \D \matr{Q}^{T} (\Y - \U \V^{T})}_{F}^{2}
+\end{align*}
 Enfin, optimiser la fonction objectif $\mathcal{L}^{'}$ est équivalent au
-problème de trouver la meilleur approximation de rang $\K$ de la matrice
+problème de trouver la meilleure approximation de rang $\K$ de la matrice
 \begin{equation*}
 \D \matr{Q}^{T} \Y,
 \end{equation*}
 qui est obtenue en tronquant la SVD pour ne garder que les $\K$ valeurs
 singulières les plus grandes cite:Eckart_1936. Nous avons bien montré que
 \begin{align*}
-\hat{\U} \hat{\V} & =  \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
-\hat{\B} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V})
+&\hat{\U} \hat{\V}^{T} = \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
+&\hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}^{T})
 \end{align*}
 est un point de minimum global de $\Lridge$.
 #+END_proof
@@ -980,83 +984,84 @@ est un point de minimum global de $\Lridge$.
   Faire le lien avec les methodes de low rank approximation
 :END:
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
-modèle LFMM défini par eqref:eq:model basé sur un problème des moindres carrés
-régularisé en norme $L_{1}$. Nous montrons que cet algorithme converge vers
-un point de minimum global du problème d'optimisation.
+modèle défini par eqref:eq:model basé sur un problème des moindres carrés
+régularisé en norme $L_{1}$ et en norme nucléaire. Nous montrons que cet
+algorithme calcule un minimum global du problème d'optimisation des moindres
+carrés régularisé.
 
 **** Fonction objectif 
-Nous proposons la fonction objective suivante
+Afin d’estimer les paramètres U, V et B de LFMM, nous définissons la fonction
+objectif de type lasso suivante
 \begin{equation}
 \label{eq:optim_lasso_reg}
-\LfmmLlasso
+\LfmmLlasso,
 \end{equation}
 où $\W$ est la matrice latente définie en eqref:eq:W, $\norm{\B}_{1}$ la norme
-$L_1$ de $\B$ et $\norm{\W}_{*}$ la norme nucléaire de la matrice
-$\W$, définie comme la somme de ses valeurs singulières.
-
-Le choix de la norme $L_{1}$ est motivé par le fait que l'on s'attend à ce que
-seulement une certaine proportion de variables expliquées soit associées aux
-variables explicatives. C'est à dire que seulement une certaine proportion des
-lignes de la matrice des effets $\B$ doivent être non nulles. La régularisation
-$L_{1}$ est connue pour produire des estimateurs parcimonieux de $\B$
-cite:Tibshirani_1996.
-
-La fonction $\Llasso$ fait aussi intervenir une régularisation sur la matrice
-latente $\W$. Ainsi la fonction $\Llasso$ est convexe et nous savons le rang de
-$\hat{\W}$, point minimum de $\Llasso$, décroît avec $\gamma$ le paramètre de
-régularisation devant la norme nucléaire cite:bach2008consistency.
+$L_1$ de $\B$ et $\norm{\W}_{*}$ la norme nucléaire de la matrice $\W$, définie
+comme la somme de ses valeurs singulières. Le choix de la norme $L_{1}$ est
+motivé par le fait que l'on s'attend à ce que seulement une certaine proportion
+de variables $\Y$ soit associée à $\X$. C'est à dire que seulement une certaine
+des lignes de la matrice des effets $\B$ doivent être non nulles. La
+régularisation $L_{1}$ est connue pour produire des estimateurs parcimonieux de
+$\B$ cite:Tibshirani_1996. La fonction $\Llasso$ fait aussi intervenir une
+régularisation sur la matrice latente $\W$. Nous ajoutons cette régularisation
+afin de lever la contrainte sur le rang de $\W$ qui ne permet pas de définir un
+problème d'optimisation convexe. Avec le terme de régularisation de $\W$, la
+fonction $\Llasso$ est convexe. De plus il a été montré que le rang d'un point
+de minimum de $\Llasso$ décroît avec $\gamma$ le paramètre de régularisation de
+$\W$ cite:bach2008consistency. La régularisation en norme nucléaire contraint le
+rang de $\W$ et donc le nombre de variables latentes.
 
 **** Algorithme de minimisation de la fonction objectif $\Llasso$
 <<sec:lasso_algo>>
 
 Nous présentons maintenant un algorithme de descente par blocs de coordonnées
-qui permet d'estimer les paramètres de LFMM minimisant la fonction objective
-$\Llasso$ définie par eqref:eq:optim_lasso_reg.
-
-Nous initialisons l'algorithme avec des matrices nulles : 
+qui permet d'estimer les paramètres de LFMM en minimisant la fonction objective
+$\Llasso$ définie par eqref:eq:optim_lasso_reg. Nous initialisons l'algorithme
+avec des matrices nulles :
 \begin{align*}
-\W_{t = 0} & = 0 \\
-\B_{t = 0} & = 0.
+\hat{\W}_{t = 0} & = 0 \\
+\hat{\B}_{t = 0} & = 0.
 \end{align*}
 Nous alternons ensuite les deux étapes suivantes : 
-1. Calculer $\B_{t}$ le point minimum de 
+1. Calculer $\hat{\B}_{t}$ le point minimum de 
    \begin{equation}
    \label{eq:lasso1}
-   \mathcal{L}_{lasso}^{2}(\B) =  \frac{1}{2} ||(\Y - \W_{t-1}) - \X \B^T||_{F}^2 + \lambLasso ||\B||_1
+   \mathcal{L}_{\mathrm{lasso}}^{'}(\B) =  \frac{1}{2} ||(\Y - \hat{\W}_{t-1}) - \X \B^T||_{F}^2 + \lambLasso ||\B||_1
    \end{equation}
-2. Calculer $\W_{t}$ le point minimum de  
+2. Calculer $\hat{\W}_{t}$ le point minimum de  
    \begin{equation}
    \label{eq:lasso2}
-   \mathcal{L}_{lasso}^{1}(\W) = \frac{1}{2} ||(\Y - \X \B_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}.
+   \mathcal{L}_{\mathrm{lasso}}^{''}(\W) = \frac{1}{2} ||(\Y - \X \hat{\B}_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}.
    \end{equation}
-Ces deux étapes sont répétées jusqu'à ce que l'algorithme est converge ou bien que
+Ces deux étapes sont répétées jusqu'à ce que l'algorithme converge ou bien que
 $t$ atteint le nombre maximum d'itérations. Nous allons maintenant expliquer
-plus en détail les deux étapes de l'algorithme.
+plus en détail les deux étapes de l'algorithme. 
 
 La première étape de l'algorithme consiste à faire une régression linéaire
 régularisée en norme $L_{1}$ de la matrice résiduelle
 \begin{equation}
-\matr{E}^{1}_{t} = \Y - \W_{t-1}
+\matr{E}^{1}_{t} = \Y - \hat{\W}_{t-1}
 \end{equation}
 par les variables explicatives $\X$. Il existe plusieurs algorithmes pour
 estimer les paramètres de cette régression comme par exemple l'algorithme de
 descente par coordonnées cite:Friedman_2007. Dans le cas présent on s'intéresse
 plus à l'estimation des variables latentes, qui permettrons ensuite de faire le
-test d'association (voir la partie [[sec:hypothese]]). Nous pouvons transformer les
-variables explicatives de sorte que
+test d'association (voir la partie [[sec:hypothese]]). Nous supposons que les
+variables explicatives $\X$ ont été transformées de sorte que
 \begin{equation}
-\X^{T} \X = Id_{d}.
+\X^{T} \X = \Id_{d}.
 \end{equation}
-On a alors d'après cite:Tibshirani_1996 
+On a alors d'après cite:Tibshirani_1996,
 \begin{equation}
-\B_{t} = \sign(\bar{\B}_{t}) (\bar{\B}_{t} - \lambLasso)_{+}
+\hat{\B}_{t} = \sign(\bar{\B}_{t}) (\bar{\B}_{t} - \lambLasso)_{+}
 \end{equation}
 où 
 \begin{equation}
-s_{+} = \mathrm{max}(0, s)
+s_{+} = \mathrm{max}(0, s),
 \end{equation}
-$\sign(s)$ est le signe de $s$ et $\bar{\B}_{t}$ est le paramètre de la
-régression linéaire classique données dans ce cas par 
+$\sign(s)$ est le signe de $s$ et $\bar{\B}_{t}$ est l'estimateur du paramètre
+de la régression linéaire classique donné dans ce cas par
 \begin{equation*}
 \bar{\B}_{t} = \X^{T} \matr{E}^{1}_{t}.
 \end{equation*}
@@ -1064,64 +1069,63 @@ régression linéaire classique données dans ce cas par
 La deuxième étape de l'algorithme est un problème d'approximation de rang faible
 de la matrice résiduelle 
 \begin{equation}
-\matr{E}^{2}_{t} = \Y - \X \B_{t}^{T}
+\matr{E}^{2}_{t} = \Y - \X \hat{\B}_{t}^{T},
 \end{equation}
 Cette approximation est donnée grâce à un seuillage des valeurs singulières de
 la matrice $\matr{E}^{2}_{t}$ cite:cai10_singul_value_thres_algor_matrix_compl.
 Pour cela, on commence par calculer la décomposition en valeurs singulières de
 la matrice résiduelle :
 \begin{equation}
-\matr{E}^{2}_{t} = \matr{M} \matr{S} \matr{N}^{T}
+\matr{E}^{2}_{t} = \matr{M} \matr{S} \matr{N}^{T},
 \end{equation}
 où $\matr{M}$ une matrice unitaire de taille $\Yrow \times \Yrow$, $\matr{N}$
 une matrice unitaire de taille $\Ycol \times \Ycol$ et $\matr{S}$ une matrice de
 taille $\Yrow \times \Ycol$ contenant les valeurs singulières $\left \{ s_{j}
 \left \}_{j = 1..\Yrow}$. On a alors 
 \begin{equation}
-\W_{t} = \matr{M} \bar{\matr{S}} \matr{N}^{T}
+\hat{\W}_{t} = \matr{M} \bar{\matr{S}} \matr{N}^{T}
 \end{equation}
-où $\bar{\matr{S}}$ est la matrice diagonale formé par les les valeur singulière
-de $\matr{S}$ seuillées. Ainsi les termes diagonaux de $\bar{\matr{S}}$ sont de
-sorte que 
+où $\bar{\matr{S}}$ est la matrice diagonale formée par les valeurs singulières
+de $\matr{S}$ seuillées de sorte que
 \begin{equation*}
 \bar{s}_{j} = (s_{j} - \gamma)_{+}, ~ j = 1,...,\Yrow.
 \end{equation*}
-Ce seuillage produit des valeurs nulles et ramène vers zéro les valeurs
+Le seuillage produit des valeurs nulles et ramène vers zéro les valeurs
 singulières restantes.
 
 L'algorithme de descente par blocs de coordonnées ne converge pas en général
-vers un point minimum quand la fonction n'est pas continûment différentiable,
-comme c'est le cas pour $\Llasso$. On peut trouver dans la littérature des
-résultats sur les algorithmes par blocs de coordonnées dans des cas ou la
-fonction objective n'est pas différentiable cite:Tseng_2001 . Cependant, les
-théorèmes démontrer dans cite:Tseng_2001 dépasse largement le cadre de la
-convergence de l'algorithme d'estimation $L_{1}$ présenté ici ce qui complique
-l'extraction des résultats intéressants. Pour facilité la compréhension, nous
-proposons de démontrer un théorème plus faible qui s'applique directement à
-notre cas. Pour cela nous introduisons quelques notations. Soit la fonction $f$
-définie sur son domaine
+vers un point minimum quand la fonction objectif n'est pas continûment
+différentiable, comme c'est le cas pour $\Llasso$. On peut trouver dans la
+littérature des résultats généraux sur les algorithmes par blocs de coordonnées
+dans des cas ou la fonction objective n'est pas différentiable cite:Tseng_2001 .
+Cependant, les théorèmes démontrés dans cite:Tseng_2001 dépassent largement le
+cadre de la convergence de l'algorithme d'estimation $L_{1}$ présenté ici et
+complique l'extraction des résultats intéressants. Pour faciliter la
+compréhension, nous proposons de démontrer un théorème plus faible qui
+s'applique directement à notre cas. Pour cela nous introduisons quelques
+notations. Soit la fonction $f$ définie sur son domaine
 \begin{equation}
 \label{eq:domf}
 A = A_{1} \times A_{2} \times ... \times A_{m}
 \end{equation}
-un produit cartésien d'ensembles fermés et convexes. L'algorithme de descente par
-blocs de coordonnées est défini par la formule de récurrence suivante :
+un produit cartésien d'ensembles fermés et convexes. L'algorithme de descente
+par blocs de coordonnées est défini par la formule de récurrence suivante :
 \begin{equation}
 \label{eq:blokAlgo}
 x_{i}^{k+1} \in \mathrm{arg} \min_{\zeta \in X_{i}} f(x_{1}^{k}, ...,x_{i-1}^{k},\zeta,x_{i+1}^{k},..., x_{m}^{k}), ~
 i = 1,...,m.
 \end{equation}
-En nous inspirant des résultats présenté dans cite:Tseng_2001 et de la
-proposition 2.7.1 de cite:Bertsekas_1997 qui montre la convergence de
-l'algorithme de descente par bloc de coordonnées dans le cas la fonction
-objectif est différentiable, nous démontrons le théorème suivant :
+En nous inspirant des résultats présentés dans cite:Tseng_2001 et de la
+proposition 2.7.1 de cite:Bertsekas_1997 qui démontre la convergence de
+l'algorithme de descente par bloc de coordonnées dans le cas où la fonction
+objectif est différentiable, nous pouvons énoncer le théorème suivant :
 #+BEGIN_theorem 
-Si $f$ est continue, convexe et tel que
+Si $f$ est une fonction continue de $A$ dans $\RR$, convexe et telle que
 \begin{equation}
-f(x_{1},..., x_{m}) = g(x_{1}, ..., x_{m}) + \sum_{i = 1}^{m} f_{i}(x_{i}) 
+f(x_{1},..., x_{m}) = g(x_{1}, ..., x_{m}) + \sum_{i = 1}^{m} f_{i}(x_{i}),
 \end{equation}
 où g est convexe et différentiable et les fonctions $f_{i}$ sont continues et
-convexes. Soit $\{x^{k}\}$ la séquence générée par eqref:eq:blokAlgo. Alors tout
+convexes. Soit $\{x^{k}\}$ la suite générée par eqref:eq:blokAlgo. Alors tout
 point limite de $\{x^{k}\}$ est un point de minimum global de $f$.
 #+END_theorem
 
@@ -1130,39 +1134,42 @@ On note
 \begin{equation*}
 \bar{x} = (\bar{x}_{1}, ..., \bar{x}_{m})
 \end{equation*}
-un point limite de $\{x^{k}\}$, $\bar{x}$ est bien dans $A$ le domaine de
-définition de $f$ car cet ensemble est fermé. Comme $g$ est convexe et
-différentiable on a pour tout $x \in A$
+un point limite de $\{x^{k}\}$ la suite générée par eqref:eq:blokAlgo, $\bar{x}$
+est bien dans $A$ le domaine de définition de $f$ car cet ensemble est fermé.
+Comme $g$ est convexe et différentiable on a pour tout $x \in A$
 \begin{align}
 \label{eq:lassoProof1}
 f(x) - f(\bar{x}) & \geq & \nabla g(\bar{x})(x - \bar{x}) + 
-\sum_{i = 1}^{N} (f_{i}(x_{i}) - f_{i}(\bar{x}_{i})) \\
- & & = \sum_{i = 1}^{N} ( \nabla_{i} g(\bar{x})(x_{i} - \bar{x}_{i}) + 
+\sum_{i = 1}^{m} (f_{i}(x_{i}) - f_{i}(\bar{x}_{i})) \\
+ & & = \sum_{i = 1}^{m} ( \nabla_{i} g(\bar{x})(x_{i} - \bar{x}_{i}) + 
  f_{i}(x_{i}) - f_{i}(\bar{x}_{i}))
 \end{align}
 où $\nabla g(\bar{x})$ et $\nabla_{i} g(\bar{x})$ sont respectivement la dérivée
-et la dérivée par rapport à la $i\text{-ième}$ variable de $g$ en $\bar{x}$. Or
-nous savons par construction de $\bar{x}$ que
+et la dérivée par rapport à la $i\text{-ième}$ variable de $g$ en $\bar{x}$.
+D'autre part pour chaque variable d'indice $i$
+\begin{align}
+\nabla_{i} g(\bar{x})(x - \bar{x}) + f_{i}(x_{i}) - f_{i}(\bar{x}_{i}) & \geq  (\nabla_{i} g(\bar{x}) + r_{i})(x - \bar{x}) 
+\end{align}
+où $r_{i}$ est n'importe quelle sous-dérivée de la fonction convexe $f_{i}$ en
+$\bar{x}_{i}$. Or nous savons par construction de $\bar{x}$ que
 \begin{equation}
 \label{eq:lassoProof2}
 f(\bar{x}) \leq f(\bar{x}_{1}, ...,x_{i},..., \bar{x}_{m}), ~ \forall x_{i} \in
 A_{i}.
-\end{equation} 
-On a donc pour chaque variable d'indice $i$
-\begin{align}
-\nabla_{i} g(\bar{x})(x - \bar{x}) + f_{i}(x_{i}) - f_{i}(\bar{x}_{i}) & \geq  (\nabla_{i} g(\bar{x}) + r_{i})(x - \bar{x}) \\
-\label{eq:lassoProof3}
-& \geq 0
-\end{align}
-où $r_{i}$ est une sous-dérivée de la fonction convexe $f_{i}$. En effet,
-l'équation eqref:eq:lassoProof2 nous permet de dire qu'il existe une
-sous-dérivée $r_{i}$ tel que
-\begin{equation}
-\label{eq:3}
-(\nabla_{i} g(\bar{x}) + r_{i}) = 0
 \end{equation}
-d'où l'équation eqref:eq:lassoProof3. Finalement, nous avons en utilisant
-eqref:eq:lassoProof3 et eqref:eq:lasso1 
+Pour chaque variable $x_{i}$, on peut donc dire que zéro appartient à l'ensemble
+des sous dérivées par rapport la variable $x_{i}$ de $f$ en $\bar{x}_{i}$. On
+peut alors dire qu'il existe une sous dérivé $r_{i}$ telle quelle que 
+\begin{equation}
+\nabla_{i} g(\bar{x}) + r_{i} = 0.
+\end{equation}
+On a finalement pour chaque variable d'indice $i$
+\begin{equation}
+\label{eq:lassoProof3}
+\nabla_{i} g(\bar{x})(x - \bar{x}) + f_{i}(x_{i}) - f_{i}(\bar{x}_{i}) & \geq  0
+\end{equation}
+Finalement, nous avons en utilisant
+eqref:eq:lassoProof3 et eqref:eq:lasso1 que
 \begin{equation}
 f(x) - f(\bar{x}) \geq 0, ~ \forall x \in A.
 \end{equation}
@@ -1171,49 +1178,49 @@ Ce résultat démontre que l'algorithme d'estimation $L_{1}$ des paramètres du
 modèle LFMM converge vers un point de minimum global de $\Llasso$.
 *** Complexité des algorithmes
 Dans cette partie nous abordons la complexité des algorithmes d'estimation des
-paramètres présentées dans les parties précédentes. On peut distinguer deux
+paramètres présentés dans les sections précédentes. On peut distinguer deux
 grandes étapes dans ces algorithmes. La première est le calcul de la
-décomposition en valeur singulière tronqué (voir le calcul de la matrice
-latente donné par l'équation eqref:eq:RidgeLfmmEstomatorW pour l'estimation
-$L_{2}$ et la résolution du problème d'optimisation de la fonction
-$\mathcal{L}_{lasso}^{1}$ définie par eqref:eq:lasso2 pour l'estimation
-$L_{1}$). La seconde est le calcul de la projection orthogonale sur l'espace
-engendré par les variables explicatives (voir le calcul de $\W$ donné par
-l'équation eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$ et la
-résolution du problème d'optimisation de la fonction $\mathcal{L}_{lasso}^{2}$
-définie par eqref:eq:lasso1 pour l'estimation $L_{1}$).
+décomposition en valeurs singulières tronquée : calcul de la matrice latente
+défini par l'équation eqref:eq:RidgeLfmmEstomatorW pour l'estimation $L_{2}$ et
+la résolution du problème d'optimisation de la fonction
+$\mathcal{L}_{\mathrm{lasso}}^{'}$ définie par eqref:eq:lasso2 pour l'estimation
+$L_{1}$. La seconde est le calcul de la projection orthogonale sur l'espace
+engendré par les variables explicatives $\X$ : calcul de la matrice des effets
+définie par l'équation eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$ et
+la résolution du problème d'optimisation de la fonction
+$\mathcal{L}_{\mathrm{lasso}}^{''}$ définie par eqref:eq:lasso1 pour
+l'estimation $L_{1}$.
 
 D'après cite:Halko_2011, le calcul des $K$ composantes dominantes de la
 décomposition en valeurs singulières demande $O(\Yrow \Ycol \K)$ opérations.
-Cette complexité temporelle peut même être réduite à $O(\Yrow \Ycol \log(\K))$
-si on utilise une méthode avec projections aléatoires, comme celle présenté dans
+Cette complexité peut être réduite à $O(\Yrow \Ycol \log(\K))$ opérations si on
+utilise une méthode avec projections aléatoires, comme celle présentée dans
 cite:Halko_2011.
 
 La deuxième étape importante consiste en une projection du résidu de
-l'approximation de rang faible sur l'espace engendré par $\X$. Le nombre précis
-d'opération dépend des hypothèses qui sont faites sur la matrice $\X$ (dans
+l' approximation de rang faible sur l'espace engendré par $\X$. Le nombre précis
+d'opération dépend des hypothèses qui sont faites sur la matrice $\X$. Dans
 l'algorithme d'estimation $L_{1}$ aucune inversion de matrice n'est nécessaire
-pour le calcule de $\B_{t}$). Mais dans les deux algorithmes, si on s'intéresse
-seulement au comportement asymptotique par rapport à $\Yrow$, $\Ycol$ et $\Ucol$,
-alors on peut majorer la complexité temporelle par $O(\Ycol \Yrow + \Ucol
-(\Ycol + \Yrow))$.
+pour le calcul de $\hat{\B}_{t}$. Mais dans les deux algorithmes, si on s'intéresse
+seulement au comportement asymptotique par rapport à $\Yrow$, $\Ycol$ et
+$\Ucol$, alors on peut majorer la complexité par $O(\Ycol \Yrow +
+\Ucol (\Ycol + \Yrow))$.
 
 Finalement, pour les deux algorithmes, le nombre d'opération est majoré par
 $O(\Yrow \Ycol \K)$. L'algorithme d'estimation $L_{1}$ est bien entendu plus
-long car il réalise plusieurs fois (le nombre d'itérations dépend de la vitesse
-à laquelle l'algorithme converge) les opérations de décomposition en valeurs
-singulières et de projection alors que l'algorithme d'estimation $L_{2}$ ne les
-réalise qu'une seule fois.
+long car il réalise plusieurs fois les opérations de décomposition en valeurs
+singulières et de projection. L'algorithme d'estimation $L_{2}$ ne les réalise
+qu'une seule fois.
 
-Outre la complexité temporelle il est important d'étudier la complexité
-spatiale, surtout pour ce genres d'algorithme qui prennent en entrée des données
-potentielles trop grandes pour la mémoire vive de l'ordinateur (RAM). Les
-algorithmes d'estimation $L_{1}$ et $L_{2}$ ne nécessite pas de dupliquer la
-matrice des variables explicatives $\Y$. La matrice $\Y$ est de taille
-$\Yrow \times \Ycol$ et donc la dupliquer pourrait poser des problèmes sur des
-ordinateurs ne possédant pas assez de RAM. Il est même possible d'envisager de ne
-pas charger la matrice $\Y$ en RAM et d'accéder au données seulement quand cela est
-nécessaire. 
+Outre la complexité temporelle il est important d'étudier la complexité de la
+taille prise en mémoire, surtout pour ce genre d'algorithme qui prennent en
+entrée des données potentiellement trop grandes pour la mémoire vive de
+l'ordinateur (RAM). Les algorithmes d'estimation $L_{1}$ et $L_{2}$ ne
+nécessitent pas de dupliquer la matrice des variables $\Y$. La matrice $\Y$ est
+de taille $\Yrow \times \Ycol$ et donc la dupliquer pourrait poser des problèmes
+sur des ordinateurs ne possédant pas assez de RAM. Il est possible d'envisager
+de ne pas charger la matrice $\Y$ en RAM et d'accéder au données seulement quand
+cela est nécessaire.
 
 *** Choix des hyperparamètres 
 <<sec:hyperparametre>>
@@ -1231,80 +1238,75 @@ nécessaire.
   l'arrache avant etc...
 :END:
 
-La sélections des hyperparamètres est un problème commun a de nombreuse méthodes
-en analyse de données. Nous présentons plusieurs approches pratiques pour
-choisir les hyperparamètre qui interviennent dans les algorithmes que nous
-présentés ici. Nous commençons par présenter les différentes approches possibles
-pour choisir le nombre de variables latentes $K$. Nous présentons ensuite
-plusieurs heuristiques qui permettent d'aider le choix des paramètres de
+La sélections des hyperparamètres est un problème commun a de nombreuses
+méthodes en analyse de données. Nous présentons plusieurs approches pratiques
+pour choisir les hyperparamètres qui interviennent dans les algorithmes que nous
+avons présentés ici. Nous commençons par présenter les différentes approches
+possibles pour choisir le nombre de variables latentes $K$. Nous présentons
+ensuite plusieurs heuristiques qui permettent d'aider le choix des paramètres de
 régularisation. Enfin nous présentons un algorithme de validation croisée adapté
 aux algorithmes que nous avons présentés.
 
-**** Nombre $\K$ de variables latentes
+**** Nombre de variables latentes ($K$)
 Nous avons vu dans la section [[sec:estimator_L2]] que la matrice latente $\W$ peut
-être estimée grâce à l'analyse en composante principale (ACP) de $\D \Q^{T} \Y$.
-Ainsi, afin d'estimer le nombre $\K$ de variable latente pour le modèle LFMM,
-nous proposons d'employer les techniques d'estimation du nombre de variables
-latentes utilisées pour l'ACP sur la matrice $\D \Q^{T} \Y$ .
-
-Il existe de nombreuses approches pour déterminer le nombre de composantes
+être estimée grâce à l'analyse en composantes principales (ACP) de $\D \Q^{T}
+\Y$. Ainsi, afin d'estimer le nombre $\K$ de variables latentes pour le modèle
+LFMM, nous proposons d'employer les techniques d'estimation du nombre de
+variables latentes utilisées pour l'ACP sur la matrice $\D \Q^{T} \Y$ . Il
+existe de nombreuses approches pour déterminer le nombre de composantes
 principales de l'ACP, celle-ci sont très bien expliquées dans
 cite:jolliffe1986principal. On peut grouper ses approches en trois catégories.
 Les approches subjectives comme l'utilisation du scree plot, il s'agit du graphe
 des valeurs singulières de la matrice des données. Les approches basées sur une
 modélisation de la distribution des données observées, comme par exemple la
 méthode présentée dans cite:choi2014selecting. Les approches basées sur la
-validation croisée, comme celle que nous détaillons plus loin.
+validation croisée, comme celle que nous détaillons plus loin. Aucune méthode ne
+s'est imposée comme la référence, et il est préférable d'en utiliser plusieurs.
+Pour les expériences que nous avons réalisées sur des vraies données, le choix
+du nombre de variables latentes $\K$ du modèle LFMM a été fait à partir du scree
+plot de la matrice $\D \Q^{T} \Y$ pour différente valeurs de $\lambRidge$. Nous
+avons aussi utilisé l'algorithme de validation croisée que nous présentons dans
+la section [[sec:CV]].
 
-Aucune méthode ne s'est imposée comme la référence, et il est préférable d'en
-utiliser plusieurs. Pour les expériences que nous avons réalisées sur des vraies
-données, le choix du nombre de variables latentes $\K$ du modèle LFMM a été fait à
-partir du scree plot de la matrice $\D \Q^{T} \Y$ pour différente valeurs de
-$\lambRidge$ et de la validation croisée.
-
-**** TODO Paramètre de régularisation $L_{2}$
+**** Paramètre de régularisation $L_{2}$
 :LOGBOOK:
 - State "TODO"       from              [2017-07-20 Thu 16:55]
 - Note taken on [2017-07-20 Thu 16:54] \\
   j'y verrai plus claire quand j'aurais choisi lambda pour les vrai data set et
   une fois que la cross validation marchera ou pas...
 :END:
-Le paramètre de régularisation $L_{2}$ intervient dans le calcul de
-l'estimation de la matrice latente décrit dans la partie [[sec:estimator_L2]] par le
-biais de la matrice diagonal $\D$. Cette matrice permet de réduire la
-corrélation entre les variables expliquées $\Y$ et les variables explicatives
-$\X$ afin de pouvoir estimer les variables latentes. 
-
-Si le paramètre de régularisation $L_{2}$ tend vers zéro, les variables expliqué
-et explicative seront linéairement décorrélé. Cependant on ne pourra plus inverser
-la matrice diagonale $\D$. De plus dans le cas ou les variable latentes sont
-trop corrélé avec $\X$ alors on risque de mal estimer celles-ci. 
-
-Si le paramètre tend vers l'infini alors la matrice $\D$ tend vers la matrice
-identité l'estimation des variables latentes sont données pas l'analyse en
-composante principale de $\Y$.
-
-Ainsi le choix de du paramètre de régularisation $L_{2}$ est une affaire de
-dosage, il doit être ni trop grand ni trop petit. Nous avons remarqué dans les
-expériences que $\lambdaRidge$ petit donne les meilleurs résultats dans de nombreux
-cas.
+Le paramètre de régularisation $L_{2}$ intervient dans le calcul de l'estimation
+de la matrice latente décrit dans la partie [[sec:estimator_L2]] par le biais de la
+matrice diagonale $\D$. Cette matrice permet de réduire la corrélation entre les
+variables $\Y$ et les variables $\X$ afin de pouvoir estimer les variables
+latentes. Lorsque le paramètre de régularisation $L_{2}$ tend vers zéro, les
+variables $\Y$ et $\X$ sont linéairement décorrélées. Cependant on ne pourra
+plus inverser la matrice diagonale $\D$. De plus dans le cas ou les variable
+latentes sont trop corrélées avec $\X$ alors on risque de mal estimer celles-ci.
+Lorsque le paramètre tend vers l'infini alors la matrice $\D$ tend vers la
+matrice identité l'estimation des variables latentes sont données pas l'analyse
+en composantes principales de $\Y$, sans prendre en compte $\X$. Le risque est
+alors d'expliquer par les variables latentes une partie de la variance de $\Y$
+qui devrait être expliquée par $\X$, et dont passer à coté de certaine
+associations. Ainsi le choix du paramètre de régularisation $L_{2}$ est une
+affaire de dosage, il doit être ni trop grand ni trop petit. Nous avons remarqué
+dans les expériences que $\lambdaRidge$ petit donne les meilleurs résultats dans
+de nombreux cas.
 
 **** Paramètre de régularisation $L_{1}$
-Le paramètre de régularisation $L_{1}$ à un impacte sur le nombre de ligne non
-nulles dans la matrice des effets $\B$. Nous savons à priori que seulement une
-partie des variables expliquées sont corrélé avec les variables explicatives.
-Ainsi, il est possible d'interpréter la proportion de lignes non nulles dans
-$\B$ comme la proportion des variables qui sont corrélé avec $\X$. Plutôt que de
-choisir le paramètre de régularisation, il est plus simple de choisir la
-proportion de variable expliquées par $\X$. Pour trouver un paramètre de
-régularisation qui correspond à cette proportion nous proposons une heuristique
-basée sur un chemin de régularisation inspiré par
-cite:friedman10_regul_paths_gener_linear_model.
-
-Nous commençons par la plus petite valeur du paramètre de régularisation
-$\lambLasso$ tel que le vecteur
+Le paramètre de régularisation $L_{1}$ à un impact sur le nombre de lignes non
+nulles dans la matrice des effets $\B$. Seulement une partie des variables $\Y$
+est corrélée avec les variables explicatives $\X$. Ainsi, il est possible
+d'interpréter la proportion de lignes non nulles dans $\B$ comme la proportion
+des variables qui sont corrélées avec $\X$. Plutôt que de choisir le paramètre
+de régularisation, il est plus simple de choisir la proportion de variable
+expliquées par $\X$ quand on prend en compte les variables latentes. Pour
+trouver un paramètre de régularisation qui correspond à cette proportion nous
+proposons une heuristique basée sur un chemin de régularisation inspirée par
+cite:friedman10_regul_paths_gener_linear_model. Nous commençons par la plus
+petite valeur du paramètre de régularisation $\lambLasso$ tel que le vecteur
 \begin{equation}
-\bar{\B}_{t} = (\X^{T} \X + \lambLasso \Id_{d})^{-1} \X^{T} (\matr{E}^{1}_{t = 1})
+\hat{\B}_{t = 1} = \sign(\bar{\B}_{t = 1}) (\bar{\B}_{t = 1} - \lambLasso)_{+}
 \end{equation}
 vaut zéro. Ceci est le résultat de la première étape de l'algorithme
 d'estimation des moindres carrés régularisée en norme $L_{1}$ présenté dans la
@@ -1314,23 +1316,26 @@ selon une échelle logarithmique depuis $\lambLasso^{\mathrm{max}}$ jusqu'à
 \begin{equation}
 \lambLasso^{\mathrm{min}} = \epsilon \lambLasso^{\mathrm{max}}.
 \end{equation}
-Enfin, nous calculons le nombre de valeurs non nulle dans $\hat{\B}$
-l'estimation de la matrice des effets et stoppons si la proportion de valeurs
-non nulle souhaitée est dépassée.
-
+Enfin, pour chaque valeur du paramètre de régularisation $\lambLasso$ nous
+calculons le nombre de valeurs non nulle dans $\hat{\B}$, l'estimation de la
+matrice des effets calculé par l'algorithme d'estimation $L_{1}$, et stoppons si
+la proportion de valeurs non nulle souhaitée est dépassée.
 
 **** Paramètre de régularisation de la norme nucléaire
 Le paramètre de régularisation de la norme nucléaire dans l'algorithme
 d'estimation $L_{1}$ à une influence sur le rang de la matrice latente $\W$. Il
-est plus simple de choisir le rang de cette matrice, qui correspond au nombre de
+est plus simple de choisir le rang de cette matrice, correspondant au nombre de
 variables latentes $K$, que de choisir le paramètre de régularisation $\gamma$.
-
 Nous proposons l'heuristique suivante pour calculer $\gamma$ à partir de $K$.
 Nous commençons par calculer les valeurs singulières de la matrice des variables
-expliquées $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, on calcul 
+expliquées $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, nous
+calculons
 \begin{equation}
 \gamma = \frac{(\sigma_{\K} + \sigma_{\K + 1})}{2}.
 \end{equation}
+Nous avons remarqué dans les expériences que ce choix de paramètre de
+régularisation $\gamma$ a toujours fait converger l'algorithme d'estimation
+$L_{1}$ vers une estimation de la matrice latente $\hat{\W}$ qui est de rang $\K$.
 
 **** Validation croisée
 :LOGBOOK:
@@ -1338,32 +1343,32 @@ expliquées $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, on c
 - Note taken on [2017-05-26 Fri 14:46] \\
   cf mon cahier
 :END:
+<<sec:CV>>
 
-La validation croisée est une méthode d'évaluation d'un modèle très utilisé en
-apprentissage statistique. Le principe est de séparé les observation en une partie
-d'apprentissage et une partie de test. Les observations d'apprentissage sont utilisées
-pour estimer les paramètres du modèle. On mesure ensuite l'erreur de prédiction
-à l'aide des observations de tests. Pour que la validation croisée fonctionne il est
-très important que les observations de test ne soit pas utilisées pour estimer les
-paramètres du modèle. Dans le cas des modèles à facteurs latents, les observations
-d'apprentissage ne permettent pas de calculer les variables latentes pour les
-observation de tests (la matrice $\U$ dans pour LFMM). Le plus simple est de séparer
-les variables expliquées des observations de test et d'en utiliser une partie pour estimer
-les variables latentes et l'autre partie pour calculer l'erreur de prédiction
-cite:Bro_2008. Nous présentons maintenant plus formellement notre procédure de
-validation croisée.
+La validation croisée est une méthode d'évaluation d'un modèle très utilisée en
+apprentissage statistique. Le principe est de séparer les individus en une
+partie d'apprentissage et une partie de test. Les individus d'apprentissage sont
+utilisées pour estimer les paramètres du modèle. On mesure ensuite l'erreur de
+prédiction à l'aide des individus de tests. Pour que la validation croisée
+fonctionne il est très important que les individus de test ne soit pas utilisées
+pour estimer les paramètres du modèle. Dans le cas des modèles à facteurs
+latents en général, les individus d'apprentissage ne permettent pas de calculer
+les variables latentes pour les individus de tests (la matrice $\U$ dans pour
+LFMM). Le plus simple est de séparer les variables des individus de test et d'en
+utiliser une partie pour estimer les variables latentes et l'autre partie pour
+calculer l'erreur de prédiction cite:Bro_2008. Nous présentons maintenant plus
+formellement notre procédure de validation croisée.
 
-Nous commençons par séparer les observations des variables expliquées et
-explicative (les lignes des matrices $\Y$ et $\X$) en une partie d'entraînement
-et une partie de test. Nous notons $I$ l'ensemble des indices des observations
-choisies pour estimer l'erreur de prédiction. On estime à partir des
-observations d'apprentissage la matrice des axes factoriels que l'on note
-$\hat{\V}_{-I}$ et la matrice des effets que l'on note $\hat{\B}_{-I}$. Ensuite,
-nous retirons aux observation de test une partie des variable expliqué (les
-colones de la matrice $\Y$) afin d'estimer les variables latentes pour les
-observations de test. On notera $J$ l'ensemble des indices de expliquée que l'on 
-retire pour l'estimation de la matrice des variable latentes calculé de
-la façon suivante
+Nous commençons par séparer les individus en une partie d'entraînement et une
+partie de test, c'est a dire que séparons matrices $\Y$ et $\X$ en deux partie
+selon leurs lignes. Nous notons $I$ l'ensemble des indices des individus
+choisies pour estimer l'erreur de prédiction. On estime à partir des individus
+d'apprentissage la matrice des axes factoriels que l'on note $\hat{\V}_{-I}$ et
+la matrice des effets que l'on note $\hat{\B}_{-I}$. Ensuite, nous la matrice de
+test $\Y[I,]$ en deux partie selon ses colonnes afin d'estimer les variables
+latentes sur les variables restantes. On notera $J$ l'ensemble des colonnes de
+$\Y$ sélectionnées pour estimer de la matrice des variables latentes de la façon
+suivante
 \begin{equation}
 \hat{\U}_{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}_{-I}[J,])^{T}) \hat{\V}_{-I}[-J,]^{T}.
 \end{equation}
@@ -1372,11 +1377,18 @@ Enfin, on peut calculer l'erreur de prédiction comme ceci
 \label{eq:2}
 \mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\U}^{-J} \hat{\V}_{-I}[J,]^{T} - \X[I, ] \hat{\B}_{-I}[J,]^{T} }_{F}.
 \end{equation}
+Cette procédure permet  bien de mesurer une erreur sur des observations de
+$\Y$ qui n'ont pas été utilisées pour estimer les paramètres du modèle.
 
-
-*** Test d'hypothèse
+*** Tests d'hypothèse
 <<sec:hypothese>>
 :LOGBOOK:
+- Note taken on [2017-08-04 ven. 17:14] \\
+  Mais il y a aussi
+  les autres variables observées qui doivent être prises en compte car elles sont
+  potentiellement des facteurs de confusion pour l'association. Les variables
+  explicatives qui ne sont pas d'intérêt pour l'association peuvent être par
+  exemple l'age des individus, ou bien le sexe
 - Note taken on [2017-05-25 Thu 11:55] \\
   parler de lm : G ~U + X 
   ET
@@ -1384,65 +1396,66 @@ Enfin, on peut calculer l'erreur de prédiction comme ceci
 :END:
 
 Jusque ici, nous avons seulement abordé l'estimation des paramètres de LFMM.
-Cependant, l'objectif initial est de trouver la liste des variables expliquées
-associées aux variables explicatives tout en prenant en compte les potentielles
-variables latentes. Nous présentons dans cette partie un test d'hypothèse
-corrigé pour les variables latentes.
-
-Une approche simple consiste a considérer que l'estimation des variables
-latentes $\hat{\U}$ comme les vraies valeurs de $\hat{\U}$ et de les utiliser au
-coté des variables explicatives du modèle mis en place pour réaliser le test
-d'hypothèse. C'est une méthode très courante dans les études d'associations qui
-a montrer de très bon résultats surtout quand il y assez d'observations
+Cependant, l'objectif initial est de trouver la liste des variables $\Y$
+associées aux variables $\X$ tout en prenant en compte les variables latentes.
+Nous présentons dans cette partie un test d'hypothèse de nullité de l'effet de
+$\X$ sur $\Y$ corrigé pour les variables latentes. Une approche simple consiste
+à considérer l'estimation des variables latentes $\hat{\U}$ comme les vraies
+valeurs de $\U$ et de les utiliser au coté des variables $\X$ du modèle mis en
+place pour réaliser le test d'hypothèse. C'est une méthode très courante dans
+les études d'associations qui a montré de très bons résultats quand il y suffisamment
+d'individus
 cite:gerard2017unifying,Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016.
-Nous avons choisi de réaliser un test d'hypothèse qui repose sur le modèle la
+Nous avons choisi de réaliser un test d'hypothèse qui repose sur la
 régression linéaire car cela correspond au modèle LFMM quand on suppose que $\U$
-est connue. Mais les estimations des variables latentes peuvent être traitées comme
-variables explicatives dans n'importe quel modèle statistique.
-
-Afin de simplifier les notations et sans perte de généralité, nous supposons
-qu'il n'y a qu'une seule variable explicative, c'est à dire que $\Xcol$ vaut $1$.
-De plus nous rappelons que l'estimation de la matrice des $\K$ variables
-latentes $\hat{\U}$ est définie de façon unique grâce à l'ACP de la matrice
-$\hat{\W}$. La matrice $\hat{\W}$ est l'estimation $L_{1}$ ou $L_{2}$ de la
-matrice latente du modèle LFMM.
+est connue. Les estimations des variables latentes peuvent être traitées
+comme variables explicatives dans n'importe quel modèle statistique. On pourrait
+par exemple envisager d'utiliser une régression linéaire
+généralisée. Afin de simplifier les notations et sans perte de généralité, nous
+supposons qu'il n'y a qu'une seule variable explicative, c'est à dire que
+$\Xcol$ vaut $1$. De plus, nous signalons qu'il est possible d'ajouter d'autres
+variables à la régression, cela à un intérêt si l'on connait des variables qui
+sont des facteurs de confusion pour notre étude d'association, comme par exemple
+le l'age et le sexe des individus. Nous rappelons que l'estimation de la matrice
+des $\K$ variables latentes $\hat{\U}$ est définie de façon unique grâce à l'ACP
+de la matrice $\hat{\W}$. La matrice $\hat{\W}$ est estimé grâces aux
+algorithmes d'estimation $L_{1}$ ou $L_{2}$ de la matrice latente du modèle
+LFMM.
 
 **** Calcul de la statistique de test
-Pour chaque variable expliquée $j$ nous avons le modèle de régression linéaire
-suivant
+Pour chaque variable $\Y_{j}$ nous avons la régression linéaire
+suivante
 \begin{equation}
-\Y_{j} =  \hat{\U} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{\epsilon_{j}}.
+\Y_{j} =  \hat{\U} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{E_{j}},
 \end{equation}
-où la matrice $\hat{\U}$ est l'estimation $L_{1}$ ou $L_{2}$ de la matrice des
-variables latentes du modèle LFMM. On suppose que l'erreur $\matr{\epsilon_{j}}$
-est Gaussienne de moyenne nulle. On veut tester l'hypothèse de nullité du
-coefficient de régression $\beta_{j}$. Sous ces hypothèses on peut calculer pour
-chaque variable expliquée une statistique $z_{j}$. Le détail des calculs de la
-statistique de test est données dans la section 3.2 de cite:Hastie_2009. La
-statistique de test suit sous l'hypothèse nulle le loi de Student à $\Yrow -
-\K - 1$ degrés de liberté. On peut donc calculer pour chaque variable expliquée
-une \pvalue.
+où la matrice $\hat{\U}$ est l'estimation de la matrice des variables latentes
+du modèle LFMM. On suppose que l'erreur $E_{j}}$ est Gaussienne de moyenne
+nulle. On veut tester l'hypothèse de nullité du coefficient de régression
+$\beta_{j}$. Sous ces hypothèses on peut calculer pour chaque variable $\Y_{j}$
+une statistique de test $z_{j}$, assimilable à un z-score. La statistique de
+test suit sous l'hypothèse nulle le loi de Student à $\Yrow - \K - 1$ degrés de
+liberté. On peut donc calculer une \pvalue pour chaque variable $\Y_{j}$. Le
+détail du calcul de la statistique de test est donnée dans la section 3.2 de
+cite:Hastie_2009.
 
 
 **** Calibration du test d'hypothèse
 Il arrive parfois que la statistique de suive pas la distribution théorique sous
 l'hypothèse nulle. On dit dans ce cas que le test est mal calibré. On peut
 trouver dans cite:Efron_2004 des exemples de situations qui peuvent aboutir à
-des tests mal calibrés. 
-
-Dans les exemples que nous présentons ici ont s'attend à ce que la majorité des
-variables expliqués ne soit pas associé avec la variable explicative, ainsi une
-large majorité des statistiques de test sont distribuées selon l'hypothèse nulle.
-Nous utilisons l'approche choisi dans cite:Sun_2012, qui consiste à calculer la
-médiane et la déviation absolue à la médiane (MAD pour median absolute
-déviation) directement sur les $z$ statistiques. En effet, la médiane donne une
-estimation robuste de la moyenne et le MAD de l'écart type. On a alors une
-nouvelle statistique de test
+des tests mal calibrés. Dans les exemples que nous présentons ici ont s'attend à
+ce que la majorité des variables $\Y_{j}$ ne soit pas associé avec $\X$, ainsi
+une large majorité des statistiques de test sont distribuées selon l'hypothèse
+nulle. Nous utilisons l'approche choisie dans cite:Sun_2012, qui consiste à
+calculer la médiane et la déviation absolue à la médiane (MAD pour median
+absolute déviation) directement sur les $z$ statistiques. En effet, la médiane
+donne une estimation robuste de la moyenne et le MAD de l'écart type. On a alors
+une nouvelle statistique de test
 \begin{equation}
 \tilde{z_{j}} = \frac{z_{j} - \med(z_{1}, ..., z_{\Ycol})}{
 \mad(z_{1}, ..., z_{\Ycol})}.
 \end{equation}
-Pour calculer les nouvelles \pvalue, on suppose que $\tilde{z_{j}}$ suit une loi
+Pour calculer les nouvelles \pvalues, on suppose que $\tilde{z_{j}}$ suit une loi
 normal de moyenne nulle et d'écart type 1 sous l'hypothèse nulle.
 
 **** Contrôle du taux de fausse découverte                      :noexport:
@@ -1467,7 +1480,7 @@ and the linear model with PCA scores.
 
 *** sva
 *** famt
-** Expériences
+** Expériences                                                    :noexport:
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
@@ -3198,6 +3211,21 @@ Les simulations de comparaison des méthodes
 
 **** Mesure de comparaison des performances
 **** Résultats
+#+BEGIN_EXPORT latex
+\begin{sidewaysfigure}[ht]
+\centering
+\includegraphics{./OUTPUT/Rplots/method_comp.pdf.png}
+\caption{Comparaison des méthodes sur des simulations faites a partir du jeux de
+  données 1000Genomes. A-B) Aire sous la source precision-recall en fonction
+  respectivement de la proportion d'outlier dans la simulation et la corrélation
+  de la varrable explicative et les variables latentes. C-D) Facteur d'inflation
+  génomique calculé sur les variable nulles en fonction respectivement de la
+  proportion d'outlier et de la corrélation entre les variable explicatives et
+  les variables latentes.}
+\label{fig:method_comp}
+\end{sidewaysfigure}
+#+END_EXPORT
+
 **** Scipts                                                     :noexport:
 ***** RUNNING Comparaisons numériques sur des simulations
 :LOGBOOK:
@@ -3549,23 +3577,9 @@ Les simulations de comparaison des méthodes
   })
 
   save_plot_png(pl.leg, filename = "method_comp.png")
-  save_plot_MaTheseR(pl.leg, filename = "method_comp.pdf.png", height = 20, width = 14)
+  save_plot_MaTheseR(pl.leg, filename = "method_comp.pdf.png", height = 14, width = 20)
 #+end_src
 
-#+BEGIN_EXPORT latex
-\begin{sidewaysfigure}[ht]
-\centering
-\includegraphics{./OUTPUT/Rplots/method_comp.pdf.png}
-\caption{Comparaison des méthodes sur des simulations faites a partir du jeux de
-  données 1000Genomes. A-B) Aire sous la source precision-recall en fonction
-  respectivement de la proportion d'outlier dans la simulation et la corrélation
-  de la varrable explicative et les variables latentes. C-D) Facteur d'inflation
-  génomique calculé sur les variable nulles en fonction respectivement de la
-  proportion d'outlier et de la corrélation entre les variable explicatives et
-  les variables latentes.}
-\label{fig:method_comp}
-\end{sidewaysfigure}
-#+END_EXPORT
 ****** STARTED Tests d'hypothèse
 :LOGBOOK:
 - State "STARTED"    from "TODO"       [2017-07-30 Sun 12:28]

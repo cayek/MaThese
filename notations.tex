@@ -45,9 +45,7 @@
 \newcommand{\Q}{\matr{Q}} %% svd de X
 \newcommand{\D}{\matr{D}_{\lambRidge}} %% matrice utilisé dans l'estimateur ridge
 \newcommand{\lambRidge}{\lambda} %% reg devant norme L2
-\newcommand{\lambLasso}{\lambda_{1}} %% reg devant norme L1
-\newcommand{\L1}{\L_{1}} %% L1
-\newcommand{\L2}{\L_{2}} %% L2
+\newcommand{\lambLasso}{\mu} %% reg devant norme L1
 
 %% lfmm equation
 \newcommand{\LfmmLridge}{%
@@ -58,7 +56,8 @@
 \Lnoreg(\U, \V, \B) =  \frac{1}{2} \norm{\Y - \U \V^T - \X \B^T}_{F}^2 %
 }
 \newcommand{\LfmmLlasso}{%
-\Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 + \lambLasso \norm{\B}_{1} + \gamma \norm{\W}_{*}%
+\Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 +
+\lambLasso \norm{\B}_{1} + \gamma \norm{\W}_{*}%
 }
 
 
