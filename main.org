@@ -3314,7 +3314,7 @@ issu du jeux de données 1000 génome que nous présentons dans ...
   prop.outlier <- c(0.01, 0.05, 0.1, 0.15, 0.2)
   rho.B <- 3
   rho.c <- c(0.1, 0.3, 0.5, 0.8, 1.0)
-  nb.cluster <- 2
+  nb.cluster <- 12
   library(foreach)
   library(doParallel)
 
@@ -3329,9 +3329,8 @@ issu du jeux de données 1000 génome que nous présentons dans ...
       s$prop.outlier = p
       s$rho.B = rho.B
       s$rho.c = rho
-      ## dat <- ExpRmouline(s)
-      dat <- 1
-      ## dat$meta$i <- i
+      dat <- ExpRmouline(s)
+      dat$meta$i <- i
       save_dat(dat, "ValNum", "1000g12", p = p, rho = rho, i = i, rho.B = rho.B)
     }
   doParallel::stopImplicitCluster()
@@ -3389,14 +3388,14 @@ issu du jeux de données 1000 génome que nous présentons dans ...
           message("Saving")
           save_res(m, f)
         }
-      } else if (exist_res(m, f))
-        m <- retrieve_res(m, f)
+      } else if (exist_res(m, dat, f))
+        m <- retrieve_res(m, dat, f)
     } else {
       m <- ExpRmouline(m, dat)
       ## save
       if (m$save) {
         message("saving")
-        save_res(m, f)
+        save_res(m, dat, f)
       }
     }
       ExpRextractor_fdr(dat, m, rep.sampler = dat$meta$i, rep.method = 1)

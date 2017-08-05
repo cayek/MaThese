@@ -106,12 +106,34 @@ save_as_bin <- function(m, file) {
 ##' @export
 save_dat <- function(dat, dirname, name, ...) {
   params <- list(...)
+  md5 <- digest::digest(dat, algo = "md5")
   dat.file <- name
   for(n in names(params)) {
     dat.file <- paste0(dat.file,"_", n, params[[n]])
   }
-  dat.file <- paste0(dat.file, ".rds")
+  dat.file <- paste0(dat.file,"_",md5, ".rds")
   dat.file <- paste0("./OUTPUT/Dat/",dirname,"/",dat.file)
   saveRDS(dat, dat.file)
   dat.file
+}
+
+##' @export
+retrieve_res <- function(m, f) {
+  md5 <- digest::digestt(m, algo = "md5")
+  f <- paste0(sub(".rds", "", f), "_", md5, ".rds")
+  readRDS(f)
+}
+
+##' @export
+save_res <- function(m, m.res, f) {
+  md5 <- digest::digestt(m, algo = "md5")
+  f <- paste0(sub(".rds", "", f), "_", md5, ".rds")
+  saveRDS(m.res, f)
+}
+
+##' @export
+exist_res <- function(m, f) {
+  md5 <- digest::digestt(m, algo = "md5")
+  f <- paste0(sub(".rds", "", f), "_", md5, ".rds")
+  file.exists(f)
 }
