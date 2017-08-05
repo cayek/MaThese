@@ -3311,12 +3311,9 @@ issu du jeux de données 1000 génome que nous présentons dans ...
   library(MaTheseR)
   sampler <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
   rep.nb.sampler <- 5
-  rep.nb.sampler <- 2
   prop.outlier <- c(0.01, 0.05, 0.1, 0.15, 0.2)
-  prop.outlier <- c(0.01)
   rho.B <- 3
   rho.c <- c(0.1, 0.3, 0.5, 0.8, 1.0)
-  rho.c <- c(0.1)
   nb.cluster <- 2
   library(foreach)
   library(doParallel)
@@ -3332,8 +3329,9 @@ issu du jeux de données 1000 génome que nous présentons dans ...
       s$prop.outlier = p
       s$rho.B = rho.B
       s$rho.c = rho
-      dat <- ExpRmouline(s)
-      dat$meta$i <- i
+      ## dat <- ExpRmouline(s)
+      dat <- 1
+      ## dat$meta$i <- i
       save_dat(dat, "ValNum", "1000g12", p = p, rho = rho, i = i, rho.B = rho.B)
     }
   doParallel::stopImplicitCluster()

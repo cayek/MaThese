@@ -105,10 +105,10 @@ save_as_bin <- function(m, file) {
 
 ##' @export
 save_dat <- function(dat, dirname, name, ...) {
-  params <- as.list(match.call()[-(1:4)])
+  params <- list(...)
   dat.file <- name
   for(n in names(params)) {
-    dat.file <- paste0(dat.file,"_", n, eval(params[[n]], envir = params))
+    dat.file <- paste0(dat.file,"_", n, params[[n]])
   }
   dat.file <- paste0(dat.file, ".rds")
   dat.file <- paste0("./OUTPUT/Dat/",dirname,"/",dat.file)
