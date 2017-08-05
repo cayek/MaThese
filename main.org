@@ -3344,6 +3344,9 @@ issu du jeux de données 1000 génome que nous présentons dans ...
 #+CAPTION: Expérience de comparaison des méthodes sur les simulations. Dépend de [[code:num_val_dat]]
 #+begin_src R 
   library(MaTheseR)
+  library(foreach)
+  library(doParallel)
+
   dat.files <- readRDS("./OUTPUT/Dat/ValNum/dat_list.rds")
 
   ## param
@@ -3382,24 +3385,24 @@ issu du jeux de données 1000 génome que nous présentons dans ...
       ## on force
       if (m$force) {
         message("Running")
-        m <- ExpRmouline(m, dat)
+        m.res <- ExpRmouline(m, dat)
         ## save
         if (m$save) {
           message("Saving")
-          save_res(m, f)
+          save_res(m, m.res, f)
         }
-      } else if (exist_res(m, dat, f))
-        m <- retrieve_res(m, dat, f)
-    } else {
-      m <- ExpRmouline(m, dat)
-      ## save
-      if (m$save) {
-        message("saving")
-        save_res(m, dat, f)
+      } else if (exist_res(m , f)) {
+        m.res <- retrieve_res(m , f)
+      } else {
+        m.res <- ExpRmouline(m, dat)
+        ## save
+        if (m$save) {
+          message("saving")
+          save_res(m, m.res, f)
+        }
       }
+      ExpRextractor_fdr(dat, m.res, rep.sampler = dat$meta$i, rep.method = 1)
     }
-      ExpRextractor_fdr(dat, m, rep.sampler = dat$meta$i, rep.method = 1)
-  }
   doParallel::stopImplicitCluster()
   parallel::stopCluster(cl)
 

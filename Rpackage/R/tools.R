@@ -119,21 +119,21 @@ save_dat <- function(dat, dirname, name, ...) {
 
 ##' @export
 retrieve_res <- function(m, f) {
-  md5 <- digest::digestt(m, algo = "md5")
+  md5 <- digest::digest(m, algo = "md5")
   f <- paste0(sub(".rds", "", f), "_", md5, ".rds")
   readRDS(f)
 }
 
 ##' @export
 save_res <- function(m, m.res, f) {
-  md5 <- digest::digestt(m, algo = "md5")
+  md5 <- digest::digest(m, algo = "md5")
   f <- paste0(sub(".rds", "", f), "_", md5, ".rds")
   saveRDS(m.res, f)
 }
 
 ##' @export
 exist_res <- function(m, f) {
-  md5 <- digest::digestt(m, algo = "md5")
+  md5 <- digest::digest(m, algo = "md5")
   f <- paste0(sub(".rds", "", f), "_", md5, ".rds")
   file.exists(f)
 }
