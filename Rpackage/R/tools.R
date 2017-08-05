@@ -112,6 +112,6 @@ save_dat <- function(dat, dirname, name, ...) {
   }
   dat.file <- paste0(dat.file, ".rds")
   dat.file <- paste0("./OUTPUT/Dat/",dirname,"/",dat.file)
-  ## saveRDS(dat, dat.file)
+  saveRDS(dat, dat.file)
   dat.file
 }
