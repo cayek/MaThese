@@ -773,7 +773,7 @@ d'estimation convergent vers le point de minimum global de leur fonction
 objectif respective. Enfin, nous comparons nos méthodes à SVA et CATE sur des
 simulations numériques ainsi que des exemples de GWAS, EWAS et GEA.
 
-** Méthodes 
+** Nouvelles méthodes 
 *** Modèle 
 <<sec:model>>
 Dans cette partie nous introduisons les notations du modèle mixes à facteurs
@@ -1469,17 +1469,87 @@ avons utiliser pour controler le taux de fausse découvertes dans les
 experiences. Dans le cadre des test d'association nous voulons en sortie de la
 méthode obtenir une liste de variable expliqué candidat pour l'association avec
 la variable explicative. Pour choisir cette liste 
-Dans le cadre des test d'association multiple 
+Dans le cadre des test d'association multiple
 
-** Méthodes comparées
+*** Implémentation en R
+Les deux nouvelles méthodes de test d'association avec correction pour les
+facteurs de confusion que nous avons développées dans cette thèse on été
+implémenter à l'aide du language de programmation R. Nous les avons appelées
+respectivement lassoLFMM pour l'implemtation des estimateurs régularisées en
+norme $L_{1}$ et ridgeLFMM pour les estimateurs régularisées en norme $L_{2}$.
+Les algortihmes lassoLFMM et ridgeLFMM prennent en entré la matrice des
+variables $/X$ et la matrices des variables $/Y$ pour lesquelle on souhaite
+tester l'association avec $/X$. Ils prennent egualement le nombre de variables
+lattentes à ajouter au model. L'algorithme ridgeLFMM prend une valeur pour
+$\lambLFMM$, le paramètre de régularisation $\L_{2}$. L'algorithme lassoLFMM
+prend la proportion de lignes non nulles dans la matrice $\B$ des effets de $\X$
+sur $\Y$, que l'on peut interpréter comme une estimation à priori de la
+proportion de variable $\Y$ associées avec $\X$. Enfin les deux algorithmes
+retournent les estimations pour les paramètres de LFMM ainsi qu'une \pvaleur
+pour chaque couple de variables $\Y$-$\X$ testés pour l'associon.
+** Autres méthodes existantes 
 <<sec:similar_method>>
-*** lm and lm + pca
-We comparared results of our method to two well known method the linear model
-and the linear model with PCA scores. 
-*** cate
 
-*** sva
-*** famt
+Dans cette section nous présentons des méthodes d'étude d'association avec et
+sans correction pour les facteurs de confusions. Les méthodes que nous
+présentons ici sont comparées aux méthodes lassoLFMM et ridgeLFMM présentées
+dans la section précedente.
+
+*** Régression linéaire simple et avec les scores de l'ACP
+Dans lassoLFMM et ridgeLFMM, les tests d'hypothèses utilisés pour détecter les
+associations reposent sur une régression linéaire de $\Y$ par $\X$ et
+l'estimation des facteurs latents $\bar{\U)}$. Il est donc naturel de se
+comparer à une méthode reposant sur la régression de $\Y$ par $\X$. Dans ce cas
+aucun facteur latent n'est pris en compte dans l'étude d'association. De plus,
+nous nous comparons à une méthode qui repose sur une estimation des variables
+latents par l'ACP. Dans ce cas, il s'agit alors de faire une régression de $\Y$
+par $\X$ et $\bar{\U)}$ la matrice des scores sur les $\K$ premières composantes
+principales. Ces deux méthodes ont été implémentées en R et nous les appellerons
+respectivement lm et PCAlm.
+
+*** emma cite:Kang_2008
+*** sva cite:article_Leek_Storey_2007
+:LOGBOOK:
+- Note taken on [2017-08-05 Sat 13:57] \\
+  sva utilisé:[[file:Rpackage/R/ExpRmethod-sva.R::ExpRmouline.method_sva%20<-%20function(m,%20dat)%20{][sva function]]
+:END:
+
+Il existe deux versions de SVA : subset-SVA cite:article_Leek_Storey_2007 et
+IRW-SVA cite:article_Leek_Storey_2008. La méthode subset-SVA se découpe en deux
+étapes : une étape d'estimation de la matrice des axes factorielles $\V$ et une
+étape d'estimation de la matrice des variables latentes $\U$. Lors de la
+premières étape la méthode subset-SVA estime les axes factorielles en faisant
+une ACP de la matrice résiduelles de la régression linaire de $\Y$ par $\X$.
+Cela correspond a faire l'ACP de $\matr{D}_{\lambRidge = 0} \Q \Y$, en utilisant
+les notations de la section [[sec:estimator_L2]]. Ensuite la méthode subset-SVA
+calcule un sous-ensemble de variable de $\Y$ qui sont le moins corrélées avec
+$/X$. Ce sous ensemble de variable est utilisé pour estimer la matrice des
+variables latentes. Cette procédure peut facilement échouer car une faible
+corrélation avec $\X$ n'implique pas qu'il n'y a pas d'association avec $\X$. En
+effet une faible corrélation sans prendre en compte les facteurs latents peut
+devenir une forte corrélation quand on les prends en compte. 
+
+La deuxième version de SVA est itérative. Plutôt que d'estimer les variables
+latentes sur un sous ensemble de variable de $\Y$ la méthode IRW-SVA attribue un
+poids à chacune d'entre elles en fonction de la probabilité que la matrice des
+effet $\B$ de LFMM soit nul sachant les variables latentes calculées à
+l'itération précédente. Ensuite les probabilités sont utilisées pour attribuer
+un poids à chaque variable de $\Y$ et une nouvelle estimation des variables
+latentes est calculée à l'aide d'une ACP qui prend en compte les poids. La
+méthode itère ces deux étapes un nombre de fois choisie par l'utilisateur. Le
+désavantage de cette procédure est qu'on ne sais pas vers quoi elle converge ni
+si elle converge. Nous avons utilisé le package R sva fourni par ces auteurs.
+IRW-SVA est la version par défaut du package R sva, c'est celle que nous
+utilisons.
+
+*** cate cite:wang2015confounder
+
+La méthode cate proposé dans cite:wang2015confounder est comparable notre méthode
+ridgeLFMM que nous avons présenté précédemment. Plutot que d'estimer les
+variables latentes 
+
+Cate procède d'abors
+
 ** Expériences                                                    :noexport:
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
@@ -3162,14 +3232,14 @@ CLOSED: [2017-07-27 jeu. 11:39]
 Dans cette partie, nous présentons les expériences numériques que nous avons
 réalisées pour évaluer la performance de nos algorithmes de correction pour les
 facteurs confusions dans les études d'associations qui repose sur une estimation
-$\L1$ et $\L2$ des paramètres de LFMM. Ces deux nouveaux algorithmes algorithmes
-ont été implémenté dans le langage de programmation R et seront appelé
-respectivement ridgeLFMM pour l'estimation $\L2$ et lassoLFMM pour l'estimation
-$\L1$. Nous nous sommes comparé aux méthodes que nous avons présenté dans la
-partie [[sec:similar_method]]. Les méthodes de régression linéaires avec et sans les
-scores de l'ACP ont été implémenté dans le langage R et sont respectivement
-appelé lm et PCAlm. Pour les méthodes CATE et sva nous avons respectivement
-utilisé les implémentation R de ces méthodes mis à disposition par leurs auteurs.
+$\L1$ et $\L2$ des paramètres de LFMM. Ces deux nouveaux algorithmes ont été
+implémenté dans le langage de programmation R et seront appelés respectivement
+ridgeLFMM pour l'estimation $\L2$ et lassoLFMM pour l'estimation $\L1$. Nous
+nous sommes comparé aux méthodes que nous avons présenté dans la partie
+[[sec:similar_method]]. Les méthodes de régression linéaires avec et sans les scores
+de l'ACP ont été implémenté dans le langage R et sont respectivement appelé lm
+et PCAlm. Pour les méthodes CATE et sva nous avons respectivement utilisé les
+implémentation R de ces méthodes mis à disposition par leurs auteurs.
 *** Comparaison des méthodes sur des données simulées
 **** Simulation
 :LOGBOOK:
@@ -3208,6 +3278,33 @@ d'avoir des simulations plus realistes et d'éviter les discution sur le choix d
 structure latente.
 
 Les simulations de comparaison des méthodes 
+
+#+NAME: code:num_val_sampler
+#+CAPTION: Le sampler qui a été utilisé pour la validation numérique. Dépend de [[code:1000g_G_valNum]]
+#+begin_src R 
+  library(MaTheseR)
+  ### The sampler
+  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_valNum.rds"
+  K <- 5
+  s <- ExpRsampler_fromTrueData(Y = Y, K = 5, prop.outlier = 0.05, cs = NULL, rho.B = 1.0)
+  saveRDS(s, "./OUTPUT/Sampler/validation_numerique.rds")
+
+  sv <- s$load.env$svd$d
+  var <- sv / sum(sv)
+
+  ## screePlot
+  pl <- qplot(seq_along(var), var) +
+    coord_cartesian(xlim = c(1,100))
+  pl
+  save_plot_png(pl, "valNum_screePlot.png")
+
+#+end_src
+
+#+NAME: code:num_val_dat
+#+CAPTION: On sample les données. Dépend de [[code:num_val_sampler]]
+#+begin_src R 
+
+#+end_src
 
 **** Mesure de comparaison des performances
 **** Résultats
@@ -3271,25 +3368,6 @@ Les simulations de comparaison des méthodes
 - State "TODO"       from              [2017-06-27 mar. 12:06]
 :END:
 
-#+NAME: code:num_val_sampler
-#+CAPTION: Le sampler pour les comparaisons d'experience et le screeplot de la matrice de génotype. Dépend de [[code:1000g_G_valNum]]
-#+begin_src R 
-  library(MaTheseR)
-  ### The sampler
-  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_valNum.rds"
-  K <- 5
-  s <- ExpRsampler_fromTrueData(Y = Y, K = 5, prop.outlier = 0.05, cs = NULL, rho.B = 1.0)
-  saveRDS(s, "./OUTPUT/Sampler/validation_numerique.rds")
-
-  sv <- s$load.env$svd$d
-  var <- sv / sum(sv)
-
-  pl <- qplot(seq_along(var), var) +
-    coord_cartesian(xlim = c(1,100))
-  pl
-  save_plot_png(pl, "valNum_screePlot.png")
-#+end_src
-
 #+RESULTS:
 [[./OUTPUT/Rplots/valNum_screePlot.png]]
 
@@ -3301,12 +3379,7 @@ Les simulations de comparaison des méthodes
   ## param
   K.method <- 5
   nb.cluster <- 8
-  rep.nb.sampler <- 5
-  prop.outlier <- c(0.01, 0.05, 0.1, 0.15)
-  rho.B <- 3
-  rho.c <- c(0.1, 0.3, 0.5, 0.8)
-
-  ## methods
+    ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
   m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.K = 100,
                               relative.err.epsilon = 1e-6)

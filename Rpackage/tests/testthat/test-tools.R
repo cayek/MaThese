@@ -30,3 +30,9 @@ test_that("save_plot_MaTheseR", {
 
   m.matter <- matter_mat(paths="test.bin", ncol = 10, nrow = 10, datamode = "double")
 })
+
+test_that("save_dat", {
+
+  a = save_dat(1, "test", "test", p = 1, a = 0.1)
+  a
+})
