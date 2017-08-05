@@ -3277,7 +3277,8 @@ la structure lattente d'une matrice de données déjà existante ce qui permet
 d'avoir des simulations plus realistes et d'éviter les discution sur le choix de la
 structure latente.
 
-Les simulations de comparaison des méthodes 
+Les vrais jeu de données que nous avons choisi pour réaliser les simulation sont
+issu du jeux de données 1000 génome que nous présentons dans ...
 
 #+NAME: code:num_val_sampler
 #+CAPTION: Le sampler qui a été utilisé pour la validation numérique. Dépend de [[code:1000g_G_valNum]]
@@ -3300,13 +3301,124 @@ Les simulations de comparaison des méthodes
 
 #+end_src
 
+#+RESULTS: code:num_val_sampler
+[[./OUTPUT/Rplots/valNum_screePlot.png]]
+
 #+NAME: code:num_val_dat
 #+CAPTION: On sample les données. Dépend de [[code:num_val_sampler]]
 #+begin_src R 
+  ## sample all data
+  library(MaTheseR)
+  sampler <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
+  rep.nb.sampler <- 5
+  prop.outlier <- c(0.01, 0.05, 0.1, 0.15, 0.2)
+  rho.B <- 3
+  rho.c <- c(0.1, 0.3, 0.5, 0.8, 1.0)
+  nb.cluster <- 8
+  library(foreach)
+  library(doParallel)
+
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  dat.files <-
+    foreach(p = prop.outlier, .combine = 'c') %:%
+    foreach(rho = rho.c, .combine = 'c') %:%
+    foreach(i = 1:rep.nb.sampler, .combine = 'c') %dopar%
+    {
+      s <- sampler
+      s$prop.outlier = p
+      s$rho.B = rho.B
+      s$rho.c = rho
+      dat <- ExpRmouline(s)
+      dat$meta$i <- i
+      save_dat(dat, "ValNum", "1000g12", p = p, rho = rho, i = i, rho.B = rho.B)
+    }
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+  save_dat(dat.files, "ValNum", "dat_list")
 
 #+end_src
 
 **** Mesure de comparaison des performances
+#+NAME: code:num_val_expr
+#+CAPTION: Expérience de comparaison des méthodes sur les simulations. Dépend de [[code:num_val_dat]]
+#+begin_src R 
+  library(MaTheseR)
+  dat.files <- readRDS("./OUTPUT/Dat/ValNum/dat_list.rds")
+
+  ## param
+  K.method <- 5
+  nb.cluster <- 15
+
+  ## methods
+  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.K = 100,
+                              relative.err.epsilon = 1e-6)
+  m.lm <- method_lm()
+  m.pca <- method_PCAlm(K = K.method)
+  m.cate <- method_cate(K = K.method)
+  m.famt <- method_famt(K.method)
+  m.sva <- method_sva(K.method)
+  m.oracle <- method_oracle()
+
+  methods <- m.ridgeLfmm * param() +
+    m.lm * param() +
+    m.pca * param() +
+    m.cate * param() +
+    m.famt * param() +
+    m.sva * param() +
+    m.lasso * param() +
+    m.oracle * param()
+
+  ## main loop
+  message("=== Main loop.")
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  df.res <-
+    foreach(m = methods, .combine = 'rbind') %:%
+    foreach(f = dats, .combine = 'rbind') %dopar%
+    {
+      res.file <- retrieve_res(m, f, "ValNum")
+      if (is.null(res.file))
+      dat <- readRDS(f)
+      m <- ExpRmouline(m, dat)
+
+      if (m$save) {
+        message("saving")
+      
+      }
+
+      ExpRextractor_fdr(dat, m, rep.sampler = dat$meta$i, rep.method = 1)
+    }
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## save
+  save_expr(df.res, "validation_numerique.rds")
+  gc()
+
+  ## plot auc
+  toplot <- df.res %>%
+    dplyr::filter(pvalue.index == "pvalue1") %>%
+    dplyr::mutate(grid.x = prop.outlier, grid.y = rho.c)
+  pl <- plot_AUC_boxplot(toplot)
+  save_plot_png(pl, "validation_numerique_auc.png")
+  pll <- plot_gif_boxplot(toplot)
+  save_plot_png(pll, "validation_numerique_gif.png")
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/validation_numerique_auc.png]]
+[[./OUTPUT/Rplots/validation_numerique_gif.png]]
+#+begin_example
+  > save_plot_png(pl, "validation_numerique_auc.png")
+  [[./OUTPUT/Rplots/validation_numerique_auc.png]]
+  > pll <- plot_gif_boxplot(toplot)
+  > save_plot_png(pll, "validation_numerique_gif.png")
+  [[./OUTPUT/Rplots/validation_numerique_gif.png]]
+#+end_example
+
+
 **** Résultats
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[ht]
@@ -3367,121 +3479,6 @@ Les simulations de comparaison des méthodes
 - State "RUNNING"    from "TODO"       [2017-06-28 mer. 18:05]
 - State "TODO"       from              [2017-06-27 mar. 12:06]
 :END:
-
-#+RESULTS:
-[[./OUTPUT/Rplots/valNum_screePlot.png]]
-
-#+NAME: code:num_val_expr
-#+CAPTION: Expérience de comparaison des méthodes sur les simulations. Dépend de [[code:num_val_sampler]]
-#+begin_src R 
-  library(MaTheseR)
-
-  ## param
-  K.method <- 5
-  nb.cluster <- 8
-    ## methods
-  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
-  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.K = 100,
-                              relative.err.epsilon = 1e-6)
-  m.lm <- method_lm()
-  m.pca <- method_PCAlm(K = K.method)
-  m.cate <- method_cate(K = K.method)
-  m.famt <- method_famt(K.method)
-  m.sva <- method_sva(K.method)
-  m.oracle <- method_oracle()
-
-  methods <- m.ridgeLfmm * param() +
-    m.lm * param() +
-    m.pca * param() +
-    m.cate * param() +
-    m.famt * param() +
-    m.sva * param() +
-    m.lasso * param() +
-    m.oracle * param()
-
-  ######################################################################
-  ## 1
-  ## sampler
-  s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
-  s$rho.B <- rho.B
-  sampler.env <- s$load.env
-  samplers <-  s * param(prop.outlier = prop.outlier[1:2], rho.c =rho.c)
-  ##run
-  cl <- parallel::makeCluster(nb.cluster, outfile = "")
-  doParallel::registerDoParallel(cl)
-  expr <- ExpR(rep.nb.sampler = rep.nb.sampler,
-               samplers = samplers,
-               preprocessors = NULL,
-               rep.nb.method = 1,
-               methods = methods,
-               extractor = ExpRextractor_fdr,
-               sampler.env = sampler.env)
-  expr <- ExpRmouline(expr)
-  doParallel::stopImplicitCluster()
-  parallel::stopCluster(cl)
-  ## checkpoint 
-  save_expr(expr, "validation_numerique_1.rds")
-  rm(expr)
-  gc()
-  message("=================== step 1 OK =============================")
-  ######################################################################
-  ## 2
-  ## sampler
-  s <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
-  s$rho.B <- rho.B
-  sampler.env <- s$load.env
-  samplers <-  s * param(prop.outlier = prop.outlier[3:4], rho.c =rho.c)
-  ##run
-  cl <- parallel::makeCluster(nb.cluster, outfile = "")
-  doParallel::registerDoParallel(cl)
-  expr <- ExpR(rep.nb.sampler = rep.nb.sampler,
-               samplers = samplers,
-               preprocessors = NULL,
-               rep.nb.method = 1,
-               methods = methods,
-               extractor = ExpRextractor_fdr,
-               sampler.env = sampler.env)
-  expr <- ExpRmouline(expr)
-  doParallel::stopImplicitCluster()
-  parallel::stopCluster(cl)
-  ## checkpoint 
-  save_expr(expr, "validation_numerique_2.rds")
-  rm(expr)
-  gc()
-  message("=================== step 2 OK =============================")
-
-
-  ## retrieve expr
-  expr1 <- readRDS("OUTPUT/Expr/validation_numerique_1.rds")
-  expr2 <- readRDS("OUTPUT/Expr/validation_numerique_2.rds")
-  expr <- list(df.res =
-                 rbind(expr1$df.res, expr2$df.res)
-    )
-  save_expr(expr, "validation_numerique.rds")
-  rm(expr1)
-  rm(expr2)
-  gc()
-
-  ## plot auc
-  toplot <- expr$df.res %>%
-    dplyr::filter(pvalue.index == "pvalue1") %>%
-    dplyr::mutate(grid.x = prop.outlier, grid.y = rho.c)
-  pl <- plot_AUC_boxplot(toplot)
-  save_plot_png(pl, "validation_numerique_auc.png")
-  pll <- plot_gif_boxplot(toplot)
-  save_plot_png(pll, "validation_numerique_gif.png")
-#+end_src
-
-#+RESULTS:
-[[./OUTPUT/Rplots/validation_numerique_auc.png]]
-[[./OUTPUT/Rplots/validation_numerique_gif.png]]
-#+begin_example
-  > save_plot_png(pl, "validation_numerique_auc.png")
-  [[./OUTPUT/Rplots/validation_numerique_auc.png]]
-  > pll <- plot_gif_boxplot(toplot)
-  > save_plot_png(pll, "validation_numerique_gif.png")
-  [[./OUTPUT/Rplots/validation_numerique_gif.png]]
-#+end_example
 
 ***** STARTED Plots
 :LOGBOOK:
