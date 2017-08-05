@@ -108,10 +108,10 @@ save_dat <- function(dat, dirname, name, ...) {
   params <- as.list(match.call()[-(1:4)])
   dat.file <- name
   for(n in names(params)) {
-    dat.file <- paste0(dat.file,"_", n, eval(params[[n]]))
+    dat.file <- paste0(dat.file,"_", n, eval(params[[n]], envir = params))
   }
   dat.file <- paste0(dat.file, ".rds")
   dat.file <- paste0("./OUTPUT/Dat/",dirname,"/",dat.file)
-  saveRDS(dat, dat.file)
+  ## saveRDS(dat, dat.file)
   dat.file
 }

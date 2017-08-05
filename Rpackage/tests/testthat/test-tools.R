@@ -33,6 +33,7 @@ test_that("save_plot_MaTheseR", {
 
 test_that("save_dat", {
 
+  skip("to debug")
   A = 1
   a = save_dat(1, "test", "test", p = A, a = 0.1)
   a

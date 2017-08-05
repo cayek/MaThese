@@ -3311,10 +3311,13 @@ issu du jeux de données 1000 génome que nous présentons dans ...
   library(MaTheseR)
   sampler <- readRDS("./OUTPUT/Sampler/validation_numerique.rds")
   rep.nb.sampler <- 5
+  rep.nb.sampler <- 2
   prop.outlier <- c(0.01, 0.05, 0.1, 0.15, 0.2)
+  prop.outlier <- c(0.01)
   rho.B <- 3
   rho.c <- c(0.1, 0.3, 0.5, 0.8, 1.0)
-  nb.cluster <- 8
+  rho.c <- c(0.1)
+  nb.cluster <- 2
   library(foreach)
   library(doParallel)
 
@@ -3361,14 +3364,14 @@ issu du jeux de données 1000 génome que nous présentons dans ...
   m.sva <- method_sva(K.method)
   m.oracle <- method_oracle()
 
-  methods <- m.ridgeLfmm * param() +
-    m.lm * param() +
-    m.pca * param() +
-    m.cate * param() +
-    m.famt * param() +
-    m.sva * param() +
-    m.lasso * param() +
-    m.oracle * param()
+  methods <- m.ridgeLfmm * param(force = FALSE, save = TRUE) +
+    m.lm * param(force = FALSE, save = TRUE) +
+    m.pca * param(force = FALSE, save = TRUE) +
+    m.cate * param(force = FALSE, save = TRUE) +
+    m.famt * param(force = FALSE, save = TRUE) +
+    m.sva * param(force = FALSE, save = TRUE) +
+    m.lasso * param(force = FALSE, save = TRUE) +
+    m.oracle * param(force = FALSE, save = TRUE)
 
   ## main loop
   message("=== Main loop.")
@@ -3378,18 +3381,28 @@ issu du jeux de données 1000 génome que nous présentons dans ...
     foreach(m = methods, .combine = 'rbind') %:%
     foreach(f = dats, .combine = 'rbind') %dopar%
     {
-      res.file <- retrieve_res(m, f, "ValNum")
-      if (is.null(res.file))
       dat <- readRDS(f)
+      ## on force
+      if (m$force) {
+        message("Running")
+        m <- ExpRmouline(m, dat)
+        ## save
+        if (m$save) {
+          message("Saving")
+          save_res(m, f)
+        }
+      } else if (exist_res(m, f))
+        m <- retrieve_res(m, f)
+    } else {
       m <- ExpRmouline(m, dat)
-
+      ## save
       if (m$save) {
         message("saving")
-      
+        save_res(m, f)
       }
-
-      ExpRextractor_fdr(dat, m, rep.sampler = dat$meta$i, rep.method = 1)
     }
+      ExpRextractor_fdr(dat, m, rep.sampler = dat$meta$i, rep.method = 1)
+  }
   doParallel::stopImplicitCluster()
   parallel::stopCluster(cl)
 
