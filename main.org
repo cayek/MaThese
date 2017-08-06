@@ -153,7 +153,7 @@ factorisation de matrice en statistique.
   Kenneth lange, factorisation de matrice = avenir des stat ! a retrouver !
 :END:
 ** Problématique et objectifs de la thèse
-* Données
+* Données                                                          :noexport:
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
 :END:
@@ -317,78 +317,7 @@ CLOSED: [2017-07-27 jeu. 17:01]
 :END:
 *** Téléchargement des données
 
-#+NAME: code:ewas_ddl
-#+CAPTION: Dépend de 
-#+BEGIN_SRC R
-  ## try http:// if https:// URLs are not supported
-  source("https://bioconductor.org/biocLite.R")
-  biocLite("Biobase")
-
-  ## try http:// if https:// URLs are not supported
-  source("https://bioconductor.org/biocLite.R")
-  biocLite("GEOquery")
-
-
-  require(Biobase)
-  require(GEOquery)
-
-  ## get le jeu de données dans le format biobase
-  obj861 <- getGEO("GSE42861",GSEMatrix = T)
-
-  ## extrait les phenotypes (factors)
-  disease.state <- pData(phenoData(obj861[[1]]))[,11]
-
-  ## extrait les covariables (subject, age, gender, smocking.status)
-  ## age est converti en numeric
-
-  subject <- pData(phenoData(obj861[[1]]))[,12]
-
-  age.f <- pData(phenoData(obj861[[1]]))[,13]
-  write.table(file = "age.txt", as.character(age.f))
-  age <- as.numeric(read.table(file = "age.txt")[,1])
-
-
-  gender <- pData(phenoData(obj861[[1]]))[,14]
-
-  smocking.status <- pData(phenoData(obj861[[1]]))[,15]
-
-  ## download la matrice d'expression. Attention elle est transposée (individus en colonnes)
-  expmat861 <- exprs(obj861[[1]])
-#+END_SRC
 *** Formatage
-#+NAME: code:ewas_format
-#+CAPTION: Dépend de [[code:ewas_ddl]]
-#+BEGIN_SRC R
-  setwd("./Data/GSE42861/")
-
-  ## load data send by OF
-  load("exp861.RData")
-  ls()
-
-  ## save G and X
-  G <- t(expmat861)
-  ### G
-  rm(expmat861)
-  dim(G)
-  saveRDS(G, "betanormalized_metylationlvl.rds")
-
-  ## we scale and center data
-  X <- data.frame(disease.state = as.numeric(disease.state),
-                  age = as.numeric(age),
-                  gender = as.numeric(gender),
-                  smocking.status = as.numeric(smocking.status))
-  X <- scale(X)
-  X <- as.matrix(X)
-  rownames(X) <- rownames(G)
-  saveRDS(X, "X.rds")
-
-  ## downsample for test
-  sample.row <- sample.int(nrow(G), size = 100)
-  sample.col <- sample.int(ncol(G), size = 2000)
-  saveRDS(G[sample.row, sample.col], "betanormalized_metylationlvl.sample.rds")
-  saveRDS(X[sample.row,], "X.sample.rds")
-
-#+END_SRC
 *** Preprocessing
 Nour avons reproduit le preprocessing expliqué dans cite:Zou_2014.
 #+NAME: code:ewas_prepross
@@ -1380,7 +1309,7 @@ Enfin, on peut calculer l'erreur de prédiction comme ceci
 Cette procédure permet  bien de mesurer une erreur sur des observations de
 $\Y$ qui n'ont pas été utilisées pour estimer les paramètres du modèle.
 
-*** Tests d'hypothèse
+*** Tests d'hypothèse corrigés pour les facteurs de confusions
 <<sec:hypothese>>
 :LOGBOOK:
 - Note taken on [2017-08-04 ven. 17:14] \\
@@ -1487,7 +1416,7 @@ sur $\Y$, que l'on peut interpréter comme une estimation à priori de la
 proportion de variable $\Y$ associées avec $\X$. Enfin les deux algorithmes
 retournent les estimations pour les paramètres de LFMM ainsi qu'une \pvaleur
 pour chaque couple de variables $\Y$-$\X$ testés pour l'associon.
-** Autres méthodes existantes 
+** Autres méthodes existantes comparées
 <<sec:similar_method>>
 
 Dans cette section nous présentons des méthodes d'étude d'association avec et
@@ -1544,11 +1473,9 @@ utilisons.
 
 *** cate cite:wang2015confounder
 
-La méthode cate proposé dans cite:wang2015confounder est comparable notre méthode
-ridgeLFMM que nous avons présenté précédemment. Plutot que d'estimer les
-variables latentes 
+La méthode cate proposée par cite:wang2015confounder est comparable à notre méthode
+ridgeLFMM. La 
 
-Cate procède d'abors
 
 ** Expériences                                                    :noexport:
 :PROPERTIES:
@@ -3241,7 +3168,7 @@ de l'ACP ont été implémenté dans le langage R et sont respectivement appelé
 et PCAlm. Pour les méthodes CATE et sva nous avons respectivement utilisé les
 implémentation R de ces méthodes mis à disposition par leurs auteurs.
 *** Comparaison des méthodes sur des données simulées
-**** Simulation
+**** Simulation à partir de données réelles
 :LOGBOOK:
 - Note taken on [2017-08-03 jeu. 16:10] \\
   [[file:Rpackage/R/ExpRsampler-fromTrueData.R::ExpRmouline.ExpRsampler_fromTrueData%20<-%20function(s)%20{][La fonction sampler]]
@@ -3339,7 +3266,13 @@ issu du jeux de données 1000 génome que nous présentons dans ...
 
 #+end_src
 
-**** Mesure de comparaison des performances
+**** RUNNING Mesure de comparaison des performances
+:LOGBOOK:
+- Note taken on [2017-08-06 Sun 09:52] \\
+  Ca tourne avec la sauvegard sur disk :D
+  tail -f ValNum.y2017_m08_d06.log
+- State "RUNNING"    from              [2017-08-06 Sun 09:52]
+:END:
 #+NAME: code:num_val_expr
 #+CAPTION: Expérience de comparaison des méthodes sur les simulations. Dépend de [[code:num_val_dat]]
 #+begin_src R 
@@ -3347,11 +3280,11 @@ issu du jeux de données 1000 génome que nous présentons dans ...
   library(foreach)
   library(doParallel)
 
-  dat.files <- readRDS("./OUTPUT/Dat/ValNum/dat_list.rds")
+  dat.files <- readRDS("./OUTPUT/Dat/ValNum/dat_list_cc6919e751d0b2b138c81d2abc21696a.rds")
 
   ## param
   K.method <- 5
-  nb.cluster <- 15
+  nb.cluster <- 16
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
@@ -3379,25 +3312,27 @@ issu du jeux de données 1000 génome que nous présentons dans ...
   doParallel::registerDoParallel(cl)
   df.res <-
     foreach(m = methods, .combine = 'rbind') %:%
-    foreach(f = dats, .combine = 'rbind') %dopar%
+    foreach(f = dat.files, .combine = 'rbind') %dopar%
     {
       dat <- readRDS(f)
       ## on force
       if (m$force) {
-        message("Running")
+        message("Running", m$name)
         m.res <- ExpRmouline(m, dat)
         ## save
         if (m$save) {
-          message("Saving")
+          message("Saving", m$name)
           save_res(m, m.res, f)
         }
       } else if (exist_res(m , f)) {
+        message("Retrieving", m$name)
         m.res <- retrieve_res(m , f)
       } else {
+        message("Running", m$name)
         m.res <- ExpRmouline(m, dat)
         ## save
         if (m$save) {
-          message("saving")
+          message("Saving", m$name)
           save_res(m, m.res, f)
         }
       }
@@ -3423,13 +3358,6 @@ issu du jeux de données 1000 génome que nous présentons dans ...
 #+RESULTS:
 [[./OUTPUT/Rplots/validation_numerique_auc.png]]
 [[./OUTPUT/Rplots/validation_numerique_gif.png]]
-#+begin_example
-  > save_plot_png(pl, "validation_numerique_auc.png")
-  [[./OUTPUT/Rplots/validation_numerique_auc.png]]
-  > pll <- plot_gif_boxplot(toplot)
-  > save_plot_png(pll, "validation_numerique_gif.png")
-  [[./OUTPUT/Rplots/validation_numerique_gif.png]]
-#+end_example
 
 
 **** Résultats
@@ -3448,51 +3376,7 @@ issu du jeux de données 1000 génome que nous présentons dans ...
 \end{sidewaysfigure}
 #+END_EXPORT
 
-**** Scipts                                                     :noexport:
-***** RUNNING Comparaisons numériques sur des simulations
-:LOGBOOK:
-- Note taken on [2017-08-03 jeu. 14:08] \\
-  tail -f /home/cayek/tmp/Logfiles/valNum.y2017_m08_d03.log
-- State "RUNNING"    from "DEBUG"      [2017-08-03 jeu. 14:07]
-- State "DEBUG"      from "RUNNING"    [2017-08-02 mer. 15:53]
-- Note taken on [2017-08-02 mer. 15:53] \\
-  Ca a bugué :( ca prend une semaine.....
-- Note taken on [2017-07-28 ven. 09:38] \\
-  tail -f /home/cayek/tmp/Logfiles/valNum.y2017_m07_d28.log
-- Note taken on [2017-07-27 jeu. 17:40] \\
-  la premiere etape est en train de tourner !!
-- State "RUNNING"    from "STARTED"    [2017-07-27 jeu. 17:40]
-- State "STARTED"    from "DONE"       [2017-07-27 jeu. 13:43]
-- Note taken on [2017-07-17 Lun 08:14] \\
-  C'est bon c'est fini ! Il faudra regarder les plots !
-- State "DONE"       from "RUNNING"    [2017-07-17 Lun 08:13]
-- Note taken on [2017-07-13 jeu. 12:06] \\
-  Je l'ai relancé avec moins de rep pourle sampler ! ca prendra moins de place en
-  mémoire !!!
-- Note taken on [2017-07-13 jeu. 08:55] \\
-  Ca prend 50 % de la mémoire !!!!! C'est par ce qu'il y a beaucoup de données !!
-- Note taken on [2017-07-12 mer. 19:39] \\
-  je fais tourner la simu final !!!
-- State "RUNNING"    from "STARTED"    [2017-07-12 mer. 19:39]
-- State "STARTED"    from "RUNNING"    [2017-07-11 mar. 10:26]
-- Note taken on [2017-07-06 jeu. 17:52] \\
-  sinon les resultats sont top :D
-- Note taken on [2017-07-06 jeu. 17:50] \\
-  je suis pas sur que c'est le dernier lfmm ridge .... Il faut que je trouve un
-  moyen dire quelle version est installé sur krakenator !! avec les commit peut
-  être a voir !!!
-- State "RUNNING"    from "TODO"       [2017-07-06 jeu. 11:33]
-- Note taken on [2017-07-05 mer. 18:11] \\
-  j'ai lancé avec le lasso c'est pas mal du tout !! J'ai elevé l'oracle, je sais
-  pas pk il merde... le lasso merde quand il y 20% d'outlier mais c'est normal je
-  lui ai pas mis le bon nombre de non zero !! :D
-- Note taken on [2017-07-03 lun. 16:13] \\
-  il faudra le relancer avec un oracle qui marche bien !!
-- State "TODO"       from "RUNNING"    [2017-07-03 lun. 16:13]
-- State "RUNNING"    from "TODO"       [2017-06-28 mer. 18:05]
-- State "TODO"       from              [2017-06-27 mar. 12:06]
-:END:
-
+**** Scripts                                                    :noexport:
 ***** STARTED Plots
 :LOGBOOK:
 - State "STARTED"    from "RUNNING"    [2017-07-25 mar. 16:35]
@@ -3703,7 +3587,96 @@ issu du jeux de données 1000 génome que nous présentons dans ...
 #+end_src
 
 
-*** Etude d'association entre les données d'expression et la maladie (EWAS)
+*** Étude d'association entre des niveau de méthylalation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+La polyarthrite rhumatoïde est une maladie autoimune. Dans cette étude nous
+souhaitons étudier le rôle de la méthylation de l'ADN dans le développement de
+la polyarthrite rhumatoide. La méthylation de l'ADN est un processus au cour du
+quelle un groupe methylé est ajouté au molécule d'ADN. La méthylation peut
+changer l'activité de l'ADN et en particulier modifier sa transcription en
+protéine. Pour cette étude nous avons accès au niveau de méthylation de $485577$
+site de l'ADN pour 354 individus attaind de polyarthrite rhumatoide et 335
+individus sains. Il est connu que pour la méthylataion de l'ADN dépend de l'age,
+du sexe et de la consomation de tabac des individus. Nous savons aussi que le
+type de la cellule ayant servi pour les mesures ainsi que les variation ajouté
+pendants les différente mesure (appelé batch effect dans la litérature)
+influence le niveau de éthylation. Ces différents facteurs peuvent être des
+facteurs de confusion, ils ont d'ailleurs été pris en compte dans les études
+d'association ont été faites à partir des données que nous allons étudier
+cite:Rahmani_2016,Zou_2014,Liu_2013.
+
+#+NAME: code:ewas_ddl
+#+CAPTION: Téléchargement des données pour l'EWAS.
+#+BEGIN_SRC R
+  ## try http:// if https:// URLs are not supported
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("Biobase")
+
+  ## try http:// if https:// URLs are not supported
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("GEOquery")
+
+
+  require(Biobase)
+  require(GEOquery)
+
+  ## get le jeu de données dans le format biobase
+  obj861 <- getGEO("GSE42861",GSEMatrix = T)
+
+  ## extrait les phenotypes (factors)
+  disease.state <- pData(phenoData(obj861[[1]]))[,11]
+
+  ## extrait les covariables (subject, age, gender, smocking.status)
+  ## age est converti en numeric
+
+  subject <- pData(phenoData(obj861[[1]]))[,12]
+
+  age.f <- pData(phenoData(obj861[[1]]))[,13]
+  write.table(file = "age.txt", as.character(age.f))
+  age <- as.numeric(read.table(file = "age.txt")[,1])
+
+
+  gender <- pData(phenoData(obj861[[1]]))[,14]
+
+  smocking.status <- pData(phenoData(obj861[[1]]))[,15]
+
+  ## download la matrice d'expression. Attention elle est transposée (individus en colonnes)
+  expmat861 <- exprs(obj861[[1]])
+#+END_SRC
+
+#+NAME: code:ewas_format
+#+CAPTION: Formatage des données pour l'EWAS. Dépend de [[code:ewas_ddl]].
+#+BEGIN_SRC R
+  setwd("./Data/GSE42861/")
+
+  ## load data send by OF
+  load("exp861.RData")
+  ls()
+
+  ## save G and X
+  G <- t(expmat861)
+  ### G
+  rm(expmat861)
+  dim(G)
+  saveRDS(G, "betanormalized_metylationlvl.rds")
+
+  ## we scale and center data
+  X <- data.frame(disease.state = as.numeric(disease.state),
+                  age = as.numeric(age),
+                  gender = as.numeric(gender),
+                  smocking.status = as.numeric(smocking.status))
+  X <- scale(X)
+  X <- as.matrix(X)
+  rownames(X) <- rownames(G)
+  saveRDS(X, "X.rds")
+
+  ## downsample for test
+  sample.row <- sample.int(nrow(G), size = 100)
+  sample.col <- sample.int(ncol(G), size = 2000)
+  saveRDS(G[sample.row, sample.col], "betanormalized_metylationlvl.sample.rds")
+  saveRDS(X[sample.row,], "X.sample.rds")
+
+#+END_SRC
+
 
 *** Etude d'association entre des données génétique et un gradient environmental (GEAS)
 **** Les données génétiques du project 1000 genomes             :noexport:
