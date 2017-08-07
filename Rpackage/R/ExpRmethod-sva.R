@@ -1,9 +1,9 @@
 ##' @export
-method_sva <- function(K) {
+method_sva <- function(K, method = "irw") {
   TestRequiredPkg("sva")
 
-  args <- list(K = K)
-  args$name = "sva"
+  args <- list(K = K, method = method)
+  args$name = paste0("sva_", method)
   res <- do.call(ExpRmethod, args)
   class(res) <- c("method_sva", class(res))
   res
@@ -28,7 +28,7 @@ ExpRmouline.method_sva <- function(m, dat) {
   ## We confounding structure
   ## n.sv <- num.sv(edata,mod,method = "leek")
   n.sv <- m$K ## K is given
-  svobj <- sva::sva(edata,mod,mod0,n.sv = n.sv)
+  svobj <- sva::sva(edata,mod,mod0,n.sv = n.sv, method = m$method)
 
 
   # We perform association with confounding correction

@@ -1405,17 +1405,19 @@ CLOSED: [2017-08-06 Sun 14:42]
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
   m.famt <- method_famt(K.method)
-  m.sva <- method_sva(K.method)
+  m.sva_irw <- method_sva(K.method, method = "irw")
+  m.sva_twostep <- method_sva(K.method, method = "two-step")
   m.oracle <- method_oracle()
 
   methods <- m.ridgeLfmm * param(force = FALSE, save = TRUE) +
     m.lm * param(force = FALSE, save = TRUE) +
     m.pca * param(force = FALSE, save = TRUE) +
     m.cate * param(force = FALSE, save = TRUE) +
-    m.famt * param(force = FALSE, save = TRUE) +
-    m.sva * param(force = FALSE, save = TRUE) +
     m.lasso * param(force = FALSE, save = TRUE) +
-    m.oracle * param(force = FALSE, save = TRUE)
+    m.oracle * param(force = FALSE, save = TRUE) +
+    m.sva_twostep* param(force = FALSE, save = TRUE) +
+    m.sva_irw * param(force = FALSE, save = TRUE) +
+    m.famt * param(force = FALSE, save = TRUE)
 
   ## main loop
   message("=== Main loop.")
