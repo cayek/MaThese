@@ -41,6 +41,7 @@ method_main <- function(m, dat, main.fun, hp.func = NULL) {
     hp <- hp.func(dat, X)
     m$score <- hp$score[,1:d, drop = FALSE]
     m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
+    m$B.hp <- hp$B[,1:d, drop = FALSE]
   }
   m
 }

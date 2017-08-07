@@ -2,7 +2,7 @@ library(testthat)
 context("PCA")
 
 test_that("test pca", {
-  
+
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/1000GenomesPhase3_QC_norel_prunned_scaled_noNA_samplep1000n100.rds"
   skip_if_not(file.exists(Y))
 

@@ -22,7 +22,7 @@
 
 #+PROPERTY: header-args    :exports none
 
-#+latex_header: \usepackage{amsthm}
+#+latex_header: \usepackage{amsthm, bm}
 #+latex_header: \newtheorem{theorem}{Théoreme}
 #+latex_header: \newtheorem{corollaire}{Corollaire}
 #+latex_header: \newtheorem{proposition}{Proposition}
@@ -229,7 +229,7 @@ latentes sont potentiellement corrélées à $\X$, il faut donc les prendre en c
 dans l'étude d'association.
 
 #+NAME: code:conf_factor
-#+BEGIN_SRC dot :file conf_factor.png :exports results :eval no-export
+#+BEGIN_SRC dot :file Figures/conf_factor.png :exports results :eval no-export
   graph {
     graph [fontname = "serif"];
     node [fontname = "serif"];
@@ -243,7 +243,8 @@ dans l'étude d'association.
 #+CAPTION: Graphe de corrélation entre la variable $y$ la variable $x$ et le facteur de confusion $u$. Dans cette situation si on ne prend pas en compte $u$ dans l'étude d'association alors $x$ et $y$ apparaitrons comme étant associées.
 #+ATTR_LATEX: :width 5cm
 #+RESULTS: code:conf_factor
-[[file:conf_factor.png]]
+[[file:Figures/conf_factor.png]]
+
 *** Simulation numérique d'une association avec facteurs de confusions
 <<sec:simu_ex>>
 
@@ -1202,7 +1203,11 @@ par $\X$ et $\bar{\U)}$ la matrice des scores sur les $\K$ premières composante
 principales. Ces deux méthodes ont été implémentées en R et nous les appellerons
 respectivement lm et PCAlm.
 
-*** emma cite:Kang_2008
+*** COMMENT emma cite:Kang_2008
+:LOGBOOK:
+- Note taken on [2017-08-07 lun. 10:23] \\
+  Non on va pas ajouter emma aux méthodes ca serais trop compliqué.
+:END:
 *** sva cite:article_Leek_Storey_2007
 :LOGBOOK:
 - Note taken on [2017-08-05 Sat 13:57] \\
@@ -1239,12 +1244,50 @@ utilisons.
 
 *** cate cite:wang2015confounder
 
-La méthode cate proposée par cite:wang2015confounder est comparable à notre méthode
-ridgeLFMM. La 
+Nous présentons dans cette partie la méthodes cate, nous considérons le cas où
+il n'y à qu'une variable explicative $\X$ pour faciliter les explications. Dans
+la méthode cate on commence par transformer la matrice des données $\Y$ afin
+d'isoler les variations expliquées par les facteurs latents. Pour cela on
+applique une matrice de changement de base à $\Y$ de sorte que la premier axe de
+la nouvelle base soit colinéaire à $\X$. Cette transformation permet d'avoir sur
+le premier axe les coefficients de la régression linéaire de $\Y$ par $\X$ et
+sur tout les autres axes le projeté orthogonale de $\Y$ par rapport à $\X$
+correspondant au résidu de cette régression. La méthode cate utilise alors les
+$\Yrow - 1$ autres coordonnées pour calculer les axes factorielles notés $\V$
+dans nos notations. Cette première étape est comparable à l'étape de calcul de
+$\V$ dans notre méthode ridgeLFMM (voir partie [[sec:estimator_L2]]). Dans
+ridgeLFMM, plutôt que d'enlever complétement les variations de $\Y$ expliquée
+par $\X$ nous la réduisons en fonction de régularisation $\lambRidge$. Comme
+cela a été montré dans cite:wang2015confounder sva et cate estime la même
+matrice des axes factorielles qui correspond en faite à celle estimée par
+ridgeLFMM dans le cas ou $\lambRidge$ vaux zéro. La méthode cate diffère de sva
+dans sa façon de calculer les variables latents et les effets de $\X$ sur $\Y$.
+Pour cela les auteurs de cate ont modélisé explicitement la corrélation entre les
+variables explicatives $\X$ et les variables latentes $\U$ tel que
+\begin{equation}
+\label{eq:cateU}
+\U = \X \bm{\alpha}^{T} + \matr{Z}.
+\end{equation}
+Comme la matrice $\Z$ est orthogonal à $\X$ elle déjà été estimée en même temps
+que la matrice des axes factorielles $\V$. Pour estimer la matrice
+$\matr{\alpha} la méthode cate utilise la première coordonné de la matrice $\Y$
+transformées dans la base où le premier axe est colinéaire à $\X$. En effet en
+injectant eqref:eq:cateU dans l'équation du modèle LFMM eqref:eq:model on peut
+écrire la matrice des coefficients de régression de $\Y$ par $\X$, notée
+$\bm{\tau}$, comme ceci
+\begin{equation}
+\bm{\tau} = \B + \V \bm{\alpha}^{T},
+\end{equation}
+où $\B$ est la matrice des effets dans l'équation eqref:eq:model. La méthode
+cate estime ensuite $\matr{\alpha}$ en faisant une régression linéaire robuste
+de $\bm{\tau}$ par son estimation de la matrice des axe factorielles $\V$ et
+$\B$ est calculé comme le résidu de cette régression. La régression robuste
+permet d'enlever de l'estimation de $\bm{\alpha}$ les effets atypiques qui
+correspondent aux variables associés à $\X$ que l'on cherche.
 
 ** Résultats
 :PROPERTIES:
-:header-args: :cache no :eval no-export :results output :exports none
+:header-args: :cache no :eval no-export :results output :exports none :session *krakR*
 :END:
 Dans cette partie, nous présentons les expériences numériques que nous avons
 réalisées pour évaluer la performance de nos algorithmes de correction pour les
@@ -1424,32 +1467,36 @@ CLOSED: [2017-08-06 Sun 14:42]
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
   doParallel::registerDoParallel(cl)
   df.res <-
-    foreach(m = methods, .combine = 'rbind') %:%
     foreach(f = dat.files, .combine = 'rbind') %dopar%
     {
       dat <- readRDS(f)
-      ## on force
-      if (m$force) {
-        message("Running", m$name)
-        m.res <- ExpRmouline(m, dat)
-        ## save
-        if (m$save) {
-          message("Saving", m$name)
-          save_res(m, m.res, f)
+      res <- data.frame()
+      for (m in methods) {
+        ## on force
+        if (m$force) {
+          message("Running", m$name)
+          m.res <- ExpRmouline(m, dat)
+          ## save
+          if (m$save) {
+            message("Saving", m$name)
+            save_res(m, m.res, f)
+          }
+        } else if (exist_res(m , f)) {
+          message("Retrieving", m$name)
+          m.res <- retrieve_res(m , f)
+        } else {
+          message("Running", m$name)
+          m.res <- ExpRmouline(m, dat)
+          ## save
+          if (m$save) {
+            message("Saving", m$name)
+            save_res(m, m.res, f)
+          }
         }
-      } else if (exist_res(m , f)) {
-        message("Retrieving", m$name)
-        m.res <- retrieve_res(m , f)
-      } else {
-        message("Running", m$name)
-        m.res <- ExpRmouline(m, dat)
-        ## save
-        if (m$save) {
-          message("Saving", m$name)
-          save_res(m, m.res, f)
-        }
+        res <- ExpRextractor_fdr(dat, m.res, rep.sampler = dat$meta$i, rep.method = 1) %>%
+          rbind(res)
       }
-      ExpRextractor_fdr(dat, m.res, rep.sampler = dat$meta$i, rep.method = 1)
+      res
     }
   doParallel::stopImplicitCluster()
   parallel::stopCluster(cl)
@@ -1708,7 +1755,10 @@ niveau de methylation moyen constitutif, c'est à inférieur à 0.2 ou supérieu
 méthylation. Nous avons ensuite lancé les méthodes cate, lm, PCAlm, sva,
 lassoLFMM, ridgeLFMM afin de trouver les sites de méthylation de l'ADN associés
 à la polyarthrite. Le nombre de facteurs latents à été choisi à partir du scree
-plot et de la validation croisée de l'estimateur $\L_{2}$ de LFMM.
+plot et de la validation croisée de l'estimateur $L_{2}$ de LFMM (voir Figure
+ref:fig:ewas_params). Nous avons choisi $\K = 10$ car il n'y a plus
+d'amélioration significative de l'erreur de prédiction après cette valeur sur la
+figure ....
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -2093,8 +2143,25 @@ CLOSED: [2017-07-27 jeu. 10:49]
 [[./OUTPUT/Rplots/ewas_CV_lambda_lfmm_lambda.png]]
 
 ***** DONE Étude du jeu de données
-CLOSED: [2017-07-27 jeu. 11:01]
+CLOSED: [2017-08-07 lun. 18:35]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-07 lun. 18:35]
+- State "RUNNING"    from "DONE"       [2017-08-07 lun. 16:39]
+- Note taken on [2017-08-07 lun. 16:35] \\
+  j'ai rajouté sva two-step a l'arrache
+  #+begin_src R :results output :exports both
+    expr.all <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
+  
+    expr.all$df.res$method[expr.all$df.res$method == "sva"] = "sva-irw"
+  
+    expr.all$df.res <- expr.all$df.res %>%
+      rbind(expr$df.res)
+  
+    summarise(expr.all$df.res)
+  
+  
+    save_expr(expr.all, "EWAS_all.rds")
+  #+end_src
 - State "DONE"       from "RUNNING"    [2017-07-27 jeu. 11:01]
 - Note taken on [2017-07-26 mer. 19:44] \\
   Du coup j'ai relancé avec K = 10 et le bon lasso !!!!!! on va voir
@@ -2141,14 +2208,16 @@ CLOSED: [2017-07-27 jeu. 11:01]
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
   m.famt <- method_famt(K.method)
-  m.sva <- method_sva(K.method)
+  m.sva_irw <- method_sva(K.method)
+  m.sva_2step <- method_sva(K.method, method = "two-step")
 
   methods <- m.ridgeLfmm * param() +
     m.lm * param() +
     m.pca * param() +
     m.cate * param() +
     m.famt * param() +
-    m.sva * param() +
+    m.sva_irw * param() +
+    m.sva_2step * param() +
     m.lasso * param()
 
   ## run
@@ -2166,7 +2235,6 @@ CLOSED: [2017-07-27 jeu. 11:01]
 
   ## save expr
   save_expr(expr, "EWAS_all.rds")
-
 
 #+end_src
 
@@ -2590,16 +2658,17 @@ CLOSED: [2017-07-27 jeu. 11:32]
 
 #+RESULTS: code:ewas_calibration
 #+begin_example
-# A tibble: 7 x 3
-     method       mad     median
-      <chr>     <dbl>      <dbl>
-1      cate  1.287086 0.04677596
-2      famt  6.265929 4.33328808
-3 lassoLFMM  1.238778 0.02799659
-4        lm  4.212716 0.04534315
-5     PCAlm  1.226813 0.03996082
-6 ridgeLFMM  1.274570 0.04853927
-7       sva 10.841806 7.58318108
+# A tibble: 8 x 3
+        method        mad     median
+         <chr>      <dbl>      <dbl>
+1         cate  1.2870855 0.04677596
+2         famt  6.2659293 4.33328808
+3    lassoLFMM  1.2387777 0.02799659
+4           lm  4.2127155 0.04534315
+5        PCAlm  1.2268129 0.03996082
+6    ridgeLFMM  1.2745703 0.04853927
+7 sva_two-step  0.9842079 0.71781997
+8      sva-irw 10.8418062 7.58318108
 #+end_example
 
 ****** DONE Les qqplots ?
@@ -2628,8 +2697,8 @@ CLOSED: [2017-07-27 jeu. 11:32]
 #+end_src
 
 #+RESULTS: code:ewas_qqplots
- [[./OUTPUT/Rplots/EWAS_qqplots.png]]
- [[./OUTPUT/Rplots/EWAS_qqplots2.png]]
+[[./OUTPUT/Rplots/EWAS_qqplots.png]]
+[[./OUTPUT/Rplots/EWAS_qqplots2.png]]
 
 
 ****** DONE Le top 
@@ -2656,18 +2725,19 @@ CLOSED: [2017-07-27 jeu. 11:35]
 #+end_src
 
 #+RESULTS: code:ewas_top
-#+begin_example
-# A tibble: 7 x 2
-     method power
-      <chr> <dbl>
-1      cate   0.8
-2      famt   0.0
-3 lassoLFMM   1.0
-4        lm   0.0
-5     PCAlm   1.0
-6 ridgeLFMM   1.0
-7       sva   0.0
 [[./OUTPUT/Rplots/ewas_top_inter.png]]
+#+begin_example
+# A tibble: 8 x 2
+        method power
+         <chr> <dbl>
+1         cate   0.8
+2         famt   0.0
+3    lassoLFMM   1.0
+4           lm   0.0
+5        PCAlm   1.0
+6    ridgeLFMM   1.0
+7 sva_two-step   1.0
+8      sva-irw   0.0
 #+end_example
 
 ****** DONE Contrôle du FDR à $0.01$
@@ -2696,18 +2766,19 @@ CLOSED: [2017-07-27 jeu. 11:37]
 #+RESULTS: code:ewas_fdr
 [[./OUTPUT/Rplots/ewas_fdr01_inter.png]]
 #+begin_example
-# A tibble: 6 x 2
-     method power
-      <chr> <dbl>
-1      cate   1.0
-2      famt   1.0
-3 lassoLFMM   1.0
-4     PCAlm   1.0
-5 ridgeLFMM   1.0
-6       sva   0.6
+# A tibble: 7 x 2
+        method power
+         <chr> <dbl>
+1         cate   1.0
+2         famt   1.0
+3    lassoLFMM   1.0
+4        PCAlm   1.0
+5    ridgeLFMM   1.0
+6 sva_two-step   1.0
+7      sva-irw   0.6
 #+end_example
 
-****** DONE Venn diagram
+****** DONE Venn diagram fdr 0.01
 CLOSED: [2017-07-27 jeu. 11:39]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-07-27 jeu. 11:39]
@@ -2724,7 +2795,7 @@ CLOSED: [2017-07-27 jeu. 11:39]
     ungroup() 
 
 
-  sets <- list(lm = toplot$index[toplot$method == "lm"],
+  sets <- list(sva = toplot$index[toplot$method == "sva_two-step"],
                cate = toplot$index[toplot$method == "cate"],
                lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
                ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
@@ -2732,13 +2803,89 @@ CLOSED: [2017-07-27 jeu. 11:39]
                )
 
 
-  out <- plot_venn(sets[2:5])
+  out <- plot_venn(sets)
 
   save_plot_png(out, "ewas_fdr01_venn.png")
 #+end_src
 
 #+RESULTS: code:ewas_venn
-[[./OUTPUT/Rplots/ewas_fdr01_venn.png]]
+: [[./OUTPUT/Rplots/ewas_fdr01_venn.png]]
+
+****** DONE Venn diagram top 100
+CLOSED: [2017-08-07 lun. 18:02]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-07 lun. 18:02]
+- State "TODO"       from "DONE"       [2017-08-07 lun. 17:57]
+- State "DONE"       from "TODO"       [2017-07-27 jeu. 11:39]
+- State "TODO"       from              [2017-07-27 jeu. 11:32]
+:END:
+
+#+NAME: code:ewas_venn_top
+#+CAPTION: Dépend de [[ewas_load_res]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  ## 0.05 % de p
+  p <- max(expr$df.res$index)
+  0.0005 * p
+
+  toplot <- expr$df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_top(100) %>%
+    ungroup() 
+
+
+  sets <- list(cate = toplot$index[toplot$method == "cate"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"]
+               )
+
+
+  out <- plot_venn(sets)
+
+  save_plot_png(out, "ewas_top100_venn.png")
+#+end_src
+
+#+RESULTS: code:ewas_venn_top
+[[./OUTPUT/Rplots/ewas_top100_venn.png]]
+: [1] 81.019
+
+
+****** DONE plot top * power
+CLOSED: [2017-08-07 lun. 17:56]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-07 lun. 17:56]
+- State "TODO"       from              [2017-08-07 lun. 17:26]
+:END:
+#+NAME: code:ewas_top_power
+#+CAPTION: Dépend de [[ewas_load_res]]
+#+begin_src R :results output :exports both
+  candidates
+  m1 <- length(candidates)
+  expr$df.res
+
+  df <- expr$df.res %>%
+    transmute(method = method,
+              index = index,
+              pvalue = pvalue,
+              outlier = index %in% candidates) %>%
+    group_by(method) %>%
+    arrange(method, pvalue) %>%
+    mutate(power = cumsum(outlier) / m1, top = seq_along(pvalue)) %>%
+    ungroup()
+
+  df <- df %>%
+    add_row(method = unique(df$method), top = 0, power = 0)
+
+  pl <- ggplot(df, aes(x = top, y = power, color = method)) +
+    geom_line() +
+    coord_cartesian(xlim = c(0,50))
+  pl
+  save_plot_png(pl, "ewas_top_power.png")
+#+end_src
+
+#+RESULTS: code:ewas_top_power
+[[./OUTPUT/Rplots/ewas_top_power.png]]
 
 ***** DONE Plots
 CLOSED: [2017-08-06 Sun 14:25]
@@ -2861,7 +3008,7 @@ CLOSED: [2017-08-06 Sun 14:25]
 
 #+END_SRC
 
-*** Etude d'association (GWAS)
+*** Étude d'association (GWAS)
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
@@ -3426,6 +3573,7 @@ CLOSED: [2017-07-28 ven. 09:25]
   expr <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
 
+  ## fdr 5%
   toplot <- expr %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
@@ -3450,6 +3598,44 @@ CLOSED: [2017-07-28 ven. 09:25]
 : 3        lm 0.5714286
 : 4     PCAlm 0.5102041
 : 5 ridgeLFMM 0.7346939
+****** DONE plot top * power
+CLOSED: [2017-08-07 lun. 18:12]
+:LOGBOOK:
+- State "DONE"       from              [2017-08-07 lun. 18:12]
+:END:
+#+NAME: code:gwas_top_power
+#+CAPTION: Dépend de [[code:gwas_expr]]
+#+begin_src R 
+  library(MaTheseR)
+  expr <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+
+  m1 <- length(candidates)
+  expr
+
+  df <- expr %>%
+    transmute(method = method,
+              index = index,
+              pvalue = pvalue,
+              outlier = index %in% candidates) %>%
+    group_by(method) %>%
+    arrange(method, pvalue) %>%
+    mutate(power = cumsum(outlier) / m1, top = seq_along(pvalue)) %>%
+    ungroup()
+
+  df <- df %>%
+    add_row(method = unique(df$method), top = 0, power = 0)
+
+  pl <- ggplot(df, aes(x = top, y = power, color = method)) +
+    geom_line() +
+    coord_cartesian(xlim = c(0,3000))
+  pl
+  save_plot_png(pl, "gwas_top_power.png")
+
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_top_power.png]]
 ***** TODO Plots
 :LOGBOOK:
 - State "TODO"       from              [2017-08-06 Sun 15:11]
@@ -3504,8 +3690,7 @@ CLOSED: [2017-07-28 ven. 09:25]
 
 #+END_SRC
 
-
-*** Etude d'association entre des données génétique et un gradient environmental (GEAS)
+*** Étude d'association entre des données génétique et un gradient environmental (GEAS)
 **** Scripts                                                    :noexport:
 ***** DONE Téléchargement du jeux de données
 CLOSED: [2017-07-26 mer. 18:17]
@@ -6574,6 +6759,26 @@ des individus nous avons choisi d'utiliser la base wordclim
 #+end_src
 
 ** Discussion                                                     :noexport:
+** SANDBOX                                                        :noexport:
+:PROPERTIES:
+:header-args: :cache no :eval no-export :results output :exports none
+:END:
+*** CANCELLED ridgeLFMM et cate quand B et V sont corrélé :D
+CLOSED: [2017-08-07 lun. 14:32]
+:LOGBOOK:
+- Note taken on [2017-08-07 lun. 16:22] \\
+  cate marche bien, la regression robuste va eviter ce cas la !!!
+- State "CANCELLED"  from              [2017-08-07 lun. 14:32]
+:END:
+
+Que se passe-t-il quand B et V sont corrélé :D
+
+#+begin_src R :results output :exports both
+  sampler
+#+end_src
+
+Voir cahier le 7/08/2017
+
 * Perspectives et conclusion 
 :LOGBOOK:
 - Note taken on [2017-07-31 lun. 10:20] \\

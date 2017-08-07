@@ -83,6 +83,8 @@ test_that("true dataset article 3 sur un petit sample", {
   venn.pl <- plot_venn(sets[1:5])
   grid.draw(venn.pl)
 
+  ## plot top
+
 })
 
 test_that("mutate_annotation", {
