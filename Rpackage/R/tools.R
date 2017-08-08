@@ -137,3 +137,24 @@ exist_res <- function(m, f) {
   f <- paste0(sub(".rds", "", f), "_", md5, ".rds")
   file.exists(f)
 }
+
+##' @export
+article3_method_name <- function(method) {
+  aux <- function(m) {
+    if (m == "sva_irw") {
+      "sva-irw"
+    } else if (m == "sva_two-step") {
+      "sva-two-step"
+    } else {
+      m
+    }
+  }
+  sapply(method, aux)
+}
+
+##' @export
+g_legend<-function(a.gplot){
+    tmp <- ggplot_gtable(ggplot_build(a.gplot))
+    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+    legend <- tmp$grobs[[leg]]
+    return(legend)}

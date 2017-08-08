@@ -58,6 +58,8 @@
   install.packages("ggmap")
   install.packages("rvest")
   install.packages("raster")
+  install.packages("latex2exp")
+
     ## bioconductor
   source("https://bioconductor.org/biocLite.R")
   biocLite("matter", ask = FALSE)
@@ -1358,7 +1360,7 @@ issu du jeux de données 1000 génome que nous présentons dans ...
 #+END_EXPORT
 
 **** Scripts                                                    :noexport:
-***** DONE Échantillonage des données
+***** DONE Échantillonnage des données
 CLOSED: [2017-08-06 Sun 14:42]
 :LOGBOOK:
 - State "DONE"       from              [2017-08-06 Sun 14:42]
@@ -1521,6 +1523,9 @@ CLOSED: [2017-08-06 Sun 14:42]
 
 ***** STARTED Plots
 :LOGBOOK:
+- Note taken on [2017-08-08 mar. 13:48] \\
+  j'attend que ca finisse ! et je filtrerais les couleurs et les nom des méthodes
+  !
 - State "STARTED"    from "RUNNING"    [2017-07-25 mar. 16:35]
 - State "RUNNING"    from "DEBUG"      [2017-07-25 mar. 10:57]
 - State "DEBUG"      from "TODO"       [2017-07-24 lun. 17:32]
@@ -1570,6 +1575,7 @@ CLOSED: [2017-08-06 Sun 14:42]
   require(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
   library(gridExtra)
+  library(forcats)
 
   auc.df <- readRDS("./OUTPUT/Expr/auc.df.rds") 
   auc.df <- auc.df %>%
@@ -1580,6 +1586,14 @@ CLOSED: [2017-08-06 Sun 14:42]
     dplyr::filter(!(rho.c %in% c(1)),
                   !(prop.outlier %in% c(0.2)))
 
+  ## methods order
+  method.ordered <- c("lm", "PCAlm", "famt", "sva",
+                      "lassoLFMM", "cate", "ridgeLFMM", "oracle")
+  auc.df <- auc.df %>%
+    mutate(method = factor(method, method.ordered))
+
+  ## Plot params
+  color.values <- MaTheseR.params$color.values
 
   #################
   ## by prop outlier
@@ -1593,7 +1607,9 @@ CLOSED: [2017-08-06 Sun 14:42]
     geom_errorbar(aes(ymin = auc.mean - se,
                       ymax = auc.mean + se),
                   width = 0.9,
-                  position = "dodge")
+                  position = "dodge") +
+    scale_fill_manual(values = color.values)
+  auc.prop.pl
   save_plot_png(auc.prop.pl, "num_val_auc_prop.png")
 
   ## gif
@@ -1752,30 +1768,45 @@ explicitement les facteurs de confusion connus.
 De la même façon que dans cite:Zou_2014 nous avons filtré les sites avec un
 niveau de methylation moyen constitutif, c'est à inférieur à 0.2 ou supérieur à
 0.8. De plus, nous avons centré et divisé par l'écart type les données de
-méthylation. Nous avons ensuite lancé les méthodes cate, lm, PCAlm, sva,
-lassoLFMM, ridgeLFMM afin de trouver les sites de méthylation de l'ADN associés
-à la polyarthrite. Le nombre de facteurs latents à été choisi à partir du scree
-plot et de la validation croisée de l'estimateur $L_{2}$ de LFMM (voir Figure
-ref:fig:ewas_params). Nous avons choisi $\K = 10$ car il n'y a plus
-d'amélioration significative de l'erreur de prédiction après cette valeur sur la
-figure ....
+méthylation. Nous avons ensuite lancé les méthodes cate, lm, PCAlm, sva-irw,
+sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de méthylation de
+l'ADN associés à la polyarthrite. Le nombre de facteurs latents à été choisi à
+partir du scree plot et de la validation croisée de l'estimateur $L_{2}$ de LFMM
+(voir Figure ref:fig:ewas_params). Nous avons choisi $\K = 10$ car il n'y a plus
+d'amélioration significative de l'erreur de prédiction et de la proportion de
+variance expliquée par les variables latentes après cette valeur sur les figures
+A et B de ref:fig:ewas_params. Les valeurs du paramètre de régularisation
+$L_{2}$ $\lambRidge$ entre $10^{-10}$ et $1$ donnent les mêmes valeurs d'erreur
+de prédiction (Figure ref:fig:ewas_params C). On s'attend à detecter un petit
+nombre d'association nous avons choisi une proportion de ligne non nulle pour
+l'estimateur $L_{1}$ de $\B$ valant 1\%. 
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/ewas_screeplot.pdf.png}
-\includegraphics{./OUTPUT/Rplots/ewas_CV_K.pdf.png}
-\includegraphics{./OUTPUT/Rplots/ewas_CV_lambda.pdf.png}
-\caption{Choix des paramètres pour l'étude d'association entre des mesure de
-  niveaux de méthylation et la maladie polyarthrite. A) valeurs singulières de
-  la matrices des variable expliquées partiellement décorrélé avec les variables
-  explicatives. Le resultats est présenté pour plusieurs valeurs du paramètre de
-  régularisation de l'estimateur ridge. Ce paramètre rêgle a quelle point les
-  variables expliquées sont décorélé avec les variable expliqué (voir ...) B)C)
-  Erreur de prédiction calculé grace a la validation croisé présenté de
-  l'estimateur $L_{2}$ pour défférente valeurs du paramètre de régularisation
-  et du nombre variable lattentes.}
+\includegraphics{./OUTPUT/Rplots/ewas_hyperparams.pdf.png}
+\caption{Choix des paramètres pour l'étude d'association entre des site
+  méthylation de l'ADN et la maladie polyarthrite rhumatoïde. A) Proportion de
+  variance expliquées par chacune des variables latentes estimé par l'algorithme
+  ridgeLFMM pour déférente valeur $\lambda$ du paramètre de régularisation
+  $L_2$. B)C) Erreur de prédiction calculée grâce à la validation croisée de
+  l'estimateur $L_{2}$ des paramètre de LFMM pour différente valeurs du
+  paramètre de régularisation $\lambda$ et du nombre variable lattentes $\K$. La
+  ligne pointillée vertical marque le nombre de variables latentes choisi, 10.}
 \label{fig:ewas_params}
+\end{figure}
+#+END_EXPORT
+
+
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/ewas_qqplot_top.pdf.png}
+\caption{A) Diagramme de Venn de la liste de candidats controlé à au taux de
+  fausses de découvertes à 1 \%. B) Quantille-quantille plot des \pvaleur
+  renvoyé par chaques méthodes.}
+\label{fig:ewas_qqplot_top}
 \end{figure}
 #+END_EXPORT
 
@@ -1783,11 +1814,9 @@ figure ....
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/ewas_venn.pdf.png}
-\includegraphics{./OUTPUT/Rplots/ewas_qqplot.pdf.png}
 \caption{A) Diagramme de Venn de la liste de candidats controlé à au taux de
-  fausses de découvertes à 1 \%. B) Quantille-quantille plot des \pvaleur
-  renvoyé par chaques méthodes.}
-\label{fig:ewas_venn_qqplot}
+  fausses de découvertes à 1 \%.}
+\label{fig:ewas_venn}
 \end{figure}
 #+END_EXPORT
 
@@ -2671,6 +2700,9 @@ CLOSED: [2017-07-27 jeu. 11:32]
 8      sva-irw 10.8418062 7.58318108
 #+end_example
 
+Pour sva_irw et sva_two-step les scores sont des Fscrore ! On ne peut pas
+calibrer avec le MAD !!!
+
 ****** DONE Les qqplots ?
 CLOSED: [2017-07-27 jeu. 11:32]
 :LOGBOOK:
@@ -2725,7 +2757,12 @@ CLOSED: [2017-07-27 jeu. 11:35]
 #+end_src
 
 #+RESULTS: code:ewas_top
-[[./OUTPUT/Rplots/ewas_top_inter.png]]
+: [1] "ridgeLFMM"    "lm"           "PCAlm"        "cate"         "famt"        
+: [6] "sva-irw"      "lassoLFMM"    "sva_two-step"
+: [1] lm           PCAlm        sva-two-step sva-irw      lassoLFMM   
+: [6] cate         ridgeLFMM   
+: Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
+: [[./OUTPUT/Rplots/ewas_top_power_article.png]]
 #+begin_example
 # A tibble: 8 x 2
         method power
@@ -2892,27 +2929,37 @@ CLOSED: [2017-08-06 Sun 14:25]
 :LOGBOOK:
 - State "DONE"       from              [2017-08-06 Sun 14:25]
 :END:
+
+****** DONE Choix des paramètres
+CLOSED: [2017-08-08 mar. 15:08]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-08 mar. 15:08]
+- State "TODO"       from              [2017-08-08 mar. 14:28]
+:END:
 #+NAME: code:ewas_screeplot_CV
 #+CAPTION: Dépend de [[code:ewas_screeplot]] [[code:ewas_CV]] [[code:ewas_CV_lambda]]
 #+begin_src R 
   library(MaTheseR)
+  library(cowplot)
+  library(latex2exp)
+  library(scales)
   MaTheseR.params <- get_MaTheseRparams()
 
   ## screeplot
   expr <- readRDS("./OUTPUT/Expr/ewas_screeplot_expr.rds")
   toplot <- expr$df.res %>%
       mutate(lambda = as.factor(lambda))
-  pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+  plA <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
     geom_point() +
     coord_cartesian(xlim = c(1,100)) +
-    xlab("K") +
-    ylab("Proportion de la variance totale") +
-    MaTheseR.params$gtheme
-
-  save_plot_MaTheseR(pl, "ewas_screeplot.pdf.png",
-                     height = 0.3 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
-
+    xlab(TeX("Nombre de variables latentes ($K$)")) +
+    ylab("Variance\nexpliquée") +
+    MaTheseR.params$gtheme +
+    scale_color_discrete(name = TeX("$\\lambda$")) +
+    scale_y_continuous(labels=percent) +
+    geom_vline(xintercept = 10, linetype = "dashed") +
+    theme(legend.position=c(0.8, 0.6))
+  save_plot_png(plA, "ewas_screeplot.png")
 
   ## cross validation K
   expr <- readRDS("./OUTPUT/Expr/ewas_CV_lfmm.rds")
@@ -2921,19 +2968,19 @@ CLOSED: [2017-08-06 Sun 14:25]
     group_by(lambda, K) %>%
     summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
     ungroup()
-  pl <- ggplot(toplot, aes(x = K, y = err.mean, color = lambda)) +
+  plB <- ggplot(toplot, aes(x = K, y = err.mean, color = lambda)) +
     geom_point() + 
     geom_errorbar(aes(ymin = err.mean - se,
                       ymax = err.mean + se,
                       width = 1)) +
     geom_line() +
-    xlab("Nombre de variables latentes (K)") +
-    ylab("Erreur de prédiction") +
-    MaTheseR.params$gtheme
-  pl
-  save_plot_MaTheseR(pl, "ewas_CV_K.pdf.png",
-                     height = 0.3 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+    xlab(TeX("Nombre de variables latentes ($K$)")) +
+    ylab("Erreur de\nprédiction") +
+    MaTheseR.params$gtheme +
+    scale_color_discrete(name = TeX("$\\lambda$")) + 
+    geom_vline(xintercept = 10, linetype = "dashed") +
+    theme(legend.position=c(0.8, 0.6))
+  save_plot_png(plB, "ewas_CV_K.png")
 
   ## cross validation lambda
   expr <- readRDS("./OUTPUT/Expr/ewas_CV_lambda_lfmm.rds")
@@ -2942,71 +2989,205 @@ CLOSED: [2017-08-06 Sun 14:25]
     group_by(lambda, K) %>%
     summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
     ungroup()
-  pl <- ggplot(toplot, aes(x = log(lambda), y = err.mean, color = K)) +
+  plC <- ggplot(toplot, aes(x = log(lambda), y = err.mean, color = K)) +
     geom_point() + 
     geom_errorbar(aes(ymin = err.mean - se,
                       ymax = err.mean + se,
                       width = 1)) +
     geom_line() +
-    xlab("Paramètre de regularisation en échelle logarithmique (lambda)") +
-    ylab("Erreur de prédiction") +
-    MaTheseR.params$gtheme
-  pl
-  save_plot_MaTheseR(pl, "ewas_CV_lambda.pdf.png",
-                     height = 0.3 * MaTheseR.params$textheightcm,
+    xlab(TeX("Paramètre de regularisation $L_{2}$ en échelle logarithmique ($\\lambda$)")) +
+    ylab("Erreur de\nprédiction") +
+    MaTheseR.params$gtheme +
+    theme(legend.position=c(0.2, 0.8))
+  save_plot_png(plC, "ewas_CV_lambda.png")
+
+  ## gather plot
+  pl <- plot_grid(plA, plB, plC, ncol = 1, labels = c("A", "B", "C"))
+
+  save_plot_MaTheseR(pl, "ewas_hyperparams.pdf.png",
+                     height = 0.9 * MaTheseR.params$textheightcm,
                      width = MaTheseR.params$textwidthcm)
 #+end_src
 
-#+NAME: code:ewas_qqplot_venn
-#+CAPTION: Dépend de [[code:ewas_run]]
+#+RESULTS: code:ewas_screeplot_CV
+[[./OUTPUT/Rplots/ewas_screeplot.png]]
+[[./OUTPUT/Rplots/ewas_CV_K.png]]
+[[./OUTPUT/Rplots/ewas_CV_lambda.png]]
+
+****** TODO Résultats des méthodes
+:LOGBOOK:
+- State "TODO"       from              [2017-08-08 mar. 14:28]
+:END:
+
+#+NAME: code:ewas_qqplot_top_venn
+#+CAPTION: Dépend de [[code:ewas_expr]]
 #+BEGIN_SRC R
   library(MaTheseR)
+  library(cowplot)
   library(gridExtra)
+  library(scales)
   MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
 
   expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
+  m1 <- length(candidates)
 
+  ## filter and order method
+  expr$df.res$method %>% unique()
+  df.res <- expr$df.res %>%
+    dplyr::filter(!(method %in% c("famt"))) %>%
+    transmute(method = factor(article3_method_name(method), method.ordered),
+              index = index,
+              pvalue = pvalue,
+              calibrated.pvalue = calibrated.pvalue,
+              outlier = index %in% candidates)
+  df.res$method %>% unique()
 
+  ## qqplot
+  pl.qq <- ggplot(df.res, aes(sample = -log10(pvalue), color = method)) +
+    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
+    geom_abline(slope = 1, intercept = 0) +
+    gtheme +
+    scale_color_manual(name = "Méthodes", values = color.values) + 
+    theme(legend.position="bottom")
+  legend <- g_legend(pl.qq)
+  pl.qq <- pl.qq + 
+    theme(legend.position="none") +
+    xlab("Quantiles théoriques") + 
+    ylab("Quantiles observés")
+
+  ## pl.qq
+  save_plot_png(pl.qq, filename = "ewas_qqplot_notcalibrated_all.png")
+
+  ## top * power plot
+  toplot <-  df.res %>%
+    group_by(method) %>%
+    arrange(method, pvalue) %>%
+    mutate(power = cumsum(outlier) / m1, top = seq_along(pvalue)) %>%
+    ungroup() 
+  toplot <- toplot  %>%
+    add_row(method = unique(toplot$method), top = 0, power = 0)
+
+  pl.top <- ggplot(toplot, aes(x = top, y = power, color = method)) +
+    geom_line() +
+    coord_cartesian(xlim = c(0,50)) +
+    scale_color_manual(values = color.values) +
+    gtheme +
+    theme(legend.position="none") + 
+    xlab("Top") + 
+    ylab("Candidats") +
+    scale_y_continuous(labels=percent)
+
+  ## pl.top
+  save_plot_png(pl.top, filename = "ewas_top_power_all.png")
+
+  ## gather plot
+  pl <- plot_grid(pl.qq, pl.top, ncol = 1, labels = c("A", "B"))
+  ## add legend
+  pl.leg <- drawable(function() {
+    grid.arrange(pl,
+                 legend, nrow=2, heights=c(10, 1))
+  })
+  save_plot_MaTheseR(pl.leg, "ewas_qqplot_top.pdf.png",
+                     height = 0.9 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
+
+  #############################################################################
   ## venn
-  toplot <- expr$df.res %>%
+
+  ## we calibrate sva-two-step with gif ! 
+  calibrate <- function(p) {
+    score2 <- qchisq(p, df = 1, lower.tail = FALSE)
+    gif <- median(score2) / qchisq(0.5, df = 1)
+    score2 <- score2 / gif
+    pchisq(score2, lower.tail = FALSE, df = 1)
+  }
+  p <- df.res$pvalue[df.res$method == "sva-two-step"]
+  hist(p)
+  p.calibrated <- calibrate(p)
+  hist(p.calibrated)
+  df.res$calibrated.pvalue[df.res$method == "sva-two-step"] <- p.calibrated
+
+  toplot <- df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
     filter_candidates_threshold(0.01) %>%
-    ungroup() 
-
-
-  sets <- list(lm = toplot$index[toplot$method == "lm"],
-               cate = toplot$index[toplot$method == "cate"],
+    ungroup()
+  sets <- list(cate = toplot$index[toplot$method == "cate"],
                lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
                ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
-               PCAlm = toplot$index[toplot$method == "PCAlm"]
+               PCAlm = toplot$index[toplot$method == "PCAlm"],
+               `sva-two-step` = toplot$index[toplot$method == "sva-two-step"]
                )
 
+  ## VennDiagram
+  inter <- function(...) {
+    id <- list(...)
+    res <- sets[[id[[1]]]]
+    for (i in id) {
+        res <- base::intersect(res, sets[[i]])
+    }
+    length(res)
+  }
 
-  out <- plot_venn(sets[2:5])
-  save_plot_png(out, filename = "ewas_venn.png")
-  save_plot_MaTheseR(out, filename = "ewas_venn.pdf.png",
-                     height = 0.4 * MaTheseR.params$textheightcm,
+  venn <- VennDiagram::draw.quintuple.venn(
+                        area1 = inter(1),
+                        area2 = inter(2),
+                        area3 = inter(3),
+                        area4 = inter(4),
+                        area5 = inter(5),
+                        n12 = inter(1,2),
+                        n13 = inter(1,3),
+                        n14 = inter(1,4),
+                        n15 = inter(1,5),
+                        n23 = inter(2,3),
+                        n24 = inter(2,4),
+                        n25 = inter(2,5),
+                        n34 = inter(3,4),
+                        n35 = inter(3,5),
+                        n45 = inter(4,5),
+                        n123 = inter(1,2,3),
+                        n124 = inter(1,2,4),
+                        n125 = inter(1,2,5),
+                        n134 = inter(1,3,4),
+                        n135 = inter(1,3,5),
+                        n145 = inter(1,4,5),
+                        n234 = inter(2,3,4),
+                        n235 = inter(2,3,5),
+                        n245 = inter(2,4,5),
+                        n345 = inter(3,4,5),
+                        n1234 = inter(1,2,3,4),
+                        n1235 = inter(1,2,3,5),
+                        n1245 = inter(1,2,4,5),
+                        n1345 = inter(1,3,4,5),
+                        n2345 = inter(2,3,4,5),
+                        n12345 = inter(1,2,3,4,5),
+                        category = names(sets),
+                        fill = color.values[names(sets)],
+                        cat.col = color.values[names(sets)],
+                        cat.cex = 1.2,
+                        cat.pos = c(0.0, -30, 180, 180, 30),
+                        cat.dist = c(0.2,0.25,0.2,0.2,0.25),
+                        margin = 0.07,
+                        ind = TRUE
+                       )
+
+  save_plot_png(venn, filename = "ewas_venn.png")
+  save_plot_MaTheseR(venn, "ewas_venn.pdf.png",
+                     height = 0.5 * MaTheseR.params$textheightcm,
                      width = MaTheseR.params$textwidthcm)
 
-
-  ## qqplot
-  toplot <- expr$df.res %>%
-    mutate(pvalue = calibrated.pvalue) %>%
-    dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
-  pll <- ggplot(toplot, aes(sample = -log10(pvalue), color = method)) +
-    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
-    geom_abline(slope = 1, intercept = 0) +
-    MaTheseR.params$gtheme + 
-    theme(legend.position = "none") 
-  pll
-  save_plot_png(pll, filename = "ewas_qqplot.png")
-  save_plot_MaTheseR(pll, filename = "ewas_qqplot.pdf.png",
-                     height = 0.4 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
 
 #+END_SRC
+
+#+RESULTS: code:ewas_qqplot_top_venn
+[[./OUTPUT/Rplots/ewas_qqplot_notcalibrated_all.png]]
+[[./OUTPUT/Rplots/ewas_top_power_all.png]]
+[[./OUTPUT/Rplots/ewas_venn.png]]
+
 
 *** Étude d'association (GWAS)
 #+BEGIN_EXPORT latex

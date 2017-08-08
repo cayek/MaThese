@@ -183,7 +183,9 @@ plot_intersection <- function(toplot, by, plot = c("point", "tile")) {
 }
 
 ##' @export
-plot_venn <- function(sets) {
+plot_venn <- function(sets,
+                      colors = c("dodgerblue", "goldenrod1", "darkorange1", "seagreen3", "orchid3"),
+                      cat.cex = 2, margin = 0.05) {
 
   ## VennDiagram
   inter <- function(...) {
@@ -230,11 +232,12 @@ plot_venn <- function(sets) {
                    n2345 = inter(2,3,4,5),
                    n12345 = inter(1,2,3,4,5),
                    category = names(sets),
-                   fill = c("dodgerblue", "goldenrod1", "darkorange1", "seagreen3", "orchid3"),
-                   cat.col = c("dodgerblue", "goldenrod1", "darkorange1", "seagreen3", "orchid3"),
-                   cat.cex = 2,
-                   margin = 0.05,
-                   ind = TRUE
+                   fill = colors[1:5],
+                   cat.col = colors[1:5],
+                   cat.cex = cat.cex,
+                   margin = margin,
+                   ind = TRUE,
+                   cat.dist = cat.dist
                    )
   } else if (length(sets) == 4) {
     out <- VennDiagram::draw.quad.venn(
@@ -254,10 +257,10 @@ plot_venn <- function(sets) {
                    n234 = inter(2,3,4),
                    n1234 = inter(1,2,3,4),
                    category = names(sets)[1:4],
-                   fill = c("dodgerblue", "goldenrod1", "darkorange1", "seagreen3"),
-                   cat.col = c("dodgerblue", "goldenrod1", "darkorange1", "seagreen3"),
-                   cat.cex = 2,
-                   margin = 0.05,
+                   fill = colors[1:4],
+                   cat.col = colors[1:4],
+                   cat.cex = cat.cex,
+                   margin = margin,
                    ind = TRUE
                    )
   } else if (length(sets) == 3) {
@@ -270,10 +273,10 @@ plot_venn <- function(sets) {
                           n23 = inter(2,3),
                           n123 = inter(1,2,3),
                           category = names(sets)[1:3],
-                          fill = c("dodgerblue", "goldenrod1", "darkorange1"),
-                          cat.col = c("dodgerblue", "goldenrod1", "darkorange1"),
-                          cat.cex = 2,
-                          margin = 0.05,
+                          fill = colors[1:3],
+                          cat.col = colors[1:3],
+                          cat.cex = cat.cex,
+                          margin = margin,
                           ind = TRUE
                         )
   } else if (length(sets) == 2) {
@@ -282,20 +285,20 @@ plot_venn <- function(sets) {
                           area2 = inter(2),
                           cross.area = inter(1,2),
                           category = names(sets)[1:2],
-                          fill = c("dodgerblue", "goldenrod1"),
-                          cat.col = c("dodgerblue", "goldenrod1"),
-                          cat.cex = 2,
-                          margin = 0.05,
+                          fill = colors[1:2],
+                          cat.col = colors[1:2],
+                          cat.cex = cat.cex,
+                          margin = margin,
                           ind = TRUE
                         )
-  } else if (length(sets) == 2) {
+  } else if (length(sets) == 1) {
     out <- VennDiagram::draw.single.venn(
                           area = inter(1),
                           category = names(sets)[1],
-                          fill = c("dodgerblue"),
-                          cat.col = c("dodgerblue"),
-                          cat.cex = 2,
-                          margin = 0.05,
+                          fill = colors[1:1],
+                          cat.col = colors[1:1],
+                          cat.cex = cat.cex,
+                          margin = margin,
                           ind = TRUE
                         )
   } else {
