@@ -1803,9 +1803,10 @@ l'estimateur $L_{1}$ de $\B$ valant 1\%.
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/ewas_qqplot_top.pdf.png}
-\caption{A) Diagramme de Venn de la liste de candidats controlé à au taux de
-  fausses de découvertes à 1 \%. B) Quantille-quantille plot des \pvaleur
-  renvoyé par chaques méthodes.}
+\caption{A) Diagrame quantile-quantile de l'inverse du logarithme en base
+  \pvaleur renvoyé par chaques méthodes. Les quantiles théoriques suivent la loi
+  exponetielle. B) Proportion des candidats proposé par \cite{Rahmani_2016} et \cite{Zou_2014}
+  retrouvés dans la top liste revoyée par chaques méthodes.}
 \label{fig:ewas_qqplot_top}
 \end{figure}
 #+END_EXPORT
@@ -1814,8 +1815,8 @@ l'estimateur $L_{1}$ de $\B$ valant 1\%.
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/ewas_venn.pdf.png}
-\caption{A) Diagramme de Venn de la liste de candidats controlé à au taux de
-  fausses de découvertes à 1 \%.}
+\caption{A) Diagramme de Venn de la liste de candidats controlé à un taux de
+  fausses de découvertes de 1 \%.}
 \label{fig:ewas_venn}
 \end{figure}
 #+END_EXPORT
@@ -3077,8 +3078,8 @@ CLOSED: [2017-08-08 mar. 15:08]
     scale_color_manual(values = color.values) +
     gtheme +
     theme(legend.position="none") + 
-    xlab("Top") + 
-    ylab("Candidats") +
+    xlab("Taille de la top liste") + 
+    ylab("Candidats retrouvés") +
     scale_y_continuous(labels=percent)
 
   ## pl.top
