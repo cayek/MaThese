@@ -1138,6 +1138,7 @@ cite:Hastie_2009.
 
 
 **** Calibration du test d'hypothèse
+<<sec:calibration>>
 Il arrive parfois que la statistique de suive pas la distribution théorique sous
 l'hypothèse nulle. On dit dans ce cas que le test est mal calibré. On peut
 trouver dans cite:Efron_2004 des exemples de situations qui peuvent aboutir à
@@ -1459,10 +1460,10 @@ CLOSED: [2017-08-06 Sun 14:42]
     m.pca * param(force = FALSE, save = TRUE) +
     m.cate * param(force = FALSE, save = TRUE) +
     m.lasso * param(force = FALSE, save = TRUE) +
-    m.oracle * param(force = FALSE, save = TRUE) +
-    m.sva_twostep* param(force = FALSE, save = TRUE) +
-    m.sva_irw * param(force = FALSE, save = TRUE) +
-    m.famt * param(force = FALSE, save = TRUE)
+    m.oracle * param(force = FALSE, save = TRUE)
+  ##   m.sva_twostep* param(force = FALSE, save = TRUE) +
+  ##   m.sva_irw * param(force = FALSE, save = TRUE) +
+  ##   m.famt * param(force = FALSE, save = TRUE)
 
   ## main loop
   message("=== Main loop.")
@@ -1497,6 +1498,7 @@ CLOSED: [2017-08-06 Sun 14:42]
         }
         res <- ExpRextractor_fdr(dat, m.res, rep.sampler = dat$meta$i, rep.method = 1) %>%
           rbind(res)
+        rm()
       }
       res
     }
@@ -1797,7 +1799,21 @@ l'estimateur $L_{1}$ de $\B$ valant 1\%.
 \end{figure}
 #+END_EXPORT
 
-
+La figure A ref:fig:ewas_qqplot_top montre la distribution observé des \pvalues
+renvoyé par chaque méthode contre la distribution théorique suivit par des
+\pvalues sous l'hypothèse nulle, c'est l'effet entre $\X$ et le niveau de
+méthylation de l'ADN vaux zéro. On constate une inflation du nombre de petites
+\pvalues pour toutes les méthodes. Il y à une forte inflation pour lm et
+sva-irw. La figure B ref:fig:ewas_qqplot_top quelle proportion dans candidat
+pour l'assocaition qui ont été identifié par cite:Zou_2014,Rahmani_2016 sont
+retrouvé dans les top liste pour chaque méthodes. Nous rappelons que les
+cadidats identifié par cite:Zou_2014,Rahmani_2016 ont été identifié en prenant
+en compte les facteurs latents tel que l'age le sex et des méthodes comparable à
+l'ACP pour identifier la conposition cellulaire. Toutes les méthode retrouve ses
+candidats dans leurs top 40 sauf lm et sva_irw. Pour la méthode lm il faut
+prendre le top 11881 pour trouver le premier candidat de
+cite:Zou_2014,Rahmani_2016 et le top 138038 pour tous les avoirs, pour la méthode
+sva-irw ses candidats son tous identifié entre le top 5111 et 87659. 
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -1811,11 +1827,22 @@ l'estimateur $L_{1}$ de $\B$ valant 1\%.
 \end{figure}
 #+END_EXPORT
 
+Enfin pour chaque méthode nous avons calculé la liste renvoyé quand on contrôle
+le taux de fausse découverte à 1\%. Toutefois les algorithme du FDR nécessite
+que les \pvalues soit correctement calibrées. Pour cela nous avons les \pvalues
+grâce à la méthode présenté dans la partie [[sec:calibration]]. Le contrôle du taux
+de fausses découvertes à été fait à l'aide du package R qvalue cite:Storey_2011.
+La figure ref:fig:ewas_venn montre les intersections entre les méthodes. Nous
+avons écarté lm et sva-irw car il renvoyait des listes trop différentes des
+autres. L'intersection de toutes les listes ont une intersection de 19 sites de
+méthylation parmi laquelle on retrouve les 5 candidats identifiés dans
+cite:Zou_2014,Rahmani_2016.
+
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/ewas_venn.pdf.png}
-\caption{A) Diagramme de Venn de la liste de candidats controlé à un taux de
+\caption{A) Diagramme de Venn de la liste des candidats controlés à un taux de
   fausses de découvertes de 1 \%.}
 \label{fig:ewas_venn}
 \end{figure}
@@ -2702,7 +2729,7 @@ CLOSED: [2017-07-27 jeu. 11:32]
 #+end_example
 
 Pour sva_irw et sva_two-step les scores sont des Fscrore ! On ne peut pas
-calibrer avec le MAD !!!
+calibrer avec le MAD !!! C'est surement idem pour famt
 
 ****** DONE Les qqplots ?
 CLOSED: [2017-07-27 jeu. 11:32]
@@ -2734,7 +2761,7 @@ CLOSED: [2017-07-27 jeu. 11:32]
 [[./OUTPUT/Rplots/EWAS_qqplots2.png]]
 
 
-****** DONE Le top 
+****** DONE Le top et rank des candidats
 CLOSED: [2017-07-27 jeu. 11:35]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-07-27 jeu. 11:35]
@@ -2755,15 +2782,19 @@ CLOSED: [2017-07-27 jeu. 11:35]
 
   pl <- plot_intersection(toplot, by = "colname", plot = "tile")
   save_plot_png(pl, "ewas_top_inter.png")
+
+  ## rang du dernier candidats
+  expr$df.res %>%
+    mutate(outlier = index %in% candidates) %>%
+    group_by(method) %>%
+    dplyr::arrange(pvalue, method) %>%
+    mutate(rk = seq_along(pvalue)) %>%
+    summarise(rk.min = min(rk[outlier]),
+              rk.max = max(rk[outlier]))
 #+end_src
 
 #+RESULTS: code:ewas_top
-: [1] "ridgeLFMM"    "lm"           "PCAlm"        "cate"         "famt"        
-: [6] "sva-irw"      "lassoLFMM"    "sva_two-step"
-: [1] lm           PCAlm        sva-two-step sva-irw      lassoLFMM   
-: [6] cate         ridgeLFMM   
-: Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
-: [[./OUTPUT/Rplots/ewas_top_power_article.png]]
+[[./OUTPUT/Rplots/ewas_top_inter.png]]
 #+begin_example
 # A tibble: 8 x 2
         method power
@@ -2776,6 +2807,17 @@ CLOSED: [2017-07-27 jeu. 11:35]
 6    ridgeLFMM   1.0
 7 sva_two-step   1.0
 8      sva-irw   0.0
+# A tibble: 8 x 3
+        method rk.min rk.max
+         <chr>  <int>  <int>
+1         cate      1     37
+2         famt   9326  27941
+3    lassoLFMM      1     24
+4           lm  11881 138038
+5        PCAlm      1      8
+6    ridgeLFMM      1     25
+7 sva_two-step      1     18
+8      sva-irw   5111  87659
 #+end_example
 
 ****** DONE Contrôle du FDR à $0.01$
@@ -3015,8 +3057,10 @@ CLOSED: [2017-08-08 mar. 15:08]
 [[./OUTPUT/Rplots/ewas_CV_K.png]]
 [[./OUTPUT/Rplots/ewas_CV_lambda.png]]
 
-****** TODO Résultats des méthodes
+****** DONE Résultats des méthodes
+CLOSED: [2017-08-09 mer. 13:56]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-09 mer. 13:56]
 - State "TODO"       from              [2017-08-08 mar. 14:28]
 :END:
 
@@ -3182,6 +3226,17 @@ CLOSED: [2017-08-08 mar. 15:08]
                      width = MaTheseR.params$textwidthcm)
 
 
+  ## list de l'intersection total
+  inter.list <- function(...) {
+    id <- list(...)
+    res <- sets[[id[[1]]]]
+    for (i in id) {
+        res <- base::intersect(res, sets[[i]])
+    }
+    res
+  }
+  l <- inter.list(1,2,3,4,5)
+  mean(candidates %in% l)
 #+END_SRC
 
 #+RESULTS: code:ewas_qqplot_top_venn
@@ -3191,6 +3246,19 @@ CLOSED: [2017-08-08 mar. 15:08]
 
 
 *** Étude d'association (GWAS)
+
+La maladie \celiac est une maladie auto-imune ayant une prévalence de près de
+$1\%$ dans la population général cite:Gujral_2012. Bien que les mécanismes
+d'apparition de cette maladie ne soit pas compris des études montres de forte
+association avec certains gène cite:dubois2010multiple; lassant envisager des
+causes génétiques à la maladie. Comme la maladie \celiac est très étudié faire
+une étude d'assocaition de celle-ci avec des données génomiques constitu un bon
+test pour les méthode de corréction pour les variable lattente. Nous pourrons en
+effet comparer nos résultat a ceux des nombreuses autre étude. De plus nous
+s'avons que les données génomique prise dans différente population son très
+structuré. De plus, nous avons choisi le jeux de données ... pour confronter les
+méthodes à un grand jeux de données.
+
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
@@ -3200,8 +3268,6 @@ CLOSED: [2017-08-08 mar. 15:08]
 \label{fig:gwas_venn_qqplot}
 \end{figure}
 #+END_EXPORT
-
-
 **** Scripts                                                    :noexport:
 :LOGBOOK:
 - Note taken on [2017-08-06 Sun 14:53] \\
@@ -3534,8 +3600,11 @@ CLOSED: [2017-07-30 Sun 11:28]
 
 On prend K = 9 variables latentes.
 
-***** DEBUG Validation croisée avec lfmmRidge
+***** RUNNING Validation croisée avec lfmmRidge
 :LOGBOOK:
+- State "RUNNING"    from "DEBUG"      [2017-08-09 mer. 15:26]
+- Note taken on [2017-08-09 mer. 15:24] \\
+  c'est reparti sur tail -f /home/cayek/tmp/Logfiles/gwas.y2017_m08_d09.log
 - State "DEBUG"      from "RUNNING"    [2017-08-03 jeu. 14:17]
 - Note taken on [2017-08-03 jeu. 14:16] \\
   ca buggé, le processus c'est fait tuer. Il en était a au bout de 5 jours...
@@ -3575,10 +3644,10 @@ On prend K = 9 variables latentes.
                               outlier = NULL) %>% ExpRmouline()
   n <- nrow(dat$Y)
 
-  lambdas <- c(1e-5, 1.0, 1e10)
-  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
+  lambdas <- c(1e-5)
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
                             lambdas = lambdas,
-                            Ks = c(1,2,3,7,10,15, 30))
+                            Ks = c(1,2,5,9,50))
 
   ## run
   res.cv <- ExpRmouline(cv, dat)
@@ -6113,9 +6182,9 @@ ième degré).
   1000GenomePhase3_CQ_norel.fam ... done.
 #+end_example
 
-***** DONE Conversion dans format utilisable en R
-CLOSED: [2017-08-03 jeu. 11:37]
+***** TODO Conversion dans format utilisable en R
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-09 mer. 15:18]
 - State "DONE"       from "TODO"       [2017-08-03 jeu. 11:37]
 - State "TODO"       from              [2017-07-26 mer. 18:17]
 :END:
@@ -6123,9 +6192,9 @@ CLOSED: [2017-08-03 jeu. 11:37]
 Nous avons utilisé le package bigsnpr pour convertir les données du format
 =.bed= à un format de matrice R. 
 
-****** DONE Données non prunnées
-CLOSED: [2017-08-03 jeu. 11:31]
+****** TODO Données non prunnées
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-09 mer. 15:18]
 - State "DONE"       from "STARTED"    [2017-08-03 jeu. 11:31]
 - State "STARTED"    from "RUNNING"    [2017-07-13 jeu. 12:29]
 - Note taken on [2017-07-13 jeu. 11:57] \\
@@ -6188,9 +6257,9 @@ CLOSED: [2017-08-03 jeu. 11:31]
   Erreur : impossible d'allouer un vecteur de taille 70.7 Go
 #+end_example
 
-****** DONE Données prunnées
-CLOSED: [2017-07-27 jeu. 17:17]
+****** TODO Données prunnées
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-09 mer. 15:18]
 - State "DONE"       from "TODO"       [2017-07-27 jeu. 17:17]
 - State "TODO"       from              [2017-07-13 jeu. 12:29]
 :END:
