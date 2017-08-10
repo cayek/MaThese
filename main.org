@@ -1172,25 +1172,23 @@ Dans le cadre des test d'association multiple
 
 *** Implémentation en R
 Les deux nouvelles méthodes de test d'association avec correction pour les
-facteurs de confusion que nous avons développées dans cette thèse on été
-implémenter à l'aide du language de programmation R. Nous les avons appelées
-respectivement lassoLFMM pour l'implemtation des estimateurs régularisées en
-norme $L_{1}$ et ridgeLFMM pour les estimateurs régularisées en norme $L_{2}$.
-Les algortihmes lassoLFMM et ridgeLFMM prennent en entré la matrice des
-variables $/X$ et la matrices des variables $/Y$ pour lesquelle on souhaite
-tester l'association avec $/X$. Ils prennent egualement le nombre de variables
-lattentes à ajouter au model. L'algorithme ridgeLFMM prend une valeur pour
+facteurs de confusion que nous avons développées dans cette thèse ont été
+implémentées en R. Nous les avons appelées respectivement lassoLFMM pour
+l'implémentation des estimateurs régularisées en norme $L_{1}$ et ridgeLFMM pour
+les estimateurs régularisées en norme $L_{2}$. Les algorithmes lassoLFMM et
+ridgeLFMM prennent en entrée la matrice des variables $/X$ et la matrices des
+variables $/Y$ à associer avec $/X$. Ils prennent egualement le nombre de
+variables latentes $\K$. L'algorithme ridgeLFMM prend une valeur pour
 $\lambLFMM$, le paramètre de régularisation $\L_{2}$. L'algorithme lassoLFMM
-prend la proportion de lignes non nulles dans la matrice $\B$ des effets de $\X$
-sur $\Y$, que l'on peut interpréter comme une estimation à priori de la
-proportion de variable $\Y$ associées avec $\X$. Enfin les deux algorithmes
-retournent les estimations pour les paramètres de LFMM ainsi qu'une \pvaleur
-pour chaque couple de variables $\Y$-$\X$ testés pour l'associon.
+prend la proportion de lignes non nulles dans la matrice $\B$, la matrice des
+effets de $\X$ sur $\Y$. Enfin les deux algorithmes retournent les estimations
+pour les paramètres de LFMM ainsi qu'une \pvaleur pour le test d'association de
+chaque colonne de $\Y$ avec $\X$.
 ** Autres méthodes existantes comparées
 <<sec:similar_method>>
 
-Dans cette section nous présentons des méthodes d'étude d'association avec et
-sans correction pour les facteurs de confusions. Les méthodes que nous
+Dans cette section nous présentons des méthodes pour l'étude d'association avec
+et sans correction pour les facteurs de confusions. Les méthodes que nous
 présentons ici sont comparées aux méthodes lassoLFMM et ridgeLFMM présentées
 dans la section précédente.
 
@@ -1198,13 +1196,13 @@ dans la section précédente.
 Dans lassoLFMM et ridgeLFMM, les tests d'hypothèses utilisés pour détecter les
 associations reposent sur une régression linéaire de $\Y$ par $\X$ et
 l'estimation des facteurs latents $\bar{\U)}$. Il est donc naturel de se
-comparer à une méthode reposant sur la régression de $\Y$ par $\X$. Dans ce cas
-aucun facteur latent n'est pris en compte dans l'étude d'association. De plus,
-nous nous comparons à une méthode qui repose sur une estimation des variables
-latents par l'ACP. Dans ce cas, il s'agit alors de faire une régression de $\Y$
-par $\X$ et $\bar{\U)}$ la matrice des scores sur les $\K$ premières composantes
-principales. Ces deux méthodes ont été implémentées en R et nous les appellerons
-respectivement lm et PCAlm.
+comparer à la méthode de test d'hypothèse nullité de l'effet dans la régression
+linaire de $\Y$ par $\X$. Dans ce cas aucun facteur latent n'est pris en compte
+dans l'étude d'association. De plus, nous nous comparons à une méthode qui
+repose sur une estimation des variables latents par l'ACP. Dans ce cas, il
+s'agit alors de faire une régression de $\Y$ par $\X$ et $\bar{\U)}$ la matrice
+des scores sur les $\K$ premières composantes principales. Ces deux méthodes ont
+été implémentées en R et nous les appellerons respectivement lm et PCAlm.
 
 *** COMMENT emma cite:Kang_2008
 :LOGBOOK:
@@ -1223,27 +1221,25 @@ IRW-SVA cite:article_Leek_Storey_2008. La méthode subset-SVA se découpe en deu
 étape d'estimation de la matrice des variables latentes $\U$. Lors de la
 premières étape la méthode subset-SVA estime les axes factorielles en faisant
 une ACP de la matrice résiduelles de la régression linaire de $\Y$ par $\X$.
-Cela correspond a faire l'ACP de $\matr{D}_{\lambRidge = 0} \Q \Y$, en utilisant
+Cela correspond à aire l'ACP de $\matr{D}_{(\lambRidge = 0)} \Q \Y$, en utilisant
 les notations de la section [[sec:estimator_L2]]. Ensuite la méthode subset-SVA
-calcule un sous-ensemble de variable de $\Y$ qui sont le moins corrélées avec
-$/X$. Ce sous ensemble de variable est utilisé pour estimer la matrice des
+calcule un sous-ensemble de colonnes de $\Y$ qui sont le moins corrélées avec
+$\X$. Ce sous ensemble de variable est utilisées pour estimer la matrice des
 variables latentes. Cette procédure peut facilement échouer car une faible
 corrélation avec $\X$ n'implique pas qu'il n'y a pas d'association avec $\X$. En
 effet une faible corrélation sans prendre en compte les facteurs latents peut
-devenir une forte corrélation quand on les prends en compte. 
+devenir une forte corrélation quand on les prends en compte.
 
 La deuxième version de SVA est itérative. Plutôt que d'estimer les variables
-latentes sur un sous ensemble de variable de $\Y$ la méthode IRW-SVA attribue un
+latentes sur un sous ensemble de colonne de $\Y$ la méthode IRW-SVA attribue un
 poids à chacune d'entre elles en fonction de la probabilité que la matrice des
 effet $\B$ de LFMM soit nul sachant les variables latentes calculées à
 l'itération précédente. Ensuite les probabilités sont utilisées pour attribuer
-un poids à chaque variable de $\Y$ et une nouvelle estimation des variables
+un poids à chaque colonne de $\Y$ et une nouvelle estimation des variables
 latentes est calculée à l'aide d'une ACP qui prend en compte les poids. La
 méthode itère ces deux étapes un nombre de fois choisie par l'utilisateur. Le
 désavantage de cette procédure est qu'on ne sais pas vers quoi elle converge ni
 si elle converge. Nous avons utilisé le package R sva fourni par ces auteurs.
-IRW-SVA est la version par défaut du package R sva, c'est celle que nous
-utilisons.
 
 *** cate cite:wang2015confounder
 
@@ -1251,29 +1247,29 @@ Nous présentons dans cette partie la méthodes cate, nous considérons le cas o
 il n'y à qu'une variable explicative $\X$ pour faciliter les explications. Dans
 la méthode cate on commence par transformer la matrice des données $\Y$ afin
 d'isoler les variations expliquées par les facteurs latents. Pour cela on
-applique une matrice de changement de base à $\Y$ de sorte que la premier axe de
-la nouvelle base soit colinéaire à $\X$. Cette transformation permet d'avoir sur
-le premier axe les coefficients de la régression linéaire de $\Y$ par $\X$ et
-sur tout les autres axes le projeté orthogonale de $\Y$ par rapport à $\X$
-correspondant au résidu de cette régression. La méthode cate utilise alors les
-$\Yrow - 1$ autres coordonnées pour calculer les axes factorielles notés $\V$
-dans nos notations. Cette première étape est comparable à l'étape de calcul de
-$\V$ dans notre méthode ridgeLFMM (voir partie [[sec:estimator_L2]]). Dans
+applique une matrice de changement de base aux lignes de $\Y$ de sorte que le
+premier axe de la nouvelle base soit colinéaire à $\X$. Cette transformation
+permet d'avoir sur le premier axe les coefficients de la régression linéaire de
+$\Y$ par $\X$ et sur tout les autres axes le projeté orthogonale de $\Y$ par
+rapport à $\X$ correspondant aux résidus de cette régression. La méthode cate
+utilise alors les $\Yrow - 1$ autres lignes pour calculer les axes factorielles
+notés $\V$ dans nos notations. Cette première étape est comparable à l'étape de
+calcul de $\V$ dans notre méthode ridgeLFMM (voir partie [[sec:estimator_L2]]). Dans
 ridgeLFMM, plutôt que d'enlever complétement les variations de $\Y$ expliquée
 par $\X$ nous la réduisons en fonction de régularisation $\lambRidge$. Comme
 cela a été montré dans cite:wang2015confounder sva et cate estime la même
 matrice des axes factorielles qui correspond en faite à celle estimée par
 ridgeLFMM dans le cas ou $\lambRidge$ vaux zéro. La méthode cate diffère de sva
 dans sa façon de calculer les variables latents et les effets de $\X$ sur $\Y$.
-Pour cela les auteurs de cate ont modélisé explicitement la corrélation entre les
-variables explicatives $\X$ et les variables latentes $\U$ tel que
+Pour cela les auteurs de cate ont modélisé explicitement la corrélation entre
+les variables explicatives $\X$ et les variables latentes $\U$ tel que
 \begin{equation}
 \label{eq:cateU}
 \U = \X \bm{\alpha}^{T} + \matr{Z}.
 \end{equation}
 Comme la matrice $\Z$ est orthogonal à $\X$ elle déjà été estimée en même temps
 que la matrice des axes factorielles $\V$. Pour estimer la matrice
-$\matr{\alpha} la méthode cate utilise la première coordonné de la matrice $\Y$
+$\matr{\alpha}$ la méthode cate utilise la première ligne de la matrice $\Y$
 transformées dans la base où le premier axe est colinéaire à $\X$. En effet en
 injectant eqref:eq:cateU dans l'équation du modèle LFMM eqref:eq:model on peut
 écrire la matrice des coefficients de régression de $\Y$ par $\X$, notée
@@ -1286,7 +1282,7 @@ cate estime ensuite $\matr{\alpha}$ en faisant une régression linéaire robuste
 de $\bm{\tau}$ par son estimation de la matrice des axe factorielles $\V$ et
 $\B$ est calculé comme le résidu de cette régression. La régression robuste
 permet d'enlever de l'estimation de $\bm{\alpha}$ les effets atypiques qui
-correspondent aux variables associés à $\X$ que l'on cherche.
+correspondent aux colonnes de $\Y$ associés à $\X$ que l'on cherche.
 
 ** Résultats
 :PROPERTIES:
@@ -1334,25 +1330,47 @@ variables expliquées tel que
 \begin{equation}
 \Y^{'} = \U^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
 \end{equation}
-Nous avons ainsi des données pour lesquelle nous connaissont en théorie quelles
-variables expliqué associées avec la variable explicative. Nous utilions de plus
-la structure lattente d'une matrice de données déjà existante ce qui permet
-d'avoir des simulations plus realistes et d'éviter les discution sur le choix de la
+Nous avons ainsi des données pour lesquelle nous savont quelles variables
+expliqué est associées avec la variable explicative. Nous utilisons de plus la
+structure lattente d'une matrice de données déjà existante ce qui permet d'avoir
+des simulations plus realistes et d'éviter les discution sur le choix de la
 structure latente.
 
-Les vrais jeu de données que nous avons choisi pour réaliser les simulation sont
-issu du jeux de données 1000 génome que nous présentons dans ...
+Les vrais jeu de données que nous avons choisi pour réaliser les simulations
+sont issu du jeux de données 1000 génome que nous présentons dans la partie
+[[sec:GEAS]]. Nous avons garder seulement le chromosome 1 et 2, cela permet de
+simuler une matrice $\Y^{'}$ composé de 52211 variables pour 1758 individus.
+Nous avons choisi de simuler 5 variables latentes pour différente valeur du
+nombre de variable de $\Y$ associé avec $\X$ et diférente valeur de la
+corrélation entre $\X$ et les 5 variables latentes. Pour chaque variable latente
+une valeur entre $-1$ et $1$ de la corélation avecv $\X$ est tiré selon une
+loie uniforme et multiplié par une coéficient entre 0 et 1. Le meme coéficient
+est utilisé pour calculer toutes les corrélations. Plus le coéficient est proche
+de 1 plus les variables latentes seront corélé à $\X$ et donc plus la confusion
+lors du test d'association avec la matrice $\Y^{'}$ simulé sera importante. 
 
 **** Mesure de comparaison des performances
+Pour comparrer les méthodes entre elles nous avons choisi deux critères. Toutes
+les méthodes renvoie une \pvalue pour chaque colonne de $\Y$ et plus cette
+\pvalue est faible plus il est raisonnable de déclarer qu'il y a une association
+de cette variable avec $\X$. A partir des \pvalues de chaque méthode nous avons
+calculé des courbe de precision-rappel. Pour cela nous avons classé pour chaque
+méthode les pvaleurs dans l'ordre croissant et calculé pour le nombre
+d'association correct retrouvé ainsi que le nombre de fausse découverte en
+prenant toute les tops listes. Cela permet ensuite de calculer une aire sous la
+courbe de precision-rappel. Cette mesure que nous appelons AUC donne une idée la
+capacité de la méthode à proposer une liste avec le moins possible de fausse
+association.
+
 **** Résultats
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[ht]
 \centering
 \includegraphics{./OUTPUT/Rplots/method_comp.pdf.png}
 \caption{Comparaison des méthodes sur des simulations faites a partir du jeux de
-  données 1000Genomes. A-B) Aire sous la source precision-recall en fonction
+  données 1000Genomes. A-B) Aire sous la courbe precision-recall en fonction
   respectivement de la proportion d'outlier dans la simulation et la corrélation
-  de la varrable explicative et les variables latentes. C-D) Facteur d'inflation
+  de la variable explicative et les variables latentes. C-D) Facteur d'inflation
   génomique calculé sur les variable nulles en fonction respectivement de la
   proportion d'outlier et de la corrélation entre les variable explicatives et
   les variables latentes.}
@@ -1426,6 +1444,8 @@ CLOSED: [2017-08-06 Sun 14:42]
 #+end_src
 ***** RUNNING Run des méthodes
 :LOGBOOK:
+- Note taken on [2017-08-10 jeu. 10:24] \\
+  ok mes méthodes performe bien :D on peut lancer le reste !!!
 - Note taken on [2017-08-06 Sun 14:42] \\
   tail -f ValNum.y2017_m08_d06.log
 - State "RUNNING"    from              [2017-08-06 Sun 14:42]
@@ -1441,7 +1461,7 @@ CLOSED: [2017-08-06 Sun 14:42]
 
   ## param
   K.method <- 5
-  nb.cluster <- 12
+  nb.cluster <- 4
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
@@ -1460,9 +1480,9 @@ CLOSED: [2017-08-06 Sun 14:42]
     m.pca * param(force = FALSE, save = TRUE) +
     m.cate * param(force = FALSE, save = TRUE) +
     m.lasso * param(force = FALSE, save = TRUE) +
-    m.oracle * param(force = FALSE, save = TRUE)
-  ##   m.sva_twostep* param(force = FALSE, save = TRUE) +
-  ##   m.sva_irw * param(force = FALSE, save = TRUE) +
+    m.oracle * param(force = FALSE, save = TRUE) + 
+    m.sva_twostep * param(force = FALSE, save = TRUE) +
+    m.sva_irw * param(force = FALSE, save = TRUE)
   ##   m.famt * param(force = FALSE, save = TRUE)
 
   ## main loop
@@ -1541,23 +1561,22 @@ CLOSED: [2017-08-06 Sun 14:42]
 :END:
 
 #+NAME: code:num_val_auc_gif_df
-#+CAPTION: Dépend de [[code:num_val_expr]]
+#+CAPTION: Calcul de l'auc et le gif. Dépend de [[code:num_val_expr]]
 #+begin_src R
   require(MaTheseR)
 
   expr <- readRDS("./OUTPUT/Expr/validation_numerique.rds")
 
-  auc.df <- expr$df.res %>%
+  auc.df <- expr %>%
     group_by(method, prop.outlier, rho.c, rep.sampler, rep.method) %>%
     compute_auc()
   save_expr(auc.df, "auc.df.rds")
 
-  gif.df <- expr$df.res %>%
+  gif.df <- expr %>%
     group_by(method, prop.outlier, rho.c, rep.sampler, rep.method) %>%
     compute_gif()
   save_expr(gif.df, "gif.df.rds")
 #+end_src
-
 
 ****** STARTED Plots
 :LOGBOOK:
@@ -1578,24 +1597,23 @@ CLOSED: [2017-08-06 Sun 14:42]
   MaTheseR.params <- get_MaTheseRparams()
   library(gridExtra)
   library(forcats)
+  library(tidyverse)
+  MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
 
   auc.df <- readRDS("./OUTPUT/Expr/auc.df.rds") 
-  auc.df <- auc.df %>%
-    dplyr::filter(!(rho.c %in% c(1)),
-                                     !(prop.outlier %in% c(0.2)))
   gif.df <- readRDS("./OUTPUT/Expr/gif.df.rds") 
-  gif.df <- gif.df %>%
-    dplyr::filter(!(rho.c %in% c(1)),
-                  !(prop.outlier %in% c(0.2)))
 
-  ## methods order
-  method.ordered <- c("lm", "PCAlm", "famt", "sva",
-                      "lassoLFMM", "cate", "ridgeLFMM", "oracle")
+
+  ## filter and order method
   auc.df <- auc.df %>%
-    mutate(method = factor(method, method.ordered))
-
-  ## Plot params
-  color.values <- MaTheseR.params$color.values
+    dplyr::mutate(method = factor(article3_method_name(method), method.ordered))
+  auc.df$method %>% unique()
+  gif.df <- gif.df %>%
+    dplyr::mutate(method = factor(article3_method_name(method), method.ordered))
+  gif.df$method %>% unique()
 
   #################
   ## by prop outlier
@@ -1610,20 +1628,22 @@ CLOSED: [2017-08-06 Sun 14:42]
                       ymax = auc.mean + se),
                   width = 0.9,
                   position = "dodge") +
-    scale_fill_manual(values = color.values)
-  auc.prop.pl
+    scale_fill_manual(values = color.values) +
+    gtheme
   save_plot_png(auc.prop.pl, "num_val_auc_prop.png")
 
   ## gif
   toplot <- gif.df %>%
     group_by(method, prop.outlier) %>%
-    summarise(gif.mean = mean(gif), N = length(gif), sd = sd(gif), se = sd / sqrt(N))
+    summarise(gif.mean = median(gif), N = length(gif), sd = mad(gif), se = sd / sqrt(N))
   gif.prop.pl <- ggplot(toplot, aes(x = as.factor(prop.outlier), y = gif.mean, fill = method)) +
     geom_bar(position = "dodge", stat = "identity") +
     geom_errorbar(aes(ymin = gif.mean - se,
                       ymax = gif.mean + se),
                   width = 0.9,
-                  position = "dodge")
+                  position = "dodge") +
+    scale_fill_manual(values = color.values) +
+    gtheme
   save_plot_png(gif.prop.pl, "num_val_gif_prop.png")
 
 
@@ -1639,19 +1659,23 @@ CLOSED: [2017-08-06 Sun 14:42]
     geom_errorbar(aes(ymin = auc.mean - se,
                       ymax = auc.mean + se),
                   width = 0.9,
-                  position = "dodge")
+                  position = "dodge") +
+    scale_fill_manual(values = color.values) +
+    gtheme
   save_plot_png(auc.rho.pl, "num_val_auc_rho.png")
 
   ## gif
   toplot <- gif.df %>%
     group_by(method, rho.c) %>%
-    summarise(gif.mean = mean(gif), N = length(gif), sd = sd(gif), se = sd / sqrt(N))
+    summarise(gif.mean = median(gif), N = length(gif), sd = mad(gif), se = sd / sqrt(N))
   gif.rho.pl <- ggplot(toplot, aes(x = as.factor(rho.c), y = gif.mean, fill = method)) +
     geom_bar(position = "dodge", stat = "identity") +
     geom_errorbar(aes(ymin = gif.mean - se,
                       ymax = gif.mean + se),
                   width = 0.9,
-                  position = "dodge")
+                  position = "dodge") +
+    scale_fill_manual(values = color.values) +
+    gtheme
   save_plot_png(gif.rho.pl, "num_val_gif_rho.png")
 
 
@@ -1673,19 +1697,19 @@ CLOSED: [2017-08-06 Sun 14:42]
   C.pl <- C.pl +
     theme(legend.position = "none") +
     xlab("Proportion d'outlier") +
-    ylab("Gif moyen")
+    ylab("Facteur d'inflaction")
 
     ## A
     A.pl <- auc.prop.pl +
       MaTheseR.params$gtheme +
       theme(legend.position = "none") +
       xlab("") +
-      ylab("Auc moyen")
+      ylab("AUC")
     ## D
     D.pl <- gif.rho.pl +
       MaTheseR.params$gtheme +
       theme(legend.position = "none") +
-      xlab("Corrélation") + 
+      xlab("Corrélation entre et U et X") + 
       ylab("") 
     ## B
     B.pl <- auc.rho.pl +
@@ -1707,8 +1731,17 @@ CLOSED: [2017-08-06 Sun 14:42]
   save_plot_MaTheseR(pl.leg, filename = "method_comp.pdf.png", height = 14, width = 20)
 #+end_src
 
-****** STARTED Tests d'hypothèse
+#+RESULTS: code:num_val_plot
+[[./OUTPUT/Rplots/num_val_auc_prop.png]]
+[[./OUTPUT/Rplots/num_val_gif_prop.png]]
+[[./OUTPUT/Rplots/num_val_auc_rho.png]]
+[[./OUTPUT/Rplots/num_val_gif_rho.png]]
+[[./OUTPUT/Rplots/method_comp.png]]
+
+****** CANCELLED Tests d'hypothèse
+CLOSED: [2017-08-10 jeu. 11:30]
 :LOGBOOK:
+- State "CANCELLED"  from "STARTED"    [2017-08-10 jeu. 11:30]
 - State "STARTED"    from "TODO"       [2017-07-30 Sun 12:28]
 - State "TODO"       from              [2017-07-28 ven. 16:06]
 :END:
@@ -3252,12 +3285,19 @@ $1\%$ dans la population général cite:Gujral_2012. Bien que les mécanismes
 d'apparition de cette maladie ne soit pas compris des études montres de forte
 association avec certains gène cite:dubois2010multiple; lassant envisager des
 causes génétiques à la maladie. Comme la maladie \celiac est très étudié faire
-une étude d'assocaition de celle-ci avec des données génomiques constitu un bon
-test pour les méthode de corréction pour les variable lattente. Nous pourrons en
-effet comparer nos résultat a ceux des nombreuses autre étude. De plus nous
-s'avons que les données génomique prise dans différente population son très
-structuré. De plus, nous avons choisi le jeux de données ... pour confronter les
-méthodes à un grand jeux de données.
+une étude d'assocaition de celle-ci avec des données génomiques constitue un bon
+test pour les méthode de corréction pour les variable latente. Nous pourrons en
+effet comparer nos résultats à ceux des nombreuses autres GWAS de la maladie
+\celiac. Nous proposons test d'association entre la maladie \celiac et des
+données génétique a partir des données présentées dans cite:dubois2010multiple.
+C'est données comporte 281122 SNPs (single nucléotyde polimorphism) pour 15155
+individus, 10659 individus sains et 4496 atteint de la maladie \celiac.
+Les SNPs sont ...
+
+. De plus nous
+s'avons que les données génomique prise dans différentes populations son très
+structuré et que cette structure peut être un facteur de confusion . De plus,
+nous avons choisi un pour confronter les méthodes à un grand jeux de données.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -3942,6 +3982,7 @@ CLOSED: [2017-08-07 lun. 18:12]
 #+END_SRC
 
 *** Étude d'association entre des données génétique et un gradient environmental (GEAS)
+<<sec:GEAS>>
 **** Scripts                                                    :noexport:
 ***** DONE Téléchargement du jeux de données
 CLOSED: [2017-07-26 mer. 18:17]
@@ -7032,6 +7073,11 @@ Voir cahier le 7/08/2017
 
 * Perspectives et conclusion 
 :LOGBOOK:
+- Note taken on [2017-08-10 jeu. 12:05] \\
+  Les données manquante :D il y en a beaucoups dans les gandes données ! tess3r
+  devrais être quand il y a des données manquante. Enfin si il prennait en compre
+  correctement les NA. Faire une petite simu d'un tess qui prend en compre bien
+  les missing data :D !!!!
 - Note taken on [2017-07-31 lun. 10:20] \\
   on va parler de : 
   - vers le big data ? (valeurs manquantes, données pas loadé en mémoire)
