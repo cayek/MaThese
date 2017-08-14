@@ -257,11 +257,11 @@ corrélation vaille $0.6$. Nous simulons ensuite une matrice de bruit gaussien
 $\E$. La matrice des effets de la variable latente sur $\Y$ est aussi calculé a
 l'aide de la loi normale, nous notons cette matrice $\V$. La matrice des effets
 de $\X$ sur $\Y$, noté $\B$, est simulée de sorte que $1 \%$ de ses lignes soit
-non nulle. Enfin, les variables \Y sont calculées telles que 
+non nulle. Enfin, la matrice $\Y$ est calculée telles que 
 \begin{equation} 
 \Y = \U \V^{T} + \X \B^{T} + \E. 
 \end{equation} 
-Cette simulation correspond à une situation où 1 \% des variables $\Y$ sont
+Cette simulation correspond à une situation où 1 \% des colonnes de $\Y$ sont
 associé avec $\X$ et la variable latente est bien facteur de confusion pour
 cette étude d'association car $\U$ est corrélé avec $\X$. Afin de détecter les
 variables expliquées associés à la variables explicative, nous avons réalisé une
@@ -275,10 +275,10 @@ compte la variable latente plus de 40 \% des \pvalues sont proches de zéro, on
 détecte alors beaucoup de candidats pour l'association avec la variable $\X$.
 Alors que quand on prend en compte les facteurs latents la distribution des
 \pvalues est bien uniforme comme on s'y attend. On s'attend a une distribution
-uniforme des \pvaleur car la majorité des variables $\Y$ ne sont pas associées
+uniforme des \pvaleur car la majorité des colonnes de $\Y$ ne sont pas associées
 avec la variable $\X$, seulement 1\% par simulation. Dans le cas de cette
 simulation il est impossible de ne pas prendre en compte la variable latente,
-sans celle-ci on détecte presque la moitié des variables $\Y comme étant
+sans celle-ci on détecte presque la moitié des colonnes de $\Y comme étant
 associées à $\X$.
 
 #+NAME: code:confusion_plot
@@ -330,7 +330,6 @@ associées à $\X$.
 \label{fig:simu_intro}
 \end{figure}
 #+END_EXPORT
-
 
 *** Méthodes de correction pour les facteurs latents
 :LOGBOOK:
@@ -413,10 +412,10 @@ matrice des axes des facteurs latents. La différence majeur de LFMM avec les
 autres modèles est qu'on ne suppose rien a priori sur les facteurs de confusion.
 Dans les modèles dont nous avons parlés précédemment on estime à priori soit les
 variables latentes directement soir leurs matrice de covariance. l'objectif de
-LFMM est d'apprendre la variation systématique observées dans les variables $\Y$
-grâce aux paramètres $\U$ et $\V$ tout en prenant en compte la variable $\X$. Il
-existe différentes méthodes pour estimer les paramètres de LFMM. On distingue
-d'abord des approches qui reposent sur des algorithmes de Monte Carlo
+LFMM est d'apprendre la variation systématique observées dans $\Y$ grâce aux
+paramètres $\U$ et $\V$ tout en prenant en compte la variable $\X$. Il existe
+différentes méthodes pour estimer les paramètres de LFMM. On distingue d'abord
+des approches qui reposent sur des algorithmes de Monte Carlo
 cite:frichot13_testin_assoc_between_loci_envir,carvalho08_high_dimen_spars_factor_model.
 Ces approches repose sur une modélisation bayésienne de LFMM qui permet
 d'échantillonner les lois à posteriori des paramètres. L'avantage de ces
@@ -432,8 +431,8 @@ transformation a pour but de séparer la variation de $\Y$ expliquée par les
 variables latentes de celle expliquée par $\X$. Parmi cette dernière catégorie
 de méthodes, on distingue des autres les méthodes dites à contrôles négatifs qui
 suppose connu un sous ensemble de variable $\Y_{j}$ qui ne sont pas associées
-avec $\X$. Les méthodes a contrôles négatifs utilisent donc les variable
-dites nulles pour estimer les variables latentes. 
+avec $\X$. Les méthodes a contrôles négatifs utilisent donc les variable dites
+nulles pour estimer les variables latentes.
 
 
 *** Source de confusion                                          :noexport:
@@ -482,11 +481,11 @@ latents que nous utilisons pour corriger les tests d'association :
 \end{equation}
 Dans cette équation, $\Y$ est la matrice, de taille $\Yrow \times \Ycol$, qui
 rassemble les observations de $\Ycol$ variables sur $\Yrow$ individus. Par
-exemple, les variables $\Y$ peuvent être des SNPs, des niveaux de méthylation ou
+exemple, la matrice $\Y$ peut contenir des SNPs, des niveaux de méthylation ou
 bien des niveaux d'expression génique. La matrice $\X$, de taille $\Xrow \times
-\Xcol$, regroupe toutes les variables explicatives. Les variable $\X$ sont les
-variables d'intérêt pour l'association, c'est à dire les variable pour
-lesquelles on souhaite trouver les associations avec $\Y$. Les variables $\X$
+\Xcol$, regroupe toutes les variables explicatives. Ainsi les colonnes de $\X$
+sont les variables d'intérêt pour l'association, c'est à dire les variables pour
+lesquelles on souhaite trouver les associations avec $\Y$. Les colonnes de $\X$
 peuvent être par exemple un phénotype, comme une maladie, ou un gradient
 environnemental, comme la température d'un habitat. La matrice des effets de
 $\X$ sur $\Y$ de taille $\Ycol \times \Xcol$ est notée $\B$. Si l'on suppose
@@ -698,7 +697,7 @@ où $\W$ est la matrice latente définie en eqref:eq:W, $\norm{\B}_{1}$ la norme
 $L_1$ de $\B$ et $\norm{\W}_{*}$ la norme nucléaire de la matrice $\W$, définie
 comme la somme de ses valeurs singulières. Le choix de la norme $L_{1}$ est
 motivé par le fait que l'on s'attend à ce que seulement une certaine proportion
-de variables $\Y$ soit associée à $\X$. C'est à dire que seulement une certaine
+des colonnes de $\Y$ soit associée à $\X$. C'est à dire que seulement une certaine
 des lignes de la matrice des effets $\B$ doivent être non nulles. La
 régularisation $L_{1}$ est connue pour produire des estimateurs parcimonieux de
 $\B$ cite:Tibshirani_1996. La fonction $\Llasso$ fait aussi intervenir une
@@ -914,11 +913,11 @@ Outre la complexité temporelle il est important d'étudier la complexité de la
 taille prise en mémoire, surtout pour ce genre d'algorithme qui prennent en
 entrée des données potentiellement trop grandes pour la mémoire vive de
 l'ordinateur (RAM). Les algorithmes d'estimation $L_{1}$ et $L_{2}$ ne
-nécessitent pas de dupliquer la matrice des variables $\Y$. La matrice $\Y$ est
-de taille $\Yrow \times \Ycol$ et donc la dupliquer pourrait poser des problèmes
-sur des ordinateurs ne possédant pas assez de RAM. Il est possible d'envisager
-de ne pas charger la matrice $\Y$ en RAM et d'accéder au données seulement quand
-cela est nécessaire.
+nécessitent pas de dupliquer la matrice $\Y$. La matrice $\Y$ est de taille
+$\Yrow \times \Ycol$ et donc la dupliquer pourrait poser des problèmes sur des
+ordinateurs ne possédant pas assez de RAM. Il est possible d'envisager de ne pas
+charger la matrice $\Y$ en RAM et d'accéder au données seulement quand cela est
+nécessaire.
 
 *** Choix des hyperparamètres 
 <<sec:hyperparametre>>
@@ -979,7 +978,7 @@ matrice diagonale $\D$. Cette matrice permet de réduire la corrélation entre l
 variables $\Y$ et les variables $\X$ afin de pouvoir estimer les variables
 latentes. Lorsque le paramètre de régularisation $L_{2}$ tend vers zéro, les
 variables $\Y$ et $\X$ sont linéairement décorrélées. Cependant on ne pourra
-plus inverser la matrice diagonale $\D$. De plus dans le cas ou les variable
+plus inverser la matrice diagonale $\D$. De plus dans le cas ou les variables
 latentes sont trop corrélées avec $\X$ alors on risque de mal estimer celles-ci.
 Lorsque le paramètre tend vers l'infini alors la matrice $\D$ tend vers la
 matrice identité l'estimation des variables latentes sont données pas l'analyse
@@ -1025,9 +1024,8 @@ d'estimation $L_{1}$ à une influence sur le rang de la matrice latente $\W$. Il
 est plus simple de choisir le rang de cette matrice, correspondant au nombre de
 variables latentes $K$, que de choisir le paramètre de régularisation $\gamma$.
 Nous proposons l'heuristique suivante pour calculer $\gamma$ à partir de $K$.
-Nous commençons par calculer les valeurs singulières de la matrice des variables
-expliquées $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, nous
-calculons
+Nous commençons par calculer les valeurs singulières de la matrice $\Y$, que
+l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, nous calculons
 \begin{equation}
 \gamma = \frac{(\sigma_{\K} + \sigma_{\K + 1})}{2}.
 \end{equation}
@@ -1094,7 +1092,7 @@ $\Y$ qui n'ont pas été utilisées pour estimer les paramètres du modèle.
 :END:
 
 Jusque ici, nous avons seulement abordé l'estimation des paramètres de LFMM.
-Cependant, l'objectif initial est de trouver la liste des variables $\Y$
+Cependant, l'objectif initial est de trouver la liste des colonnes de $\Y$
 associées aux variables $\X$ tout en prenant en compte les variables latentes.
 Nous présentons dans cette partie un test d'hypothèse de nullité de l'effet de
 $\X$ sur $\Y$ corrigé pour les variables latentes. Une approche simple consiste
@@ -1164,11 +1162,11 @@ normal de moyenne nulle et d'écart type 1 sous l'hypothèse nulle.
   je veux juste dire que j'ai utilisé qvalue....
 :END:
 Dans cette dernière partie, nous présentons en quelques mots les outils que nous
-avons utiliser pour controler le taux de fausse découvertes dans les
+avons utiliser pour contrôler le taux de fausse découvertes dans les
 experiences. Dans le cadre des test d'association nous voulons en sortie de la
-méthode obtenir une liste de variable expliqué candidat pour l'association avec
-la variable explicative. Pour choisir cette liste 
-Dans le cadre des test d'association multiple
+méthode obtenir une liste de colonnes de $\Y$ candidate pour l'association avec
+la variable explicative. Pour choisir cette liste Dans le cadre des test
+d'association multiple....................
 
 *** Implémentation en R
 Les deux nouvelles méthodes de test d'association avec correction pour les
@@ -1176,14 +1174,13 @@ facteurs de confusion que nous avons développées dans cette thèse ont été
 implémentées en R. Nous les avons appelées respectivement lassoLFMM pour
 l'implémentation des estimateurs régularisées en norme $L_{1}$ et ridgeLFMM pour
 les estimateurs régularisées en norme $L_{2}$. Les algorithmes lassoLFMM et
-ridgeLFMM prennent en entrée la matrice des variables $/X$ et la matrices des
-variables $/Y$ à associer avec $/X$. Ils prennent egualement le nombre de
-variables latentes $\K$. L'algorithme ridgeLFMM prend une valeur pour
-$\lambLFMM$, le paramètre de régularisation $\L_{2}$. L'algorithme lassoLFMM
-prend la proportion de lignes non nulles dans la matrice $\B$, la matrice des
-effets de $\X$ sur $\Y$. Enfin les deux algorithmes retournent les estimations
-pour les paramètres de LFMM ainsi qu'une \pvaleur pour le test d'association de
-chaque colonne de $\Y$ avec $\X$.
+ridgeLFMM prennent en entrée la matrice $/X$ et la matrices $/Y$ à associer avec
+$/X$. Ils prennent également le nombre de variables latentes $\K$. L'algorithme
+ridgeLFMM prend une valeur pour $\lambLFMM$, le paramètre de régularisation
+$\L_{2}$. L'algorithme lassoLFMM prend la proportion de lignes non nulles dans
+la matrice $\B$, la matrice des effets de $\X$ sur $\Y$. Enfin les deux
+algorithmes retournent les estimations pour les paramètres de LFMM ainsi qu'une
+\pvaleur pour le test d'association de chaque colonne de $\Y$ avec $\X$.
 ** Autres méthodes existantes comparées
 <<sec:similar_method>>
 
@@ -1224,11 +1221,11 @@ une ACP de la matrice résiduelles de la régression linaire de $\Y$ par $\X$.
 Cela correspond à aire l'ACP de $\matr{D}_{(\lambRidge = 0)} \Q \Y$, en utilisant
 les notations de la section [[sec:estimator_L2]]. Ensuite la méthode subset-SVA
 calcule un sous-ensemble de colonnes de $\Y$ qui sont le moins corrélées avec
-$\X$. Ce sous ensemble de variable est utilisées pour estimer la matrice des
+$\X$. Ce sous ensemble de variables est utilisées pour estimer la matrice des
 variables latentes. Cette procédure peut facilement échouer car une faible
 corrélation avec $\X$ n'implique pas qu'il n'y a pas d'association avec $\X$. En
 effet une faible corrélation sans prendre en compte les facteurs latents peut
-devenir une forte corrélation quand on les prends en compte.
+devenir une forte corrélation quand on les prend en compte.
 
 La deuxième version de SVA est itérative. Plutôt que d'estimer les variables
 latentes sur un sous ensemble de colonne de $\Y$ la méthode IRW-SVA attribue un
@@ -1255,7 +1252,7 @@ rapport à $\X$ correspondant aux résidus de cette régression. La méthode cat
 utilise alors les $\Yrow - 1$ autres lignes pour calculer les axes factorielles
 notés $\V$ dans nos notations. Cette première étape est comparable à l'étape de
 calcul de $\V$ dans notre méthode ridgeLFMM (voir partie [[sec:estimator_L2]]). Dans
-ridgeLFMM, plutôt que d'enlever complétement les variations de $\Y$ expliquée
+ridgeLFMM, plutôt que d'enlever complétement les variations de $\Y$ expliquées
 par $\X$ nous la réduisons en fonction de régularisation $\lambRidge$. Comme
 cela a été montré dans cite:wang2015confounder sva et cate estime la même
 matrice des axes factorielles qui correspond en faite à celle estimée par
@@ -1298,7 +1295,7 @@ nous sommes comparé aux méthodes que nous avons présenté dans la partie
 [[sec:similar_method]]. Les méthodes de régression linéaires avec et sans les scores
 de l'ACP ont été implémenté dans le langage R et sont respectivement appelé lm
 et PCAlm. Pour les méthodes CATE et sva nous avons respectivement utilisé les
-implémentation R de ces méthodes mis à disposition par leurs auteurs.
+implémentations R de ces méthodes mises à disposition par leurs auteurs.
 *** Comparaison des méthodes sur des données simulées
 **** Simulation à partir de données réelles
 :LOGBOOK:
@@ -1306,61 +1303,69 @@ implémentation R de ces méthodes mis à disposition par leurs auteurs.
   [[file:Rpackage/R/ExpRsampler-fromTrueData.R::ExpRmouline.ExpRsampler_fromTrueData%20<-%20function(s)%20{][La fonction sampler]]
 :END:
 Afin de comparer la performance des méthodes sur une étude d'association pour
-laquelle nous connaissons la vérité, nous avons réalisé des simulation à partir
+laquelle nous connaissons la vérité, nous avons réalisé des simulations à partir
 de vrai jeux de données. Pour cela nous réalisons une analyse en composante
-principale de la matrice des variables expliquée $\Y$ et ne gardons que les $\K$
-composantes choisies en fonction du nombre $\K$ de facteurs de confusion que
-l'on souhaites simuler. On a alors 
+principale de la matrice $\Y$ et ne gardons que les $\K$ premières composantes
+en fonction du nombre $\K$ de facteurs de confusion que l'on souhaite
+simuler. On a alors
 \begin{equation}
 \Y = \U \V^{T} + \E
 \end{equation}
-où $\V$ est la matrice des $\K$ axes principaux orthonomée et $\U$ la matrice
-des variables latentes calculée par l'ACP. La matrice $\E$ est la matrice
-residuelle. Nous simulons ensuite une variable explicative et $\K$ variables
-latentes de sorte que les nouvelle variables latentes ont la même strucure de
-covariance que les variables latentes calculée par l'analyse en composante
-principale. Nous choisissont de plus la corrélation entre chaque variables
-latentes et la variable expliqué. Ces matrices sont simulé a l'aide d'un
-simulateur de variable suivant la loie normale multivariée. Nous notons les
-matrices ainsi simulés $\X^{'}$ et $\U^{'}$. Enfin la matrice des effets de la
-variable explicative sur la variable expliqué est non nulle pour une certaines
-proportion du nombre totale de variable expliqué. Les effets non nulle sont
-simulé a l'aide d'une loie normale. Enfin, nous calculons la nouvelle matrice de
-variables expliquées tel que
+où $\V$ est la matrice des $\K$ axes principaux orthogonaux et $\U$ la matrice
+des variables latentes calculés par l'ACP. La matrice $\E$ est la matrice
+residuelle. Nous simulons ensuite la variable d'intérêt pour l'association
+$\X^{'}$ et $\K$ variables latentes $\U^{'}$ de sorte qu'elles aient la même
+structure de covariance que les variables latentes calculée par l'ACP. Nous
+choisissons de plus la corrélation entre chaque colonne de $\U^{'}$ et $\X$. Ces
+matrices sont simulé à l'aide de la loi normale multidimensionnelle. Enfin nous
+calculons une matrice des effets $\B^{'}$ de sorte qu'une certaines proportion
+des lignes de $\B^{'}$ soit non nul et simulés grâce à une loi normale. Enfin,
+nous calculons la nouvelle matrice des variables à tester tel que
 \begin{equation}
 \Y^{'} = \U^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
 \end{equation}
-Nous avons ainsi des données pour lesquelle nous savont quelles variables
-expliqué est associées avec la variable explicative. Nous utilisons de plus la
-structure lattente d'une matrice de données déjà existante ce qui permet d'avoir
-des simulations plus realistes et d'éviter les discution sur le choix de la
-structure latente.
+Nous avons ainsi des données pour lesquelles nous savons quelles colonnes de
+$\Y^{'}$ est associées avec la variable $\X$, il s'agit des lignes non nulles de
+la matrice $\B^{'}$. Nous utilisons de plus la structure lattente d'une matrice
+de données déjà existante ce qui permet d'avoir des simulations plus réalistes
+et d'éviter les discussions sur le choix des variables latentes.
 
 Les vrais jeu de données que nous avons choisi pour réaliser les simulations
 sont issu du jeux de données 1000 génome que nous présentons dans la partie
 [[sec:GEAS]]. Nous avons garder seulement le chromosome 1 et 2, cela permet de
 simuler une matrice $\Y^{'}$ composé de 52211 variables pour 1758 individus.
-Nous avons choisi de simuler 5 variables latentes pour différente valeur du
-nombre de variable de $\Y$ associé avec $\X$ et diférente valeur de la
-corrélation entre $\X$ et les 5 variables latentes. Pour chaque variable latente
-une valeur entre $-1$ et $1$ de la corélation avecv $\X$ est tiré selon une
-loie uniforme et multiplié par une coéficient entre 0 et 1. Le meme coéficient
-est utilisé pour calculer toutes les corrélations. Plus le coéficient est proche
-de 1 plus les variables latentes seront corélé à $\X$ et donc plus la confusion
-lors du test d'association avec la matrice $\Y^{'}$ simulé sera importante. 
+Nous avons choisi de simuler 5 variables latentes pour plusieurs valeurs du
+nombre de colonnes de $\Y^{'}$ associées avec $\X^{'}$ et plusieurs valeurs de
+la corrélation entre $\X^{'}$ et les 5 variables latentes. Pour chaque variable
+latente une valeur entre $-1$ et $1$ de la corrélation avec $\X^{'}$ est tirée
+selon une loi uniforme et multipliée par un coefficient compris entre 0 et 1. Le
+même coefficient est utilisé pour calculer toutes les corrélations. Plus le
+coefficient est proche de 1 plus les variable latentes seront corrélées à
+$\X^{'}$ et donc plus la confusion lors du test d'association de $\X^{'}$ avec
+la matrice $\Y^{'}$ sera importante.
 
 **** Mesure de comparaison des performances
-Pour comparrer les méthodes entre elles nous avons choisi deux critères. Toutes
-les méthodes renvoie une \pvalue pour chaque colonne de $\Y$ et plus cette
-\pvalue est faible plus il est raisonnable de déclarer qu'il y a une association
-de cette variable avec $\X$. A partir des \pvalues de chaque méthode nous avons
-calculé des courbe de precision-rappel. Pour cela nous avons classé pour chaque
-méthode les pvaleurs dans l'ordre croissant et calculé pour le nombre
-d'association correct retrouvé ainsi que le nombre de fausse découverte en
-prenant toute les tops listes. Cela permet ensuite de calculer une aire sous la
-courbe de precision-rappel. Cette mesure que nous appelons AUC donne une idée la
-capacité de la méthode à proposer une liste avec le moins possible de fausse
-association.
+Pour comparer les méthodes entre elles nous avons choisi deux critères. Toutes
+les méthodes renvoie une \pvalue pour chaque colonne de $\Y$. Afin d'évaluer la
+capacité des méthodes à détecter le plus possible d'association sans se tromper
+nous avons calculer l'aire sous la courbe de précision-rappel pour chacune des
+méthodes. Nous rappelons que pour une liste de candidats données la précision
+est le nombre de vrais associations dans la liste divisé par la taille de la
+liste et le rappel est le nombre de vrai association retrouvé dans la liste
+divisé par le nombre total des vrais associations, parfois appelé puissance en
+statistique. Une méthode qui donne les plus petites \pvalues d'abord à toutes
+les vrais associations donne une courbe de précision-rappel de 1. Le deuxième
+critère de comparaison des méthode permet d'évaluer la calibration des \pvalues
+renvoyées par les méthodes. Pour cela nous calculons le facteur d'inflation sur
+\pvalues des variables non associées avec $\X$. Si les \pvalues sont bien
+calibrées alors la distribution des \pvalues sous l'hypothèse nulles suit une
+loi uniforme et dans ce cas le facteur d'inflation vaux 1. Une méthode qui
+renvoie des \pvalues correctement calibrées permet de calculé une liste de
+candidats avec un taux de fausse découverte moyen contrôlé à une valeur choisie
+en utilisant par exemple l'algorithme de Benjamini-Hoshberg
+cite:benjamini1995controlling. Une bonne méthode doit donc à la fois être capable de
+detecter les vrais associations sans se tromper mais aussi fournir des \pvalues
+correctement calibrer.
 
 **** Résultats
 #+BEGIN_EXPORT latex
@@ -6307,7 +6312,8 @@ CLOSED: [2017-07-27 jeu. 15:01]
 :END:
 
 On fait un filtrage des SNPs (voir [[https://www.cog-genomics.org/plink/1.9/ld#indep][doc plink]])
-
+#+NAME: code:1000g_prunning
+#+CAPTION: Dépend de [[1000g_concat]]
 #+begin_src shell :results output :exports both 
   cd ~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/
   plink --bfile 1000GenomePhase3_CQ --indep-pairwise 100 1 0.2 --out 1000GenomePhase3_CQ --threads 8
@@ -6402,7 +6408,7 @@ On filtre les individus trop apparenté (voir [[https://www.cog-genomics.org/pli
 
 ****** On commence par calculer la proportion d'IBD.
 #+NAME: code:1000g_ibd
-#+CAPTION: Dépend de [[code:1000g_concat]]
+#+CAPTION: Dépend de [[code:1000g_prunning]]
 #+begin_src shell :session *ssh krakenator* :results output 
   cd ~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3
 
@@ -6436,8 +6442,10 @@ On filtre les individus trop apparenté (voir [[https://www.cog-genomics.org/pli
 
 #+end_example
 
-***** On visualise la proportion d'IBD
+***** DONE On visualise la proportion d'IBD
+CLOSED: [2017-08-14 lun. 13:55]
 :LOGBOOK:
+- State "DONE"       from              [2017-08-14 lun. 13:55]
 - Note taken on [2017-07-28 ven. 14:37] \\
   RMK: le dataframe ne contient bien pas les apparentement symétrique !!!
 :END:
@@ -6533,8 +6541,10 @@ ième degré).
   1000GenomePhase3_CQ_norel.fam ... done.
 #+end_example
 
-***** TODO Conversion dans format utilisable en R
+***** DONE Conversion dans format utilisable en R
+CLOSED: [2017-08-14 lun. 14:38]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-14 lun. 14:38]
 - State "TODO"       from "DONE"       [2017-08-09 mer. 15:18]
 - State "DONE"       from "TODO"       [2017-08-03 jeu. 11:37]
 - State "TODO"       from              [2017-07-26 mer. 18:17]
@@ -6543,8 +6553,10 @@ ième degré).
 Nous avons utilisé le package bigsnpr pour convertir les données du format
 =.bed= à un format de matrice R. 
 
-****** TODO Données non prunnées
+****** DONE Données non prunnées
+CLOSED: [2017-08-14 lun. 14:14]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-14 lun. 14:14]
 - State "TODO"       from "DONE"       [2017-08-09 mer. 15:18]
 - State "DONE"       from "STARTED"    [2017-08-03 jeu. 11:31]
 - State "STARTED"    from "RUNNING"    [2017-07-13 jeu. 12:29]
@@ -6557,8 +6569,10 @@ Nous avons utilisé le package bigsnpr pour convertir les données du format
 - State "TODO"       from              [2017-07-13 jeu. 08:59]
 :END:
 
-******* TODO Format .rds
+******* DONE Format .rds
+CLOSED: [2017-08-14 lun. 14:11]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-14 lun. 14:11]
 - Note taken on [2017-08-03 jeu. 14:14] \\
   ca a bugger le pense ...a voir.
 - State "TODO"       from "RUNNING"    [2017-08-03 jeu. 14:14]
@@ -6585,9 +6599,9 @@ Nous avons utilisé le package bigsnpr pour convertir les données du format
   ## G.r <- readRDS("G.rds")
   G.r <- attach.BM(G$genotypes)[,]
   ## rownames(G.r) <- G$fam$sample.ID
-  attr(G.r, "rownames") <- G$fam$sample.ID
+  ## attr(G.r, "rownames") <- G$fam$sample.ID
   ## colnames(G.r) <- G$map$marker.ID
-  attr(G.r, "colnames") <- G$map$marker.ID
+  ## attr(G.r, "colnames") <- G$map$marker.ID
 
   saveRDS(G.r, "G.rds")
   #+END_SRC
@@ -6608,8 +6622,10 @@ Nous avons utilisé le package bigsnpr pour convertir les données du format
   Erreur : impossible d'allouer un vecteur de taille 70.7 Go
 #+end_example
 
-****** TODO Données prunnées
+****** DONE Données prunnées
+CLOSED: [2017-08-14 lun. 14:38]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-14 lun. 14:38]
 - State "TODO"       from "DONE"       [2017-08-09 mer. 15:18]
 - State "DONE"       from "TODO"       [2017-07-27 jeu. 17:17]
 - State "TODO"       from              [2017-07-13 jeu. 12:29]
@@ -6647,13 +6663,8 @@ Nous avons utilisé le package bigsnpr pour convertir les données du format
   saveRDS(G$fam, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/G_indiv_df.rds")
   #+END_SRC
 
-  
-***** TODO Scaling des données et valeurs manquantes
-:LOGBOOK:
-- State "TODO"       from              [2017-07-13 jeu. 12:29]
-:END:
 
-****** DONE Données utilisées pour la validation numérique lfmm
+***** DONE Données utilisées pour la validation numérique lfmm
 CLOSED: [2017-07-27 jeu. 17:26]
 :LOGBOOK:
 - State "DONE"       from              [2017-07-27 jeu. 17:26]
@@ -6676,99 +6687,30 @@ CLOSED: [2017-07-27 jeu. 17:26]
   proportion of removed loci = 0.00686677318724797
 #+end_example
 
-****** DONE Données prunnées
-CLOSED: [2017-07-28 ven. 11:01]
+***** DONE Filtrage des individus pour la GEAS
+CLOSED: [2017-08-14 lun. 15:37]
 :LOGBOOK:
-- State "DONE"       from "TODO"       [2017-07-28 ven. 11:01]
-- State "TODO"       from              [2017-07-27 jeu. 17:29]
-:END:
-
-#+NAME: code:1000g_G_prunned_scaling
-#+CAPTION: On scale et enlève les données manquantes. Dépend de [[code:1000g_G_prunned_bigsnpr]]
-#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
-  library(MaTheseR)
-  G <- readRDS("./Data/1000Genomes/Phase3/G_prunned.rds")
-  anyNA(G)
-  G.noNa <- preprocessing_filter_na(G)
-  anyNA(G.noNa)
-  G.scale <- scale(G.noNa)
-  saveRDS(G.scale, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/G_prunned.rds")
-#+end_src
-
-#+RESULTS: code:1000g_G_prunned_scaling
-: [1] TRUE
-: proportion of removed loci = 0.00785647245264041
-: [1] FALSE
-
-****** TODO Données non prunnées 
-:LOGBOOK:
-- State "TODO"       from              [2017-07-28 ven. 10:34]
-:END:
-
-******* TODO Missing data and export to =matter=
-:LOGBOOK:
-- State "TODO"       from              [2017-08-03 jeu. 11:37]
-:END:
-#+NAME: code:1000g_G_noNA
-#+CAPTION: Dépend de [[code:1000g_G_bigsnpr]]
-#+begin_src R 
-  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
-  G <- readRDS("G.rds")
-  n <- nrow(G)
-
-  ## NA mu sds
-  nas <- 1:ncol(G)
-  for(j in 1:ncol(G)) {
-    nas[j] <- mean(is.na(G[,j]))
-  }
-
-  ## export to bin
-  con <- file("~/Projects/Thesis/Data/1000Genomes/Phase3/G_noNA.bin", 'wb')
-  notNA.ids <- which(nas != 0.0)
-  for(j in notNA.ids {
-    writeBin(G[,j], con)
-  }
-  flush(con)
-  close(con)
-
-  ## matter matrix
-  G.matter <- matter_mat(paths="/home/cayek/Projects/Thesis/Data/1000Genomes/Phase3/G_noNA.bin",
-                         ncol = length(notNA.ids),
-                         nrow = n, datamode = "double")
-  colnames(G.matter) <- attr(G, "colnames")[nas.bool]
-  rownames(G.matter) <- attr(G, "rownames")
-  ## test
-  mean(G[,notNA.ids[length(notNA.ids)]] == G.matter[,length(notNA.ids)])
-
-  saveRDS(G.matter, "G_noNA.matter.rds")
-
-#+end_src
-
-***** TODO Preprocessing des données pour la GEAS
-:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-14 lun. 15:37]
 - State "TODO"       from "DONE"       [2017-08-03 jeu. 17:28]
 - State "DONE"       from "TODO"       [2017-07-28 ven. 14:18]
 - State "TODO"       from              [2017-07-28 ven. 11:46]
 :END:
-Pour cette étude nous avons choisi d'utiliser les données 1000 genome. Après les
-étapes de preprocessing présenter dans la section..., les individus metisse ont
-été exclu. En effet pour une étude d'association à l'environement il n'est pas
-pertinent de travailler avec individu issu du metissage de plusieurs
-populations. Pour cette étude nous ne gardons que les individus pour lesquels
-qui vivent dans leur un milieu naturel depuis plusieurs générations.
 
-#+NAME: code:eas_prepross
-#+CAPTION: Dépend de [[code:1000g_G_prunned_scaling]]
-#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+Nous ne gardons que les individus non métisses.
+
+#+NAME: code:eas_indiv_df
+#+CAPTION: Dépend de [[code:1000g_G_prunned_bigsnpr]] [[code:1000g_ibd_visu]]
+#+begin_src R
   library(MaTheseR)
 
-  G <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/G_prunned.rds")
   indiv.df <- readRDS("./Data/1000Genomes/Phase3/indiv_df.rds") %>% as_tibble()
   indiv.df
 
-  ## keep only indiv in G
+  ## keep only indiv with no rel
+  out.indif <- read_delim(file = "./Data/1000Genomes/Phase3/out.indif.txt", delim = " ",
+                          col_names = FALSE, col_types = cols(.default = col_character()))
   indiv.df <- indiv.df %>%
-    dplyr::filter(sample %in% rownames(G))
+    dplyr::filter(!(sample %in% out.indif$X1))
   indiv.df
 
   ## retrieve pop
@@ -6780,25 +6722,10 @@ qui vivent dans leur un milieu naturel depuis plusieurs générations.
     dplyr::filter(!(pop %in% c("ASW", "ACB")))
   indiv.df
 
-  ## remove indiv
-  G <- G[indiv.df$sample,]
-  dim(G)
-
-  ## filter sd, there are snps without variance !!
-  sds <- apply(G, 2, sd)
-  quantile(sds, 0.000001)
-  G <- preprocessing_filter_sd(G, 0.0)
-  dim(G)
-
-  ## scale G
-  G <- scale(G)
-  anyNA(G)
-
-  saveRDS(G, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds")
-  saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv_df.rds")
+  saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df.rds")
 #+end_src
 
-#+RESULTS: code:eas_prepross
+#+RESULTS: code:eas_indiv_df
 #+begin_example
 # A tibble: 2,504 x 4
     sample   pop super_pop gender
@@ -6842,13 +6769,116 @@ qui vivent dans leur un milieu naturel depuis plusieurs générations.
  9 HG00107   GBR       EUR   male
 10 HG00108   GBR       EUR   male
 # ... with 1,399 more rows
-[1]   1409 339324
-0.0001% 
-      0
-proportion of removed loci = 8.84110761396188e-06
-[1]   1409 339321
-[1] FALSE
 #+end_example
+
+***** TODO Scaling des données et valeurs manquantes pour GEAS
+:LOGBOOK:
+- State "TODO"       from              [2017-07-13 jeu. 12:29]
+:END:
+
+****** TODO Données non prunnées 
+:LOGBOOK:
+- State "TODO"       from              [2017-07-28 ven. 10:34]
+:END:
+
+******* RUNNING Scale, remove missing data and export to =matter=
+:LOGBOOK:
+- Note taken on [2017-08-14 lun. 14:47] \\
+  tail -f 1000g_G.y2017_m08_d14.log
+- State "RUNNING"    from "TODO"       [2017-08-14 lun. 14:47]
+- State "TODO"       from              [2017-08-03 jeu. 11:37]
+:END:
+#+NAME: code:1000g_G_noNA_scaled
+#+CAPTION: Dépend de [[code:1000g_G_bigsnpr]] [[code:eas_indiv_df]]
+#+begin_src R 
+  library(bigsnpr)
+
+  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
+  G <- snp_attach("bigsnpr_G/G.rds")
+  G.r <- attach.BM(G$genotypes)
+  dim(G.r) ## [1]    1758 5398440
+
+  ## indiv to keep
+  eas.indiv.df <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df.rds")
+  kept.indiv.id <- G$fam$sample %in% eas.indiv.df$sample
+
+  ## NA mu sds
+  nas <- 1:ncol(G.r)
+  mus <- 1:ncol(G.r)
+  sds <- 1:ncol(G.r)
+  pb <- txtProgressBar(min = 1, max = ncol(G.r))
+  for(j in 1:ncol(G.r)) {
+    nas[j] <- mean(is.na(G.r[kept.indiv.id,j]))
+    mus[j] <- mean(G.r[kept.indiv.id,j], na.rm = TRUE)
+    sds[j] <- sd(G.r[kept.indiv.id,j], na.rm = TRUE)
+    setTxtProgressBar(pb, j)
+  }
+  close(pb)
+
+  ## test
+  quantile(nas)
+  quantile(mus)
+  quantile(sds)
+
+
+  ## export to bin
+  con <- file("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.bin", 'wb')
+  notNA.ids <- which(nas != 0.0)
+  for(j in notNA.ids {
+    writeBin((G.r[kept.indiv.id,j] - mus[j]) / sds[j], con)
+  }
+  flush(con)
+  close(con)
+
+  ############################################################################################
+  ## matter matrix
+  library(matter)
+
+  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
+  G.big <- readRDS("bigsnpr_G/G.rds")
+  eas.indiv.df <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df.rds")
+
+  G.matter <- matter_mat(paths="~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.bin",
+                         ncol = ,
+                         nrow = ,
+                         datamode = "double")
+  colnames(G.matter) <- 
+  rownames(G.matter) <- 
+
+  ## test
+  dim(G.matter)
+
+  saveRDS(G.matter, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds")
+
+#+end_src
+
+****** TODO Données prunnées
+:LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-14 lun. 14:19]
+- State "DONE"       from "TODO"       [2017-07-28 ven. 11:01]
+- State "TODO"       from              [2017-07-27 jeu. 17:29]
+:END:
+
+#+NAME: code:1000g_G_noNA_scaled_prunned
+#+CAPTION: On scale et enlève les données manquantes. Dépend de [[code:1000g_G_noNA_scaled]] [[code:1000g_prunning]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  prune.in <- read_delim(file = "~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/1000GenomePhase3_CQ.prune.in", delim = " ", col_names = FALSE, col_types = cols(col_character()))
+
+  library(matter)
+  G.matter <- readRDS("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds")
+  anyNA(G.matter)
+  dim(G.matter)
+
+  keep.id <- colnames(G.matter) %in% prune.in
+  G.prunned <- G[,keep.id]
+  saveRDS(G.scale, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled_prunned.rds")
+#+end_src
+
+#+RESULTS: code:1000g_G_prunned_scaling
+: [1] TRUE
+: proportion of removed loci = 0.00785647245264041
+: [1] FALSE
 
 
 ***** TODO Calcule du gradient climatique
