@@ -1286,8 +1286,20 @@ correspondent aux colonnes de $\Y$ associés à $\X$ que l'on cherche.
 
 ** Résultats
 :PROPERTIES:
-:header-args: :cache no :eval no-export :results output :exports none :session *krakR*
+:header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
 :END:
+
+#+NAME: code:krakR
+#+begin_src R 
+  Sys.info()["nodename"]
+  getwd()
+#+end_src
+
+#+RESULTS: code:krakR
+:             nodename 
+: "krakenator.imag.fr"
+: [1] "/home/cayek/Projects/Thesis/MaThese"
+
 Dans cette partie, nous présentons les expériences numériques que nous avons
 réalisées pour évaluer la performance de nos algorithmes de correction pour les
 facteurs confusions dans les études d'associations qui repose sur une estimation
@@ -3417,19 +3429,47 @@ $1\%$ dans la population général cite:Gujral_2012. Bien que les mécanismes
 d'apparition de cette maladie ne soit pas compris des études montres de forte
 association avec certains gène cite:dubois2010multiple; lassant envisager des
 causes génétiques à la maladie. Comme la maladie \celiac est très étudié faire
-une étude d'assocaition de celle-ci avec des données génomiques constitue un bon
-test pour les méthode de corréction pour les variable latente. Nous pourrons en
-effet comparer nos résultats à ceux des nombreuses autres GWAS de la maladie
-\celiac. Nous proposons test d'association entre la maladie \celiac et des
-données génétique a partir des données présentées dans cite:dubois2010multiple.
-C'est données comporte 281122 SNPs (single nucléotyde polimorphism) pour 15155
-individus, 10659 individus sains et 4496 atteint de la maladie \celiac.
-Les SNPs sont ...
+une étude d'association de celle-ci avec des données génomiques constitue un bon
+test pour les méthodes de corréction pour les variables latentes. Nous pourrons
+en effet comparer nos résultats à ceux des nombreuses autres GWAS de la maladie
+\celiac. De plus nous s'avons que la stratification des individus en sous
+population peut être un facteur de confusion dans les GWAS. Il est habituelle de
+corriger les GWAS en utilisant les score de l'ACP des données génétiques pour
+représenter la structure de population cite:Price_2006. Nous proposons ici de
+faire une étude d'association entre la maladie \celiac et des données génétique
+présentées dans cite:dubois2010multiple. Ces données comportent 281122 SNPs
+(single nucléotyde polimorphism) pour 15155 individus, 10659 individus sains et
+4496 atteint de la maladie \celiac. Ce que nous appelons SNP est la mesure pour
+une position données du génome, que l'on appel locus, du nucléotyde présent chez
+les individu. On parle de "single nucléotyde polimorphism" car on s'intéresse
+seulement au locus pour lesquels on a observé seulement deux variants dans la
+population étudiée. Il faut de plus que le variant le moins fréquent soit au
+moins observé chez $5\%$ des individus de la population. Ainsi pour cette GWAS
+la matrice des variables expliquées est composée de 0, 1 et 2. 
 
-. De plus nous
-s'avons que les données génomique prise dans différentes populations son très
-structuré et que cette structure peut être un facteur de confusion . De plus,
-nous avons choisi un pour confronter les méthodes à un grand jeux de données.
+
+Avant de lancer les méthodes d'étude d'association nous avons filtré les données
+génétique afin de garder seulement les SNPs ayant le variant le moins fréquent
+présent dans au moins $5\%$ des observations. 
+...
+Enfin nous avons utilisé beagle pour imputer la matrice pour les données manquantes
+
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/gwas_hyperparams.pdf.png}
+\caption{Choix des paramètres pour l'étude d'association entre des site
+  méthylation de l'ADN et la maladie polyarthrite rhumatoïde. A) Proportion de
+  variance expliquées par chacune des variables latentes estimé par l'algorithme
+  ridgeLFMM pour déférente valeur $\lambda$ du paramètre de régularisation
+  $L_2$. B)C) Erreur de prédiction calculée grâce à la validation croisée de
+  l'estimateur $L_{2}$ des paramètre de LFMM pour différente valeurs du
+  paramètre de régularisation $\lambda$ et du nombre variable lattentes $\K$. La
+  ligne pointillée vertical marque le nombre de variables latentes choisi, 10.}
+\label{fig:ewas_params}
+\end{figure}
+#+END_EXPORT
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -3453,35 +3493,352 @@ nous avons choisi un pour confronter les méthodes à un grand jeux de données.
 \end{figure}
 #+END_EXPORT
 
+
 **** Scripts                                                    :noexport:
 :LOGBOOK:
 - Note taken on [2017-08-06 Sun 14:53] \\
   J'ai juste mis la dernière étape pour pouvoir lancer les analyses ! Les autres
   étapes sont juste un recopie de Notes.org
 :END:
-***** TODO Téléchargement des données
+***** DONE Téléchargement des données
+CLOSED: [2017-08-16 mer. 17:40]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 17:40]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
 :END:
 Ou ont elle été ddl ??? FP a recu dirrect =./Data/Celiac/dubois_2010/=
 
-***** TODO Contrôle qualité
+#+NAME: code:gwas_ddl
+#+CAPTION: 
+#+begin_src shell :session *ssh krakenator* :result output
+  cd ~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/
+  ls FinnuncorrNLITUK1UK3hap300.*
+#+end_src
+
+#+RESULTS: code:gwas_ddl
+: 
+: FinnuncorrNLITUK1UK3hap300.bed	FinnuncorrNLITUK1UK3hap300.bim	FinnuncorrNLITUK1UK3hap300.fam
+
+***** DONE Contrôle qualité
+CLOSED: [2017-08-16 mer. 17:40]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 17:40]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
 :END:
-***** TODO Filtrage des individus trop apparenté
+
+#+NAME: code:gwas_CQ
+#+CAPTION: Dépend de [[code:gwas_ddl]]
+#+begin_src shell :session *ssh krakenator* :result output
+  cd ~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/
+  plink --bfile FinnuncorrNLITUK1UK3hap300 --maf 0.05 --mind 0.05 --geno 0.05 --hwe 1e-10 --snps-only --autosome --make-bed --out FinnuncorrNLITUK1UK3hap300_CQ --threads 8
+#+end_src
+
+#+RESULTS: code:gwas_CQ
+#+begin_example
+
+PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+(C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to FinnuncorrNLITUK1UK3hap300_CQ.log.
+Options in effect:
+  --autosome
+  --bfile FinnuncorrNLITUK1UK3hap300
+  --geno 0.05
+  --hwe 1e-10
+  --maf 0.05
+  --make-bed
+  --mind 0.05
+  --out FinnuncorrNLITUK1UK3hap300_CQ
+  --snps-only
+  --threads 8
+
+193793 MB RAM detected; reserving 96896 MB for main workspace.
+Allocated 72672 MB successfully, after larger attempt(s) failed.
+287385 out of 295453 variants loaded from .bim file.
+15283 people (6713 males, 8570 females) loaded from .fam.
+15283 phenotype values loaded from .fam.
+0 people removed due to missing genotype data (--mind).
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 15283 founders and 0 nonfounders present.
+Total genotyping rate is 0.999579.
+67 variants removed due to missing genotype data (--geno).
+--hwe: 17 variants removed due to Hardy-Weinberg exact test.
+6179 variants removed due to minor allele threshold(s)
+(--maf/--max-maf/--mac/--max-mac).
+281122 variants and 15283 people pass filters and QC.
+Among remaining phenotypes, 4533 are cases and 10750 are controls.
+--make-bed to FinnuncorrNLITUK1UK3hap300_CQ.bed +
+#+end_example
+
+***** DONE Élagage (LD prunning)
+CLOSED: [2017-08-16 mer. 17:49]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 17:49]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
 :END:
-***** TODO Imputation des données manquantes
+
+#+NAME: code:gwas_prunning
+#+CAPTION: Dépend de [[code:gwas_CQ]]
+#+begin_src shell :session *ssh krakenator* :result output
+  cd ~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/
+  plink --bfile FinnuncorrNLITUK1UK3hap300_CQ --indep-pairwise 100 1 0.2 --out FinnuncorrNLITUK1UK3hap300_CQ --threads 8
+  plink --bfile FinnuncorrNLITUK1UK3hap300_CQ --extract FinnuncorrNLITUK1UK3hap300_CQ.prune.in --make-bed --out FinnuncorrNLITUK1UK3hap300_CQ_prunned --threads 8
+#+end_src
+
+#+RESULTS: code:gwas_prunning
+#+begin_example
+
+  PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to FinnuncorrNLITUK1UK3hap300_CQ.log.
+  Options in effect:
+    --bfile FinnuncorrNLITUK1UK3hap300_CQ
+    --indep-pairwise 100 1 0.2
+    --out FinnuncorrNLITUK1UK3hap300_CQ
+    --threads 8
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  Allocated 72672 MB successfully, after larger attempt(s) failed.
+  281122 variants loaded from .bim file.
+  15283 people (6713 males, 8570 females) loaded from .fam.
+  15283 phenotype values loaded from .fam.
+  Using 1 thread (no multithreaded calculations invoked).
+  Before main variant filters, 15283 founders and 0 nonfounders present.
+  Calculating allele frequencies... 0%plink --bfile FinnuncorrNLITUK1UK3hap300_CQ --extract FinnuncorrNLITUK1UK3hap300_CQ.prune.in --make-bed --out FinnuncorrNLITUK1UK3hap300_CQ_prunned --threads 8
+  1%echo 'org_babel_sh_eoe'
+   done.
+  Total genotyping rate is 0.999596.
+  281122 variants and 15283 people pass filters and QC.
+  Among remaining phenotypes, 4533 are cases and 10750 are controls.
+  Pruned 15141 variants from chromosome 1, leaving 6399.
+  Pruned 16905 variants from chromosome 2, leaving 6214.
+  Pruned 14431 variants from chromosome 3, leaving 5343.
+  Pruned 12416 variants from chromosome 4, leaving 4848.
+  Pruned 12574 variants from chromosome 5, leaving 4932.
+  Pruned 14081 variants from chromosome 6, leaving 4860.
+  Pruned 10944 variants from chromosome 7, leaving 4341.
+  Pruned 12291 variants from chromosome 8, leaving 4164.
+  Pruned 10651 variants from chromosome 9, leaving 3896.
+  Pruned 10176 variants from chromosome 10, leaving 4034.
+  Pruned 9597 variants from chromosome 11, leaving 3753.
+  Pruned 9754 variants from chromosome 12, leaving 3987.
+  Pruned 7466 variants from chromosome 13, leaving 3019.
+  Pruned 6364 variants from chromosome 14, leaving 2725.
+  Pruned 5555 variants from chromosome 15, leaving 2484.
+  Pruned 5528 variants from chromosome 16, leaving 2702.
+  Pruned 5063 variants from chromosome 17, leaving 2564.
+  Pruned 6770 variants from chromosome 18, leaving 2754.
+  Pruned 3373 variants from chromosome 19, leaving 2035.
+  Pruned 4698 variants from chromosome 20, leaving 2309.
+  Pruned 3620 variants from chromosome 21, leaving 1416.
+  Pruned 3449 variants from chromosome 22, leaving 1496.
+  Pruning complete.  200847 of 281122 variants removed.
+  Marker lists written to FinnuncorrNLITUK1UK3hap300_CQ.prune.in and
+  FinnuncorrNLITUK1UK3hap300_CQ.prune.out .
+  9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to FinnuncorrNLITUK1UK3hap300_CQ_prunned.log.
+  Options in effect:
+    --bfile FinnuncorrNLITUK1UK3hap300_CQ
+    --extract FinnuncorrNLITUK1UK3hap300_CQ.prune.in
+    --make-bed
+    --out FinnuncorrNLITUK1UK3hap300_CQ_prunned
+    --threads 8
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  Allocated 72672 MB successfully, after larger attempt(s) failed.
+  281122 variants loaded from .bim file.
+  15283 people (6713 males, 8570 females) loaded from .fam.
+  15283 phenotype values loaded from .fam.
+  --extract: 80275 variants remaining.
+  Using 1 thread (no multithreaded calculations invoked).
+  Before main variant filters, 15283 founders and 0 nonfounders present.
+  Calculating allele frequencies... done.
+  Total genotyping rate is 0.999591.
+  80275 variants and 15283 people pass filters and QC.
+  Among remaining phenotypes, 4533 are cases and 10750 are controls.
+  --make-bed to FinnuncorrNLITUK1UK3hap300_CQ_prunned.bed +
+  FinnuncorrNLITUK1UK3hap300_CQ_prunned.bim +
+  FinnuncorrNLITUK1UK3hap300_CQ_prunned.fam ... done.
+#+end_example
+
+***** DONE Filtrage des individus trop apparenté
+CLOSED: [2017-08-16 mer. 18:18]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 18:18]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
 :END:
+
+****** DONE On commence par calculer la proportion d'IBD.
+CLOSED: [2017-08-16 mer. 18:10]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 18:10]
+- State "TODO"       from "DONE"       [2017-08-16 mer. 17:52]
+:END:
+#+NAME: code:gwas_ibd
+#+CAPTION: Dépend de [[code:gwas_prunning]]
+#+begin_src shell :session *ssh krakenator* :results output 
+  cd ~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/
+  ## ibd
+  plink -bfile FinnuncorrNLITUK1UK3hap300_CQ_prunned --genome --min 0.08 --threads 8
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to plink.log.
+  Options in effect:
+    --bfile FinnuncorrNLITUK1UK3hap300_CQ_prunned
+    --genome
+    --min 0.08
+    --threads 8
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  Allocated 72672 MB successfully, after larger attempt(s) failed.
+  80275 variants loaded from .bim file.
+  15283 people (6713 males, 8570 females) loaded from .fam.
+  15283 phenotype values loaded from .fam.
+  Using up to 8 threads (change this with --threads).
+  Before main variant filters, 15283 founders and 0 nonfounders present.
+  Calculating allele frequencies... 0%echo 'org_babel_sh_eoe'
+   done.
+  Total genotyping rate is 0.999591.
+  80275 variants and 15283 people pass filters and QC.
+  Among remaining phenotypes, 4533 are cases and 10750 are controls.
+  IBD calculations complete.  
+  Finished writing plink.genome .
+
+#+end_example
+
+****** DONE On visualise la proportion d'IBD
+CLOSED: [2017-08-16 mer. 18:12]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 18:12]
+- State "TODO"       from "DONE"       [2017-08-16 mer. 17:52]
+- State "DONE"       from              [2017-08-14 lun. 13:55]
+- Note taken on [2017-07-28 ven. 14:37] \\
+  RMK: le dataframe ne contient bien pas les apparentement symétrique !!!
+:END:
+#+NAME: code:gwas_ibd_visu
+#+CAPTION: Dépend de [[code:gwas_ibd]]
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  library(tidyverse)
+
+  setwd("~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/")
+
+  ibd.df <- data.table::fread("plink.genome", data.table = FALSE) %>% as_tibble()
+
+  pl.hist <- ggplot(ibd.df, aes(PI_HAT)) +
+    geom_histogram()
+  pl.hist
+  save_plot_png(pl.hist, "celiac_ibd.png")
+
+
+  ## We filter PI_HAT > 0.08
+  out.indiv.df <- ibd.df %>%
+    dplyr::filter(PI_HAT > 0.08) %>%
+    dplyr::select(FID1, IID1) %>%
+    group_by(FID1, IID1) %>%
+    summarise()
+  write.table(out.indiv.df, "out.indif.txt", row.names = FALSE, col.names = FALSE, quote = FALSE)
+#+end_src
+
+#+RESULTS: code:gwas_ibd_visu
+: `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+: `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+[[./OUTPUT/Rplots/celiac_ibd.png]]
+
+
+On va filter les pour une proportion d'ibd à 0.08 (ca correspond à cousin au 4
+ième degré).
+
+****** DONE On filtre les individus trop apparentés
+CLOSED: [2017-08-16 mer. 18:15]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 18:15]
+- State "TODO"       from "DONE"       [2017-08-16 mer. 17:52]
+- State "DONE"       from              [2017-08-16 mer. 17:52]
+:END:
+
+#+NAME: code:gwas_ibd_filter
+#+CAPTION: Dépend de [[code:gwas_ibd_visu]]
+#+begin_src shell :session *ssh krakenator* :results output 
+  cd ~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/
+  plink --bfile FinnuncorrNLITUK1UK3hap300_CQ_prunned --remove out.indif.txt --make-bed --out FinnuncorrNLITUK1UK3hap300_CQ_prunned_norel
+
+  plink --bfile FinnuncorrNLITUK1UK3hap300_CQ --remove out.indif.txt --make-bed --out FinnuncorrNLITUK1UK3hap300_CQ_norel
+#+end_src
+
+#+RESULTS: code:gwas_ibd_filter
+#+begin_example
+
+PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+(C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to FinnuncorrNLITUK1UK3hap300_CQ_prunned_norel.log.
+Options in effect:
+  --bfile FinnuncorrNLITUK1UK3hap300_CQ_prunned
+  --make-bed
+  --out FinnuncorrNLITUK1UK3hap300_CQ_prunned_norel
+  --remove out.indif.txt
+
+193793 MB RAM detected; reserving 96896 MB for main workspace.
+Allocated 54504 MB successfully, after larger attempt(s) failed.
+80275 variants loaded from .bim file.
+15283 people (6713 males, 8570 females) loaded from .fam.
+15283 phenotype values loaded from .fam.
+--remove: 15155 people remaining.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 15155 founders and 0 nonfounders present.
+Total genotyping rate in remaining samples is 0.999592.
+80275 variants and 15155 people pass filters and QC.
+Among remaining phenotypes, 4496 are cases and 10659 are controls.
+--make-bed to FinnuncorrNLITUK1UK3hap300_CQ_prunned_norel.bed +
+FinnuncorrNLITUK1UK3hap300_CQ_prunned_norel.bim +
+PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+(C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to FinnuncorrNLITUK1UK3hap300_CQ_norel.log.
+Options in effect:
+  --bfile FinnuncorrNLITUK1UK3hap300_CQ
+  --make-bed
+  --out FinnuncorrNLITUK1UK3hap300_CQ_norel
+  --remove out.indif.txt
+
+193793 MB RAM detected; reserving 96896 MB for main workspace.
+Allocated 54504 MB successfully, after larger attempt(s) failed.
+281122 variants loaded from .bim file.
+15283 people (6713 males, 8570 females) loaded from .fam.
+15283 phenotype values loaded from .fam.
+--remove: 15155 people remaining.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 15155 founders and 0 nonfounders present.
+Total genotyping rate in remaining samples is 0.999597.
+281122 variants and 15155 people pass filters and QC.
+Among remaining phenotypes, 4496 are cases and 10659 are controls.
+--make-bed to FinnuncorrNLITUK1UK3hap300_CQ_norel.bed +
+FinnuncorrNLITUK1UK3hap300_CQ_norel.bim +
+#+end_example
+
+
+***** RUNNING Imputation des données manquantes
+:LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-08-16 mer. 18:53]
+- State "TODO"       from              [2017-08-06 Sun 14:52]
+:END:
+
+#+NAME: code:
+#+CAPTION: Dépend de 
+#+begin_src shell :session *ssh krakenator* :results output 
+  cd ~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/
+  ## recode to vcf
+  plink --bfile FinnuncorrNLITUK1UK3hap300_CQ_prunned_norel --recode vcf bgz --out FinnuncorrNLITUK1UK3hap300_CQ_norel --threads 8
+  ## run beagle
+  java -Xmx40g -jar beagle.08Jun17.d8b.jar gt=FinnuncorrNLITUK1UK3hap300_CQ_norel.vcf.gz out=FinnuncorrNLITUK1UK3hap300_CQ_norel_imputed nthreads=8
+
+  ##
+#+end_src
+
 Avec bigsnpr et xgboost
-***** TODO Élagage
-:LOGBOOK:
-- State "TODO"       from              [2017-08-06 Sun 14:52]
-:END:
 ***** TODO Conversion au format R et scaling
 :LOGBOOK:
 - State "TODO"       from              [2017-08-06 Sun 14:52]
@@ -3785,9 +4142,9 @@ CLOSED: [2017-07-30 Sun 11:28]
 
 On prend K = 9 variables latentes.
 
-***** DONE Validation croisée avec lfmmRidge
-CLOSED: [2017-08-16 mer. 09:53]
+***** RUNNING Validation croisée avec lfmmRidge
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-08-16 mer. 15:08]
 - State "DONE"       from "RUNNING"    [2017-08-16 mer. 09:53]
 - Note taken on [2017-08-14 lun. 12:07] \\
   Il y a aussi gwas_CV_lambda qui tourne !
@@ -3889,6 +4246,36 @@ CLOSED: [2017-08-16 mer. 09:53]
 #+RESULTS:
 [[./OUTPUT/Rplots/gwas_CV_lfmm_K_encore.png]]
 
+#+NAME: code:gwas_CV_encore_encore
+#+CAPTION: Dépend de [[gwas_CV_encore]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## samplers
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds",
+                              X = "./Data/ThesisDataset/3Article/Celiac/X.rds",
+                              outlier = NULL) %>% ExpRmouline()
+  n <- nrow(dat$Y)
+
+  lambdas <- c(1e-5)
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
+                            lambdas = lambdas,
+                            Ks = 6:8)
+
+  ## run
+  res.cv <- ExpRmouline(cv, dat)
+
+  ## retrieve expr
+  res.cv.other <- readRDS("./OUTPUT/Expr/gwas_CV_lfmm_encore.rds")
+  res.cv$errs <- rbind(res.cv$errs,
+                       res.cv.other$errs)
+  save_expr(res.cv, "gwas_CV_lfmm_encore_encore.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  save_plot_png(pl, "gwas_CV_lfmm_K_encore_encore.png")
+#+end_src
+
+
 #+NAME: code:gwas_CV_lambda
 #+CAPTION: Dépend de 
 #+begin_src R 
@@ -3914,12 +4301,6 @@ CLOSED: [2017-08-16 mer. 09:53]
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
   pl
   save_plot_png(pl, "gwas_CV_lambda_lfmm_lambda.png")
-
-  ## plot smooth
-  pl <- ggplot(res.cv$errs, aes(y = err, x = log(lambda))) +
-    geom_smooth()
-  pl
-  save_plot_png(pl, "gwas_CV_lambda_lfmm_lambda_smooth.png")
 #+end_src
 
 #+RESULTS:
@@ -6531,7 +6912,11 @@ CLOSED: [2017-07-27 jeu. 16:21]
 On filtre les individus trop apparenté (voir [[https://www.cog-genomics.org/plink/1.9/ibd][doc de plink]]).
 
 
-****** On commence par calculer la proportion d'IBD.
+****** DONE On commence par calculer la proportion d'IBD.
+CLOSED: [2017-08-16 mer. 17:52]
+:LOGBOOK:
+- State "DONE"       from              [2017-08-16 mer. 17:52]
+:END:
 #+NAME: code:1000g_ibd
 #+CAPTION: Dépend de [[code:1000g_prunning]]
 #+begin_src shell :session *ssh krakenator* :results output 
@@ -6567,7 +6952,7 @@ On filtre les individus trop apparenté (voir [[https://www.cog-genomics.org/pli
 
 #+end_example
 
-***** DONE On visualise la proportion d'IBD
+****** DONE On visualise la proportion d'IBD
 CLOSED: [2017-08-14 lun. 13:55]
 :LOGBOOK:
 - State "DONE"       from              [2017-08-14 lun. 13:55]
@@ -6575,7 +6960,7 @@ CLOSED: [2017-08-14 lun. 13:55]
   RMK: le dataframe ne contient bien pas les apparentement symétrique !!!
 :END:
 #+NAME: code:1000g_ibd_visu
-#+CAPTION: Dépend de [[code:1000g_ibd_visu]]
+#+CAPTION: Dépend de [[code:1000g_ibd]]
 #+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   library(MaTheseR)
   library(tidyverse)
@@ -6605,7 +6990,11 @@ CLOSED: [2017-08-14 lun. 13:55]
 On va filter les pour une proportion d'ibd à 0.125 (ca correspond à cousin au 3
 ième degré).
 
-****** On filtre les individus trop apparentés
+****** DONE On filtre les individus trop apparentés
+CLOSED: [2017-08-16 mer. 17:52]
+:LOGBOOK:
+- State "DONE"       from              [2017-08-16 mer. 17:52]
+:END:
 
 #+NAME: code:1000g_ibd_filter
 #+CAPTION: Dépend de [[code:1000g_ibd_visu]]
@@ -6896,18 +7285,24 @@ Nous ne gardons que les individus non métisses.
 # ... with 1,399 more rows
 #+end_example
 
-***** TODO Scaling des données et valeurs manquantes pour GEAS
+***** DONE Scaling des données et valeurs manquantes pour GEAS
+CLOSED: [2017-08-16 mer. 15:44]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 15:44]
 - State "TODO"       from              [2017-07-13 jeu. 12:29]
 :END:
 
-****** TODO Données non prunnées 
+****** DONE Données non prunnées 
+CLOSED: [2017-08-16 mer. 15:29]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 15:29]
 - State "TODO"       from              [2017-07-28 ven. 10:34]
 :END:
 
-******* RUNNING Scale, remove missing data and export to =matter=
+******* DONE Scale, remove missing data and export to =matter=
+CLOSED: [2017-08-16 mer. 15:29]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-16 mer. 15:29]
 - Note taken on [2017-08-14 lun. 14:47] \\
   tail -f 1000g_G.y2017_m08_d14.log
 - State "RUNNING"    from "TODO"       [2017-08-14 lun. 14:47]
@@ -6971,18 +7366,22 @@ Nous ne gardons que les individus non métisses.
 
   setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
   G.big <- readRDS("bigsnpr_G/G.rds")
-  kept.indiv.id <- G$fam$sample %in% eas.indiv.df$sample
+  row.names <- readRDS("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.rownames.rds")
+  col.names <- readRDS("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.colnames.rds")
   eas.indiv.df <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df.rds")
 
   G.matter <- matter_mat(paths="~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.bin",
-                         nrow = 1409,
-                         ncol = 5397214,
+                         nrow = length(row.names),
+                         ncol = length(col.names),
                          datamode = "double")
-  colnames(G.matter) <- G.big$fam
-  rownames(G.matter) <- 
+  rownames(G.matter) <- row.names
+  colnames(G.matter) <- col.names
 
   ## test
   dim(G.matter)
+  sd(G.matter[,5397214])
+  mean(G.matter[,5397214])
+  G.matter[1409,5397214]
 
   saveRDS(G.matter, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds")
 
@@ -7005,8 +7404,10 @@ Nous ne gardons que les individus non métisses.
   [1] 1226
 
 #+end_example
-****** TODO Données prunnées
+****** DONE Données prunnées
+CLOSED: [2017-08-16 mer. 15:40]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 15:40]
 - State "TODO"       from "DONE"       [2017-08-14 lun. 14:19]
 - State "DONE"       from "TODO"       [2017-07-28 ven. 11:01]
 - State "TODO"       from              [2017-07-27 jeu. 17:29]
@@ -7020,22 +7421,33 @@ Nous ne gardons que les individus non métisses.
 
   library(matter)
   G.matter <- readRDS("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds")
-  anyNA(G.matter)
+
+  ## test
+  sd(G.matter[,5397214])
+  mean(G.matter[,5397214])
   dim(G.matter)
 
-  keep.id <- colnames(G.matter) %in% prune.in
-  G.prunned <- G[,keep.id]
-  saveRDS(G.scale, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled_prunned.rds")
+  ## prunning
+  keep.id <- colnames(G.matter) %in% prune.in$X1
+  G.prunned <- G.matter[,keep.id]
+
+  ## test
+  length(colnames(G.prunned))
+  dim(G.prunned)
+
+  saveRDS(G.prunned, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled_prunned.rds")
 #+end_src
 
-#+RESULTS: code:1000g_G_prunned_scaling
-: [1] TRUE
-: proportion of removed loci = 0.00785647245264041
-: [1] FALSE
+#+RESULTS:
+#+begin_example
+> dim(G.prunned)
+[1]   1409 341661
+#+end_example
 
-
-***** TODO Calcule du gradient climatique
+***** DONE Calcule du gradient climatique
+CLOSED: [2017-08-16 mer. 15:57]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-16 mer. 15:57]
 - State "TODO"       from              [2017-08-06 Sun 14:47]
 - State "TODO"       from "DONE"       [2017-08-03 jeu. 17:26]
 - State "DONE"       from "TODO"       [2017-07-28 ven. 15:58]
@@ -7049,8 +7461,8 @@ Nous ne gardons que les individus non métisses.
 Afin de calculer un gradient climatique avec partir des positions géographique
 des individus nous avons choisi d'utiliser la base wordclim
 #+NAME: code:eas_climatic_gradient
-#+CAPTION: Dépend de [[code:eas_prepross]]
-#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+#+CAPTION: Dépend de [[code:eas_indiv_df]]
+#+begin_src R 
   library(tidyverse)
   library(MaTheseR)
 
@@ -7069,7 +7481,7 @@ des individus nous avons choisi d'utiliser la base wordclim
   ## pop location
   library(ggmap)
 
-  indiv.df <- readRDS( "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv_df.rds") %>% as_tibble()
+  indiv.df <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df.rds") %>% as_tibble()
   indiv.df <-indiv.df %>% inner_join(pop.tbl)
 
   indiv.df
@@ -7080,8 +7492,6 @@ des individus nous avons choisi d'utiliser la base wordclim
     mutate(citie = NA)
   indiv.df[indiv.df$pop == "IBS",]$citie = "Spain"
   indiv.df[indiv.df$pop == "PJL",]$citie = "Pakistan"
-  indiv.df[indiv.df$pop == "CDX",]$citie = "China"
-  indiv.df[indiv.df$pop == "ACB",]$citie = "Barbados"
   indiv.df[indiv.df$pop == "GWD",]$citie = "Gambia"
   indiv.df[indiv.df$pop == "BEB",]$citie = "Bangladesh"
   indiv.df[indiv.df$pop == "MSL",]$citie = "Sierra Leone"
@@ -7126,12 +7536,12 @@ des individus nous avons choisi d'utiliser la base wordclim
 
   ## plot map
   mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
-  ggplot() + 
   map.world <- get_map(location = "world")
   pl <- ggplot(cities, aes(x = lon, y = lat, color = `Population Description`)) +
-    mapWorld + 
+    mapWorld +
     geom_point() +
     theme(legend.position='bottom')
+  pl
   save_plot_png(pl, "eas_map_ggplot.png", 1000, 600)
 
   ## compute X
@@ -7156,11 +7566,11 @@ des individus nous avons choisi d'utiliser la base wordclim
   dim(X.eas)
 
   ## save
-  saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
-  saveRDS(X.eas, "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds")
+  saveRDS(indiv.df, "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df_2.rds")
+  saveRDS(X.eas, "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds")
 
   ## plot X
-  indiv.df <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS_indiv.rds")
+  indiv.df <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df_2.rds")
   pl <- ggplot(indiv.df, aes(x = lon, y = lat, color = X, size = X, text = `Population Description`)) +
     mapWorld + 
     geom_point()
@@ -7173,17 +7583,176 @@ des individus nous avons choisi d'utiliser la base wordclim
 
 #+end_src
 
-#+RESULTS:
-[[./OUTPUT/Rplots/eas_map_ggplot.png]]
+#+RESULTS: code:eas_climatic_gradient
 [[./OUTPUT/Rplots/X_eas.png]]
 #+begin_example
-  >   dim(X.eas)
-  [1] 1409   1
+Le chargement a nécessité le package : xml2
 
+Attachement du package : ‘rvest’
+
+The following object is masked from ‘package:readr’:
+
+    guess_encoding
+  Population Code
+1             CHB
+2             JPT
+3             CHS
+4             CDX
+5             KHV
+6             CEU
+                                             Population Description
+1                                      Han Chinese in Bejing, China
+2                                          Japanese in Tokyo, Japan
+3                                              Southern Han Chinese
+4                               Chinese Dai in Xishuangbanna, China
+5                                 Kinh in Ho Chi Minh City, Vietnam
+6 Utah Residents (CEPH) with Northern and Western European Ancestry
+  Super Population Code Sequence Data Available Alignment Data Available
+1                   EAS                       1                        1
+2                   EAS                       1                        1
+3                   EAS                       1                        1
+4                   EAS                       1                        1
+5                   EAS                       1                        1
+6                   EUR                       1                        1
+  Variant Data Available
+1                      1
+2                      1
+3                      1
+4                      1
+5                      1
+6                      1
+Google Maps API Terms of Service: http://developers.google.com/maps/terms.
+Please cite ggmap if you use it: see citation('ggmap') for details.
+
+Attachement du package : ‘ggmap’
+
+The following object is masked from ‘package:magrittr’:
+
+    inset
+Joining, by = "pop"
+# A tibble: 1,409 x 9
+    sample   pop super_pop gender        `Population Description`
+     <chr> <chr>     <chr>  <chr>                           <chr>
+ 1 HG00096   GBR       EUR   male British in England and Scotland
+ 2 HG00097   GBR       EUR female British in England and Scotland
+ 3 HG00099   GBR       EUR female British in England and Scotland
+ 4 HG00100   GBR       EUR female British in England and Scotland
+ 5 HG00101   GBR       EUR   male British in England and Scotland
+ 6 HG00102   GBR       EUR female British in England and Scotland
+ 7 HG00105   GBR       EUR   male British in England and Scotland
+ 8 HG00106   GBR       EUR female British in England and Scotland
+ 9 HG00107   GBR       EUR   male British in England and Scotland
+10 HG00108   GBR       EUR   male British in England and Scotland
+# ... with 1,399 more rows, and 4 more variables: `Super Population
+#   Code` <chr>, `Sequence Data Available` <int>, `Alignment Data
+#   Available` <int>, `Variant Data Available` <int>
+   pop                                            Population Description
+1  BEB                                           Bengali from Bangladesh
+2  CEU Utah Residents (CEPH) with Northern and Western European Ancestry
+3  ESN                                                   Esan in Nigeria
+4  FIN                                                Finnish in Finland
+5  GBR                                   British in England and Scotland
+6  GIH                               Gujarati Indian from Houston, Texas
+7  GWD                        Gambian in Western Divisions in the Gambia
+8  IBS                                       Iberian Population in Spain
+9  ITU                                         Indian Telugu from the UK
+10 JPT                                          Japanese in Tokyo, Japan
+11 LWK                                            Luhya in Webuye, Kenya
+12 MSL                                             Mende in Sierra Leone
+13 PJL                                     Punjabi from Lahore, Pakistan
+14 STU                                      Sri Lankan Tamil from the UK
+15 TSI                                                 Toscani in Italia
+16 YRI                                         Yoruba in Ibadan, Nigeria
+            citie
+1      Bangladesh
+2  United Kingdom
+3         Nigeria
+4         Finland
+5         England
+6         Gujarat
+7          Gambia
+8           Spain
+9       Telangana
+10          Japan
+11          Kenya
+12   Sierra Leone
+13       Pakistan
+14      Sri Lanka
+15         Italia
+16        Nigeria
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=England&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Finland&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Spain&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Pakistan&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Gambia&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Nigeria&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Bangladesh&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Sierra%20Leone&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Sri%20Lanka&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Telangana&sensor=false
+.Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=United%20Kingdom&sensor=false
+.Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Nigeria&sensor=false
+.Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Kenya&sensor=false
+.Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Japan&sensor=false
+.Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Italia&sensor=false
+.Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Gujarat&sensor=false
+
+Attaching package: ‘maps’
+
+The following object is masked from ‘package:purrr’:
+
+    map
+Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=world&zoom=10&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=world&sensor=false
+[[./OUTPUT/Rplots/eas_map_ggplot.png]]
+Le chargement a nécessité le package : sp
+
+Attachement du package : ‘raster’
+
+The following object is masked from ‘package:magrittr’:
+
+    extract
+
+The following object is masked from ‘package:dplyr’:
+
+    select
+
+The following object is masked from ‘package:tidyr’:
+
+    extract
+Joining, by = c("pop", "Population Description", "citie")
+[1] 1409    1
+
+Attachement du package : ‘plotly’
+
+The following object is masked from ‘package:raster’:
+
+    select
+
+The following object is masked from ‘package:ggmap’:
+
+    wind
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+The following object is masked from ‘package:graphics’:
+
+    layout
+
+The following object is masked from ‘package:ggplot2’:
+
+    last_plot
+We recommend that you use the dev version of ggplot2 with `ggplotly()`
+Install it with: `devtools::install_github('hadley/ggplot2')`
 #+end_example
 
-***** TODO Scree plot du 1000 genome pour EAS
+***** DONE Scree plot
+CLOSED: [2017-08-16 mer. 17:24]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-16 mer. 17:24]
+- State "RUNNING"    from "TODO"       [2017-08-16 mer. 16:03]
 - Note taken on [2017-07-25 mar. 17:52] \\
   faut que je reance avec lambda
 - State "TODO"       from "RUNNING"    [2017-07-25 mar. 17:49]
@@ -7204,17 +7773,17 @@ des individus nous avons choisi d'utiliser la base wordclim
 :END:
 
 #+NAME: code:eas_screeplot
-#+CAPTION: Dépend de [[code:eas_prepross]] [[code:eas_climatic_gradient]]
+#+CAPTION: Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]]
 #+begin_src R 
   library(MaTheseR)
 
-  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds"
-  X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds"
+  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled_prunned.rds"
+  X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds"
 
   ## samplers
-  samplers <- ExpRsampler_trueData(Y = Y, X = NULL, outlier = NULL) * param()
+  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
 
-  lambda <- c(1e-5, 1.0, 1e8)
+  lambda <- c(1e-5, 1.0,1e10)
 
   ## methods
   methods <- method_PCA(scale = FALSE) * param(lambda = lambda)
@@ -7228,22 +7797,27 @@ des individus nous avons choisi d'utiliser la base wordclim
                extractor = ExpRextractor_sing_values)
   expr <- ExpRmouline(expr)
 
-  save_expr(expr)
+  save_expr(expr, "geas_screeplot_expr.rds")
 
-    pl <- ggplot(expr$df.res, aes(x = index, y = singular.value, color = lambda)) +
-      geom_point() + 
+  toplot <- expr$df.res %>%
+    mutate(lambda = as.factor(lambda))
+    pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+      geom_point() +
       coord_cartesian(xlim = c(1,100))
 
-  save_plot_png(pl, "EAS_sree_plot.png")
+  save_plot_png(pl, "geas_screeplot.png")
+
 
 #+end_src
 
 #+RESULTS:
-[[./OUTPUT/Rplots/EAS_sree_plot.png]]
+[[./OUTPUT/Rplots/geas_screeplot.png]]
 
 
-***** TODO Validation croisée du modèle lfmmRidge sur 1000genome
+***** STARTED Validation croisée du modèle lfmmRidge
 :LOGBOOK:
+- State "STARTED"    from "RUNNING"    [2017-08-16 mer. 18:55]
+- State "RUNNING"    from "TODO"       [2017-08-16 mer. 17:23]
 - State "TODO"       from "DONE"       [2017-08-06 Sun 14:48]
 - State "DONE"       from "RUNNING"    [2017-07-11 mar. 14:36]
 - Note taken on [2017-07-11 mar. 14:36] \\
@@ -7275,20 +7849,25 @@ des individus nous avons choisi d'utiliser la base wordclim
 - State "RUNNING"    from "TODO"       [2017-06-28 mer. 20:37]
 - State "TODO"       from              [2017-06-27 mar. 15:29]
 :END:
+
+#+NAME: code:geas_CV
+#+CAPTION: Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]]
 #+begin_src R 
   library(MaTheseR)
 
   ## samplers
-  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds",
-                              X = "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds",
-                              outlier = NULL) %>% ExpRmouline()
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled_prunned.rds",
+                              X = "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds",
+                              outlier = NULL) %>%
+    ExpRmouline()
+
   n <- nrow(dat$Y)
 
-  lambdas <- c(1e-5, 1.0, 1e8) / n
-  nb.cluster <- 2
-  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
+  lambdas <- c(1e-5)
+  nb.cluster <- 5
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
                             lambdas = lambdas,
-                            Ks = c(1,2,3,4,5,10,15))
+                            Ks = 1:15)
 
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
@@ -7298,17 +7877,16 @@ des individus nous avons choisi d'utiliser la base wordclim
   parallel::stopCluster(cl)
 
   ## save expr
-  save_expr(res.cv, "eas_CV_lfmm.rds")
+  save_expr(res.cv, "geas_CV_lfmm.rds")
 
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
-  save_plot_png(pl, "eas_CV_lambda.png")
+  save_plot_png(pl, "geas_CV_lfmm_lambda.png")
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
-  save_plot_png(pl, "eas_CV_K.png")
+  save_plot_png(pl, "geas_CV_lfmm_K.png")
 #+end_src
 
 #+RESULTS:
-[[./OUTPUT/Rplots/eas_CV_lambda.png]]
-[[./OUTPUT/Rplots/eas_CV_K.png]]
+[[./OUTPUT/Rplots/geas_CV_lfmm_K.png]]
 
 ***** STARTED Étude du jeu de données
 :LOGBOOK:
