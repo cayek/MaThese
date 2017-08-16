@@ -373,10 +373,9 @@ pour corriger les études d'association pour les facteurs de confusion.
 
 **** Estimation des facteurs latent à priori
 Une première approche consiste à trouver les variables latentes en faisant une
-analyse factorielle de la matrice $\Y$. On fait l'analyse factorielle à priori
-et sans prendre en compte la variable $\X$. Les variables latentes sont ensuite
-ajoutées au modèle de régression au coté des autres variables explicatives de
-sorte que
+analyse factorielle de $\Y$. On fait l'analyse factorielle à priori et sans
+prendre en compte la variable $\X$. Les variables latentes sont ensuite ajoutées
+au modèle de régression au coté des autres variables explicatives de sorte que
 \begin{equation}
 \Y_{j} = \X b_{j} + \bar{\U} \V_{j}^{T} + \E_{j}
 \end{equation}
@@ -395,11 +394,11 @@ modèles mixes on suppose de plus que la matrice de covariance de l'effet
 aléatoire est connue. On parle d'effet aléatoire mais il s'agit en faite du
 facteur de confusion dont à parlé jusque ici. Ainsi, la matrice de covariance
 doit correspondre à la variance du facteur de confusion, elle est en générale
-calculé à partir de la matrice $\Y$. Les modèles mixes ont été largement utilisés
-pour les GWAS cite:Kang_2008,Zhou_2014. Dans le cas des GWAS, l'effet aléatoire
-permet d'expliquer la variation de $\Y_{j}$ qui est dû à la structure de
-population. Dans ce cas la matrice de covariance est estimé à priori sur les
-données génétiques.
+calculé à partir de $\Y$. Les modèles mixes ont été largement utilisés pour les
+GWAS cite:Kang_2008,Zhou_2014. Dans le cas des GWAS, l'effet aléatoire permet
+d'expliquer la variation de $\Y_{j}$ qui est dû à la structure de population.
+Dans ce cas la matrice de covariance est estimé à priori sur les données
+génétiques.
 **** Les modèles mixes à facteurs latents (LFMM latent factor mixed model)
 Nous introduisons maintenant les modèles mixes à facteurs latents. L'équation de
 régression peut s'écrire comme ceci : 
@@ -430,8 +429,8 @@ cite:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007. Cette
 transformation a pour but de séparer la variation de $\Y$ expliquée par les
 variables latentes de celle expliquée par $\X$. Parmi cette dernière catégorie
 de méthodes, on distingue des autres les méthodes dites à contrôles négatifs qui
-suppose connu un sous ensemble de variable $\Y_{j}$ qui ne sont pas associées
-avec $\X$. Les méthodes a contrôles négatifs utilisent donc les variable dites
+suppose connu un sous ensemble de colonnes de $\Y$ qui ne sont pas associées
+avec $\X$. Les méthodes à contrôles négatifs utilisent ces variables dîtes
 nulles pour estimer les variables latentes.
 
 
@@ -482,9 +481,10 @@ latents que nous utilisons pour corriger les tests d'association :
 Dans cette équation, $\Y$ est la matrice, de taille $\Yrow \times \Ycol$, qui
 rassemble les observations de $\Ycol$ variables sur $\Yrow$ individus. Par
 exemple, la matrice $\Y$ peut contenir des SNPs, des niveaux de méthylation ou
-bien des niveaux d'expression génique. La matrice $\X$, de taille $\Xrow \times
-\Xcol$, regroupe toutes les variables explicatives. Ainsi les colonnes de $\X$
-sont les variables d'intérêt pour l'association, c'est à dire les variables pour
+bien des niveaux d'expression génique. Nous appellerons la matrice $\Y$ la
+matrice des variable expliquées. La matrice $\X$, de taille $\Xrow \times \Xcol$,
+regroupe toutes les variables explicatives. Ainsi les colonnes de $\X$ sont les
+variables d'intérêt pour l'association, c'est à dire les variables pour
 lesquelles on souhaite trouver les associations avec $\Y$. Les colonnes de $\X$
 peuvent être par exemple un phénotype, comme une maladie, ou un gradient
 environnemental, comme la température d'un habitat. La matrice des effets de
@@ -544,8 +544,8 @@ et $\lambRidge$ le paramètre de régularisation. Le premier terme de $\Lridge$,
 le terme d'attache aux données, correspond à l'opposé de la log vraisemblance si
 l'on suppose que la matrice de bruit $\E$ est gaussienne, isotrope et de moyenne
 nulle. Le deuxième terme de $\Lridge$, le terme de régularisation, est
-indispensable pour séparer la variation de $\Y$ expliquée par les variables
-latentes de celle expliquée des variables explicatives. En effet, si
+indispensable pour séparer les variations de $\Y$ expliquées par les variables
+latentes de celles expliquées des variables explicatives. En effet, si
 \begin{equation*}
 \lambRidge = 0, 
 \end{equation*}
@@ -597,8 +597,9 @@ prendre le résidu d'une régression linéaire de $\Y$ par $\X$, on enlève alor
 toute la part de variance expliquée par $\X$. Mais $\D$ n'est plus inversible.
 Si $\lambRidge$ est très grand alors $\D$ tend vers la matrice identité. Dans ce
 cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en composante
-principale de la matrice $\Y$. Nous expliquons dans la partie [[sec:hyperparametre]]
-plus en détail comment choisir l'hyperparamètre $\lambRidge$.
+principale de la matrice des variable expliquées $\Y$. Nous expliquons dans la
+partie [[sec:hyperparametre]] plus en détail comment choisir l'hyperparamètre
+$\lambRidge$.
 
 L'estimation des paramètres régularisé en norme $L_{2}$ est justifier par le
 théorème suivant
@@ -913,11 +914,11 @@ Outre la complexité temporelle il est important d'étudier la complexité de la
 taille prise en mémoire, surtout pour ce genre d'algorithme qui prennent en
 entrée des données potentiellement trop grandes pour la mémoire vive de
 l'ordinateur (RAM). Les algorithmes d'estimation $L_{1}$ et $L_{2}$ ne
-nécessitent pas de dupliquer la matrice $\Y$. La matrice $\Y$ est de taille
-$\Yrow \times \Ycol$ et donc la dupliquer pourrait poser des problèmes sur des
-ordinateurs ne possédant pas assez de RAM. Il est possible d'envisager de ne pas
-charger la matrice $\Y$ en RAM et d'accéder au données seulement quand cela est
-nécessaire.
+nécessitent pas de dupliquer la matrice des variables expliquées $\Y$. En effet,
+$\Y$ est de taille $\Yrow \times \Ycol$ et donc la dupliquer pourrait poser des
+problèmes sur des ordinateurs ne possédant pas assez de RAM. Il est possible
+d'envisager de ne pas charger $\Y$ en RAM et d'accéder au données seulement
+quand cela est nécessaire.
 
 *** Choix des hyperparamètres 
 <<sec:hyperparametre>>
@@ -975,25 +976,25 @@ la section [[sec:CV]].
 Le paramètre de régularisation $L_{2}$ intervient dans le calcul de l'estimation
 de la matrice latente décrit dans la partie [[sec:estimator_L2]] par le biais de la
 matrice diagonale $\D$. Cette matrice permet de réduire la corrélation entre les
-variables $\Y$ et les variables $\X$ afin de pouvoir estimer les variables
-latentes. Lorsque le paramètre de régularisation $L_{2}$ tend vers zéro, les
-variables $\Y$ et $\X$ sont linéairement décorrélées. Cependant on ne pourra
-plus inverser la matrice diagonale $\D$. De plus dans le cas ou les variables
-latentes sont trop corrélées avec $\X$ alors on risque de mal estimer celles-ci.
-Lorsque le paramètre tend vers l'infini alors la matrice $\D$ tend vers la
-matrice identité l'estimation des variables latentes sont données pas l'analyse
-en composantes principales de $\Y$, sans prendre en compte $\X$. Le risque est
-alors d'expliquer par les variables latentes une partie de la variance de $\Y$
-qui devrait être expliquée par $\X$, et dont passer à coté de certaine
-associations. Ainsi le choix du paramètre de régularisation $L_{2}$ est une
-affaire de dosage, il doit être ni trop grand ni trop petit. Nous avons remarqué
-dans les expériences que $\lambdaRidge$ petit donne les meilleurs résultats dans
-de nombreux cas.
+variables expliquées $\Y$ et les variables explicative $\X$ afin de pouvoir
+estimer les variables latentes $\U$. Lorsque le paramètre de régularisation
+$L_{2}$ tend vers zéro, les variables $\Y$ et $\X$ sont linéairement
+décorrélées. Cependant on ne pourra plus inverser la matrice diagonale $\D$. De
+plus dans le cas ou les variables latentes sont trop corrélées avec $\X$ alors
+on risque de mal estimer celles-ci. Lorsque le paramètre tend vers l'infini
+alors la matrice $\D$ tend vers la matrice identité l'estimation des variables
+latentes sont données pas l'analyse en composantes principales de $\Y$, sans
+prendre en compte $\X$. Le risque est alors d'expliquer par les variables
+latentes une partie de la variance de $\Y$ qui devrait être expliquée par $\X$,
+et dont passer à coté de certaine associations. Ainsi le choix du paramètre de
+régularisation $L_{2}$ est une affaire de dosage, il doit être ni trop grand ni
+trop petit. Nous avons remarqué dans les expériences que $\lambdaRidge$ petit
+donne les meilleurs résultats dans de nombreux cas.
 
 **** Paramètre de régularisation $L_{1}$
 Le paramètre de régularisation $L_{1}$ à un impact sur le nombre de lignes non
-nulles dans la matrice des effets $\B$. Seulement une partie des variables $\Y$
-est corrélée avec les variables explicatives $\X$. Ainsi, il est possible
+nulles dans la matrice des effets $\B$. Seulement une partie des colonnes de
+$\Y$ est corrélée avec les variables explicatives $\X$. Ainsi, il est possible
 d'interpréter la proportion de lignes non nulles dans $\B$ comme la proportion
 des variables qui sont corrélées avec $\X$. Plutôt que de choisir le paramètre
 de régularisation, il est plus simple de choisir la proportion de variable
@@ -1024,8 +1025,9 @@ d'estimation $L_{1}$ à une influence sur le rang de la matrice latente $\W$. Il
 est plus simple de choisir le rang de cette matrice, correspondant au nombre de
 variables latentes $K$, que de choisir le paramètre de régularisation $\gamma$.
 Nous proposons l'heuristique suivante pour calculer $\gamma$ à partir de $K$.
-Nous commençons par calculer les valeurs singulières de la matrice $\Y$, que
-l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, nous calculons
+Nous commençons par calculer les valeurs singulières de la matrice des variable
+explicative $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, nous
+calculons
 \begin{equation}
 \gamma = \frac{(\sigma_{\K} + \sigma_{\K + 1})}{2}.
 \end{equation}
@@ -1056,8 +1058,8 @@ calculer l'erreur de prédiction cite:Bro_2008. Nous présentons maintenant plus
 formellement notre procédure de validation croisée.
 
 Nous commençons par séparer les individus en une partie d'entraînement et une
-partie de test, c'est a dire que séparons matrices $\Y$ et $\X$ en deux partie
-selon leurs lignes. Nous notons $I$ l'ensemble des indices des individus
+partie de test, c'est a dire que nous séparons les matrices $\Y$ et $\X$ en deux
+parties selon leurs lignes. Nous notons $I$ l'ensemble des indices des individus
 choisies pour estimer l'erreur de prédiction. On estime à partir des individus
 d'apprentissage la matrice des axes factoriels que l'on note $\hat{\V}_{-I}$ et
 la matrice des effets que l'on note $\hat{\B}_{-I}$. Ensuite, nous la matrice de
@@ -1073,8 +1075,9 @@ Enfin, on peut calculer l'erreur de prédiction comme ceci
 \label{eq:2}
 \mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\U}^{-J} \hat{\V}_{-I}[J,]^{T} - \X[I, ] \hat{\B}_{-I}[J,]^{T} }_{F}.
 \end{equation}
-Cette procédure permet  bien de mesurer une erreur sur des observations de
-$\Y$ qui n'ont pas été utilisées pour estimer les paramètres du modèle.
+Cette procédure permet bien de mesurer une erreur sur des observations des
+variables expliquées qui n'ont pas été utilisées pour estimer les paramètres du
+modèle.
 
 *** Tests d'hypothèse corrigés pour les facteurs de confusions
 <<sec:hypothese>>
@@ -1119,7 +1122,7 @@ algorithmes d'estimation $L_{1}$ ou $L_{2}$ de la matrice latente du modèle
 LFMM.
 
 **** Calcul de la statistique de test
-Pour chaque variable $\Y_{j}$ nous avons la régression linéaire
+Pour chaque variable expliquée $\Y_{j}$ nous avons la régression linéaire
 suivante
 \begin{equation}
 \Y_{j} =  \hat{\U} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{E_{j}},
@@ -1127,27 +1130,27 @@ suivante
 où la matrice $\hat{\U}$ est l'estimation de la matrice des variables latentes
 du modèle LFMM. On suppose que l'erreur $E_{j}}$ est Gaussienne de moyenne
 nulle. On veut tester l'hypothèse de nullité du coefficient de régression
-$\beta_{j}$. Sous ces hypothèses on peut calculer pour chaque variable $\Y_{j}$
-une statistique de test $z_{j}$, assimilable à un z-score. La statistique de
-test suit sous l'hypothèse nulle le loi de Student à $\Yrow - \K - 1$ degrés de
-liberté. On peut donc calculer une \pvalue pour chaque variable $\Y_{j}$. Le
-détail du calcul de la statistique de test est donnée dans la section 3.2 de
-cite:Hastie_2009.
+$\beta_{j}$. Sous ces hypothèses on peut calculer pour chaque variable expliquée
+$\Y_{j}$ une statistique de test $z_{j}$, assimilable à un z-score. La
+statistique de test suit sous l'hypothèse nulle le loi de Student à $\Yrow -
+\K - 1$ degrés de liberté. On peut donc calculer une \pvalue pour chaque
+variable expliquées $\Y_{j}$. Le détail du calcul de la statistique de test est
+donnée dans la section 3.2 de cite:Hastie_2009.
 
 
 **** Calibration du test d'hypothèse
-<<sec:calibration>>
-Il arrive parfois que la statistique de suive pas la distribution théorique sous
-l'hypothèse nulle. On dit dans ce cas que le test est mal calibré. On peut
-trouver dans cite:Efron_2004 des exemples de situations qui peuvent aboutir à
-des tests mal calibrés. Dans les exemples que nous présentons ici ont s'attend à
-ce que la majorité des variables $\Y_{j}$ ne soit pas associé avec $\X$, ainsi
-une large majorité des statistiques de test sont distribuées selon l'hypothèse
-nulle. Nous utilisons l'approche choisie dans cite:Sun_2012, qui consiste à
-calculer la médiane et la déviation absolue à la médiane (MAD pour median
-absolute déviation) directement sur les $z$ statistiques. En effet, la médiane
-donne une estimation robuste de la moyenne et le MAD de l'écart type. On a alors
-une nouvelle statistique de test
+<<sec:calibration>> Il arrive parfois que la statistique de suive pas la
+distribution théorique sous l'hypothèse nulle. On dit dans ce cas que le test
+est mal calibré. On peut trouver dans cite:Efron_2004 des exemples de situations
+qui peuvent aboutir à des tests mal calibrés. Dans les exemples que nous
+présentons ici ont s'attend à ce que la majorité des variables expliquées
+$\Y_{j}$ ne soit pas associé avec $\X$, ainsi une large majorité des
+statistiques de test sont distribuées selon l'hypothèse nulle. Nous utilisons
+l'approche choisie dans cite:Sun_2012, qui consiste à calculer la médiane et la
+déviation absolue à la médiane (MAD pour median absolute déviation) directement
+sur les $z$ statistiques. En effet, la médiane donne une estimation robuste de
+la moyenne et le MAD de l'écart type. On a alors une nouvelle statistique de
+test
 \begin{equation}
 \tilde{z_{j}} = \frac{z_{j} - \med(z_{1}, ..., z_{\Ycol})}{
 \mad(z_{1}, ..., z_{\Ycol})}.
@@ -1164,7 +1167,7 @@ normal de moyenne nulle et d'écart type 1 sous l'hypothèse nulle.
 Dans cette dernière partie, nous présentons en quelques mots les outils que nous
 avons utiliser pour contrôler le taux de fausse découvertes dans les
 experiences. Dans le cadre des test d'association nous voulons en sortie de la
-méthode obtenir une liste de colonnes de $\Y$ candidate pour l'association avec
+méthode obtenir une liste de colonnes de $\Y$ candidates pour l'association avec
 la variable explicative. Pour choisir cette liste Dans le cadre des test
 d'association multiple....................
 
@@ -1242,9 +1245,9 @@ si elle converge. Nous avons utilisé le package R sva fourni par ces auteurs.
 
 Nous présentons dans cette partie la méthodes cate, nous considérons le cas où
 il n'y à qu'une variable explicative $\X$ pour faciliter les explications. Dans
-la méthode cate on commence par transformer la matrice des données $\Y$ afin
-d'isoler les variations expliquées par les facteurs latents. Pour cela on
-applique une matrice de changement de base aux lignes de $\Y$ de sorte que le
+la méthode cate on commence par transformer la matrice des variables expliquées
+$\Y$ afin d'isoler les variations expliquées par les facteurs latents. Pour cela
+on applique une matrice de changement de base aux lignes de $\Y$ de sorte que le
 premier axe de la nouvelle base soit colinéaire à $\X$. Cette transformation
 permet d'avoir sur le premier axe les coefficients de la régression linéaire de
 $\Y$ par $\X$ et sur tout les autres axes le projeté orthogonale de $\Y$ par
@@ -1305,9 +1308,8 @@ implémentations R de ces méthodes mises à disposition par leurs auteurs.
 Afin de comparer la performance des méthodes sur une étude d'association pour
 laquelle nous connaissons la vérité, nous avons réalisé des simulations à partir
 de vrai jeux de données. Pour cela nous réalisons une analyse en composante
-principale de la matrice $\Y$ et ne gardons que les $\K$ premières composantes
-en fonction du nombre $\K$ de facteurs de confusion que l'on souhaite
-simuler. On a alors
+principale de $\Y$ et ne gardons que les $\K$ premières composantes en fonction
+du nombre $\K$ de facteurs de confusion que l'on souhaite simuler. On a alors
 \begin{equation}
 \Y = \U \V^{T} + \E
 \end{equation}
@@ -1319,8 +1321,8 @@ structure de covariance que les variables latentes calculée par l'ACP. Nous
 choisissons de plus la corrélation entre chaque colonne de $\U^{'}$ et $\X$. Ces
 matrices sont simulé à l'aide de la loi normale multidimensionnelle. Enfin nous
 calculons une matrice des effets $\B^{'}$ de sorte qu'une certaines proportion
-des lignes de $\B^{'}$ soit non nul et simulés grâce à une loi normale. Enfin,
-nous calculons la nouvelle matrice des variables à tester tel que
+des lignes de $\B^{'}$ soit non nul et simulés grâce à une loi normale. Nous
+calculons alors la nouvelle matrice des variables à tester tel que
 \begin{equation}
 \Y^{'} = \U^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
 \end{equation}
@@ -1333,52 +1335,90 @@ et d'éviter les discussions sur le choix des variables latentes.
 Les vrais jeu de données que nous avons choisi pour réaliser les simulations
 sont issu du jeux de données 1000 génome que nous présentons dans la partie
 [[sec:GEAS]]. Nous avons garder seulement le chromosome 1 et 2, cela permet de
-simuler une matrice $\Y^{'}$ composé de 52211 variables pour 1758 individus.
-Nous avons choisi de simuler 5 variables latentes pour plusieurs valeurs du
-nombre de colonnes de $\Y^{'}$ associées avec $\X^{'}$ et plusieurs valeurs de
-la corrélation entre $\X^{'}$ et les 5 variables latentes. Pour chaque variable
-latente une valeur entre $-1$ et $1$ de la corrélation avec $\X^{'}$ est tirée
-selon une loi uniforme et multipliée par un coefficient compris entre 0 et 1. Le
-même coefficient est utilisé pour calculer toutes les corrélations. Plus le
-coefficient est proche de 1 plus les variable latentes seront corrélées à
-$\X^{'}$ et donc plus la confusion lors du test d'association de $\X^{'}$ avec
-la matrice $\Y^{'}$ sera importante.
+simuler une matrice de variable expliquées $\Y^{'}$ composée de 52211 variables
+pour 1758 individus. Nous avons choisi de simuler 5 variables latentes pour
+plusieurs valeurs de la corrélation entre $\X^{'}$ et ces 5 variables latentes.
+Pour chaque variable latente une valeur entre $-1$ et $1$ de la corrélation avec
+$\X^{'}$ est tirée selon une loi uniforme et multipliée par un coefficient que
+l'on nome $\rho$ prenant une des valeurs suivantes: $0.1$, $0.3$, $0.5$, $0.8$
+ou $1$. Le même coefficient $\rho$ est utilisé pour calculer toutes les
+corrélations. Plus le coefficient $\rho$ est proche de 1 plus les variables
+latentes seront corrélées à $\X^{'}$ et donc plus la confusion lors du test
+d'association de $\X^{'}$ avec la matrice $\Y^{'}$ sera importante. Nous avons
+de plus choisi la proportion proportions des variables expliquées associées avec
+la variable explicative valant $1\%$, $5\%$, $10\%$, $15\%$ ou $20\%$. Pour
+chaque paramètre de simulation nous avons simulé $5$ jeux de données ce
+qui donne un total de 125 jeux de données.
 
 **** Mesure de comparaison des performances
-Pour comparer les méthodes entre elles nous avons choisi deux critères. Toutes
-les méthodes renvoie une \pvalue pour chaque colonne de $\Y$. Afin d'évaluer la
+Pour comparer les méthodes entre elles nous avons choisi deux critères. Chaque
+méthode renvoie une \pvalue pour chaque colonne de $\Y$. Afin d'évaluer la
 capacité des méthodes à détecter le plus possible d'association sans se tromper
-nous avons calculer l'aire sous la courbe de précision-rappel pour chacune des
-méthodes. Nous rappelons que pour une liste de candidats données la précision
-est le nombre de vrais associations dans la liste divisé par la taille de la
-liste et le rappel est le nombre de vrai association retrouvé dans la liste
-divisé par le nombre total des vrais associations, parfois appelé puissance en
-statistique. Une méthode qui donne les plus petites \pvalues d'abord à toutes
-les vrais associations donne une courbe de précision-rappel de 1. Le deuxième
-critère de comparaison des méthode permet d'évaluer la calibration des \pvalues
-renvoyées par les méthodes. Pour cela nous calculons le facteur d'inflation sur
-\pvalues des variables non associées avec $\X$. Si les \pvalues sont bien
-calibrées alors la distribution des \pvalues sous l'hypothèse nulles suit une
-loi uniforme et dans ce cas le facteur d'inflation vaux 1. Une méthode qui
-renvoie des \pvalues correctement calibrées permet de calculé une liste de
-candidats avec un taux de fausse découverte moyen contrôlé à une valeur choisie
-en utilisant par exemple l'algorithme de Benjamini-Hoshberg
-cite:benjamini1995controlling. Une bonne méthode doit donc à la fois être capable de
-detecter les vrais associations sans se tromper mais aussi fournir des \pvalues
-correctement calibrer.
+nous avons calculer l'aire sous la courbe de précision-rappel, noté AUC, pour
+chacune des méthodes. Nous rappelons que pour une liste de candidats données la
+précision est le nombre de vraies associations dans la liste divisé par la
+taille de la liste et le rappel est le nombre de vraies associations retrouvées
+dans la liste divisé par le nombre total des vraies associations. Le rappel est
+parfois appelé puissance en statistique. Une méthode qui donne les plus petites
+\pvalues d'abord à toutes les vraies associations donne une aire sous la courbe
+de précision-rappel de 1. Le deuxième critère de comparaison des méthodes permet
+d'évaluer la calibration des \pvalues renvoyées par les méthodes. Pour cela nous
+calculons le facteur d'inflation sur les \pvalues attribuées aux variables non
+associées avec $\X$. Si les \pvalues sont bien calibrées alors la distribution
+des \pvalues attribuées aux colonne de $\Y$ non associées avec $\X$ suivent une
+loi uniforme et donc le facteur d'inflation vaux 1. Une méthode qui renvoie des
+\pvalues correctement calibrées permet de calculé une liste de candidats avec un
+taux de fausses découvertes moyen contrôlé à une valeur choisie en utilisant par
+exemple l'algorithme de Benjamini-Hoshberg cite:benjamini1995controlling. Une
+bonne méthode doit donc à la fois être capable de detecter les vrais
+associations sans se tromper mais aussi fournir des \pvalues correctement
+calibrées.
 
 **** Résultats
+Sur les 125 jeux de données simulés nous avons lancé les méthodes lm, PCAlm,
+sva-irw, sva-two-step, cate et les deux méthodes présentées dans cette thèse
+lassoLFMM et ridgeLFMM. De plus, nous avons considéré une méthode oracle qui
+fait le test d'association entre $\Y$ et $\X$ en connaissant les variables
+latentes de la simulation. Les résultats sont résumés dans la Figure
+ref:fig:method_comp. Les méthodes cate, lassoLFMM et ridgeLFMM ont les mêmes
+performance que l'oracle sur toutes les simulations. Nous constatons toutefois
+une exception sur les simulations avec un paramètre $\rho$ de corélation entre
+la variable explicative $\X$ et les variable latentes de $1$ pour cate et
+ridgeLFMM qui renvoie des \pvalues avec un taux d'inflation moyen de $3.3$ alors
+que celui de lassoLFMM vaux $1.3$ et celui de l'oracle $1.0$ (Figure
+ref:fig:method_comp D). Les performance de la méthode lm sont sensible au
+paramètre de corélation $\rho$, lorsque celui-ci vaux $0.1$ l'AUC et le facteur
+d'inflation de lm est presque égal à ceux de l'oracle mais le facteur
+d'inflation croit jusqu'à plus de 30 et l'AUC décroit jusqu'à la moitié de celui
+de l'oracle pour $\rho$ valant 1 (Figure ref:fig:method_comp B et D). Les
+\pvalues de la méthode PCAlm sont toujours corréctement calibré puisque le
+facteur d'inflation est toujours autour de 1 (Figure ref:fig:method_comp C et
+D). Cependant la différence de l'oracle avec l'AUC de PCAlm de l'oracle croit
+avec la proportion de vrais associations et le paramètre de corrélation $\rho$
+(Figure ref:fig:method_comp A et B). Enfin sva-two-step et sva-irw renvoie des
+\pvalues correctement qualibré sauf quand le paramèrte de corélation $\rho$ vaut
+0.8 et 1.0 (Figure ref:fig:method_comp C et D). L'AUC de sva-irw est toujours en
+dessous de l'AUC de l'oracle pour toute les proportion de vrais asociation des
+simulations (Figure ref:fig:method_comp A) et la différence de l'AUC de sva-irw
+avec de l'AUC de l'oracle croit avec le paramèter de corrélation $\rho$ (Figure
+ref:fig:method_comp B). Nous obsevons egualement que l'AUC de sva-two-step est
+très légèrement en dessous de l'AUC de l'oracle pour toute les proportion de
+vrais asociation des simulations (Figure ref:fig:method_comp A) et comme pour
+sva-irw la différence de l'AUC de sva-two-step avec de l'AUC de l'oracle croit
+avec le paramèter de corrélation $\rho$ mais plus faiblement (Figure
+ref:fig:method_comp B).
+
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[ht]
 \centering
 \includegraphics{./OUTPUT/Rplots/method_comp.pdf.png}
-\caption{Comparaison des méthodes sur des simulations faites a partir du jeux de
-  données 1000Genomes. A-B) Aire sous la courbe precision-recall en fonction
-  respectivement de la proportion d'outlier dans la simulation et la corrélation
-  de la variable explicative et les variables latentes. C-D) Facteur d'inflation
-  génomique calculé sur les variable nulles en fonction respectivement de la
-  proportion d'outlier et de la corrélation entre les variable explicatives et
-  les variables latentes.}
+\caption{Comparaison des méthodes sur des simulations faites à partir du jeux de
+  données 1000Genomes. A-B) Aire sous la courbe précision-rappel en fonction
+  respectivement de la proportion de colonne de $\Y$ associé à $\X$ et la
+  corrélation de la variable explicative $\X$ et les variables latentes. C-D)
+  Facteur d'inflation calculé sur les variables nulles en fonction
+  respectivement de la proportion de colonne de $\Y$ associé à $\X$ et la
+  corrélation de la variable explicative $\X$ et les variables latentes.}
 \label{fig:method_comp}
 \end{sidewaysfigure}
 #+END_EXPORT
@@ -1610,6 +1650,7 @@ CLOSED: [2017-08-14 lun. 11:46]
   library(gridExtra)
   library(forcats)
   library(tidyverse)
+  library(latex2exp)
   MaTheseR.params <- get_MaTheseRparams()
   method.ordered <- MaTheseR.params$method.ordered
   color.values <- MaTheseR.params$color.values
@@ -1708,7 +1749,7 @@ CLOSED: [2017-08-14 lun. 11:46]
   mylegend <- g_legend(C.pl)
   C.pl <- C.pl +
     theme(legend.position = "none") +
-    xlab("Proportion d'outlier") +
+    xlab("Proportion de vrais associations") +
     ylab("Facteur d'inflaction")
 
     ## A
@@ -1721,7 +1762,7 @@ CLOSED: [2017-08-14 lun. 11:46]
     D.pl <- gif.rho.pl +
       MaTheseR.params$gtheme +
       theme(legend.position = "none") +
-      xlab("Corrélation entre et U et X") + 
+      xlab(TeX("Paramètre de corrélation entre et U et X ($\\rho$)")) +
       ylab("") 
     ## B
     B.pl <- auc.rho.pl +
@@ -2139,8 +2180,12 @@ CLOSED: [2017-07-25 mar. 18:05]
 [[./OUTPUT/Rplots/ewas_screeplot.png]]
 
 ***** DONE Validation croisée du modèle lfmmRidge
-CLOSED: [2017-07-27 jeu. 10:49]
+CLOSED: [2017-08-16 mer. 12:57]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-16 mer. 12:57]
+- State "RUNNING"    from "DONE"       [2017-08-16 mer. 11:07]
+- State "DONE"       from "RUNNING"    [2017-08-16 mer. 11:00]
+- State "RUNNING"    from "DONE"       [2017-08-16 mer. 10:21]
 - State "DONE"       from "RUNNING"    [2017-07-27 jeu. 10:49]
 - Note taken on [2017-07-26 mer. 19:36]
 - Note taken on [2017-07-26 mer. 18:05] \\
@@ -2198,6 +2243,79 @@ CLOSED: [2017-07-27 jeu. 10:49]
 #+RESULTS:
 [[./OUTPUT/Rplots/ewas_CV_lfmm_lambda.png]]
 [[./OUTPUT/Rplots/ewas_CV_lfmm_K.png]]
+
+#+NAME: code:ewas_CV_encore
+#+CAPTION: Dépend de [[ewas_CV]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## samplers
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/GSE42861/G.rds",
+                              X = "./Data/ThesisDataset/3Article/GSE42861/X.rds",
+                              outlier = "./Data/ThesisDataset/3Article/GSE42861/candidates.rds") %>%
+    ExpRmouline()
+
+  n <- nrow(dat$Y)
+
+  lambdas <- c(1e-5, 1.0, 1e10)
+  nb.cluster <- 10
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
+                            lambdas = lambdas,
+                            Ks = c(6,7,8,9))
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  res.cv <- ExpRmouline(cv, dat)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## retrieve expr
+  res.cv.other <- readRDS("./OUTPUT/Expr/ewas_CV_lfmm.rds")
+  res.cv$errs <- rbind(res.cv$errs,
+                       res.cv.other$errs)
+  save_expr(res.cv, "ewas_CV_lfmm_encore.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  save_plot_png(pl, "ewas_CV_lfmm_K_encore.png")
+#+end_src
+
+#+NAME: code:ewas_CV_encore_encore
+#+CAPTION: Dépend de [[ewas_CV_encore]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## samplers
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/GSE42861/G.rds",
+                              X = "./Data/ThesisDataset/3Article/GSE42861/X.rds",
+                              outlier = "./Data/ThesisDataset/3Article/GSE42861/candidates.rds") %>%
+    ExpRmouline()
+
+  n <- nrow(dat$Y)
+
+  lambdas <- c(1e-5, 1.0, 1e10)
+  nb.cluster <- 10
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
+                            lambdas = lambdas,
+                            Ks = 11:19)
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  res.cv <- ExpRmouline(cv, dat)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## retrieve expr
+  res.cv.other <- readRDS("./OUTPUT/Expr/ewas_CV_lfmm_encore.rds")
+  res.cv$errs <- rbind(res.cv$errs,
+                       res.cv.other$errs)
+  save_expr(res.cv, "ewas_CV_lfmm_encore_encore.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  save_plot_png(pl, "ewas_CV_lfmm_K_encore_encore.png")
+#+end_src
+
 
 #+NAME: code:ewas_CV_lambda
 #+CAPTION: Dépend de [[code:ewas_G_X]] [[code:ewas_candidates]]
@@ -3025,7 +3143,7 @@ CLOSED: [2017-08-08 mar. 15:08]
 - State "TODO"       from              [2017-08-08 mar. 14:28]
 :END:
 #+NAME: code:ewas_screeplot_CV
-#+CAPTION: Dépend de [[code:ewas_screeplot]] [[code:ewas_CV]] [[code:ewas_CV_lambda]]
+#+CAPTION: Dépend de [[code:ewas_screeplot]] [[code:ewas_CV]] [[code:ewas_CV_lambda]] [[code:ewas_CV_encore]] [[code:ewas_CV_encore_encore]]
 #+begin_src R 
   library(MaTheseR)
   library(cowplot)
@@ -3039,7 +3157,7 @@ CLOSED: [2017-08-08 mar. 15:08]
       mutate(lambda = as.factor(lambda))
   plA <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
     geom_point() +
-    coord_cartesian(xlim = c(1,100)) +
+    coord_cartesian(xlim = c(1,30)) +
     xlab(TeX("Nombre de variables latentes ($K$)")) +
     ylab("Variance\nexpliquée") +
     MaTheseR.params$gtheme +
@@ -3050,7 +3168,7 @@ CLOSED: [2017-08-08 mar. 15:08]
   save_plot_png(plA, "ewas_screeplot.png")
 
   ## cross validation K
-  expr <- readRDS("./OUTPUT/Expr/ewas_CV_lfmm.rds")
+  expr <- readRDS("./OUTPUT/Expr/ewas_CV_lfmm_encore_encore.rds")
   toplot <- expr$errs %>%
     mutate(lambda = as.factor(lambda)) %>%
     group_by(lambda, K) %>%
@@ -3060,13 +3178,14 @@ CLOSED: [2017-08-08 mar. 15:08]
     geom_point() + 
     geom_errorbar(aes(ymin = err.mean - se,
                       ymax = err.mean + se,
-                      width = 1)) +
+                      width = 0.4)) +
     geom_line() +
     xlab(TeX("Nombre de variables latentes ($K$)")) +
     ylab("Erreur de\nprédiction") +
     MaTheseR.params$gtheme +
     scale_color_discrete(name = TeX("$\\lambda$")) + 
     geom_vline(xintercept = 10, linetype = "dashed") +
+    coord_cartesian(xlim = c(1,30)) +
     theme(legend.position=c(0.8, 0.6))
   save_plot_png(plB, "ewas_CV_K.png")
 
@@ -3098,9 +3217,10 @@ CLOSED: [2017-08-08 mar. 15:08]
 #+end_src
 
 #+RESULTS: code:ewas_screeplot_CV
-[[./OUTPUT/Rplots/ewas_screeplot.png]]
-[[./OUTPUT/Rplots/ewas_CV_K.png]]
-[[./OUTPUT/Rplots/ewas_CV_lambda.png]]
+: [[./OUTPUT/Rplots/ewas_screeplot.png]]
+: [[./OUTPUT/Rplots/ewas_CV_K.png]]
+: [[./OUTPUT/Rplots/ewas_CV_lambda.png]]
+: [[./OUTPUT/Rplots/ewas_hyperparams.pdf.png]]
 
 ****** DONE Résultats des méthodes
 CLOSED: [2017-08-09 mer. 13:56]
@@ -3665,8 +3785,10 @@ CLOSED: [2017-07-30 Sun 11:28]
 
 On prend K = 9 variables latentes.
 
-***** RUNNING Validation croisée avec lfmmRidge
+***** DONE Validation croisée avec lfmmRidge
+CLOSED: [2017-08-16 mer. 09:53]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-16 mer. 09:53]
 - Note taken on [2017-08-14 lun. 12:07] \\
   Il y a aussi gwas_CV_lambda qui tourne !
 - Note taken on [2017-08-14 lun. 12:02] \\
@@ -3757,14 +3879,15 @@ On prend K = 9 variables latentes.
   ## retrieve expr
   res.cv.other <- readRDS("./OUTPUT/Expr/gwas_CV_lfmm.rds")
   res.cv$errs <- rbind(res.cv$errs,
-                       res.cv.orher$errs)
+                       res.cv.other$errs)
   save_expr(res.cv, "gwas_CV_lfmm_encore.rds")
 
   pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
   save_plot_png(pl, "gwas_CV_lfmm_K_encore.png")
 #+end_src
 
-
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_CV_lfmm_K_encore.png]]
 
 #+NAME: code:gwas_CV_lambda
 #+CAPTION: Dépend de 
@@ -3797,9 +3920,10 @@ On prend K = 9 variables latentes.
     geom_smooth()
   pl
   save_plot_png(pl, "gwas_CV_lambda_lfmm_lambda_smooth.png")
-
-
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_CV_lambda_lfmm_lambda.png]]
 
 ***** DONE Étude du jeu de données 
 CLOSED: [2017-07-28 ven. 09:25]
@@ -4051,18 +4175,18 @@ CLOSED: [2017-08-07 lun. 18:12]
       mutate(lambda = as.factor(lambda))
   plA <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
     geom_point() +
-    coord_cartesian(xlim = c(1,100)) +
+    coord_cartesian(xlim = c(1,50)) +
     xlab(TeX("Nombre de variables latentes ($K$)")) +
     ylab("Variance\nexpliquée") +
     MaTheseR.params$gtheme +
     scale_color_discrete(name = TeX("$\\lambda$")) +
     scale_y_continuous(labels=percent) +
-    geom_vline(xintercept = 5, linetype = "dashed") +
+    geom_vline(xintercept = 9, linetype = "dashed") +
     theme(legend.position=c(0.8, 0.6))
   save_plot_png(plA, "gwas_screeplot.png")
 
   ## cross validation K
-  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lfmm.rds")
+  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lfmm_encore.rds")
   toplot <- expr$errs %>%
     mutate(lambda = as.factor(lambda)) %>%
     group_by(lambda, K) %>%
@@ -4078,12 +4202,12 @@ CLOSED: [2017-08-07 lun. 18:12]
     ylab("Erreur de\nprédiction") +
     MaTheseR.params$gtheme +
     scale_color_discrete(name = TeX("$\\lambda$")) + 
-    geom_vline(xintercept = 5, linetype = "dashed") +
+    geom_vline(xintercept = 9, linetype = "dashed") +
     theme(legend.position=c(0.8, 0.6))
   save_plot_png(plB, "gwas_CV_K.png")
 
   ## cross validation lambda
-  expr <- readRDS("./OUTPUT/Expr/ewas_CV_lambda_lfmm.rds")
+  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lambda_lfmm.rds")
   toplot <- expr$errs %>%
     mutate(K = as.factor(K)) %>%
     group_by(lambda, K) %>%
@@ -4098,20 +4222,21 @@ CLOSED: [2017-08-07 lun. 18:12]
     xlab(TeX("Paramètre de regularisation $L_{2}$ en échelle logarithmique ($\\lambda$)")) +
     ylab("Erreur de\nprédiction") +
     MaTheseR.params$gtheme +
-    theme(legend.position=c(0.2, 0.8))
-  save_plot_png(plC, "ewas_CV_lambda.png")
+    theme(legend.position=c(0.2, 0.2))
+  save_plot_png(plC, "gwas_CV_lambda.png")
 
   ## gather plot
   pl <- plot_grid(plA, plB, plC, ncol = 1, labels = c("A", "B", "C"))
 
-  save_plot_MaTheseR(pl, "ewas_hyperparams.pdf.png",
+  save_plot_MaTheseR(pl, "gwas_hyperparams.pdf.png",
                      height = 0.9 * MaTheseR.params$textheightcm,
                      width = MaTheseR.params$textwidthcm)
 #+end_src
 
-#+RESULTS:
+#+RESULTS: code:gwas_screeplot_CV
 [[./OUTPUT/Rplots/gwas_screeplot.png]]
 [[./OUTPUT/Rplots/gwas_CV_K.png]]
+[[./OUTPUT/Rplots/gwas_CV_lambda.png]]
 
 ****** TODO Résultats des méthodes
 :LOGBOOK:
@@ -6808,9 +6933,10 @@ Nous ne gardons que les individus non métisses.
   sds <- 1:ncol(G.r)
   pb <- txtProgressBar(min = 1, max = ncol(G.r))
   for(j in 1:ncol(G.r)) {
-    nas[j] <- mean(is.na(G.r[kept.indiv.id,j]))
-    mus[j] <- mean(G.r[kept.indiv.id,j], na.rm = TRUE)
-    sds[j] <- sd(G.r[kept.indiv.id,j], na.rm = TRUE)
+    aux <- as.double(G.r[kept.indiv.id,j])
+    nas[j] <- mean(is.na(aux))
+    mus[j] <- mean(aux, na.rm = TRUE)
+    sds[j] <- sd(aux, na.rm = TRUE)
     setTxtProgressBar(pb, j)
   }
   close(pb)
@@ -6819,13 +6945,22 @@ Nous ne gardons que les individus non métisses.
   quantile(nas)
   quantile(mus)
   quantile(sds)
+  sum(nas > 0.0)
+  sum(sds < 0.095) ## 2 * 0.05 * (1 - 0.05)
 
+  ## filter
+  col.ids <- which(sds > 0.095) 
+
+  ## size matrix file 1409x5397214
+  ## save col and row name
+  saveRDS(G$fam$sample.ID[kept.indiv.id], "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.rownames.rds")
+  saveRDS(G$map$marker.ID[col.ids], "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.colnames.rds")
 
   ## export to bin
   con <- file("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.bin", 'wb')
-  notNA.ids <- which(nas != 0.0)
-  for(j in notNA.ids {
-    writeBin((G.r[kept.indiv.id,j] - mus[j]) / sds[j], con)
+  for(j in col.ids) {
+    aux <- as.double(G.r[kept.indiv.id,j])
+    writeBin((aux - mus[j]) / sds[j], con)
   }
   flush(con)
   close(con)
@@ -6836,13 +6971,14 @@ Nous ne gardons que les individus non métisses.
 
   setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
   G.big <- readRDS("bigsnpr_G/G.rds")
+  kept.indiv.id <- G$fam$sample %in% eas.indiv.df$sample
   eas.indiv.df <- readRDS("~/Projects/Thesis/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df.rds")
 
   G.matter <- matter_mat(paths="~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.bin",
-                         ncol = ,
-                         nrow = ,
+                         nrow = 1409,
+                         ncol = 5397214,
                          datamode = "double")
-  colnames(G.matter) <- 
+  colnames(G.matter) <- G.big$fam
   rownames(G.matter) <- 
 
   ## test
@@ -6852,6 +6988,23 @@ Nous ne gardons que les individus non métisses.
 
 #+end_src
 
+#+RESULTS:
+#+begin_example
+  > quantile(nas)
+    0%  25%  50%  75% 100% 
+     0    0    0    0    0 
+  > quantile(mus)
+         0%       25%       50%       75%      100% 
+  0.9254791 1.3584102 1.6217175 1.7934705 2.0539390 
+  > quantile(sds)
+         0%       25%       50%       75%      100% 
+  0.0000000 0.4419241 0.5679660 0.6762505 0.8825680 
+  > sum(nas > 0.0)
+  [1] 0
+  > sum(sds < 0.095) ## 2 * 0.05 * (1 - 0.05)
+  [1] 1226
+
+#+end_example
 ****** TODO Données prunnées
 :LOGBOOK:
 - State "TODO"       from "DONE"       [2017-08-14 lun. 14:19]
