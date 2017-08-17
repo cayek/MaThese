@@ -1899,8 +1899,7 @@ l'estimateur $L_{1}$ de $\B$ valant 1\%.
 
 La figure A ref:fig:ewas_qqplot_top montre la distribution observé des \pvalues
 renvoyé par chaque méthode contre la distribution théorique suivit par des
-\pvalues sous l'hypothèse nulle, c'est l'effet entre $\X$ et le niveau de
-méthylation de l'ADN vaux zéro. On constate une inflation du nombre de petites
+\pvalues sous l'hypothèse nulle. On constate une inflation du nombre de petites
 \pvalues pour toutes les méthodes. Il y à une forte inflation pour lm et
 sva-irw. La figure B ref:fig:ewas_qqplot_top quelle proportion dans candidat
 pour l'assocaition qui ont été identifié par cite:Zou_2014,Rahmani_2016 sont
@@ -3432,9 +3431,11 @@ causes génétiques à la maladie. Comme la maladie \celiac est très étudié f
 une étude d'association de celle-ci avec des données génomiques constitue un bon
 test pour les méthodes de corréction pour les variables latentes. Nous pourrons
 en effet comparer nos résultats à ceux des nombreuses autres GWAS de la maladie
-\celiac. De plus nous s'avons que la stratification des individus en sous
+\celiac. Pour cela nous avons utilisé GWAS catalog pour récupérer les SNPs ayant
+été identifié dans d'autre étude comme étant associé avec la maladie \celiac.
+Par ailleurs, nous s'avons que la stratification des individus en sous
 population peut être un facteur de confusion dans les GWAS. Il est habituelle de
-corriger les GWAS en utilisant les score de l'ACP des données génétiques pour
+corriger les GWAS en utilisant les scores de l'ACP des données génétiques pour
 représenter la structure de population cite:Price_2006. Nous proposons ici de
 faire une étude d'association entre la maladie \celiac et des données génétique
 présentées dans cite:dubois2010multiple. Ces données comportent 281122 SNPs
@@ -3445,8 +3446,7 @@ les individu. On parle de "single nucléotyde polimorphism" car on s'intéresse
 seulement au locus pour lesquels on a observé seulement deux variants dans la
 population étudiée. Il faut de plus que le variant le moins fréquent soit au
 moins observé chez $5\%$ des individus de la population. Ainsi pour cette GWAS
-la matrice des variables expliquées est composée de 0, 1 et 2. 
-
+la matrice des variables expliquées est composée de 0, 1 et 2.
 
 Avant de lancer les méthodes d'étude d'association nous avons filtré les données
 génétique afin de garder seulement les SNPs ayant le variant le moins fréquent
@@ -3462,30 +3462,53 @@ corélation liénaire au carré est supérieure à $0.2$, cela nous as permit
 d'identifier un sous ensemble de 80275 SNPs. Ces opérations de fitrage on été
 faite à l'aide du logiciel plink cite:Purcell_2007. Enfin nous avons utilisé
 beagle pour imputer les données manquante de la matrice de SNPs
-cite:Browning_2016. Finalement, nous obtenons finalement un jeux de données
-composée 281122 SNPs et 15155 individus. Afin d'estimer les variables latentes
-pour corriger le test d'association entre les SNPS et la maladie \celiac nous
-avons lancer les méthode lm, lmPCA, cate, ridgeLFMM et lassoLFMM sur le sous
-ensemble de SNPs identifé par l'étape de LD pruning. Par la suite, nous avons
-effectuer le test d'hypothèse présenté dans la partie [[sec:hypothese]] sur le jeux
-de données génétique complet mais avec l'estimation des variables latentes
-caluclé sur le sous ensemble de SPNs.
+cite:Browning_2016. Nous obtenons finalement un jeux de données composée 281122
+SNPs et 15155 individus.
+
+Afin d'estimer les variables latentes pour corriger le test d'association entre
+les SNPS et la maladie \celiac nous avons lancer les méthode lm, lmPCA, cate,
+ridgeLFMM et lassoLFMM sur le sous ensemble de SNPs identifé par l'étape de LD
+pruning. Par la suite, nous avons effectuer le test d'hypothèse présenté dans la
+partie [[sec:hypothese]] sur le jeux de données génétique complet mais avec
+l'estimation des variables latentes caluclé sur le sous ensemble de SNPs. Nous
+avons choisi 9 variables latentes car il car il n'y a plus d'amélioration
+significative de l'erreur de prédiction et de la proportion de variance
+expliquée par les variables latentes après cette valeur sur les graphiques A et
+B de la Figure ref:fig:gwas_params. La validation croisée du paramètre
+$\lambRidge$ ne permet pas de conclure (Figure ref:fig:gwas_params C), nous
+avons choisi $1e^{-5}$ car nous avons remarqué dans nos expérimentation que les
+petites valeurs du paramètres de régularisation $L_{2}$ donne les meilleur
+résultats. Enfin comme on s'attend à detecter un petit nombre d'association nous
+avons choisi une proportion de ligne non nulle pour l'estimateur $L_{1}$ de $\B$
+valant 1\%.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/gwas_hyperparams.pdf.png}
-\caption{Choix des paramètres pour l'étude d'association entre des site
-  méthylation de l'ADN et la maladie polyarthrite rhumatoïde. A) Proportion de
-  variance expliquées par chacune des variables latentes estimé par l'algorithme
-  ridgeLFMM pour déférente valeur $\lambda$ du paramètre de régularisation
-  $L_2$. B)C) Erreur de prédiction calculée grâce à la validation croisée de
-  l'estimateur $L_{2}$ des paramètre de LFMM pour différente valeurs du
-  paramètre de régularisation $\lambda$ et du nombre variable lattentes $\K$. La
-  ligne pointillée vertical marque le nombre de variables latentes choisi, 10.}
-\label{fig:ewas_params}
+\caption{Choix des paramètres pour la GWAS. A) Proportion de variance expliquées
+  par chacune des variables latentes estimée par l'algorithme ridgeLFMM pour
+  déférentes valeurs $\lambda$ du paramètre de régularisation $L_2$. B)C) Erreur
+  de prédiction calculée grâce à la validation croisée de l'estimateur $L_{2}$
+  des paramètre de LFMM pour différente valeurs du paramètre de régularisation
+  $\lambda$ et du nombre variable lattentes $\K$. La ligne pointillée vertical
+  marque le nombre de variables latentes choisi, 10.}
+\label{fig:gwas_params}
 \end{figure}
 #+END_EXPORT
+
+La figure A ref:fig:gwas_qqplot_top montre la distribution observé des \pvalues
+renvoyé par chaque méthode contre la distribution théorique suivit par des
+\pvalues sous l'hypothèse nulle. On constate que les méthodes sont toute bien
+calibré et que la méthode la plus libérale est lm alors que PCAlm est la méthode
+la plus conservative. La Figure ref:fig:gwas_qqplot_top B montre le nombre de
+SNPs idéntifié dans le GWAS catalog comme étant associé avec la maladie celiac
+qui sont retrouvé dans les top liste des différente méthodes. On observe que lm
+retrouve moins facilement dans sa top liste les candidats du GWAS catalogue
+($78\%$ des candidats du GWAS catalogue sont dans le top 3000 de lm contre
+$83\%$ pour PCAlm et $88\%$ pour les trois méthodes restantes). 
+
+parler du diag de venn et du nombre de candidat trouver etc...
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -3495,7 +3518,7 @@ caluclé sur le sous ensemble de SPNs.
   \pvaleur renvoyé par chaques méthodes. Les quantiles théoriques suivent la loi
   exponetielle. B) Proportion des candidats du GWAS catalogue
   retrouvés dans la top liste revoyée par chaques méthodes.}
-\label{fig:ewas_qqplot_top}
+\label{fig:gwas_qqplot_top}
 \end{figure}
 #+END_EXPORT
 
@@ -3505,7 +3528,7 @@ caluclé sur le sous ensemble de SPNs.
 \includegraphics{./OUTPUT/Rplots/gwas_venn.pdf.png}
 \caption{A) Diagramme de Venn de la liste des candidats controlés à un taux de
   fausses de découvertes de 1 \%.}
-\label{fig:ewas_venn}
+\label{fig:gwas_venn}
 \end{figure}
 #+END_EXPORT
 
@@ -3912,14 +3935,18 @@ FinnuncorrNLITUK1UK3hap300_CQ_norel.bim +
 #+end_example
 
 
-***** RUNNING Imputation des données manquantes
+***** STARTED Imputation des données manquantes
 :LOGBOOK:
+- Note taken on [2017-08-17 jeu. 13:48] \\
+  il va falloir le relancer ! ca prend du temps !!! > 1 jour, peut être
+  augmenter nb thread et ram
+- State "STARTED"    from "RUNNING"    [2017-08-17 jeu. 13:48]
 - State "RUNNING"    from "TODO"       [2017-08-16 mer. 18:53]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
 :END:
 
-#+NAME: code:
-#+CAPTION: Dépend de 
+#+NAME: code:gwas_impute
+#+CAPTION: Dépend de [[code:gwas_ibd_filter]]
 #+begin_src shell :session *ssh krakenator* :results output 
   cd ~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/
   ## recode to vcf
@@ -4233,8 +4260,11 @@ CLOSED: [2017-07-30 Sun 11:28]
 
 On prend K = 9 variables latentes.
 
-***** RUNNING Validation croisée avec lfmmRidge
+***** STARTED Validation croisée avec lfmmRidge
 :LOGBOOK:
+- Note taken on [2017-08-17 jeu. 13:47] \\
+  il va falloir relancer gwas_CV_encore_encore !!!
+- State "STARTED"    from "RUNNING"    [2017-08-17 jeu. 13:47]
 - State "RUNNING"    from "DONE"       [2017-08-16 mer. 15:08]
 - State "DONE"       from "RUNNING"    [2017-08-16 mer. 09:53]
 - Note taken on [2017-08-14 lun. 12:07] \\
@@ -4433,7 +4463,7 @@ CLOSED: [2017-07-28 ven. 09:25]
   ## param
   K.method <- 9
   lambda <- 1e-5
-  nozero.prop <- 0.005
+  nozero.prop <- 0.01
 
   ## mask
   col.mask <- readRDS("./Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
@@ -4768,13 +4798,18 @@ CLOSED: [2017-08-07 lun. 18:12]
 
   pl.top <- ggplot(toplot, aes(x = top, y = power, color = method)) +
     geom_line() +
-    coord_cartesian(xlim = c(0,3000)) +
+    coord_cartesian(xlim = c(0,6000)) +
     scale_color_manual(values = color.values) +
     gtheme +
     theme(legend.position="none") +
     xlab("Taille de la top liste") +
     ylab("Candidats retrouvés") +
     scale_y_continuous(labels=percent)
+
+  ## When to we have every candidates ?
+  message("== Top list information ==")
+  toplot %>% group_by(method) %>% summarise(top = min(which(power >= 1.0)))
+  toplot %>% dplyr::filter(top == 3000)
 
   ## pl.top
   save_plot_png(pl.top, filename = "gwas_top_power_all.png")
@@ -4798,6 +4833,10 @@ CLOSED: [2017-08-07 lun. 18:12]
     group_by(method) %>%
     filter_candidates_threshold(0.01) %>%
     ungroup()
+  message("== List with fdr controle ==")
+  toplot %>% group_by(method) %>% summarise(n = length(outlier),
+                                            power = sum(outlier) / m1)
+
   sets <- list(cate = toplot$index[toplot$method == "cate"],
                lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
                ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
@@ -4877,24 +4916,70 @@ CLOSED: [2017-08-07 lun. 18:12]
 #+END_SRC
 
 #+RESULTS: code:gwas_qqplot_venn
-[[./OUTPUT/Rplots/gwas_qqplot_notcalibrated_all.png]]
-[[./OUTPUT/Rplots/gwas_top_power_all.png]]
-[[./OUTPUT/Rplots/gwas_venn.png]]
 #+begin_example
 [1] "lassoLFMM" "cate"      "PCAlm"     "ridgeLFMM" "lm"
 [1] lassoLFMM cate      PCAlm     ridgeLFMM lm       
 Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
 Warning message:
 Removed 344 rows containing non-finite values (stat_qq).
+[[./OUTPUT/Rplots/gwas_qqplot_notcalibrated_all.png]]
 Warning message:
 Removed 344 rows containing non-finite values (stat_qq).
+== Top list information ==
+# A tibble: 5 x 2
+     method    top
+     <fctr>  <int>
+1        lm 213444
+2     PCAlm 259689
+3 lassoLFMM 151172
+4      cate 156858
+5 ridgeLFMM 168820
+# A tibble: 5 x 7
+     method  index       pvalue calibrated.pvalue outlier     power   top
+     <fctr>  <int>        <dbl>             <dbl>   <lgl>     <dbl> <dbl>
+1        lm 274194 0.0005994528       0.004013977   FALSE 0.7755102  3000
+2     PCAlm  68895 0.0047379566       0.006679586   FALSE 0.8367347  3000
+3 lassoLFMM 148728 0.0030905497       0.004813782   FALSE 0.8775510  3000
+4      cate  86890 0.0027882883       0.004325066   FALSE 0.8775510  3000
+5 ridgeLFMM 266748 0.0032799926       0.005477400   FALSE 0.8775510  3000
+[[./OUTPUT/Rplots/gwas_top_power_all.png]]
 Warning message:
 Removed 344 rows containing non-finite values (stat_qq).
+[[./OUTPUT/Rplots/gwas_qqplot_top.pdf.png]]
+== List with fdr controle ==
+# A tibble: 5 x 3
+     method     n     power
+     <fctr> <int>     <dbl>
+1        lm  1319 0.4489796
+2     PCAlm   777 0.3673469
+3 lassoLFMM  1267 0.6122449
+4      cate  1319 0.6734694
+5 ridgeLFMM  1000 0.5510204
+[[./OUTPUT/Rplots/gwas_venn.png]]
+[[./OUTPUT/Rplots/gwas_venn.pdf.png]]
 [1] 0.2857143
 #+end_example
 
+
 *** Étude d'association entre des données génétiques et un gradient environmental (GEAS)
 <<sec:GEAS>>
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/eas_hyperparams.pdf.png}
+\caption{Choix des paramètres pour l'étude d'association entre des SNPs et la
+  maladie polyarthrite \celiac. A) Proportion de variance expliquées par chacune
+  des variables latentes estimé par l'algorithme ridgeLFMM pour déférente valeur
+  $\lambda$ du paramètre de régularisation $L_2$. B)C) Erreur de prédiction
+  calculée grâce à la validation croisée de l'estimateur $L_{2}$ des paramètre
+  de LFMM pour différente valeurs du paramètre de régularisation $\lambda$ et du
+  nombre variable lattentes $\K$. La ligne pointillée vertical marque le nombre
+  de variables latentes choisi, 10.}
+\label{fig:ewas_params}
+\end{figure}
+#+END_EXPORT
+
+
 **** Scripts                                                    :noexport:
 ***** DONE Téléchargement du jeux de données
 CLOSED: [2017-07-26 mer. 18:17]
@@ -7962,8 +8047,10 @@ We recommend that you use the dev version of ggplot2 with `ggplotly()`
 Install it with: `devtools::install_github('hadley/ggplot2')`
 #+end_example
 
-***** RUNNING Scree plot
+***** DONE Scree plot
+CLOSED: [2017-08-17 jeu. 13:25]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-17 jeu. 13:25]
 - State "RUNNING"    from "TODO"       [2017-08-17 jeu. 12:11]
 - State "TODO"       from "DONE"       [2017-08-17 jeu. 11:47]
 - State "DONE"       from "RUNNING"    [2017-08-16 mer. 17:24]
@@ -8029,8 +8116,13 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
 [[./OUTPUT/Rplots/geas_screeplot.png]]
 
 
-***** TODO Validation croisée du modèle lfmmRidge
+***** RUNNING Validation croisée du modèle lfmmRidge
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-08-17 jeu. 16:49]
+- State "DONE"       from "RUNNING"    [2017-08-17 jeu. 16:47]
+- Note taken on [2017-08-17 jeu. 13:58] \\
+  Faut que je relance eas_CV_lambda pour etre sur
+- State "RUNNING"    from "TODO"       [2017-08-17 jeu. 13:26]
 - State "TODO"       from "DONE"       [2017-08-17 jeu. 11:47]
 - State "DONE"       from "STARTED"    [2017-08-17 jeu. 08:52]
 - State "STARTED"    from "RUNNING"    [2017-08-16 mer. 18:55]
@@ -8081,7 +8173,7 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
   n <- nrow(dat$Y)
 
   lambdas <- c(1e-5)
-  nb.cluster <- 5
+  nb.cluster <- 8
   cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
                             lambdas = lambdas,
                             Ks = 1:15)
@@ -8105,6 +8197,77 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
 #+RESULTS:
 [[./OUTPUT/Rplots/geas_CV_lfmm_K.png]]
 
+#+NAME: code:eas_CV_encore
+#+CAPTION: Dépend de [[eas_CV]]
+#+begin_src R 
+  library(MaTheseR)
+
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled_prunned.rds",
+                                X = "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds",
+                                outlier = NULL) %>%
+      ExpRmouline()
+
+  lambdas <- c(1e10)
+  nb.cluster <- 8
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
+                            lambdas = lambdas,
+                            Ks = 1:15)
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  res.cv <- ExpRmouline(cv, dat)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+
+  ## retrieve expr
+  res.cv.other <- readRDS("./OUTPUT/Expr/geas_CV_lfmm.rds")
+  res.cv$errs <- rbind(res.cv$errs,
+                       res.cv.other$errs)
+  save_expr(res.cv, "geas_CV_lfmm_encore.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  save_plot_png(pl, "geas_CV_lfmm_K_encore.png")
+#+end_src
+
+#+NAME: code:eas_CV_lambda
+#+CAPTION: Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]]
+#+begin_src R 
+  library(MaTheseR)
+
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled_prunned.rds",
+                              X = "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds",
+                              outlier = NULL) %>%
+    ExpRmouline()
+
+  n <- nrow(dat$Y)
+
+  lambdas <- c(1e-10, 1e-5, 1, 1e10, 1e20)
+  nb.cluster <- 8
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
+                            lambdas = lambdas,
+                            Ks = c(4,5,6))
+
+  ## run
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  res.cv <- ExpRmouline(cv, dat)
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+  ## save expr
+  save_expr(res.cv, "eas_CV_lambda_lfmm.rds")
+
+  ## plot
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  pl
+  save_plot_png(pl, "eas_CV_lambda_lfmm_lambda.png")
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/eas_CV_lambda_lfmm_lambda.png]]
+
 ***** STARTED Étude du jeu de données
 :LOGBOOK:
 - State "STARTED"    from "RUNNING"    [2017-08-17 jeu. 12:11]
@@ -8125,9 +8288,9 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
   library(matter)
 
   ## param
-  K.method <- 7
+  K.method <- 5
   lambda <- 1e-5
-  nozero.prop <- 0.005
+  nozero.prop <- 0.01
 
   ## mask
   col.mask <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_ind_pruning.rds")
@@ -8381,6 +8544,96 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
   ggplot(toplot, aes(pvalue)) +
     geom_histogram()
 #+end_src
+
+***** TODO Plot
+:LOGBOOK:
+- State "TODO"       from              [2017-08-17 jeu. 14:32]
+:END:
+****** TODO Choix des paramètres
+:LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-17 jeu. 16:47]
+- State "DONE"       from "TODO"       [2017-08-17 jeu. 16:46]
+- State "TODO"       from              [2017-08-17 jeu. 14:33]
+:END:
+
+#+NAME: code:eas_screeplot_CV
+#+CAPTION: Dépend de [[code:eas_screeplot]] [[code:eas_CV]] [[code:eas_CV_lambda]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(latex2exp)
+  library(scales)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  ## screeplot
+  expr <- readRDS("./OUTPUT/Expr/geas_screeplot_expr.rds")
+  toplot <- expr$df.res %>%
+      mutate(lambda = as.factor(lambda))
+  plA <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+    geom_point() +
+    coord_cartesian(xlim = c(1,30)) +
+    xlab(TeX("Nombre de variables latentes ($K$)")) +
+    ylab("Variance\nexpliquée") +
+    MaTheseR.params$gtheme +
+    scale_color_discrete(name = TeX("$\\lambda$")) +
+    scale_y_continuous(labels=percent) +
+    geom_vline(xintercept = 5, linetype = "dashed") +
+    theme(legend.position=c(0.8, 0.6))
+  save_plot_png(plA, "eas_screeplot.png")
+
+  ## cross validation K
+  expr <- readRDS("./OUTPUT/Expr/geas_CV_lfmm_encore.rds")
+  toplot <- expr$errs %>%
+    mutate(lambda = as.factor(lambda)) %>%
+    group_by(lambda, K) %>%
+    summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
+    ungroup()
+  plB <- ggplot(toplot, aes(x = K, y = err.mean, color = lambda)) +
+    geom_point() + 
+    geom_errorbar(aes(ymin = err.mean - se,
+                      ymax = err.mean + se,
+                      width = 0.5)) +
+    geom_line() +
+    xlab(TeX("Nombre de variables latentes ($K$)")) +
+    ylab("Erreur de\nprédiction") +
+    MaTheseR.params$gtheme +
+    scale_color_discrete(name = TeX("$\\lambda$")) + 
+    geom_vline(xintercept = 5, linetype = "dashed") +
+    theme(legend.position=c(0.8, 0.8))
+  save_plot_png(plB, "eas_CV_K.png")
+
+  ## cross validation lambda
+  expr <- readRDS("./OUTPUT/Expr/eas_CV_lambda_lfmm.rds")
+  toplot <- expr$errs %>%
+    mutate(K = as.factor(K)) %>%
+    group_by(lambda, K) %>%
+    summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
+    ungroup()
+  plC <- ggplot(toplot, aes(x = log(lambda), y = err.mean, color = K)) +
+    geom_point() + 
+    geom_errorbar(aes(ymin = err.mean - se,
+                      ymax = err.mean + se,
+                      width = 1)) +
+    geom_line() +
+    xlab(TeX("Paramètre de regularisation $L_{2}$ en échelle logarithmique ($\\lambda$)")) +
+    ylab("Erreur de\nprédiction") +
+    MaTheseR.params$gtheme +
+    theme(legend.position=c(0.8, 0.2))
+  save_plot_png(plC, "eas_CV_lambda.png")
+
+  ## gather plot
+  pl <- plot_grid(plA, plB, plC, ncol = 1, labels = c("A", "B", "C"))
+
+  save_plot_MaTheseR(pl, "eas_hyperparams.pdf.png",
+                     height = 0.9 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
+#+end_src
+
+#+RESULTS: code:eas_screeplot_CV
+: [[./OUTPUT/Rplots/eas_screeplot.png]]
+: [[./OUTPUT/Rplots/eas_CV_K.png]]
+: [[./OUTPUT/Rplots/eas_CV_lambda.png]]
+: [[./OUTPUT/Rplots/eas_hyperparams.pdf.png]]
 
 ** Discussion                                                     :noexport:
 ** SANDBOX                                                        :noexport:
