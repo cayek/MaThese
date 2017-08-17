@@ -7962,8 +7962,9 @@ We recommend that you use the dev version of ggplot2 with `ggplotly()`
 Install it with: `devtools::install_github('hadley/ggplot2')`
 #+end_example
 
-***** TODO Scree plot
+***** RUNNING Scree plot
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-08-17 jeu. 12:11]
 - State "TODO"       from "DONE"       [2017-08-17 jeu. 11:47]
 - State "DONE"       from "RUNNING"    [2017-08-16 mer. 17:24]
 - State "RUNNING"    from "TODO"       [2017-08-16 mer. 16:03]
@@ -8104,8 +8105,9 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
 #+RESULTS:
 [[./OUTPUT/Rplots/geas_CV_lfmm_K.png]]
 
-***** RUNNING Étude du jeu de données
+***** STARTED Étude du jeu de données
 :LOGBOOK:
+- State "STARTED"    from "RUNNING"    [2017-08-17 jeu. 12:11]
 - State "RUNNING"    from "STARTED"    [2017-08-17 jeu. 09:11]
 - State "STARTED"    from "DONE"       [2017-07-12 mer. 11:10]
 - State "DONE"       from "RUNNING"    [2017-07-12 mer. 09:48]
