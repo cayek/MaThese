@@ -3422,7 +3422,7 @@ CLOSED: [2017-08-09 mer. 13:56]
 [[./OUTPUT/Rplots/ewas_venn.png]]
 
 
-*** Étude d'association (GWAS)
+*** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
 
 La maladie \celiac est une maladie auto-imune ayant une prévalence de près de
 $1\%$ dans la population général cite:Gujral_2012. Bien que les mécanismes
@@ -3450,10 +3450,26 @@ la matrice des variables expliquées est composée de 0, 1 et 2.
 
 Avant de lancer les méthodes d'étude d'association nous avons filtré les données
 génétique afin de garder seulement les SNPs ayant le variant le moins fréquent
-présent dans au moins $5\%$ des observations. 
-...
-Enfin nous avons utilisé beagle pour imputer la matrice pour les données manquantes
-
+présent dans au moins $5\%$ des observations. Nous avons de plus filtré les
+individus aparenté, pour cela on mesure la probabilité qu'une séquence
+consécutive de SNPs prise chez deux individus différents soit identique et si
+celle-ci est supérieur à $0.08$ nous ne gardons qu'un des deux individus. Il est
+connu que les SNPs sont corrélé le long du génome, nous avons donc filtrer les
+SNPs trop corrélé entre eux, cette étape est idéntifié dans la litérature comme
+LD pruning. Pour cela, pour chaque SNPs nous gardons que le SNIPs de variance
+maximum sur une fenêtre de 100 SNPs et cela sur les SNPs ayant un coéficient de
+corélation liénaire au carré est supérieure à $0.2$, cela nous as permit
+d'identifier un sous ensemble de 80275 SNPs. Ces opérations de fitrage on été
+faite à l'aide du logiciel plink cite:Purcell_2007. Enfin nous avons utilisé
+beagle pour imputer les données manquante de la matrice de SNPs
+cite:Browning_2016. Finalement, nous obtenons finalement un jeux de données
+composée 281122 SNPs et 15155 individus. Afin d'estimer les variables latentes
+pour corriger le test d'association entre les SNPS et la maladie \celiac nous
+avons lancer les méthode lm, lmPCA, cate, ridgeLFMM et lassoLFMM sur le sous
+ensemble de SNPs identifé par l'étape de LD pruning. Par la suite, nous avons
+effectuer le test d'hypothèse présenté dans la partie [[sec:hypothese]] sur le jeux
+de données génétique complet mais avec l'estimation des variables latentes
+caluclé sur le sous ensemble de SPNs.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -3569,11 +3585,88 @@ Among remaining phenotypes, 4533 are cases and 10750 are controls.
 --make-bed to FinnuncorrNLITUK1UK3hap300_CQ.bed +
 #+end_example
 
-***** DONE Élagage (LD prunning)
+***** DONE Élagage (LD pruning)
 CLOSED: [2017-08-16 mer. 17:49]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-08-16 mer. 17:49]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
+:END:
+
+Pour comprendre le LD pruning: 
+- [[https://www.cog-genomics.org/plink/1.9/ld][doc de plink]]
+- [[https://privefl.github.io/bigsnpr/reference/pruning-clumping.html][re-implementation du ld pruning de plink]]
+- [[https://en.wikipedia.org/wiki/Coefficient_of_determination#As_squared_correlation_coefficient][R2 = cor(Y,X)^2]]
+
+****** DONE LD report
+CLOSED: [2017-08-17 jeu. 10:59]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-17 jeu. 10:59]
+- State "TODO"       from              [2017-08-17 jeu. 10:32]
+:END:
+
+#+NAME: code:gwas_ld_report
+#+CAPTION: Dépend de [[code:gwas_CQ]]
+#+begin_src shell :session *ssh krakenator* :result output
+  cd ~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/
+  plink --bfile FinnuncorrNLITUK1UK3hap300_CQ --r2 --ld-window 10 --ld-window-kb 100 --ld-window-r2 0.1 --threads 8
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to plink.log.
+  Options in effect:
+    --bfile FinnuncorrNLITUK1UK3hap300_CQ
+    --ld-window 10
+    --ld-window-kb 100
+    --ld-window-r2 0.1
+    --r2
+    --threads 8
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  281122 variants loaded from .bim file.
+  15283 people (6713 males, 8570 females) loaded from .fam.
+  15283 phenotype values loaded from .fam.
+  Using up to 8 threads (change this with --threads).
+  Before main variant filters, 15283 founders and 0 nonfounders present.
+  Calculating allele frequencies... 0%echo 'org_babel_sh_eoe'
+   done.
+  Total genotyping rate is 0.999596.
+  281122 variants and 15283 people pass filters and QC.
+  Among remaining phenotypes, 4533 are cases and 10750 are controls.
+  --r2 to plink.ld ... done.
+#+end_example
+
+#+NAME: code:gwas_ld_report_R
+#+CAPTION: Dépend de [[code:gwas_ld_report]]
+#+begin_src R 
+  library(MaTheseR)
+  library(tidyverse)
+
+  setwd("~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/")
+
+  ld.df <- data.table::fread("plink.ld", data.table = FALSE) %>% as_tibble()
+
+  toplot <- ld.df %>%
+    transmute(pb = abs(BP_A - BP_B), r2 = R2)
+  pl <- ggplot(toplot, aes(x = pb, y = r2)) +
+    stat_summary_bin(fun.y = mean, bins = 20, geom = "point")
+  save_plot_png(pl, "gwas_ld_report_bin.png")
+  pl <- ggplot(toplot, aes(x = pb, y = r2)) +
+    stat_smooth()
+  save_plot_png(pl, "gwas_ld_report_smooth.png")
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_ld_report_bin.png]]
+[[./OUTPUT/Rplots/gwas_ld_report_smooth.png]]
+
+****** DONE LD pruning
+CLOSED: [2017-08-17 jeu. 11:00]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-17 jeu. 11:00]
+- State "TODO"       from              [2017-08-17 jeu. 10:32]
 :END:
 
 #+NAME: code:gwas_prunning
@@ -3660,7 +3753,6 @@ CLOSED: [2017-08-16 mer. 17:49]
   FinnuncorrNLITUK1UK3hap300_CQ_prunned.bim +
   FinnuncorrNLITUK1UK3hap300_CQ_prunned.fam ... done.
 #+end_example
-
 ***** DONE Filtrage des individus trop apparenté
 CLOSED: [2017-08-16 mer. 18:18]
 :LOGBOOK:
@@ -3838,7 +3930,6 @@ FinnuncorrNLITUK1UK3hap300_CQ_norel.bim +
   ##
 #+end_src
 
-Avec bigsnpr et xgboost
 ***** TODO Conversion au format R et scaling
 :LOGBOOK:
 - State "TODO"       from              [2017-08-06 Sun 14:52]
@@ -4802,7 +4893,7 @@ Removed 344 rows containing non-finite values (stat_qq).
 [1] 0.2857143
 #+end_example
 
-*** Étude d'association entre des données génétique et un gradient environmental (GEAS)
+*** Étude d'association entre des données génétiques et un gradient environmental (GEAS)
 <<sec:GEAS>>
 **** Scripts                                                    :noexport:
 ***** DONE Téléchargement du jeux de données
@@ -6817,6 +6908,78 @@ CLOSED: [2017-07-27 jeu. 15:01]
 - State "TODO"       from              [2017-07-26 mer. 18:17]
 :END:
 
+****** DONE LD report
+CLOSED: [2017-08-17 jeu. 11:23]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-17 jeu. 11:23]
+- State "TODO"       from "DONE"       [2017-08-17 jeu. 11:01]
+- State "DONE"       from "TODO"       [2017-08-17 jeu. 10:59]
+- State "TODO"       from              [2017-08-17 jeu. 10:32]
+:END:
+
+#+NAME: code:1000g_ld_report
+#+CAPTION: Dépend de [[1000g_concat]]
+#+begin_src shell :session *ssh krakenator* :result output
+  cd ~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/
+  plink --bfile 1000GenomePhase3_CQ --r2 --ld-window 10 --ld-window-kb 10 --ld-window-r2 0.1 --threads 8
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to plink.log.
+  Options in effect:
+    --bfile 1000GenomePhase3_CQ
+    --ld-window 10
+    --ld-window-kb 10
+    --ld-window-r2 0.1
+    --r2
+    --threads 8
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  5398440 variants loaded from .bim file.
+  2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
+  Ambiguous sex IDs written to plink.nosex .
+  Using up to 8 threads (change this with --threads).
+  Before main variant filters, 2504 founders and 0 nonfounders present.
+  Calculating allele frequencies... done.
+  Total genotyping rate is 0.999922.
+  5398440 variants and 2504 people pass filters and QC.
+  Note: No phenotypes present.
+  --r2 to plink.ld ... done.
+#+end_example
+
+#+NAME: code:1000g_ld_report_R
+#+CAPTION: Dépend de [[code:1000g_ld_report]]
+#+begin_src R 
+  library(MaTheseR)
+  library(tidyverse)
+
+  setwd("~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/")
+
+  ld.df <- data.table::fread("plink.ld", data.table = FALSE) %>% as_tibble()
+
+  toplot <- ld.df %>%
+    transmute(pb = abs(BP_A - BP_B), r2 = R2)
+  pl <- ggplot(toplot, aes(x = pb, y = r2)) +
+    stat_summary_bin(fun.y = mean, bins = 20, geom = "point")
+  save_plot_png(pl, "1000g_ld_report_bin.png")
+  pl <- ggplot(toplot, aes(x = pb, y = r2)) +
+    stat_smooth()
+  save_plot_png(pl, "1000g_ld_report_smooth.png")
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/1000g_ld_report_bin.png]]
+[[./OUTPUT/Rplots/1000g_ld_report_smooth.png]]
+
+****** DONE LD pruning
+CLOSED: [2017-08-17 jeu. 11:01]
+:LOGBOOK:
+- State "DONE"       from              [2017-08-17 jeu. 11:01]
+:END:
+
 On fait un filtrage des SNPs (voir [[https://www.cog-genomics.org/plink/1.9/ld#indep][doc plink]])
 #+NAME: code:1000g_prunning
 #+CAPTION: Dépend de [[1000g_concat]]
@@ -7174,7 +7337,7 @@ CLOSED: [2017-08-14 lun. 14:38]
 
 
   ## save indiv data frame
-  saveRDS(G$fam, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/G_indiv_df.rds")
+  saveRDS(G$fam, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/indiv_df.rds")
   #+END_SRC
 
 
@@ -7299,15 +7462,6 @@ CLOSED: [2017-08-16 mer. 15:29]
 - State "TODO"       from              [2017-07-28 ven. 10:34]
 :END:
 
-******* DONE Scale, remove missing data and export to =matter=
-CLOSED: [2017-08-16 mer. 15:29]
-:LOGBOOK:
-- State "DONE"       from "RUNNING"    [2017-08-16 mer. 15:29]
-- Note taken on [2017-08-14 lun. 14:47] \\
-  tail -f 1000g_G.y2017_m08_d14.log
-- State "RUNNING"    from "TODO"       [2017-08-14 lun. 14:47]
-- State "TODO"       from              [2017-08-03 jeu. 11:37]
-:END:
 #+NAME: code:1000g_G_noNA_scaled
 #+CAPTION: Dépend de [[code:1000g_G_bigsnpr]] [[code:eas_indiv_df]]
 #+begin_src R 
@@ -7413,11 +7567,68 @@ CLOSED: [2017-08-16 mer. 15:40]
 - State "TODO"       from              [2017-07-27 jeu. 17:29]
 :END:
 
+On fait un pruning plus fort que celui de [[code:1000g_prunning]]
+
+#+NAME: code:1000g_prunning_more
+#+CAPTION: Dépend de [[1000g_concat]]
+#+begin_src shell :results output :exports both 
+  cd ~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/
+  plink --bfile 1000GenomePhase3_CQ --indep-pairwise 5000 1 0.2 --out 1000GenomePhase3_CQ_more --threads 8
+#+end_src
+
+
+#+RESULTS:
+#+begin_example
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to 1000GenomePhase3_CQ_more.log.
+  Options in effect:
+    --bfile 1000GenomePhase3_CQ
+    --indep-pairwise 5000 1 0.2
+    --out 1000GenomePhase3_CQ_more
+    --threads 8
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  5398440 variants loaded from .bim file.
+  2504 people (0 males, 0 females, 2504 ambiguous) loaded from .fam.
+  Ambiguous sex IDs written to 1000GenomePhase3_CQ_more.nosex .
+  Using 1 thread (no multithreaded calculations invoked).
+  Before main variant filters, 2504 founders and 0 nonfounders present.
+  Calculating allele frequencies... done.
+  Total genotyping rate is 0.999922.
+  5398440 variants and 2504 people pass filters and QC.
+  Note: No phenotypes present.
+  Pruned 387086 variants from chromosome 1, leaving 23446.
+  Pruned 413054 variants from chromosome 2, leaving 22315.
+  Pruned 366259 variants from chromosome 3, leaving 19576.
+  Pruned 379840 variants from chromosome 4, leaving 18572.
+  Pruned 324752 variants from chromosome 5, leaving 17269.
+  Pruned 350848 variants from chromosome 6, leaving 16928.
+  Pruned 308455 variants from chromosome 7, leaving 16443.
+  Pruned 280143 variants from chromosome 8, leaving 14738.
+  Pruned 223125 variants from chromosome 9, leaving 13825.
+  Pruned 263958 variants from chromosome 10, leaving 14865.
+  Pruned 254728 variants from chromosome 11, leaving 13604.
+  Pruned 244633 variants from chromosome 12, leaving 14715.
+  Pruned 189373 variants from chromosome 13, leaving 10509.
+  Pruned 164213 variants from chromosome 14, leaving 10056.
+  Pruned 143194 variants from chromosome 15, leaving 10111.
+  Pruned 156696 variants from chromosome 16, leaving 11148.
+  Pruned 132527 variants from chromosome 17, leaving 10678.
+  Pruned 148556 variants from chromosome 18, leaving 9979.
+  Pruned 120363 variants from chromosome 19, leaving 9170.
+  Pruned 108299 variants from chromosome 20, leaving 8351.
+  Pruned 73482 variants from chromosome 21, leaving 5041.
+  Pruned 67649 variants from chromosome 22, leaving 5868.
+  Pruning complete.  5101233 of 5398440 variants removed.
+  Marker lists written to 1000GenomePhase3_CQ_more.prune.in and
+  1000GenomePhase3_CQ_more.prune.out .
+#+end_example
+
 #+NAME: code:1000g_G_noNA_scaled_prunned
-#+CAPTION: On scale et enlève les données manquantes. Dépend de [[code:1000g_G_noNA_scaled]] [[code:1000g_prunning]]
+#+CAPTION: On scale et enlève les données manquantes. Dépend de [[code:1000g_G_noNA_scaled]] [[code:1000g_prunning_more]]
 #+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   library(MaTheseR)
-  prune.in <- read_delim(file = "~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/1000GenomePhase3_CQ.prune.in", delim = " ", col_names = FALSE, col_types = cols(col_character()))
+  prune.in <- read_delim(file = "~/Projects/Thesis/MaThese/Data/1000Genomes/Phase3/1000GenomePhase3_CQ_more.prune.in", delim = " ", col_names = FALSE, col_types = cols(col_character()))
 
   library(matter)
   G.matter <- readRDS("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds")
@@ -7429,6 +7640,7 @@ CLOSED: [2017-08-16 mer. 15:40]
 
   ## prunning
   keep.id <- colnames(G.matter) %in% prune.in$X1
+  saveRDS(which(keep.id), "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_ind_pruning.rds")
   G.prunned <- G.matter[,keep.id]
 
   ## test
@@ -7441,12 +7653,14 @@ CLOSED: [2017-08-16 mer. 15:40]
 #+RESULTS:
 #+begin_example
 > dim(G.prunned)
-[1]   1409 341661
+[1]   1409 296948
 #+end_example
 
 ***** DONE Calcule du gradient climatique
-CLOSED: [2017-08-16 mer. 15:57]
+CLOSED: [2017-08-17 jeu. 11:52]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-17 jeu. 11:52]
+- State "TODO"       from "DONE"       [2017-08-17 jeu. 11:47]
 - State "DONE"       from "TODO"       [2017-08-16 mer. 15:57]
 - State "TODO"       from              [2017-08-06 Sun 14:47]
 - State "TODO"       from "DONE"       [2017-08-03 jeu. 17:26]
@@ -7748,9 +7962,9 @@ We recommend that you use the dev version of ggplot2 with `ggplotly()`
 Install it with: `devtools::install_github('hadley/ggplot2')`
 #+end_example
 
-***** DONE Scree plot
-CLOSED: [2017-08-16 mer. 17:24]
+***** TODO Scree plot
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-17 jeu. 11:47]
 - State "DONE"       from "RUNNING"    [2017-08-16 mer. 17:24]
 - State "RUNNING"    from "TODO"       [2017-08-16 mer. 16:03]
 - Note taken on [2017-07-25 mar. 17:52] \\
@@ -7814,8 +8028,10 @@ CLOSED: [2017-08-16 mer. 17:24]
 [[./OUTPUT/Rplots/geas_screeplot.png]]
 
 
-***** STARTED Validation croisée du modèle lfmmRidge
+***** TODO Validation croisée du modèle lfmmRidge
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-17 jeu. 11:47]
+- State "DONE"       from "STARTED"    [2017-08-17 jeu. 08:52]
 - State "STARTED"    from "RUNNING"    [2017-08-16 mer. 18:55]
 - State "RUNNING"    from "TODO"       [2017-08-16 mer. 17:23]
 - State "TODO"       from "DONE"       [2017-08-06 Sun 14:48]
@@ -7850,7 +8066,7 @@ CLOSED: [2017-08-16 mer. 17:24]
 - State "TODO"       from              [2017-06-27 mar. 15:29]
 :END:
 
-#+NAME: code:geas_CV
+#+NAME: code:eas_CV
 #+CAPTION: Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]]
 #+begin_src R 
   library(MaTheseR)
@@ -7888,8 +8104,9 @@ CLOSED: [2017-08-16 mer. 17:24]
 #+RESULTS:
 [[./OUTPUT/Rplots/geas_CV_lfmm_K.png]]
 
-***** STARTED Étude du jeu de données
+***** RUNNING Étude du jeu de données
 :LOGBOOK:
+- State "RUNNING"    from "STARTED"    [2017-08-17 jeu. 09:11]
 - State "STARTED"    from "DONE"       [2017-07-12 mer. 11:10]
 - State "DONE"       from "RUNNING"    [2017-07-12 mer. 09:48]
 - Note taken on [2017-07-11 mar. 16:30] \\
@@ -7897,63 +8114,93 @@ CLOSED: [2017-08-16 mer. 17:24]
 - State "RUNNING"    from "TODO"       [2017-07-11 mar. 16:30]
 - State "TODO"       from              [2017-07-10 lun. 09:06]
 :END:
+
+#+NAME: code:eas_expr
+#+CAPTION:  Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]] [[code:1000g_G_noNA_scaled]]
 #+begin_src R
   library(MaTheseR)
+  library(MatrixFactorizationR)
+  library(matter)
 
   ## param
   K.method <- 7
-  nb.cluster <- 2
   lambda <- 1e-5
-  nozero.prop <- 0.01
+  nozero.prop <- 0.005
 
-  ## sampler
-  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/G_EAS.rds"
-  X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/X_EAS.rds"
-  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
+  ## mask
+  col.mask <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_ind_pruning.rds")
 
   ## methods
-  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
-  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                              lambda.K = 25, relative.err.epsilon = 1e-6)
-  m.lm <- method_lm()
-  m.pca <- method_PCAlm(K = K.method)
-  m.cate <- method_cate(K = K.method)
-  m.famt <- method_famt(K.method)
-  m.sva <- method_sva(K.method)
+  methods <- list()
+  methods$m.lm <- method_lm(col.mask = col.mask,
+                            inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lm.rds",
+                            inter.res.file = "./OUTPUT/Expr/eas_inter_lm.rds")
+  methods$m.ridgeLfmm <- method_ridgeLFMM(K = K.method,
+                                  col.mask = col.mask,
+                                  inter.res.saving.file = "./OUTPUT/Expr/eas_inter_ridgelfmm.rds",
+                                  inter.res.file = "./OUTPUT/Expr/eas_inter_ridgelfmm.rds")
+  methods$m.pca <- method_PCAlm(K = K.method,
+                                col.mask = col.mask,
+                                inter.res.saving.file = "./OUTPUT/Expr/eas_inter_PCAlm.rds",
+                                inter.res.file = "./OUTPUT/Expr/eas_inter_PCAlm.rds"
+                                )
+  methods$m.cate <- method_cate(K = K.method,
+                        col.mask = col.mask,
+                        inter.res.saving.file = "./OUTPUT/Expr/eas_inter_cate.rds",
+                        inter.res.file = "./OUTPUT/Expr/eas_inter_cate.rds",
+                        hp = "lm"
+                        )
+  methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
+                              lambda.K = 25, relative.err.epsilon = 1e-6,
+                              col.mask = col.mask,
+                              inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lassolfmm.rds",
+                              inter.res.file = "./OUTPUT/Expr/eas_inter_lassolfmm.rds"
+                              )
 
-  methods <- m.ridgeLfmm * param() +
-    m.lm * param() +
-    m.pca * param() +
-    m.cate * param() +
-    m.famt * param() +
-    m.sva * param() +
-    m.lasso * param()
+  run_eas <- function(m) {
+    message("=============== ", m$name)
+    ## dat
+    Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds"
+    X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds"
+    outlier <- c()
+    dat <- LfmmMatterDat(Y, X, outlier)
 
-  ## run
-  cl <- parallel::makeCluster(nb.cluster, outfile = "")
-  doParallel::registerDoParallel(cl)
-  expr <- ExpR(rep.nb.sampler = 1,
-               samplers = samplers,
-               preprocessors = NULL,
-               rep.nb.method = 1,
-               methods = methods,
-               extractor = ExpRextractor_pvalue1_calibrated)
-  expr <- ExpRmouline(expr)
-  doParallel::stopImplicitCluster()
-  parallel::stopCluster(cl)
+    out.file <- paste0("eas_df_", m$name, ".rds")
+    out.file.path <- paste0("./OUTPUT/Expr/", out.file)
+    if (file.exists(out.file.path)) {
+      message("Reading ", out.file.path)
+      df <- readRDS(out.file.path)
+    } else {
+      message("Running method")
+      m <- ExpRmouline(m, dat)
+      df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
+      ## save expr
+      message("Saving output in ", out.file)
+      save_expr(df, out.file)
+    }
+    df
+  }
 
-  ## save expr
-  save_expr(expr, "EAS_all.rds")
-
-
+  res.df <- tibble()
+  for (m in methods) {
+    res.df <- run_eas(m) %>%
+      rbind(res.df)
+  }
+  save_expr(res.df, "eas_all_df.rds")
 #+end_src
 
-****** Charger l'experience
+****** TODO Charger l'experience
+:LOGBOOK:
+- State "TODO"       from              [2017-08-17 jeu. 09:31]
+:END:
 #+BEGIN_SRC R
   library(MaTheseR)
   expr <- readRDS("./OUTPUT/Expr/EAS_all.rds")
 #+END_SRC
-****** Que donne la calibration ?
+****** TODO Que donne la calibration ?
+:LOGBOOK:
+- State "TODO"       from              [2017-08-17 jeu. 09:31]
+:END:
 #+BEGIN_SRC R
   expr$df.res %>%
     group_by(method) %>%
@@ -7974,7 +8221,10 @@ CLOSED: [2017-08-16 mer. 17:24]
   7       sva 0.7385787 0.53293170
 #+end_example
 
-****** Les qqplots ?
+****** TODO Les qqplots ?
+:LOGBOOK:
+- State "TODO"       from              [2017-08-17 jeu. 09:31]
+:END:
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     mutate(pvalue = calibrated.pvalue) %>%
@@ -7996,7 +8246,10 @@ CLOSED: [2017-08-16 mer. 17:24]
 [[./OUTPUT/Rplots/EAS_qqplots.png]]
 [[./OUTPUT/Rplots/EAS_qqplots2.png]]
 
-****** Le top 15
+****** TODO Le top 15
+:LOGBOOK:
+- State "TODO"       from              [2017-08-17 jeu. 09:31]
+:END:
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
@@ -8010,7 +8263,10 @@ CLOSED: [2017-08-16 mer. 17:24]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_top_inter.png]]
 
-****** Contrôle du FDR à $0.01$
+****** TODO Contrôle du FDR à $0.01$
+:LOGBOOK:
+- State "TODO"       from              [2017-08-17 jeu. 09:31]
+:END:
 #+BEGIN_SRC R
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
@@ -8024,7 +8280,10 @@ CLOSED: [2017-08-16 mer. 17:24]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_fdr01_inter.png]]
 
-****** Venn diagram
+****** TODO Venn diagram
+:LOGBOOK:
+- State "TODO"       from              [2017-08-17 jeu. 09:31]
+:END:
 #+begin_src R 
   toplot <- expr$df.res %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
