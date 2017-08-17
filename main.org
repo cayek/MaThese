@@ -4260,8 +4260,11 @@ CLOSED: [2017-07-30 Sun 11:28]
 
 On prend K = 9 variables latentes.
 
-***** STARTED Validation croisée avec lfmmRidge
+***** RUNNING Validation croisée avec lfmmRidge
 :LOGBOOK:
+- State "RUNNING"    from "STARTED"    [2017-08-17 Thu 18:17]
+- Note taken on [2017-08-17 Thu 18:16] \\
+  tail -f /home/cayek/tmp/Logfiles/gwas_CV_encore_encore.y2017_m08_d17.log
 - Note taken on [2017-08-17 jeu. 13:47] \\
   il va falloir relancer gwas_CV_encore_encore !!!
 - State "STARTED"    from "RUNNING"    [2017-08-17 jeu. 13:47]
@@ -8116,8 +8119,10 @@ CLOSED: [2017-08-17 jeu. 13:25]
 [[./OUTPUT/Rplots/geas_screeplot.png]]
 
 
-***** RUNNING Validation croisée du modèle lfmmRidge
+***** DONE Validation croisée du modèle lfmmRidge
+CLOSED: [2017-08-17 Thu 18:09]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-17 Thu 18:09]
 - State "RUNNING"    from "DONE"       [2017-08-17 jeu. 16:49]
 - State "DONE"       from "RUNNING"    [2017-08-17 jeu. 16:47]
 - Note taken on [2017-08-17 jeu. 13:58] \\
@@ -8268,8 +8273,9 @@ CLOSED: [2017-08-17 jeu. 13:25]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_CV_lambda_lfmm_lambda.png]]
 
-***** STARTED Étude du jeu de données
+***** RUNNING Étude du jeu de données
 :LOGBOOK:
+- State "RUNNING"    from "STARTED"    [2017-08-17 Thu 18:13]
 - State "STARTED"    from "RUNNING"    [2017-08-17 jeu. 12:11]
 - State "RUNNING"    from "STARTED"    [2017-08-17 jeu. 09:11]
 - State "STARTED"    from "DONE"       [2017-07-12 mer. 11:10]
