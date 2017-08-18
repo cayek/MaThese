@@ -3,10 +3,12 @@ method_lassoLFMM <- function(K, col.mask = NULL,
                              inter.res.saving.file = NULL, inter.res.file = NULL,
                              nozero.prop = 0.1,
                              lambda.K = 100, lambda.eps = 0.001,
+                             lambda = NULL,
                              it.max = 100, relative.err.epsilon = 1e-6) {
   args <- list(K = K,
                nozero.prop = nozero.prop,
                lambda.K = lambda.K,
+               lambda = lambda,
                lambda.eps = lambda.eps,
                it.max = it.max,
                relative.err.epsilon = relative.err.epsilon,
@@ -30,13 +32,14 @@ ExpRmouline.method_lassoLFMM <- function(m, dat) {
       m$nozero.prop <- length(dat$outlier) / ncol(dat$Y) * 1.5
     }
 
-  ## rum lfmm
+    ## rum lfmm
     lfmm <- MatrixFactorizationR::lassoLFMM(K = m$K,
                                             nozero.prop = m$nozero.prop,
                                             lambda.eps = m$lambda.eps,
-                                            lambda.K = m$lambda.K)
-  lfmm <- MatrixFactorizationR::MatrixFactorizationR_fit(lfmm, dat, it.max = m$it.max,
-                                                         relative.err.epsilon = m$relative.err.epsilon)
+                                            lambda.K = m$lambda.K,
+                                            lambda = m$lambda)
+    lfmm <- MatrixFactorizationR::MatrixFactorizationR_fit(lfmm, dat, it.max = m$it.max,
+                                                           relative.err.epsilon = m$relative.err.epsilon)
     lfmm
   }
   method_main(m, dat, main.fun, hp.func = MatrixFactorizationR::hypothesis_testing_lm)
