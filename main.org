@@ -4410,6 +4410,38 @@ On prend K = 9 variables latentes.
   save_plot_png(pl, "gwas_CV_lfmm_K_encore_encore.png")
 #+end_src
 
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_CV_lfmm_K_encore_encore.png]]
+
+#+NAME: code:gwas_CV_encore_encore_encore
+#+CAPTION: Dépend de [[gwas_CV_encore_encore]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## samplers
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds",
+                              X = "./Data/ThesisDataset/3Article/Celiac/X.rds",
+                              outlier = NULL) %>% ExpRmouline()
+  n <- nrow(dat$Y)
+
+  lambdas <- c(1e-5)
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
+                            lambdas = lambdas,
+                            Ks = 3:4)
+
+  ## run
+  res.cv <- ExpRmouline(cv, dat)
+
+  ## retrieve expr
+  res.cv.other <- readRDS("./OUTPUT/Expr/gwas_CV_lfmm_encore_encore.rds")
+  res.cv$errs <- rbind(res.cv$errs,
+                       res.cv.other$errs)
+  save_expr(res.cv, "gwas_CV_lfmm_encore_encore_encore.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "K")
+  save_plot_png(pl, "gwas_CV_lfmm_K_encore_encore_encore.png")
+#+end_src
+
 
 #+NAME: code:gwas_CV_lambda
 #+CAPTION: Dépend de 
@@ -4702,7 +4734,7 @@ CLOSED: [2017-08-07 lun. 18:12]
   save_plot_png(plA, "gwas_screeplot.png")
 
   ## cross validation K
-  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lfmm_encore.rds")
+  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lfmm_encore_encore.rds")
   toplot <- expr$errs %>%
     mutate(lambda = as.factor(lambda)) %>%
     group_by(lambda, K) %>%
@@ -8365,7 +8397,7 @@ CLOSED: [2017-08-17 Thu 18:09]
   ## methods
   methods <- list()
   methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                                      lambda.K = NULL, lambda.eps = NULL, lambda = 4.9e-2,
+                                      lambda.K = 100, lambda.eps = 0.001, lambda = 4.9e-2,
                                       relative.err.epsilon = 1e-6,
                                       col.mask = col.mask,
                                       inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lassoLFMM.rds",
@@ -8523,6 +8555,9 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
   library(MaTheseR)
   res.df <- readRDS("./OUTPUT/Expr/eas_all_df.rds")
 #+END_SRC
+
+#+RESULTS: code:eas_load_res
+
 ****** TODO Que donne la calibration ?
 :LOGBOOK:
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
