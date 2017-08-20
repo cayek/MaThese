@@ -8388,7 +8388,6 @@ CLOSED: [2017-08-17 Thu 18:09]
 
   ## param
   K.method <- 5
-  lambda <- 1e-5
   nozero.prop <- 0.01
 
   ## mask
@@ -8397,7 +8396,7 @@ CLOSED: [2017-08-17 Thu 18:09]
   ## methods
   methods <- list()
   methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                                      lambda.K = 100, lambda.eps = 0.001, lambda = 4.9e-2,
+                                      lambda.K = 100, lambda.eps = 0.001, lambda = 5.9e-2,
                                       relative.err.epsilon = 1e-6,
                                       col.mask = col.mask,
                                       inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lassoLFMM.rds",
