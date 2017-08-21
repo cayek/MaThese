@@ -29,7 +29,7 @@ ExpRmouline.method_PCA <- function(m, dat) {
   }
 
   if (is.null(m$K)) {
-    res <- svd(dat$Y, 0, 0)
+    res <- svd(P.list$sqrt.P %*% dat$Y, 0, 0)
   } else {
     message("Using RSpectra")
     Af <- function(x, args) {

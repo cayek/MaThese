@@ -1844,7 +1844,7 @@ CLOSED: [2017-08-10 jeu. 11:30]
     geom_boxplot()
 #+end_src
 
-*** Étude d'association entre des niveau de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+*** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
 <<sec:ewas>>
 
 La polyarthrite rhumatoïde est une maladie auto-immune d'origine inconnue. Dans
@@ -2192,9 +2192,9 @@ CLOSED: [2017-07-25 mar. 18:05]
 #+RESULTS:
 [[./OUTPUT/Rplots/ewas_screeplot.png]]
 
-***** DONE Validation croisée du modèle lfmmRidge
-CLOSED: [2017-08-16 mer. 12:57]
+***** RUNNING Validation croisée du modèle lfmmRidge
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-08-21 lun. 17:05]
 - State "DONE"       from "RUNNING"    [2017-08-16 mer. 12:57]
 - State "RUNNING"    from "DONE"       [2017-08-16 mer. 11:07]
 - State "DONE"       from "RUNNING"    [2017-08-16 mer. 11:00]
@@ -2347,7 +2347,7 @@ CLOSED: [2017-08-16 mer. 12:57]
   nb.cluster <- 5
   cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 10,
                             lambdas = lambdas,
-                            Ks = c(10))
+                            Ks = 9:11)
 
   ## run
   cl <- parallel::makeCluster(nb.cluster, outfile = "")
@@ -4319,7 +4319,7 @@ On prend K = 9 variables latentes.
 :END:
 
 #+NAME: code:gwas_CV
-#+CAPTION: Dépend de
+#+CAPTION: Dépend de 
 #+begin_src R 
   library(MaTheseR)
 
@@ -4350,7 +4350,7 @@ On prend K = 9 variables latentes.
 [[./OUTPUT/Rplots/gwas_CV_lfmm_K.png]]
 
 #+NAME: code:gwas_CV_encore
-#+CAPTION: Dépend de [[gwas_CV]]
+#+CAPTION: Dépend de [[code:gwas_CV]]
 #+begin_src R 
   library(MaTheseR)
 
@@ -4382,7 +4382,7 @@ On prend K = 9 variables latentes.
 [[./OUTPUT/Rplots/gwas_CV_lfmm_K_encore.png]]
 
 #+NAME: code:gwas_CV_encore_encore
-#+CAPTION: Dépend de [[gwas_CV_encore]]
+#+CAPTION: Dépend de [[code:gwas_CV_encore]]
 #+begin_src R 
   library(MaTheseR)
 
@@ -4414,7 +4414,7 @@ On prend K = 9 variables latentes.
 [[./OUTPUT/Rplots/gwas_CV_lfmm_K_encore_encore.png]]
 
 #+NAME: code:gwas_CV_encore_encore_encore
-#+CAPTION: Dépend de [[gwas_CV_encore_encore]]
+#+CAPTION: Dépend de [[code:gwas_CV_encore_encore]]
 #+begin_src R 
   library(MaTheseR)
 
@@ -4442,6 +4442,8 @@ On prend K = 9 variables latentes.
   save_plot_png(pl, "gwas_CV_lfmm_K_encore_encore_encore.png")
 #+end_src
 
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_CV_lfmm_K_encore_encore_encore.png]]
 
 #+NAME: code:gwas_CV_lambda
 #+CAPTION: Dépend de 
@@ -4472,6 +4474,36 @@ On prend K = 9 variables latentes.
 
 #+RESULTS:
 [[./OUTPUT/Rplots/gwas_CV_lambda_lfmm_lambda.png]]
+
+#+NAME: code:gwas_CV_lambda_encore
+#+CAPTION: Dépend de [[code:gwas_CV_lambda]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## samplers
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds",
+                              X = "./Data/ThesisDataset/3Article/Celiac/X.rds",
+                              outlier = NULL) %>% ExpRmouline()
+  n <- nrow(dat$Y)
+
+  lambdas <- c(1e-10, 1e-5, 1, 1e10, 1e20)
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
+                            lambdas = lambdas,
+                            Ks = c(8,10))
+
+  ## run
+  res.cv <- ExpRmouline(cv, dat)
+
+  ## retrieve expr
+  res.cv.other <- readRDS("./OUTPUT/Expr/gwas_CV_lambda_lfmm.rds")
+  res.cv$errs <- rbind(res.cv$errs,
+                       res.cv.other$errs)
+  save_expr(res.cv, "gwas_CV_lambda_lfmm_encore.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  save_plot_png(pl, "gwas_CV_lambda_lfmm_lambda_encore.png")
+
+#+end_src
 
 ***** DONE Étude du jeu de données 
 CLOSED: [2017-07-28 ven. 09:25]
@@ -4734,7 +4766,7 @@ CLOSED: [2017-08-07 lun. 18:12]
   save_plot_png(plA, "gwas_screeplot.png")
 
   ## cross validation K
-  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lfmm_encore_encore.rds")
+  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lfmm_encore_encore_encore.rds")
   toplot <- expr$errs %>%
     mutate(lambda = as.factor(lambda)) %>%
     group_by(lambda, K) %>%
@@ -5026,26 +5058,54 @@ de données WorldClim 2.0 cite:Fick_2017. L'objectif est alors de comparer les
 résutats de l'étude d'assoication entre les données du 1000Genome et un gradient
 envorinmental calculé à partir des données WorlClim. 
 
-De la même facon que pour la GWAS nous avons filtrer les individus trop a
-apparenté les variants génétique pas assez fréquent (voir Partie [[sec:gwas]]). De
-plus pour faire une étude d'association entre un génotype et un environement il
-faut garder des individus qui vive dans leur habitat depuis plusieurs
+De la même facon que pour la GWAS nous avons filtrer les individus trop
+apparenté et les variants génétiques pas assez fréquents (voir Partie [[sec:gwas]]).
+De plus pour faire une étude d'association entre un génotype et un environement
+il faut garder des individus qui vive dans leur habitat depuis plusieurs
 générations, nous avons donc enlever les populations afro-américaine et
-africaine des caraïbes. Il reste finalement 
+africaine des caraïbes. Il reste 1409 individus et 5397214 locus. Enfin, de la
+même facon que dans la GWAS nous avons identifier un sous ensemble de 296948
+grace au LD pruning. Nous utilisons ce sous ensembled e locus pour calculer les
+variables latentes avec les méthodes PCAlm, cate, lassoLFMM et ridgeLFMM. On
+calcule ensuite des \pvaleurs pour chacun des 5397214 locus grace au test
+d'hypothèse présenté dans la partie [[sec:hypothese]].
+
+Afin de calculer le gradient environnemental utilisé dans l'étude d'assocaition
+nous avons attribué un position géographique a chaque individu en prenant la
+capital de leur pays d'origine. Cela nous a parmis de recupérer les données de
+la base WorlClim. Nous ne gardons que la première composante principale des
+variables revoyé par la base Wordclim. La Figure ref:fig:eas_gradient rerpésente
+la valeur du gradient climatique pour chaque population. On remarque que celui
+ci est très corélé avec la latitue. Comme les population sont à différente
+latitute il y aura de la corrélation entre la structure de population et le
+gradient envorinmental.
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/eas_climatic_gradient.pdf.png}
+\caption{Gradient climatique utilisé pour l'assocaition génome-environement.}
+\label{fig:eas_gradient}
+\end{figure}
+#+END_EXPORT
+
+Nous avons lancer les méthodes cate ridgeLFMM, lassoLFMM et PCAlm avec 5
+variables latentes. Ce choix a été motivé par la décroissance des valeurs
+propre reprédsenté par la Figure ref:fig:eas_params A.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/eas_hyperparams.pdf.png}
-\caption{Choix des paramètres pour l'étude d'association entre des SNPs et la
-  maladie polyarthrite \celiac. A) Proportion de variance expliquées par chacune
-  des variables latentes estimé par l'algorithme ridgeLFMM pour déférente valeur
+\caption{Choix des paramètres pour l'étude d'association entre un gradient
+  environmental et un génome. A) Proportion de variance expliquées par chacune
+  des variables latentes estimées par l'algorithme ridgeLFMM pour diférente valeur
   $\lambda$ du paramètre de régularisation $L_2$. B)C) Erreur de prédiction
   calculée grâce à la validation croisée de l'estimateur $L_{2}$ des paramètre
   de LFMM pour différente valeurs du paramètre de régularisation $\lambda$ et du
   nombre variable lattentes $\K$. La ligne pointillée vertical marque le nombre
   de variables latentes choisi, 10.}
-\label{fig:ewas_params}
+\label{fig:eas_params}
 \end{figure}
 #+END_EXPORT
 
@@ -7918,6 +7978,7 @@ des individus nous avons choisi d'utiliser la base wordclim
   climate <- getData('worldclim', var='bio', res = 2.5)
   bio <- extract(climate, y = as.matrix(cities[c("lon","lat")]))
   pc.bio <- prcomp(bio,scale = T)
+  plot(pc.bio$sdev)
   X <- pc.bio$x[,1]
 
   cities <- cbind(cities, X)
@@ -8340,8 +8401,11 @@ CLOSED: [2017-08-17 Thu 18:09]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_CV_lambda_lfmm_lambda.png]]
 
-***** RUNNING Étude du jeu de données
+***** TODO Étude du jeu de données
 :LOGBOOK:
+- State "TODO"       from "RUNNING"    [2017-08-21 lun. 16:48]
+- State "RUNNING"    from "DONE"       [2017-08-21 lun. 16:48]
+- State "DONE"       from "RUNNING"    [2017-08-21 lun. 16:41]
 - State "RUNNING"    from "STARTED"    [2017-08-17 Thu 18:13]
 - State "STARTED"    from "RUNNING"    [2017-08-17 jeu. 12:11]
 - State "RUNNING"    from "STARTED"    [2017-08-17 jeu. 09:11]
@@ -8353,6 +8417,11 @@ CLOSED: [2017-08-17 Thu 18:09]
 - State "TODO"       from              [2017-07-10 lun. 09:06]
 :END:
 
+****** RUNNING Run all methods
+:LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-08-21 lun. 16:49]
+- State "TODO"       from              [2017-08-21 lun. 16:48]
+:END:
 #+NAME: code:eas_expr_rm
 #+CAPTION: Pour supprimer les résultats avant de relancer ! 
 #+begin_src shell :session *ssh krakenator*
@@ -8378,7 +8447,6 @@ CLOSED: [2017-08-17 Thu 18:09]
 
 #+RESULTS: code:eas_expr_rm
 
-
 #+NAME: code:eas_expr_lasso
 #+CAPTION: lassoLFMM est un peut plus long on va le lancer a coté. Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]] [[code:1000g_G_noNA_scaled]]
 #+begin_src R 
@@ -8396,7 +8464,7 @@ CLOSED: [2017-08-17 Thu 18:09]
   ## methods
   methods <- list()
   methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                                      lambda.K = 100, lambda.eps = 0.001, lambda = 5.9e-2,
+                                      lambda.K = 100, lambda.eps = 0.001, lambda = 10e-2,
                                       relative.err.epsilon = 1e-6,
                                       col.mask = col.mask,
                                       inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lassoLFMM.rds",
@@ -8413,17 +8481,12 @@ CLOSED: [2017-08-17 Thu 18:09]
 
     out.file <- paste0("eas_df_", m$name, ".rds")
     out.file.path <- paste0("./OUTPUT/Expr/", out.file)
-    if (file.exists(out.file.path)) {
-      message("Reading ", out.file.path)
-      df <- readRDS(out.file.path)
-    } else {
-      message("Running method")
-      m <- ExpRmouline(m, dat)
-      df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
-      ## save expr
-      message("Saving output in ", out.file)
-      save_expr(df, out.file)
-    }
+    message("Running method")
+    m <- ExpRmouline(m, dat)
+    df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
+    ## save expr
+    message("Saving output in ", out.file)
+    save_expr(df, out.file)
     df
   }
 
@@ -8434,6 +8497,33 @@ CLOSED: [2017-08-17 Thu 18:09]
   }
 
 #+end_src
+
+#+RESULTS:
+#+begin_example
+  =============== lassoLFMM
+  Running method
+  mask data
+  Computing latent variables
+  It = 1/100, err2 = 0.999290276780934
+  It = 2/100, err2 = 0.903653256741087
+  It = 3/100, err2 = 0.903571723701793
+  It = 4/100, err2 = 0.903542788594417
+  It = 5/100, err2 = 0.903541852013131
+  It = 6/100, err2 = 0.903546623150277
+  It = 7/100, err2 = 0.903549675465802
+  It = 8/100, err2 = 0.903551453958885
+  It = 9/100, err2 = 0.903552407374758
+  === lambda = 0.1, no zero B proportion = 0.0124769319880922
+  Saving intermediate res into./OUTPUT/Expr/eas_inter_lassoLFMM.rds
+  unmask data
+  running hp
+       pvalue     colname index outlier   score rep.sampler rep.method    method
+  1 0.6467073 rs575272151     1   FALSE 0.45844           1          1 lassoLFMM
+    method.K method.lambda
+  1        5           0.1
+  Saving output in eas_df_lassoLFMM.rds
+  Expr save in ./OUTPUT/Expr/eas_df_lassoLFMM.rds
+#+end_example
 
 #+NAME: code:eas_expr
 #+CAPTION: Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]] [[code:1000g_G_noNA_scaled]]
@@ -8472,12 +8562,12 @@ CLOSED: [2017-08-17 Thu 18:09]
                         inter.res.file = NULL,
                         hp = "lm"
                         )
-  methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                              lambda.K = 100, relative.err.epsilon = 1e-6,
-                              col.mask = col.mask,
-                              inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lassoLFMM.rds",
-                              inter.res.file = NULL
-                              )
+  ## methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
+  ##                             lambda.K = 100, relative.err.epsilon = 1e-6,
+  ##                             col.mask = col.mask,
+  ##                             inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lassoLFMM.rds",
+  ##                             inter.res.file = NULL
+  ##                             )
 
   run_eas <- function(m) {
     message("=============== ", m$name)
@@ -8542,18 +8632,67 @@ save_expr(res.df, "eas_all_df.rds")
 Expr save in ./OUTPUT/Expr/eas_all_df.rds
 #+end_example
 
-
-****** TODO Charger l'experience
+****** TODO Rbind results
 :LOGBOOK:
-- State "TODO"       from              [2017-08-17 jeu. 09:31]
+- State "TODO"       from              [2017-08-21 lun. 16:49]
 :END:
+#+NAME: code:eas_expr_all
+#+CAPTION: Dépend de [[code:eas_expr]] [[code:eas_expr]]
+#+begin_src R 
+  library(MaTheseR)
+  library(MatrixFactorizationR)
+  library(matter)
 
-#+NAME: code:eas_load_res
+  files <- list.files("./OUTPUT/Expr/", "eas_df_.*\\.rds")
+
+  res.df <- tibble()
+  for (f in files) {
+    message("==", f)
+    res.df <- readRDS(paste0("./OUTPUT/Expr/",f)) %>%
+      rbind(res.df)
+  }
+  save_expr(res.df, "eas_all_df.rds")
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  ==eas_df_cate.rds
+  ==eas_df_lassoLFMM.rds
+  ==eas_df_lm.rds
+  ==eas_df_PCAlm.rds
+#+end_example
+
+****** TODO compute qvalue
+:LOGBOOK:
+- State "TODO"       from              [2017-08-21 lun. 16:42]
+:END:
+#+NAME: code:eas_qvalue
 #+CAPTION: Dépend de [[code:eas_expr]]
 #+BEGIN_SRC R
   library(MaTheseR)
   res.df <- readRDS("./OUTPUT/Expr/eas_all_df.rds")
+
+  qval.df <- res.df %>%
+    group_by(method) %>%
+    dplyr::mutate(qvalue = qvalue::qvalue(calibrated.pvalue)$qvalues)
+    mutate_qvalue() %>%
+    ungroup()
+
+  save_expr(qval.df, "eas_all_qvalue_df.rds")
 #+END_SRC
+
+****** load expr res
+:LOGBOOK:
+- State "TODO"       from              [2017-08-17 jeu. 09:31]
+:END:
+#+NAME: code:eas_qvalue
+#+CAPTION: Dépend de [[code:eas_expr]]
+#+BEGIN_SRC R
+  library(MaTheseR)
+  res.df <- readRDS("./OUTPUT/Expr/eas_all_qvalue_df.rds")
+#+END_SRC
+
 
 #+RESULTS: code:eas_load_res
 
@@ -8576,9 +8715,8 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
 : 1      cate 1.727900 0.1291523
 : 2 lassoLFMM 2.377960 0.2881817
 : 3        lm 8.760657 0.3815248
-: 4     PCAlm 1.128414 0.0248036
+: 4     PCAlm 1.169850 0.0205260
 : 5 ridgeLFMM 1.593141 0.1152645
-
 
 ****** TODO Les qqplots ?
 :LOGBOOK:
@@ -8588,7 +8726,7 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
 #+NAME: code:eas_qqplot
 #+CAPTION: Dépend de [[code:eas_load_res]]
 #+BEGIN_SRC R
-  toplot <- expr %>%
+  toplot <- res.df %>%
     mutate(pvalue = calibrated.pvalue) %>%
     dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
 
@@ -8610,7 +8748,7 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
 #+NAME: code:eas_top
 #+CAPTION: Dépend de [[code:eas_load_res]]
 #+BEGIN_SRC R
-  toplot <- df.res %>%
+  toplot <- res.df %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
     filter_candidates_top(30)
@@ -8619,10 +8757,10 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
   save_plot_png(pl, "eas_top_inter.png")
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: code:eas_top
 [[./OUTPUT/Rplots/eas_top_inter.png]]
 
-****** TODO Comparaison des liste avec contrôle du FDR à $0.01$
+****** TODO Comparaison des liste avec contrôle du FDR à $0.01$ and venn diag
 :LOGBOOK:
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
 :END:
@@ -8630,33 +8768,16 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
 #+NAME: code:eas_fdr
 #+CAPTION: Dépend de [[code:eas_load_res]]
 #+BEGIN_SRC R
-  toplot <- expr$df.res %>%
+  toplot <- res.df %>%
     dplyr::mutate(pvalue = calibrated.pvalue) %>%
     group_by(method) %>%
     filter_candidates_threshold(0.01)
 
+  ## matrix
   pl <- plot_intersection(toplot, by = "colname", plot = "point")
   save_plot_png(pl, "eas_fdr01_inter.png")
-#+END_SRC
 
-#+RESULTS:
-[[./OUTPUT/Rplots/eas_fdr01_inter.png]]
-
-****** TODO Venn diagram
-:LOGBOOK:
-- State "TODO"       from              [2017-08-17 jeu. 09:31]
-:END:
-
-#+NAME: code:eas_venn
-#+CAPTION: Dépend de [[code:eas_load_res]]
-#+begin_src R 
-  toplot <- expr$df.res %>%
-    dplyr::mutate(pvalue = calibrated.pvalue) %>%
-    group_by(method) %>%
-    filter_candidates_threshold(0.01) %>%
-    ungroup() 
-
-
+  ## venn diagram
   sets <- list(lm = toplot$index[toplot$method == "lm"],
                cate = toplot$index[toplot$method == "cate"],
                lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
@@ -8669,8 +8790,59 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
 
   save_plot_png(out, "eas_fdr01_venn.png")
 
+#+END_SRC
 
-  ## see common snps
+#+RESULTS:
+[[./OUTPUT/Rplots/eas_fdr01_venn.png]]
+[[./OUTPUT/Rplots/eas_fdr01_inter.png]]
+
+****** TODO Annotation
+:LOGBOOK:
+- State "TODO"       from "DONE"       [2017-07-12 mer. 11:10]
+- State "DONE"       from              [2017-07-12 mer. 11:10]
+:END:
+
+#+NAME: code:eas_qvalue
+#+CAPTION: Dépend de [[code:eas_expr]] [[code:eas_expr]]
+#+begin_src R 
+  require(MaTheseR)
+
+  res.df <- readRDS("./OUTPUT/Expr/eas_all_df.rds")
+
+  aux.df <- res.df %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    mutate_qvalue() %>%
+    ungroup()
+
+  save_expr(aux.df, "eas_all_qvalue_df.rds")
+#+end_src
+
+#+NAME: code:eas_annotation
+#+CAPTION: Dépend de [[code:eas_load_res]]
+#+BEGIN_SRC R
+  require(biomaRt)
+  require(MaTheseR)
+
+  ## annotation
+  biomaRt::listMarts()
+  snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+  listFilters(snp.db)
+  listAttributes(snp.db)
+
+  message("== annotation union ==")
+  aux <- aux.df %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate(snps = colname) %>%
+    mutate_annotation(snp.db)
+  aux %>%
+    dplyr::select(phenotype_description, phenotype_name) %>%
+    dplyr::filter(phenotype_name != "" | phenotype_description != "") %>%
+    print.data.frame()
+
+
+  message("== annotation inter ==")
+  ## meta analysis
   inter.list <- function(...) {
     id <- list(...)
     res <- sets[[id[[1]]]]
@@ -8679,57 +8851,32 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
     }
     res
   }
+  sets <- list(lm = toplot$index[toplot$method == "lm"],
+               cate = toplot$index[toplot$method == "cate"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"]
+               )
   sets <- sets[2:5]
   candidates.snps.df <- toplot %>%
     dplyr::filter(index %in% inter.list(1,2,3,4))
-  snps <- unique(candidates.snps.df$colname)
-  snps
-  ## annotation
-  require(biomaRt)
-
-  ## annotation
-  biomaRt::listMarts()
-  snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
-  listFilters(snp.db)
-  listAttributes(snp.db)
-  att <- c("p_value", "ensembl_mart_snp")
-
-#+end_src
-
-#+RESULTS:
-[[./OUTPUT/Rplots/eas_fdr01_venn.png]]
-
-****** TODO Annotation
-:LOGBOOK:
-- State "TODO"       from "DONE"       [2017-07-12 mer. 11:10]
-- State "DONE"       from              [2017-07-12 mer. 11:10]
-:END:
-
-#+NAME: code:eas_annotation
-#+CAPTION: Dépend de [[code:eas_load_res]]
-#+BEGIN_SRC R
-  require(biomaRt)
-
-  toplot <- expr$df.res %>%
-    dplyr::mutate(pvalue = calibrated.pvalue) %>%
-    group_by(method) %>%
-    dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM")) %>%
-    filter_candidates_threshold(0.01) %>%
-    ungroup()
-
-  ## annotation
-  biomaRt::listMarts()
-  snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
-  listFilters(snp.db)
-  listAttributes(snp.db)
-  att
-
-  toplot <- toplot %>%
+  length(unique(candidates.snps.df$colname))
+  aux <- candidates.snps.df %>%
     mutate(snps = colname) %>%
-    mutate_annotation(snp.db, att)
-
-  toplot %>%
+    mutate_annotation(snp.db)
+  aux %>%
     dplyr::select(phenotype_description, phenotype_name) %>%
+    print.data.frame()
+
+  message("== annotation lfmmRidge ==")
+  aux <- aux.df %>%
+    mutate(snps = colname) %>%
+    dplyr::filter(method %in% c("ridgeLFMM")) %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate_annotation(snp.db)
+  aux %>%
+    dplyr::select(phenotype_description, phenotype_name) %>%
+    dplyr::filter(phenotype_name != "" | phenotype_description != "") %>%
     print.data.frame()
 #+END_SRC
 
@@ -8755,6 +8902,39 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
 :LOGBOOK:
 - State "TODO"       from              [2017-08-17 jeu. 14:32]
 :END:
+
+****** TODO Gradient climatique
+:LOGBOOK:
+- State "TODO"       from              [2017-08-21 lun. 14:48]
+:END:
+#+NAME: code:eas_climatic_gradient_plot
+#+CAPTION: Dépend de [[code:eas_climatic_gradient]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(latex2exp)
+  library(scales)
+  library(ggmap)
+  MaTheseR.params <- get_MaTheseRparams()
+
+
+  mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
+  indiv.df <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df_2.rds")
+  pl <- ggplot(indiv.df, aes(x = lon, y = lat, color = X, size = X, text = `Population Description`)) +
+    mapWorld + 
+    geom_point() +
+    MaTheseR.params$gtheme +
+    scale_size_continuous(guide = FALSE) +
+    xlab("Longitude") +
+    xlab("Latitude")
+  pl
+  save_plot_MaTheseR(pl, "eas_climatic_gradient.pdf.png",
+                     height = 0.4 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
+
+
+
+#+end_src
 ****** TODO Choix des paramètres
 :LOGBOOK:
 - State "TODO"       from "DONE"       [2017-08-17 jeu. 16:47]
@@ -8840,6 +9020,15 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
 : [[./OUTPUT/Rplots/eas_CV_K.png]]
 : [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 : [[./OUTPUT/Rplots/eas_hyperparams.pdf.png]]
+****** TODO qqplot
+:LOGBOOK:
+- State "TODO"       from              [2017-08-21 lun. 16:50]
+:END:
+
+****** TODO Diagrame de venn
+:LOGBOOK:
+- State "TODO"       from              [2017-08-21 lun. 16:50]
+:END:
 
 ** Discussion                                                     :noexport:
 ** SANDBOX                                                        :noexport:
