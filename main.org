@@ -1872,16 +1872,18 @@ niveau de methylation moyen constitutif, c'est à inférieur à 0.2 ou supérieu
 0.8. De plus, nous avons centré et divisé par l'écart type les données de
 méthylation. Nous avons ensuite lancé les méthodes cate, lm, PCAlm, sva-irw,
 sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de méthylation de
-l'ADN associés à la polyarthrite. Le nombre de facteurs latents à été choisi à
-partir du scree plot et de la validation croisée de l'estimateur $L_{2}$ de LFMM
-(voir Figure ref:fig:ewas_params). Nous avons choisi $\K = 10$ car il n'y a plus
+l'ADN associés à la polyarthrite.
+
+Le nombre de facteurs latents à été choisi à partir du scree plot et de la
+validation croisée de l'estimateur $L_{2}$ de LFMM (voir Figure
+ref:fig:ewas_params). Nous avons choisi $\K = 10$ car il n'y a plus
 d'amélioration significative de l'erreur de prédiction et de la proportion de
 variance expliquée par les variables latentes après cette valeur sur les figures
 A et B de ref:fig:ewas_params. Les valeurs du paramètre de régularisation
 $L_{2}$ $\lambRidge$ entre $10^{-10}$ et $1$ donnent les mêmes valeurs d'erreur
 de prédiction (Figure ref:fig:ewas_params C). On s'attend à detecter un petit
 nombre d'association nous avons choisi une proportion de ligne non nulle pour
-l'estimateur $L_{1}$ de $\B$ valant 1\%. 
+l'estimateur $L_{1}$ de $\B$ valant 1\%.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -2141,9 +2143,9 @@ candidates
 
 #+RESULTS:
 : [1]  36714  51546 101455 125220 149131
-***** DONE Scree plot 
-CLOSED: [2017-07-25 mar. 18:05]
+***** RUNNING Scree plot 
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-08-21 lun. 17:18]
 - State "DONE"       from "RUNNING"    [2017-07-25 mar. 18:05]
 - Note taken on [2017-07-25 mar. 17:56] \\
   tail -f ewas_screeplot.y2017_m07_d25_krakenatorh_juil..log
@@ -2166,7 +2168,7 @@ CLOSED: [2017-07-25 mar. 18:05]
   samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
 
   ## methods
-  methods <- method_PCA(scale = FALSE) * param(lambda = lambdas)
+  methods <- method_PCA(scale = FALSE, K = 300) * param(lambda = lambdas)
 
   ## expr
   expr <- ExpR(rep.nb.sampler = 1,
@@ -2192,8 +2194,10 @@ CLOSED: [2017-07-25 mar. 18:05]
 #+RESULTS:
 [[./OUTPUT/Rplots/ewas_screeplot.png]]
 
-***** RUNNING Validation croisée du modèle lfmmRidge
+***** DONE Validation croisée du modèle lfmmRidge
+CLOSED: [2017-08-21 lun. 17:38]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-21 lun. 17:38]
 - State "RUNNING"    from "DONE"       [2017-08-21 lun. 17:05]
 - State "DONE"       from "RUNNING"    [2017-08-16 mer. 12:57]
 - State "RUNNING"    from "DONE"       [2017-08-16 mer. 11:07]
@@ -3149,9 +3153,9 @@ CLOSED: [2017-08-06 Sun 14:25]
 - State "DONE"       from              [2017-08-06 Sun 14:25]
 :END:
 
-****** DONE Choix des paramètres
-CLOSED: [2017-08-08 mar. 15:08]
+****** TODO Choix des paramètres
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-21 lun. 17:19]
 - State "DONE"       from "TODO"       [2017-08-08 mar. 15:08]
 - State "TODO"       from              [2017-08-08 mar. 14:28]
 :END:
@@ -4205,9 +4209,10 @@ GRCh38.
    [1] "rs10903122" "rs859637"   "rs13010713" "rs1464510"  "rs1020388" 
    [6] "rs1738074"  "rs653178"   "rs1958589"  "rs1893217"  "rs157640" 
 #+end_example
-***** DONE Scree plot
-CLOSED: [2017-07-30 Sun 11:28]
+***** RUNNING Scree plot
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-08-21 lun. 17:59]
+- State "TODO"       from "DONE"       [2017-08-21 lun. 17:19]
 - State "DONE"       from "RUNNING"    [2017-07-30 Sun 11:28]
 - Note taken on [2017-07-30 Sun 11:27] \\
   c'est fait mais la projection change rien !!
@@ -4242,7 +4247,7 @@ CLOSED: [2017-07-30 Sun 11:28]
   samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
 
   ## methods
-  methods <- method_PCA(scale = FALSE) * param(lambda = lambdas)
+  methods <- method_PCA(scale = FALSE, K = 101) * param(lambda = lambdas)
 
   ## expr
   expr <- ExpR(rep.nb.sampler = 1,
@@ -8178,9 +8183,10 @@ We recommend that you use the dev version of ggplot2 with `ggplotly()`
 Install it with: `devtools::install_github('hadley/ggplot2')`
 #+end_example
 
-***** DONE Scree plot
-CLOSED: [2017-08-17 jeu. 13:25]
+***** RUNNING Scree plot
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-08-21 lun. 17:57]
+- State "TODO"       from "DONE"       [2017-08-21 lun. 17:19]
 - State "DONE"       from "RUNNING"    [2017-08-17 jeu. 13:25]
 - State "RUNNING"    from "TODO"       [2017-08-17 jeu. 12:11]
 - State "TODO"       from "DONE"       [2017-08-17 jeu. 11:47]
@@ -8219,7 +8225,7 @@ CLOSED: [2017-08-17 jeu. 13:25]
   lambda <- c(1e-5, 1.0,1e10)
 
   ## methods
-  methods <- method_PCA(scale = FALSE) * param(lambda = lambda)
+  methods <- method_PCA(scale = FALSE, 101) * param(lambda = lambda)
 
   ## expr
   expr <- ExpR(rep.nb.sampler = 1,
@@ -8417,8 +8423,10 @@ CLOSED: [2017-08-17 Thu 18:09]
 - State "TODO"       from              [2017-07-10 lun. 09:06]
 :END:
 
-****** RUNNING Run all methods
+****** DONE Run all methods
+CLOSED: [2017-08-21 lun. 17:28]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-21 lun. 17:28]
 - State "RUNNING"    from "TODO"       [2017-08-21 lun. 16:49]
 - State "TODO"       from              [2017-08-21 lun. 16:48]
 :END:
@@ -8632,8 +8640,11 @@ save_expr(res.df, "eas_all_df.rds")
 Expr save in ./OUTPUT/Expr/eas_all_df.rds
 #+end_example
 
-****** TODO Rbind results
+****** DONE Rbind results
+CLOSED: [2017-08-21 lun. 17:32]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-21 lun. 17:32]
+- State "RUNNING"    from "TODO"       [2017-08-21 lun. 17:29]
 - State "TODO"       from              [2017-08-21 lun. 16:49]
 :END:
 #+NAME: code:eas_expr_all
@@ -8661,10 +8672,13 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
   ==eas_df_lassoLFMM.rds
   ==eas_df_lm.rds
   ==eas_df_PCAlm.rds
+  ==eas_df_ridgeLFMM.rds
 #+end_example
 
-****** TODO compute qvalue
+****** DONE compute qvalue
+CLOSED: [2017-08-21 lun. 17:57]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-21 lun. 17:57]
 - State "TODO"       from              [2017-08-21 lun. 16:42]
 :END:
 #+NAME: code:eas_qvalue
@@ -8675,8 +8689,7 @@ Expr save in ./OUTPUT/Expr/eas_all_df.rds
 
   qval.df <- res.df %>%
     group_by(method) %>%
-    dplyr::mutate(qvalue = qvalue::qvalue(calibrated.pvalue)$qvalues)
-    mutate_qvalue() %>%
+    dplyr::mutate(qvalue = qvalue::qvalue(calibrated.pvalue)$qvalues) %>%
     ungroup()
 
   save_expr(qval.df, "eas_all_qvalue_df.rds")
