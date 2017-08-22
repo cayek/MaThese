@@ -2192,7 +2192,7 @@ CLOSED: [2017-08-22 mar. 09:31]
   samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
 
   ## methods
-  methods <- method_PCA(scale = FALSE, K = 300) * param(lambda = lambdas)
+  methods <- method_PCA(scale = FALSE, K = 30) * param(lambda = lambdas)
 
   ## expr
   expr <- ExpR(rep.nb.sampler = 1,
@@ -2202,6 +2202,9 @@ CLOSED: [2017-08-22 mar. 09:31]
                preprocessors = NULL,
                extractor = ExpRextractor_sing_values)
   expr <- ExpRmouline(expr)
+
+  ## variance total 
+
 
   save_expr(expr, "ewas_screeplot_expr.rds")
 

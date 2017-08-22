@@ -24,7 +24,6 @@ ExpRmouline.method_PCA <- function(m, dat) {
   if (!is.null(m$lambda)) {
     message("Lambda = ", m$lambda)
     P.list <- MatrixFactorizationR::compute_P(dat$X, m$lambda)
-    dat$Y <- P.list$sqrt.P %*% dat$Y
   } else {
     P.list <- list(sqrt.P = diag(1, nrow(dat$Y)))
   }

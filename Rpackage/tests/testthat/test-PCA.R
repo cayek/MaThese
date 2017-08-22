@@ -45,7 +45,7 @@ test_that("test pca on simulation", {
   mK <- method_PCA(lambda = 1e-5, K = 30)
   mK.res <- ExpRmouline(mK, dat)
 
-  expect_lte(mean(abs(m.res$d[1:30] - mK.res$d)), 1e-3)
+  expect_lte(mean(abs(m.res$d[1:30] - mK.res$d)), 1e-10)
 
 })
 
