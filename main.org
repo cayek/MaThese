@@ -2212,7 +2212,7 @@ CLOSED: [2017-08-22 mar. 09:31]
     mutate(lambda = as.factor(lambda))
   pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
     geom_point() +
-    coord_cartesian(xlim = c(1,300))
+    coord_cartesian(xlim = c(1,30))
 
   save_plot_png(pl, "ewas_screeplot.png")
 
