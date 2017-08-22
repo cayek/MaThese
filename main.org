@@ -81,6 +81,19 @@
 ** Ligne de commande
 *** ms
 *** plink
+*** vep
+#+NAME: code:install_vep
+#+CAPTION: Dépend de 
+#+begin_src shell
+  cd BiocompSoftware
+  git clone https://github.com/Ensembl/ensembl-vep.git
+  cd ensembl-vep
+  perl INSTALL.pl
+#+end_src
+
+*RMK :* J'ai ddl les cache
+- =47 : homo_sapiens_vep_89_GRCh38.tar.gz=
+
 ** python
 * Introduction
 :LOGBOOK:
@@ -149,6 +162,11 @@ factorisation de matrice en statistique.
   - eas: ...
 :END:
 ** Test d'association
+:LOGBOOK:
+- Note taken on [2017-08-22 mar. 09:56] \\
+  parler des méthode classsique pour controlé l hétérogénéité en stat (experience
+  jardin commum, vidéo les stat expliqué a mon chat :D)
+:END:
 ** La factorisation de matrice en statistique
 :LOGBOOK:
 - Note taken on [2017-07-18 Tue 08:55] \\
@@ -1852,20 +1870,19 @@ cette étude nous souhaitons étudier le rôle de la méthylation de l'ADN dans 
 développement de la polyarthrite rhumatoïde. La méthylation de l'ADN est un
 processus au cours duquel un groupe méthyle est ajouté au molécule d'ADN. La
 méthylation peut changer l'activité de l'ADN et en particulier modifier sa
-transcription en protéine. Pour cette étude nous avons le au niveau de
+transcription en protéine. Pour cette étude nous nous intéressons au niveau de
 méthylation de $485 577$ site de l'ADN pour 354 individus atteints de
 polyarthrite rhumatoïde et 335 individus sains. Il est connu que la methylation
-de l'ADN dépend de l'âge, du sexe et de la consommation de tabac des individus.
-Nous savons aussi que le type de la cellule sur laquelle on mesure le nuveau de
-méthylation influence le niveau de méthylation. Tous ces facteurs peuvent être
-des facteurs de confusion pour l'étude d'association avec la maladie, ils ont
-d'ailleurs été pris en compte dans les études d'association qui ont été faites à
-partir des même données que celle étudié ici
-cite:Rahmani_2016,Zou_2014,Liu_2013. Afin d'évaluer la capacités des méthodes à
-bien corriger pour les facteurs de confusion, nous ne prenons pas en compte les
-facteurs de confusion connus et nous comparons les résultats à ceux obtenus par
-les études cite:Rahmani_2016 et cite:Zou_2014 qui prennent en compte
-explicitement les facteurs de confusion connus.
+de l'ADN dépend de l'âge, du sexe et de la consommation de tabac. Nous savons
+aussi que le type de la cellule sur laquelle on pratique la mesure influence le
+niveau de méthylation. Tous ces facteurs peuvent être des facteurs de confusion
+pour l'étude d'association avec la maladie, ils ont d'ailleurs été pris en
+compte dans les études d'association qui ont été faites à partir des mêmes
+données que celle étudié ici cite:Rahmani_2016,Zou_2014,Liu_2013. Afin d'évaluer
+la capacités des méthodes à bien corriger pour les facteurs de confusion, nous
+ne prenons pas en compte les facteurs de confusion connus et nous comparons les
+résultats à ceux obtenus par les études cite:Rahmani_2016 et cite:Zou_2014 qui
+prennent en compte explicitement les facteurs de confusion connus.
 
 De la même façon que dans cite:Zou_2014 nous avons filtré les sites avec un
 niveau de methylation moyen constitutif, c'est à inférieur à 0.2 ou supérieur à
@@ -1874,29 +1891,33 @@ méthylation. Nous avons ensuite lancé les méthodes cate, lm, PCAlm, sva-irw,
 sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de méthylation de
 l'ADN associés à la polyarthrite.
 
-Le nombre de facteurs latents à été choisi à partir du scree plot et de la
+Afin de choisir le nombre de facteurs latents nous avons représenté la variance  à été choisi à partir d et de la
 validation croisée de l'estimateur $L_{2}$ de LFMM (voir Figure
-ref:fig:ewas_params). Nous avons choisi $\K = 10$ car il n'y a plus
-d'amélioration significative de l'erreur de prédiction et de la proportion de
-variance expliquée par les variables latentes après cette valeur sur les figures
-A et B de ref:fig:ewas_params. Les valeurs du paramètre de régularisation
-$L_{2}$ $\lambRidge$ entre $10^{-10}$ et $1$ donnent les mêmes valeurs d'erreur
-de prédiction (Figure ref:fig:ewas_params C). On s'attend à detecter un petit
-nombre d'association nous avons choisi une proportion de ligne non nulle pour
-l'estimateur $L_{1}$ de $\B$ valant 1\%.
+ref:fig:ewas_params). Afin de choisir le 
+
+Nous avons choisi $\K = 10$ pour le nombre de variable
+latentes (voir Figure ref:fig:ewas_params A et B). 
+
+Pour $\K = 10$, les valeurs du paramètre de régularisation $L_{2}$ $\lambRidge$
+entre $10^{-10}$ et $1$ donnent les mêmes valeurs d'erreur de prédiction moyen
+(Figure ref:fig:ewas_params C), nous avons choisi de prendre $\lambRidge =
+10^{-5}$. On s'attend à détecter un petit nombre d'association nous avons choisi
+une proportion de ligne non nulle pour l'estimateur $L_{1}$ de $\B$ valant 1\%.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/ewas_hyperparams.pdf.png}
-\caption{Choix des paramètres pour l'étude d'association entre des site
+\caption{Choix des paramètres pour l'étude d'association entre des sites
   méthylation de l'ADN et la maladie polyarthrite rhumatoïde. A) Proportion de
-  variance expliquées par chacune des variables latentes estimé par l'algorithme
-  ridgeLFMM pour déférente valeur $\lambda$ du paramètre de régularisation
-  $L_2$. B)C) Erreur de prédiction calculée grâce à la validation croisée de
-  l'estimateur $L_{2}$ des paramètre de LFMM pour différente valeurs du
-  paramètre de régularisation $\lambda$ et du nombre variable lattentes $\K$. La
-  ligne pointillée vertical marque le nombre de variables latentes choisi, 10.}
+  variance expliquées par chacune des variables latentes estimées par
+  l'algorithme ridgeLFMM pour différentes valeurs $\lambda$ du paramètre de
+  régularisation $L_2$. B)C) Erreur de prédiction calculée grâce à la validation
+  croisée des estimateurs $L_{2}$ des paramètres de LFMM pour différente valeurs
+  du paramètre de régularisation $\lambda$ et du nombre variable latentes $\K$,
+  le point représente l'erreur de prédiction moyen et les bar l'erreur standard.
+  La ligne pointillée vertical marque le nombre de variables latentes choisies,
+  c'est à dire 10.}
 \label{fig:ewas_params}
 \end{figure}
 #+END_EXPORT
@@ -2143,8 +2164,11 @@ candidates
 
 #+RESULTS:
 : [1]  36714  51546 101455 125220 149131
-***** RUNNING Scree plot 
+***** DONE Scree plot 
+CLOSED: [2017-08-22 mar. 09:31]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-22 mar. 09:31]
+- State "TODO"       from "RUNNING"    [2017-08-22 mar. 09:31]
 - State "RUNNING"    from "DONE"       [2017-08-21 lun. 17:18]
 - State "DONE"       from "RUNNING"    [2017-07-25 mar. 18:05]
 - Note taken on [2017-07-25 mar. 17:56] \\
@@ -7453,22 +7477,6 @@ Nous avons utilisé le package bigsnpr pour convertir les données du format
 ****** DONE Données non prunnées
 CLOSED: [2017-08-14 lun. 14:14]
 :LOGBOOK:
-- State "DONE"       from "TODO"       [2017-08-14 lun. 14:14]
-- State "TODO"       from "DONE"       [2017-08-09 mer. 15:18]
-- State "DONE"       from "STARTED"    [2017-08-03 jeu. 11:31]
-- State "STARTED"    from "RUNNING"    [2017-07-13 jeu. 12:29]
-- Note taken on [2017-07-13 jeu. 11:57] \\
-  Après ca on va creer la matrice matter par block !! Et il faudra calculer les
-  indice du prinning et aussi les indice sur les individus !!!
-- Note taken on [2017-07-13 jeu. 11:57] \\
-  Ca tourne sur mon pc fixe :D
-- State "RUNNING"    from "TODO"       [2017-07-13 jeu. 11:57]
-- State "TODO"       from              [2017-07-13 jeu. 08:59]
-:END:
-
-******* DONE Format .rds
-CLOSED: [2017-08-14 lun. 14:11]
-:LOGBOOK:
 - State "DONE"       from "TODO"       [2017-08-14 lun. 14:11]
 - Note taken on [2017-08-03 jeu. 14:14] \\
   ca a bugger le pense ...a voir.
@@ -7480,6 +7488,7 @@ CLOSED: [2017-08-14 lun. 14:11]
   pas si grave !!
 - State "RUNNING"    from              [2017-08-02 mer. 15:59]
 :END:
+
 #+NAME: code:1000g_G_bigsnpr
 #+CAPTION: Dépend de [[code:1000g_ibd_filter]]
 #+BEGIN_SRC R
@@ -7559,7 +7568,6 @@ CLOSED: [2017-08-14 lun. 14:38]
   ## save indiv data frame
   saveRDS(G$fam, "~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/indiv_df.rds")
   #+END_SRC
-
 
 ***** DONE Données utilisées pour la validation numérique lfmm
 CLOSED: [2017-07-27 jeu. 17:26]
@@ -7669,6 +7677,7 @@ Nous ne gardons que les individus non métisses.
 #+end_example
 
 ***** DONE Scaling des données et valeurs manquantes pour GEAS
+
 CLOSED: [2017-08-16 mer. 15:44]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-08-16 mer. 15:44]
@@ -7875,6 +7884,59 @@ On fait un pruning plus fort que celui de [[code:1000g_prunning]]
 > dim(G.prunned)
 [1]   1409 296948
 #+end_example
+
+***** DONE Annotation VEP
+CLOSED: [2017-08-22 mar. 15:31]
+:LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-22 mar. 15:31]
+- State "RUNNING"    from "TODO"       [2017-08-22 mar. 12:41]
+- State "TODO"       from              [2017-08-22 mar. 11:53]
+:END:
+
+vep input format : [[http://www.ensembl.org/info/docs/tools/vep/vep_formats.html#input][here]]
+
+#+NAME: code:1000g_vep_input
+#+CAPTION: On creer un fichier input pour vep. Dépend de [[code:1000g_G_noNA_scaled]]
+#+begin_src R 
+  library(matter)
+  library(tidyverse)
+
+  G.matter <- readRDS("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds")
+  snps.info <- readRDS("./Data/1000Genomes/Phase3/bigsnpr_G/G.rds")$map
+  snps.info <- snps.info %>%
+    dplyr::filter(marker.ID %in% colnames(G.matter))
+
+  vep.input <- snps.info %>%
+    transmute(chromosome = chromosome,
+              start = physical.pos,
+              end = physical.pos,
+              allele = paste0(allele1,"/", allele2),
+              strand = NA,
+              identifier = marker.ID)
+
+  write.table(vep.input, file = "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.input.txt",
+              row.names = FALSE, col.names = FALSE, na = "", quote = FALSE)
+
+#+end_src
+
+run vep option : [[http://www.ensembl.org/info/docs/tools/vep/script/vep_options.html][here]]
+
+#+NAME: code:1000g_vep_run
+#+CAPTION: Dépend de [[code:1000g_vep_input]]
+#+begin_src shell
+  cd ~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article//
+  vep --cache -i vep.input.txt -o vep.output.txt
+#+end_src
+
+#+NAME: code:1000g_vep_output
+#+CAPTION: Dépend de [[code:1000g_vep_run]]
+#+begin_src R 
+  vep.output <- data.table::fread("./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.txt", skip = "#Uploaded_variation", data.table = FALSE, na.strings = "-")
+
+  vep.output <- vep.output %>% as_tibble()
+
+  saveRDS(vep.output, "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
+#+end_src
 
 ***** DONE Calcule du gradient climatique
 CLOSED: [2017-08-17 jeu. 11:52]
@@ -8183,8 +8245,10 @@ We recommend that you use the dev version of ggplot2 with `ggplotly()`
 Install it with: `devtools::install_github('hadley/ggplot2')`
 #+end_example
 
-***** RUNNING Scree plot
+***** DONE Scree plot
+CLOSED: [2017-08-22 mar. 09:31]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-22 mar. 09:31]
 - State "RUNNING"    from "TODO"       [2017-08-21 lun. 17:57]
 - State "TODO"       from "DONE"       [2017-08-21 lun. 17:19]
 - State "DONE"       from "RUNNING"    [2017-08-17 jeu. 13:25]
@@ -8251,7 +8315,6 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
 
 #+RESULTS:
 [[./OUTPUT/Rplots/geas_screeplot.png]]
-
 
 ***** DONE Validation croisée du modèle lfmmRidge
 CLOSED: [2017-08-17 Thu 18:09]
@@ -8422,7 +8485,6 @@ CLOSED: [2017-08-17 Thu 18:09]
 - State "RUNNING"    from "TODO"       [2017-07-11 mar. 16:30]
 - State "TODO"       from              [2017-07-10 lun. 09:06]
 :END:
-
 ****** DONE Run all methods
 CLOSED: [2017-08-21 lun. 17:28]
 :LOGBOOK:
@@ -8472,7 +8534,7 @@ CLOSED: [2017-08-21 lun. 17:28]
   ## methods
   methods <- list()
   methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                                      lambda.K = 100, lambda.eps = 0.001, lambda = 10e-2,
+                                      lambda.K = 100, lambda.eps = 0.001, lambda = 9.5e-2,
                                       relative.err.epsilon = 1e-6,
                                       col.mask = col.mask,
                                       inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lassoLFMM.rds",
@@ -8513,24 +8575,22 @@ CLOSED: [2017-08-21 lun. 17:28]
   mask data
   Computing latent variables
   It = 1/100, err2 = 0.999290276780934
-  It = 2/100, err2 = 0.903653256741087
-  It = 3/100, err2 = 0.903571723701793
-  It = 4/100, err2 = 0.903542788594417
-  It = 5/100, err2 = 0.903541852013131
-  It = 6/100, err2 = 0.903546623150277
-  It = 7/100, err2 = 0.903549675465802
-  It = 8/100, err2 = 0.903551453958885
-  It = 9/100, err2 = 0.903552407374758
-  === lambda = 0.1, no zero B proportion = 0.0124769319880922
+  It = 2/100, err2 = 0.903643187921675
+  It = 3/100, err2 = 0.903566451059916
+  It = 4/100, err2 = 0.903540302588162
+  It = 5/100, err2 = 0.903537790776936
+  It = 6/100, err2 = 0.903543772139505
+  It = 7/100, err2 = 0.903547531654694
+  It = 8/100, err2 = 0.903549843083158
+  It = 9/100, err2 = 0.903551197197631
+  === lambda = 0.095, no zero B proportion = 0.0198856365424249
   Saving intermediate res into./OUTPUT/Expr/eas_inter_lassoLFMM.rds
   unmask data
   running hp
-       pvalue     colname index outlier   score rep.sampler rep.method    method
-  1 0.6467073 rs575272151     1   FALSE 0.45844           1          1 lassoLFMM
-    method.K method.lambda
-  1        5           0.1
-  Saving output in eas_df_lassoLFMM.rds
-  Expr save in ./OUTPUT/Expr/eas_df_lassoLFMM.rds
+       pvalue     colname index outlier     score rep.sampler rep.method
+  1 0.6466421 rs575272151     1   FALSE 0.4585309           1          1
+       method method.K method.lambda
+  1 lassoLFMM        5         0.095
 #+end_example
 
 #+NAME: code:eas_expr
@@ -8648,7 +8708,7 @@ CLOSED: [2017-08-21 lun. 17:32]
 - State "TODO"       from              [2017-08-21 lun. 16:49]
 :END:
 #+NAME: code:eas_expr_all
-#+CAPTION: Dépend de [[code:eas_expr]] [[code:eas_expr]]
+#+CAPTION: Dépend de [[code:eas_expr]] [[code:eas_expr_lasso]]
 #+begin_src R 
   library(MaTheseR)
   library(MatrixFactorizationR)
@@ -8682,7 +8742,7 @@ CLOSED: [2017-08-21 lun. 17:57]
 - State "TODO"       from              [2017-08-21 lun. 16:42]
 :END:
 #+NAME: code:eas_qvalue
-#+CAPTION: Dépend de [[code:eas_expr]]
+#+CAPTION: Dépend de [[code:eas_expr_all]]
 #+BEGIN_SRC R
   library(MaTheseR)
   res.df <- readRDS("./OUTPUT/Expr/eas_all_df.rds")
@@ -8699,8 +8759,8 @@ CLOSED: [2017-08-21 lun. 17:57]
 :LOGBOOK:
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
 :END:
-#+NAME: code:eas_qvalue
-#+CAPTION: Dépend de [[code:eas_expr]]
+#+NAME: code:eas_load_res
+#+CAPTION: Dépend de [[code:eas_qvalue]]
 #+BEGIN_SRC R
   library(MaTheseR)
   res.df <- readRDS("./OUTPUT/Expr/eas_all_qvalue_df.rds")
@@ -8709,8 +8769,10 @@ CLOSED: [2017-08-21 lun. 17:57]
 
 #+RESULTS: code:eas_load_res
 
-****** TODO Que donne la calibration ?
+****** DONE Que donne la calibration ?
+CLOSED: [2017-08-22 mar. 09:36]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-22 mar. 09:36]
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
 :END:
 #+NAME: code:eas_calibration
@@ -8723,13 +8785,13 @@ CLOSED: [2017-08-21 lun. 17:57]
 
 #+RESULTS: code:eas_calibration
 : # A tibble: 5 x 3
-:      method      mad    median
-:       <chr>    <dbl>     <dbl>
-: 1      cate 1.727900 0.1291523
-: 2 lassoLFMM 2.377960 0.2881817
-: 3        lm 8.760657 0.3815248
-: 4     PCAlm 1.169850 0.0205260
-: 5 ridgeLFMM 1.593141 0.1152645
+:      method      mad     median
+:       <chr>    <dbl>      <dbl>
+: 1      cate 1.727900 0.12915235
+: 2 lassoLFMM 1.171343 0.02114513
+: 3        lm 8.760657 0.38152482
+: 4     PCAlm 1.169850 0.02052600
+: 5 ridgeLFMM 1.736133 0.13956344
 
 ****** TODO Les qqplots ?
 :LOGBOOK:
@@ -8753,8 +8815,10 @@ CLOSED: [2017-08-21 lun. 17:57]
 #+RESULTS:
 [[./OUTPUT/Rplots/EAS_qqplots2.png]]
 
-****** TODO Comparaison des top listes
+****** DONE Comparaison des top listes
+CLOSED: [2017-08-22 mar. 09:41]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-22 mar. 09:41]
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
 :END:
 
@@ -8809,27 +8873,11 @@ CLOSED: [2017-08-21 lun. 17:57]
 [[./OUTPUT/Rplots/eas_fdr01_venn.png]]
 [[./OUTPUT/Rplots/eas_fdr01_inter.png]]
 
-****** TODO Annotation
+****** TODO Annotation Biomart
 :LOGBOOK:
 - State "TODO"       from "DONE"       [2017-07-12 mer. 11:10]
 - State "DONE"       from              [2017-07-12 mer. 11:10]
 :END:
-
-#+NAME: code:eas_qvalue
-#+CAPTION: Dépend de [[code:eas_expr]] [[code:eas_expr]]
-#+begin_src R 
-  require(MaTheseR)
-
-  res.df <- readRDS("./OUTPUT/Expr/eas_all_df.rds")
-
-  aux.df <- res.df %>%
-    dplyr::mutate(pvalue = calibrated.pvalue) %>%
-    group_by(method) %>%
-    mutate_qvalue() %>%
-    ungroup()
-
-  save_expr(aux.df, "eas_all_qvalue_df.rds")
-#+end_src
 
 #+NAME: code:eas_annotation
 #+CAPTION: Dépend de [[code:eas_load_res]]
@@ -8844,7 +8892,7 @@ CLOSED: [2017-08-21 lun. 17:57]
   listAttributes(snp.db)
 
   message("== annotation union ==")
-  aux <- aux.df %>%
+  aux <- res.df %>%
     dplyr::filter(qvalue <= 0.01) %>%
     mutate(snps = colname) %>%
     mutate_annotation(snp.db)
@@ -8854,35 +8902,8 @@ CLOSED: [2017-08-21 lun. 17:57]
     print.data.frame()
 
 
-  message("== annotation inter ==")
-  ## meta analysis
-  inter.list <- function(...) {
-    id <- list(...)
-    res <- sets[[id[[1]]]]
-    for (i in id) {
-      res <- base::intersect(res, sets[[i]])
-    }
-    res
-  }
-  sets <- list(lm = toplot$index[toplot$method == "lm"],
-               cate = toplot$index[toplot$method == "cate"],
-               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
-               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
-               PCAlm = toplot$index[toplot$method == "PCAlm"]
-               )
-  sets <- sets[2:5]
-  candidates.snps.df <- toplot %>%
-    dplyr::filter(index %in% inter.list(1,2,3,4))
-  length(unique(candidates.snps.df$colname))
-  aux <- candidates.snps.df %>%
-    mutate(snps = colname) %>%
-    mutate_annotation(snp.db)
-  aux %>%
-    dplyr::select(phenotype_description, phenotype_name) %>%
-    print.data.frame()
-
   message("== annotation lfmmRidge ==")
-  aux <- aux.df %>%
+  aux <- res.df %>%
     mutate(snps = colname) %>%
     dplyr::filter(method %in% c("ridgeLFMM")) %>%
     dplyr::filter(qvalue <= 0.01) %>%
@@ -8891,7 +8912,92 @@ CLOSED: [2017-08-21 lun. 17:57]
     dplyr::select(phenotype_description, phenotype_name) %>%
     dplyr::filter(phenotype_name != "" | phenotype_description != "") %>%
     print.data.frame()
+
+  message("== annotation cate ==")
+  aux <- res.df %>%
+    mutate(snps = colname) %>%
+    dplyr::filter(method %in% c("cate")) %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate_annotation(snp.db)
+  aux %>%
+    dplyr::select(phenotype_description, phenotype_name) %>%
+    dplyr::filter(phenotype_name != "" | phenotype_description != "") %>%
+    print.data.frame()
+
+  message("== annotation lasso ==")
+  aux <- res.df %>%
+    mutate(snps = colname) %>%
+    dplyr::filter(method %in% c("lassoLFMM")) %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate_annotation(snp.db)
+  aux %>%
+    dplyr::select(phenotype_description, phenotype_name) %>%
+    dplyr::filter(phenotype_name != "" | phenotype_description != "") %>%
+    print.data.frame()
+
+  message("== annotation PCAlm ==")
+  aux <- res.df %>%
+    mutate(snps = colname) %>%
+    dplyr::filter(method %in% c("PCAlm")) %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate_annotation(snp.db)
+  aux %>%
+    dplyr::select(phenotype_description, phenotype_name) %>%
+    dplyr::filter(phenotype_name != "" | phenotype_description != "") %>%
+    print.data.frame()
+
 #+END_SRC
+
+#+NAME: code:eas_annotation_inter
+#+CAPTION: Dépend de [[code:eas_load_res]]
+#+begin_src R 
+  require(biomaRt)
+  require(MaTheseR)
+
+  ## annotation
+  biomaRt::listMarts()
+  snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+  listFilters(snp.db)
+  listAttributes(snp.db)
+
+  message("== annotation inter ==")
+  aux <- res.df %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate(snps = colname)
+  inter.list <- function(...) {
+    id <- list(...)
+    res <- sets[[id[[1]]]]
+    for (i in id) {
+      res <- base::intersect(res, sets[[i]])
+    }
+    res
+  }
+  sets <- list(lm = aux$index[aux$method == "lm"],
+               cate = aux$index[aux$method == "cate"],
+               lassoLFMM = aux$index[aux$method == "lassoLFMM"],
+               ridgeLFMM = aux$index[aux$method == "ridgeLFMM"],
+               PCAlm = aux$index[aux$method == "PCAlm"]
+               )
+  sets <- sets[2:5]
+  candidates.snps.df <- aux %>%
+    dplyr::filter(index %in% inter.list(1,2,3,4))
+  length(unique(candidates.snps.df$colname))
+  aux2 <- candidates.snps.df %>%
+    mutate(snps = colname) %>%
+    mutate_annotation(snp.db)
+  aux2 %>%
+    dplyr::select(phenotype_description, phenotype_name) %>%
+    print.data.frame()
+
+
+#+end_src
+
+****** TODO Annotation Vep
+:LOGBOOK:
+- State "TODO"       from              [2017-08-22 mar. 11:46]
+:END:
+
+
 
 ****** TODO manhattan plot
 :LOGBOOK:

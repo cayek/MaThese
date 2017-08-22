@@ -22,6 +22,7 @@ ExpRmouline.method_PCA <- function(m, dat) {
   }
 
   if (!is.null(m$lambda)) {
+    message("Lambda = ", m$lambda)
     P.list <- MatrixFactorizationR::compute_P(dat$X, m$lambda)
     dat$Y <- P.list$sqrt.P %*% dat$Y
   } else {
@@ -46,7 +47,7 @@ ExpRmouline.method_PCA <- function(m, dat) {
                           dim = c(nrow(dat$Y), ncol(dat$Y)))
   }
 
-  m$d <- res$d / sum(res$d)
+  m$d <- res$d
   m
 }
 

@@ -30,3 +30,22 @@ test_that("test pca", {
   ExpRplot_sing_values(expr)
 })
 
+test_that("test pca on simulation", {
+
+  s <- ExpRsampler_generativeData(n = 100,
+                                  p = 1000,
+                                 K = 3,
+                                  cs = c(0.8, 0.5,0.3),
+                                  outlier.prop = 0.2)
+  dat <- ExpRmouline(s)
+
+  m <- method_PCA(lambda = 1e-5)
+  m.res <- ExpRmouline(m, dat)
+
+  mK <- method_PCA(lambda = 1e-5, K = 30)
+  mK.res <- ExpRmouline(mK, dat)
+
+  expect_lte(mean(abs(m.res$d[1:30] - mK.res$d)), 1e-3)
+
+})
+

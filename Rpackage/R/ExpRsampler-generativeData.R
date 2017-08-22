@@ -60,7 +60,7 @@ ExpRsampler_generativeData_BVcorrelated <- function(n, p, K,
 
 ##' @export
 ExpRmouline.ExpRsampler_generativeData_BVcorrelated <- function(s) {
-  
+
   ## sample outlier
   outlier <- sample.int(s$p, s$outlier.prop * s$p)
   outlier.nb = length(outlier)
