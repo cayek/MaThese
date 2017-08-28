@@ -559,11 +559,12 @@ fonction objectif de type ridge suivante
 \end{equation}
 où $\norm{.}_{F}$ est la norme de Frobenius, $\norm{.}_{2}$ est la norme $L_2$
 et $\lambRidge$ le paramètre de régularisation. Le premier terme de $\Lridge$,
-le terme d'attache aux données, correspond à l'opposé de la log vraisemblance si
-l'on suppose que la matrice de bruit $\E$ est gaussienne, isotrope et de moyenne
-nulle. Le deuxième terme de $\Lridge$, le terme de régularisation, est
-indispensable pour séparer les variations de $\Y$ expliquées par les variables
-latentes de celles expliquées des variables explicatives. En effet, si
+le terme d'attache aux données. Si il n'y a pas de variable explicative $\X$, le
+terme d'attache aux données correspond à la fonction objective de l'analyse en
+composantes principales. Le deuxième terme de $\Lridge$, le terme de
+régularisation, est indispensable pour séparer les variations de $\Y$ expliquées
+par les variables latentes de celles expliquées des variables explicatives. En
+effet, si
 \begin{equation*}
 \lambRidge = 0, 
 \end{equation*}
@@ -964,11 +965,20 @@ régularisation. Enfin nous présentons un algorithme de validation croisée ada
 aux algorithmes que nous avons présentés.
 
 **** Nombre de variables latentes ($K$)
-Nous avons vu dans la section [[sec:estimator_L2]] que la matrice latente $\W$ peut
-être estimée grâce à l'analyse en composantes principales (ACP) de $\D \Q^{T}
-\Y$. Ainsi, afin d'estimer le nombre $\K$ de variables latentes pour le modèle
-LFMM, nous proposons d'employer les techniques d'estimation du nombre de
-variables latentes utilisées pour l'ACP sur la matrice $\D \Q^{T} \Y$ . Il
+Pour trouver le nombre de variables latentes $\K$ nous proposons d'isoler les
+variations de $\Y$ expliquées par les variables latentes à l'aide de la matrice
+$\D$ utilisée dans l'estimation $L_{2}$ (voir la section [[sec:estimator_L2]]). Pour
+cela on projette $\Y$ sur l'espace orthogonal à $\X$ en prenant $\lambRidge = 0$.
+On a alors
+\begin{equation}
+ \matr{D}_{0} \Q^{T} \Y = \matr{D}_{0} \Q^{T}\U \V^{T} + \matr{D}_{0} \Q^{T} \E.
+\end{equation}
+On peut ainsi utiliser les méthodes d'estimation du nombre $\K$ de variables
+latentes sur la matrice $\matr{D}_{0} \Q^{T} \Y$. Quand il n'y a plus de
+variable explicative $\X$ les fonctions objectives des deux algorithmes
+d'estimations $L_1$ et $L_2$ présentés ici correspondent à la fonction objective
+de l'analyse en composante principales (ACP). Nous utilisons donc les méthodes
+d'estimation du nombre composante dans l'ACP sur $\matr{D}_{0} \Q^{T} \Y$. Il
 existe de nombreuses approches pour déterminer le nombre de composantes
 principales de l'ACP, celle-ci sont très bien expliquées dans
 cite:jolliffe1986principal. On peut grouper ses approches en trois catégories.
@@ -980,9 +990,8 @@ validation croisée, comme celle que nous détaillons plus loin. Aucune méthode
 s'est imposée comme la référence, et il est préférable d'en utiliser plusieurs.
 Pour les expériences que nous avons réalisées sur des vraies données, le choix
 du nombre de variables latentes $\K$ du modèle LFMM a été fait à partir du scree
-plot de la matrice $\D \Q^{T} \Y$ pour différente valeurs de $\lambRidge$. Nous
-avons aussi utilisé l'algorithme de validation croisée que nous présentons dans
-la section [[sec:CV]].
+plot de $\matr{D}_{0} \Q^{T} \Y$. Nous avons aussi utilisé l'algorithme de
+validation croisée que nous présentons dans la section [[sec:CV]].
 
 **** Paramètre de régularisation $L_{2}$
 :LOGBOOK:
@@ -1004,7 +1013,7 @@ alors la matrice $\D$ tend vers la matrice identité l'estimation des variables
 latentes sont données pas l'analyse en composantes principales de $\Y$, sans
 prendre en compte $\X$. Le risque est alors d'expliquer par les variables
 latentes une partie de la variance de $\Y$ qui devrait être expliquée par $\X$,
-et dont passer à coté de certaine associations. Ainsi le choix du paramètre de
+et don de passer à coté de certaines associations. Ainsi le choix du paramètre de
 régularisation $L_{2}$ est une affaire de dosage, il doit être ni trop grand ni
 trop petit. Nous avons remarqué dans les expériences que $\lambdaRidge$ petit
 donne les meilleurs résultats dans de nombreux cas.
@@ -1879,7 +1888,7 @@ niveau de méthylation. Tous ces facteurs peuvent être des facteurs de confusio
 pour l'étude d'association avec la maladie, ils ont d'ailleurs été pris en
 compte dans les études d'association qui ont été faites à partir des mêmes
 données que celle étudié ici cite:Rahmani_2016,Zou_2014,Liu_2013. Afin d'évaluer
-la capacités des méthodes à bien corriger pour les facteurs de confusion, nous
+la capacité des méthodes à bien corriger pour les facteurs de confusion, nous
 ne prenons pas en compte les facteurs de confusion connus et nous comparons les
 résultats à ceux obtenus par les études cite:Rahmani_2016 et cite:Zou_2014 qui
 prennent en compte explicitement les facteurs de confusion connus.
@@ -1889,20 +1898,13 @@ niveau de methylation moyen constitutif, c'est à inférieur à 0.2 ou supérieu
 0.8. De plus, nous avons centré et divisé par l'écart type les données de
 méthylation. Nous avons ensuite lancé les méthodes cate, lm, PCAlm, sva-irw,
 sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de méthylation de
-l'ADN associés à la polyarthrite.
-
-Afin de choisir le nombre de facteurs latents nous avons représenté la variance  à été choisi à partir d et de la
-validation croisée de l'estimateur $L_{2}$ de LFMM (voir Figure
-ref:fig:ewas_params). Afin de choisir le 
-
-Nous avons choisi $\K = 10$ pour le nombre de variable
-latentes (voir Figure ref:fig:ewas_params A et B). 
-
-Pour $\K = 10$, les valeurs du paramètre de régularisation $L_{2}$ $\lambRidge$
-entre $10^{-10}$ et $1$ donnent les mêmes valeurs d'erreur de prédiction moyen
-(Figure ref:fig:ewas_params C), nous avons choisi de prendre $\lambRidge =
-10^{-5}$. On s'attend à détecter un petit nombre d'association nous avons choisi
-une proportion de ligne non nulle pour l'estimateur $L_{1}$ de $\B$ valant 1\%.
+l'ADN associés à la polyarthrite. Nous avons choisi $\K = 10$ pour le nombre de
+variable latentes (voir Figure ref:fig:ewas_params A et B). Pour $\K = 10$, les
+valeurs du paramètre de régularisation $L_{2}$ $\lambRidge$ entre $10^{-10}$ et
+$1$ donnent les mêmes valeurs d'erreur de prédiction moyen (Figure
+ref:fig:ewas_params C), nous avons choisi de prendre $\lambRidge = 10^{-5}$.
+Nous avons choisi une proportion de ligne non nulle pour l'estimateur $L_{1}$ de
+$\B$ valant 1\%.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -1910,14 +1912,13 @@ une proportion de ligne non nulle pour l'estimateur $L_{1}$ de $\B$ valant 1\%.
 \includegraphics{./OUTPUT/Rplots/ewas_hyperparams.pdf.png}
 \caption{Choix des paramètres pour l'étude d'association entre des sites
   méthylation de l'ADN et la maladie polyarthrite rhumatoïde. A) Proportion de
-  variance expliquées par chacune des variables latentes estimées par
-  l'algorithme ridgeLFMM pour différentes valeurs $\lambda$ du paramètre de
-  régularisation $L_2$. B)C) Erreur de prédiction calculée grâce à la validation
-  croisée des estimateurs $L_{2}$ des paramètres de LFMM pour différente valeurs
-  du paramètre de régularisation $\lambda$ et du nombre variable latentes $\K$,
-  le point représente l'erreur de prédiction moyen et les bar l'erreur standard.
-  La ligne pointillée vertical marque le nombre de variables latentes choisies,
-  c'est à dire 10.}
+  variance expliquées de la projection de $\Y$ sur l'espace orthogonal à $\X$
+  ($\matr{D}_{0} \Q^{T} \Y$) par chacune des composantes principales B)C) Erreur
+  de prédiction calculée grâce à la validation croisée des estimateurs $L_{2}$
+  des paramètres de LFMM pour différente valeurs du paramètre de régularisation
+  $\lambda$ et du nombre variable latentes $\K$, le point représente l'erreur de
+  prédiction moyen et les bar l'erreur standard. La ligne pointillée vertical
+  marque le nombre de variables latentes choisies, c'est à dire 10.}
 \label{fig:ewas_params}
 \end{figure}
 #+END_EXPORT
@@ -2186,34 +2187,27 @@ CLOSED: [2017-08-22 mar. 09:31]
   Y <- "./Data/ThesisDataset/3Article/GSE42861/G.rds"
   X <- "./Data/ThesisDataset/3Article/GSE42861/X.rds"
 
-  lambdas <- c(1e-5, 1.0, 1e10)
+  ## dat
+  dat <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) %>% ExpRmouline()
 
-  ## samplers
-  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
+  ## projection
+  P.list <- MatrixFactorizationR::compute_P(dat$X, lambda = 0.0)
+  Y <- P.list$sqrt.P %*% dat$Y
+  rm(P.list)
+  rm(dat)
+  gc()
 
-  ## methods
-  methods <- method_PCA(scale = FALSE, K = 30) * param(lambda = lambdas)
+  ## PCA
+  svd.res <- svd(Y,0,0)
+  df.res <- tibble(index = seq_along(svd.res$d), singular.value = svd.res$d) %>%
+    mutate(var.expl = singular.value / sum(singular.value))
+  save_expr(df.res, "ewas_screeplot_expr.rds")
 
-  ## expr
-  expr <- ExpR(rep.nb.sampler = 1,
-               samplers = samplers,
-               rep.nb.method = 1,
-               methods = methods,
-               preprocessors = NULL,
-               extractor = ExpRextractor_sing_values)
-  expr <- ExpRmouline(expr)
-
-  ## variance total 
-
-
-  save_expr(expr, "ewas_screeplot_expr.rds")
-
-  toplot <- expr$df.res %>%
-    mutate(lambda = as.factor(lambda))
-  pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+  ## plot
+  pl <- ggplot(df.res, aes(x = index, y = var.expl)) +
     geom_point() +
     coord_cartesian(xlim = c(1,30))
-
+  pl
   save_plot_png(pl, "ewas_screeplot.png")
 
 #+end_src
@@ -3196,10 +3190,8 @@ CLOSED: [2017-08-06 Sun 14:25]
   MaTheseR.params <- get_MaTheseRparams()
 
   ## screeplot
-  expr <- readRDS("./OUTPUT/Expr/ewas_screeplot_expr.rds")
-  toplot <- expr$df.res %>%
-      mutate(lambda = as.factor(lambda))
-  plA <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+  df.res <- readRDS("./OUTPUT/Expr/ewas_screeplot_expr.rds")
+  plA <- ggplot(df.res, aes(x = index, y = var.expl)) +
     geom_point() +
     coord_cartesian(xlim = c(1,30)) +
     xlab(TeX("Nombre de variables latentes ($K$)")) +
@@ -3249,7 +3241,7 @@ CLOSED: [2017-08-06 Sun 14:25]
     xlab(TeX("Paramètre de regularisation $L_{2}$ en échelle logarithmique ($\\lambda$)")) +
     ylab("Erreur de\nprédiction") +
     MaTheseR.params$gtheme +
-    theme(legend.position=c(0.2, 0.8))
+    theme(legend.position=c(0.15, 0.8))
   save_plot_png(plC, "ewas_CV_lambda.png")
 
   ## gather plot
@@ -3492,41 +3484,45 @@ connu que les SNPs sont corrélé le long du génome, nous avons donc filtrer le
 SNPs trop corrélé entre eux, cette étape est idéntifié dans la litérature comme
 LD pruning. Pour cela, pour chaque SNPs nous gardons que le SNIPs de variance
 maximum sur une fenêtre de 100 SNPs et cela sur les SNPs ayant un coéficient de
-corélation liénaire au carré est supérieure à $0.2$, cela nous as permit
-d'identifier un sous ensemble de 80275 SNPs. Ces opérations de fitrage on été
+corélation liénaire au carré est supérieure à $0.2$, cela nous a permis
+d'identifier un sous ensemble de 80275 SNPs. Ces opérations de titrage on été
 faite à l'aide du logiciel plink cite:Purcell_2007. Enfin nous avons utilisé
 beagle pour imputer les données manquante de la matrice de SNPs
 cite:Browning_2016. Nous obtenons finalement un jeux de données composée 281122
 SNPs et 15155 individus.
 
 Afin d'estimer les variables latentes pour corriger le test d'association entre
-les SNPS et la maladie \celiac nous avons lancer les méthode lm, lmPCA, cate,
-ridgeLFMM et lassoLFMM sur le sous ensemble de SNPs identifé par l'étape de LD
-pruning. Par la suite, nous avons effectuer le test d'hypothèse présenté dans la
+les SNPS et la maladie \celiac nous avons lancé les méthodes lm, lmPCA, cate,
+ridgeLFMM et lassoLFMM sur le sous ensemble de SNPs identifié par l'étape de LD
+pruning. Par la suite, nous avons effectué le test d'hypothèse présenté dans la
 partie [[sec:hypothese]] sur le jeux de données génétique complet mais avec
-l'estimation des variables latentes caluclé sur le sous ensemble de SNPs. Nous
-avons choisi 9 variables latentes car il car il n'y a plus d'amélioration
-significative de l'erreur de prédiction et de la proportion de variance
-expliquée par les variables latentes après cette valeur sur les graphiques A et
-B de la Figure ref:fig:gwas_params. La validation croisée du paramètre
-$\lambRidge$ ne permet pas de conclure (Figure ref:fig:gwas_params C), nous
-avons choisi $1e^{-5}$ car nous avons remarqué dans nos expérimentation que les
-petites valeurs du paramètres de régularisation $L_{2}$ donne les meilleur
-résultats. Enfin comme on s'attend à detecter un petit nombre d'association nous
-avons choisi une proportion de ligne non nulle pour l'estimateur $L_{1}$ de $\B$
-valant 1\%.
+l'estimation des variables latentes calculé sur le sous ensemble de SNPs. Nous
+avons choisi 9 variables latentes (voir Figure ref:fig:gwas_params A et B). 
+
+La
+validation croisée du paramètre $\lambRidge$ pousse a choisir une valeur grande
+($10^{10}) ne permet pas de conclure (Figure
+ref:fig:gwas_params C), nous avons choisi $1e^{-5}$ car nous avons remarqué dans
+nos expérimentation que les petites valeurs du paramètres de régularisation
+$L_{2}$ donne les meilleur résultats. 
+
+Enfin comme on s'attend à detecter un
+petit nombre d'association nous avons choisi une proportion de ligne non nulle
+pour l'estimateur $L_{1}$ de $\B$ valant 1\%.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/gwas_hyperparams.pdf.png}
-\caption{Choix des paramètres pour la GWAS. A) Proportion de variance expliquées
-  par chacune des variables latentes estimée par l'algorithme ridgeLFMM pour
-  déférentes valeurs $\lambda$ du paramètre de régularisation $L_2$. B)C) Erreur
-  de prédiction calculée grâce à la validation croisée de l'estimateur $L_{2}$
-  des paramètre de LFMM pour différente valeurs du paramètre de régularisation
-  $\lambda$ et du nombre variable lattentes $\K$. La ligne pointillée vertical
-  marque le nombre de variables latentes choisi, 10.}
+\caption{Choix des paramètres pour l'tude d'association entre génotype et la
+  maladie \celiac. A) Proportion de variance expliquées de la projection de $\Y$
+  sur l'espace orthogonal à $\X$ ($\matr{D}_{0} \Q^{T} \Y$) par chacune des
+  composantes principales B)C) Erreur de prédiction calculée grâce à la
+  validation croisée des estimateurs $L_{2}$ des paramètres de LFMM pour
+  différente valeurs du paramètre de régularisation $\lambda$ et du nombre
+  variable latentes $\K$, le point représente l'erreur de prédiction moyen et
+  les bar l'erreur standard. La ligne pointillée vertical marque le nombre de
+  variables latentes choisies, c'est à dire 9.}
 \label{fig:gwas_params}
 \end{figure}
 #+END_EXPORT
@@ -4268,31 +4264,27 @@ GRCh38.
   Y <- "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds"
   X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
 
-  lambdas <- c(1e-5, 1.0, 1e10)
 
-  ## samplers
-  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
+  ## dat
+  dat <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) %>% ExpRmouline()
 
-  ## methods
-  methods <- method_PCA(scale = FALSE, K = 101) * param(lambda = lambdas)
+  ## projection
+  P.list <- MatrixFactorizationR::compute_P(dat$X, lambda = 0.0)
+  Y <- P.list$sqrt.P %*% dat$Y
+  rm(P.list)
+  rm(dat)
+  gc()
 
-  ## expr
-  expr <- ExpR(rep.nb.sampler = 1,
-               samplers = samplers,
-               rep.nb.method = 1,
-               methods = methods,
-               preprocessors = NULL,
-               extractor = ExpRextractor_sing_values)
-  expr <- ExpRmouline(expr)
-
+  ## PCA
+  svd.res <- svd(Y,0,0)
+  df.res <- tibble(index = seq_along(svd.res$d), singular.value = svd.res$d) %>%
+    mutate(var.expl = singular.value / sum(singular.value))
   save_expr(expr, "gwas_screeplot_expr.rds")
 
-  toplot <- expr$df.res %>%
-    mutate(lambda = as.factor(lambda))
-  pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+  ## plot
+  pl <- ggplot(df.res, aes(x = index, y = var.expl)) +
     geom_point() +
     coord_cartesian(xlim = c(1,100))
-
   save_plot_png(pl, "gwas_screeplot.png")
 
 #+end_src
@@ -4305,6 +4297,8 @@ On prend K = 9 variables latentes.
 
 ***** RUNNING Validation croisée avec lfmmRidge
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-08-28 lun. 15:47]
+- State "DONE"       from "RUNNING"    [2017-08-28 lun. 11:53]
 - State "RUNNING"    from "STARTED"    [2017-08-17 Thu 18:17]
 - Note taken on [2017-08-17 Thu 18:16] \\
   tail -f /home/cayek/tmp/Logfiles/gwas_CV_encore_encore.y2017_m08_d17.log
@@ -4536,6 +4530,34 @@ On prend K = 9 variables latentes.
   save_plot_png(pl, "gwas_CV_lambda_lfmm_lambda_encore.png")
 
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_CV_lambda_lfmm_lambda_encore.png]]
+
+#+NAME: code:gwas_CV_lambda_round2
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(MaTheseR)
+
+  ## samplers
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds",
+                              X = "./Data/ThesisDataset/3Article/Celiac/X.rds",
+                              outlier = NULL) %>% ExpRmouline()
+  n <- nrow(dat$Y)
+  lambdas <- c(1e-5, 1, 10, 1e3, 1e10)
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
+                            lambdas = lambdas,
+                            Ks = 9)
+
+  ## run
+  res.cv <- ExpRmouline(cv, dat)
+  save_expr(res.cv, "gwas_CV_lambda_lfmm_round2.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  save_plot_png(pl, "gwas_CV_lambda_lfmm_lambda_round2.png")
+
+#+end_src
+
 
 ***** DONE Étude du jeu de données 
 CLOSED: [2017-07-28 ven. 09:25]
@@ -4819,14 +4841,14 @@ CLOSED: [2017-08-07 lun. 18:12]
   save_plot_png(plB, "gwas_CV_K.png")
 
   ## cross validation lambda
-  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lambda_lfmm.rds")
+  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lambda_lfmm_encore.rds")
   toplot <- expr$errs %>%
     mutate(K = as.factor(K)) %>%
     group_by(lambda, K) %>%
     summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
     ungroup()
-  plC <- ggplot(toplot, aes(x = log(lambda), y = err.mean, color = K)) +
-    geom_point() + 
+  plC <- ggplot(toplot, aes(x = log10(lambda), y = err.mean, color = K)) +
+    geom_point() +
     geom_errorbar(aes(ymin = err.mean - se,
                       ymax = err.mean + se,
                       width = 1)) +
@@ -5109,7 +5131,7 @@ la base WorlClim. Nous ne gardons que la première composante principale des
 variables revoyé par la base Wordclim. La Figure ref:fig:eas_gradient rerpésente
 la valeur du gradient climatique pour chaque population. On remarque que celui
 ci est très corélé avec la latitue. Comme les population sont à différente
-latitute il y aura de la corrélation entre la structure de population et le
+latitute il y a de la corrélation entre la structure de population et le
 gradient envorinmental.
 
 #+BEGIN_EXPORT latex
@@ -5122,21 +5144,26 @@ gradient envorinmental.
 #+END_EXPORT
 
 Nous avons lancer les méthodes cate ridgeLFMM, lassoLFMM et PCAlm avec 5
-variables latentes. Ce choix a été motivé par la décroissance des valeurs
-propre reprédsenté par la Figure ref:fig:eas_params A.
+variables latentes. Ce choix à été motivé par la décroissance des valeurs propre
+représenté par la Figure ref:fig:eas_params A. Les erreurs de prédiction
+calculées à partir de la validation croisée donne des résultat compliqué a
+interpréter (Figure ref:fig:eas_params B et C). Nous avons choisi $\lambdaRidge
+= 10^{-5}$ pour l'estimateur $L_{2}$ et une proportion de ligne non nulle de
+pour de $\B$ valant 1\% l'estimateur $L_{1}$.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/eas_hyperparams.pdf.png}
-\caption{Choix des paramètres pour l'étude d'association entre un gradient
-  environmental et un génome. A) Proportion de variance expliquées par chacune
-  des variables latentes estimées par l'algorithme ridgeLFMM pour diférente valeur
-  $\lambda$ du paramètre de régularisation $L_2$. B)C) Erreur de prédiction
-  calculée grâce à la validation croisée de l'estimateur $L_{2}$ des paramètre
-  de LFMM pour différente valeurs du paramètre de régularisation $\lambda$ et du
-  nombre variable lattentes $\K$. La ligne pointillée vertical marque le nombre
-  de variables latentes choisi, 10.}
+\caption{Choix des paramètres pour l'étude d'association entre un génotype et un
+  gradient environmental. A) Proportion de variance expliquées de la projection
+  de $\Y$ sur l'espace orthogonal à $\X$ ($\matr{D}_{0} \Q^{T} \Y$) par chacune
+  des composantes principales B)C) Erreur de prédiction calculée grâce à la
+  validation croisée des estimateurs $L_{2}$ des paramètres de LFMM pour
+  différente valeurs du paramètre de régularisation $\lambda$ et du nombre
+  variable latentes $\K$, le point représente l'erreur de prédiction moyen et
+  les bars l'erreur standard. La ligne pointillée verticale marque le nombre de
+  variables latentes choisies, c'est à dire 5.}
 \label{fig:eas_params}
 \end{figure}
 #+END_EXPORT
@@ -7927,8 +7954,8 @@ run vep option : [[http://www.ensembl.org/info/docs/tools/vep/script/vep_options
 #+NAME: code:1000g_vep_run
 #+CAPTION: Dépend de [[code:1000g_vep_input]]
 #+begin_src shell
-  cd ~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article//
-  vep --cache -i vep.input.txt -o vep.output.txt
+  cd ~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/
+  vep --cache -i vep.input.txt -o vep.output.txt --force
 #+end_src
 
 #+NAME: code:1000g_vep_output
@@ -7937,6 +7964,17 @@ run vep option : [[http://www.ensembl.org/info/docs/tools/vep/script/vep_options
   vep.output <- data.table::fread("./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.txt", skip = "#Uploaded_variation", data.table = FALSE, na.strings = "-")
 
   vep.output <- vep.output %>% as_tibble()
+
+  ## add snps name
+  G.matter <- readRDS("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds")
+  snps.info <- readRDS("./Data/1000Genomes/Phase3/bigsnpr_G/G.rds")$map %>% as_tibble()
+  snps.info <- snps.info %>%
+    dplyr::filter(marker.ID %in% colnames(G.matter))
+  snps.info <- snps.info %>%
+    transmute(Location = paste0(chromosome,":",physical.pos),
+              snps = marker.ID)
+
+  vep.output <- left_join(vep.output, snps.info, by = c('Location'))
 
   saveRDS(vep.output, "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
 #+end_src
@@ -8249,8 +8287,10 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
 #+end_example
 
 ***** DONE Scree plot
-CLOSED: [2017-08-22 mar. 09:31]
+CLOSED: [2017-08-28 lun. 15:48]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-28 lun. 15:48]
+- State "RUNNING"    from "DONE"       [2017-08-28 lun. 15:23]
 - State "DONE"       from "RUNNING"    [2017-08-22 mar. 09:31]
 - State "RUNNING"    from "TODO"       [2017-08-21 lun. 17:57]
 - State "TODO"       from "DONE"       [2017-08-21 lun. 17:19]
@@ -8285,34 +8325,27 @@ CLOSED: [2017-08-22 mar. 09:31]
 
   Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled_prunned.rds"
   X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds"
+  ## dat
+  dat <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) %>% ExpRmouline()
 
-  ## samplers
-  samplers <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) * param()
+  ## projection
+  P.list <- MatrixFactorizationR::compute_P(dat$X, lambda = 0.0)
+  Y <- P.list$sqrt.P %*% dat$Y
+  rm(P.list)
+  rm(dat)
+  gc()
 
-  lambda <- c(1e-5, 1.0,1e10)
+  ## PCA
+  svd.res <- svd(Y,0,0)
+  df.res <- tibble(index = seq_along(svd.res$d), singular.value = svd.res$d) %>%
+    mutate(var.expl = singular.value / sum(singular.value))
+  save_expr(df.res, "geas_screeplot_expr.rds")
 
-  ## methods
-  methods <- method_PCA(scale = FALSE, 101) * param(lambda = lambda)
-
-  ## expr
-  expr <- ExpR(rep.nb.sampler = 1,
-               samplers = samplers,
-               rep.nb.method = 1,
-               methods = methods,
-               preprocessors = NULL,
-               extractor = ExpRextractor_sing_values)
-  expr <- ExpRmouline(expr)
-
-  save_expr(expr, "geas_screeplot_expr.rds")
-
-  toplot <- expr$df.res %>%
-    mutate(lambda = as.factor(lambda))
-    pl <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
-      geom_point() +
-      coord_cartesian(xlim = c(1,100))
-
+  ## plot
+  pl <- ggplot(df.res, aes(x = index, y = var.expl)) +
+    geom_point() +
+    coord_cartesian(xlim = c(1,100))
   save_plot_png(pl, "geas_screeplot.png")
-
 
 #+end_src
 
@@ -8840,7 +8873,7 @@ CLOSED: [2017-08-22 mar. 09:41]
 #+RESULTS: code:eas_top
 [[./OUTPUT/Rplots/eas_top_inter.png]]
 
-****** TODO Comparaison des liste avec contrôle du FDR à $0.01$ and venn diag
+****** TODO Comparaison des listes avec contrôle du FDR à $0.01$ and venn diag
 :LOGBOOK:
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
 :END:
@@ -9000,7 +9033,31 @@ CLOSED: [2017-08-22 mar. 09:41]
 - State "TODO"       from              [2017-08-22 mar. 11:46]
 :END:
 
+#+NAME: code:eas_annotation_vep
+#+CAPTION: Dépend de [[code:eas_load_res]] [[code:1000g_vep_output]]
+#+begin_src R 
+  require(MaTheseR)
 
+  vep.output <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
+
+  vep.output <- vep.output %>%
+    mutate(Impact = sub("IMPACT=", "",sub(";.*", "", Extra)))
+
+  pl <- ggplot(vep.output, aes(x = Consequence)) +
+    geom_bar()
+  pl
+
+  mean(is.na(vep.output$Feature_type))
+
+
+  message("== vep annotation union ==")
+  res.df.union <- res.df %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate(snps = colname) %>%
+    dplyr::left_join(vep.output, by = c('snps'))
+
+
+#+end_src
 
 ****** TODO manhattan plot
 :LOGBOOK:
@@ -9057,8 +9114,10 @@ CLOSED: [2017-08-22 mar. 09:41]
 
 
 #+end_src
-****** TODO Choix des paramètres
+****** DONE Choix des paramètres
+CLOSED: [2017-08-28 lun. 16:07]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-28 lun. 16:07]
 - State "TODO"       from "DONE"       [2017-08-17 jeu. 16:47]
 - State "DONE"       from "TODO"       [2017-08-17 jeu. 16:46]
 - State "TODO"       from              [2017-08-17 jeu. 14:33]
@@ -9075,11 +9134,9 @@ CLOSED: [2017-08-22 mar. 09:41]
 
   ## screeplot
   expr <- readRDS("./OUTPUT/Expr/geas_screeplot_expr.rds")
-  toplot <- expr$df.res %>%
-      mutate(lambda = as.factor(lambda))
-  plA <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+  plA <- ggplot(expr, aes(x = index, y = var.expl)) +
     geom_point() +
-    coord_cartesian(xlim = c(1,30)) +
+    coord_cartesian(xlim = c(1,50)) +
     xlab(TeX("Nombre de variables latentes ($K$)")) +
     ylab("Variance\nexpliquée") +
     MaTheseR.params$gtheme +
@@ -9117,7 +9174,7 @@ CLOSED: [2017-08-22 mar. 09:41]
     group_by(lambda, K) %>%
     summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
     ungroup()
-  plC <- ggplot(toplot, aes(x = log(lambda), y = err.mean, color = K)) +
+  plC <- ggplot(toplot, aes(x = log10(lambda), y = err.mean, color = K)) +
     geom_point() + 
     geom_errorbar(aes(ymin = err.mean - se,
                       ymax = err.mean + se,
