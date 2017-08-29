@@ -1216,8 +1216,8 @@ algorithmes retournent les estimations pour les paramètres de LFMM ainsi qu'une
 
 Dans cette section nous présentons des méthodes pour l'étude d'association avec
 et sans correction pour les facteurs de confusions. Les méthodes que nous
-présentons ici sont comparées aux méthodes lassoLFMM et ridgeLFMM présentées
-dans la section précédente.
+présentons ici sont comparées aux méthodes lassoLFMM et ridgeLFMM dans la
+section Résultats.
 
 *** Régression linéaire simple et avec les scores de l'ACP
 Dans lassoLFMM et ridgeLFMM, les tests d'hypothèses utilisés pour détecter les
@@ -1226,7 +1226,7 @@ l'estimation des facteurs latents $\bar{\U)}$. Il est donc naturel de se
 comparer à la méthode de test d'hypothèse nullité de l'effet dans la régression
 linaire de $\Y$ par $\X$. Dans ce cas aucun facteur latent n'est pris en compte
 dans l'étude d'association. De plus, nous nous comparons à une méthode qui
-repose sur une estimation des variables latents par l'ACP. Dans ce cas, il
+repose sur une estimation des variables latentes par l'ACP. Dans ce cas, il
 s'agit alors de faire une régression de $\Y$ par $\X$ et $\bar{\U)}$ la matrice
 des scores sur les $\K$ premières composantes principales. Ces deux méthodes ont
 été implémentées en R et nous les appellerons respectivement lm et PCAlm.
@@ -1242,37 +1242,38 @@ des scores sur les $\K$ premières composantes principales. Ces deux méthodes o
   sva utilisé:[[file:Rpackage/R/ExpRmethod-sva.R::ExpRmouline.method_sva%20<-%20function(m,%20dat)%20{][sva function]]
 :END:
 
-Il existe deux versions de SVA : subset-SVA cite:article_Leek_Storey_2007 et
-IRW-SVA cite:article_Leek_Storey_2008. La méthode subset-SVA se découpe en deux
-étapes : une étape d'estimation de la matrice des axes factorielles $\V$ et une
-étape d'estimation de la matrice des variables latentes $\U$. Lors de la
-premières étape la méthode subset-SVA estime les axes factorielles en faisant
+Il existe deux versions de SVA : sva-two-step cite:article_Leek_Storey_2007 et
+sva-irw cite:article_Leek_Storey_2008. La méthode sva-two-step se découpe en
+deux étapes : une étape d'estimation de la matrice des axes factorielles $\V$ et
+une étape d'estimation de la matrice des variables latentes $\U$. Lors de la
+premières étape la méthode sva-two-step estime les axes factorielles en faisant
 une ACP de la matrice résiduelles de la régression linaire de $\Y$ par $\X$.
-Cela correspond à aire l'ACP de $\matr{D}_{(\lambRidge = 0)} \Q \Y$, en utilisant
-les notations de la section [[sec:estimator_L2]]. Ensuite la méthode subset-SVA
-calcule un sous-ensemble de colonnes de $\Y$ qui sont le moins corrélées avec
-$\X$. Ce sous ensemble de variables est utilisées pour estimer la matrice des
-variables latentes. Cette procédure peut facilement échouer car une faible
-corrélation avec $\X$ n'implique pas qu'il n'y a pas d'association avec $\X$. En
-effet une faible corrélation sans prendre en compte les facteurs latents peut
-devenir une forte corrélation quand on les prend en compte.
+Cela correspond à aire l'ACP de $\matr{D}_{(\lambRidge = 0)} \Q^{T} \Y$, en
+utilisant les notations de la section [[sec:estimator_L2]]. Ensuite la méthode
+sva-two-step calcule un sous-ensemble de colonnes de $\Y$ qui sont le moins
+corrélées avec $\X$. Ce sous ensemble de colonnes est utilisées pour estimer la
+matrice des variables latentes $\U$. Cette procédure peut facilement échouer car
+une faible corrélation avec $\X$ n'implique pas qu'il n'y a pas d'association
+avec $\X$. En effet une faible corrélation sans prendre en compte les facteurs
+latents peut devenir une forte corrélation quand on les prend en compte.
 
 La deuxième version de SVA est itérative. Plutôt que d'estimer les variables
-latentes sur un sous ensemble de colonne de $\Y$ la méthode IRW-SVA attribue un
-poids à chacune d'entre elles en fonction de la probabilité que la matrice des
-effet $\B$ de LFMM soit nul sachant les variables latentes calculées à
-l'itération précédente. Ensuite les probabilités sont utilisées pour attribuer
-un poids à chaque colonne de $\Y$ et une nouvelle estimation des variables
-latentes est calculée à l'aide d'une ACP qui prend en compte les poids. La
-méthode itère ces deux étapes un nombre de fois choisie par l'utilisateur. Le
-désavantage de cette procédure est qu'on ne sais pas vers quoi elle converge ni
-si elle converge. Nous avons utilisé le package R sva fourni par ces auteurs.
+latentes sur un sous ensemble de colonnes de $\Y$ la méthode sva-irw attribue un
+poids à chacune d'entre elles. Pour chaque colonnes de $\Y$, on calcule la
+probabilité que l'effet de $\X$ sur la colonne sachant les variables les
+variables latentes calculées à l'itération précédente soir nul. Ensuite les
+probabilités sont utilisées pour attribuer un poids à chaque colonne de $\Y$ et
+une nouvelle estimation des variables latentes est calculée à l'aide d'une ACP
+qui prend en compte ces poids. La méthode itère ces deux étapes un nombre de
+fois choisi par l'utilisateur. Le désavantage de cette procédure est qu'on ne
+sais pas vers quoi elle converge ni si elle converge. Nous avons utilisé le
+package R sva fourni par ses auteurs.
 
 *** cate cite:wang2015confounder
 
-Nous présentons dans cette partie la méthodes cate, nous considérons le cas où
-il n'y à qu'une variable explicative $\X$ pour faciliter les explications. Dans
-la méthode cate on commence par transformer la matrice des variables expliquées
+Nous présentons dans cette partie la méthode cate, nous considérons le cas où il
+n'y à qu'une variable explicative $\X$ pour faciliter les explications. Dans la
+méthode cate on commence par transformer la matrice des variables expliquées
 $\Y$ afin d'isoler les variations expliquées par les facteurs latents. Pour cela
 on applique une matrice de changement de base aux lignes de $\Y$ de sorte que le
 premier axe de la nouvelle base soit colinéaire à $\X$. Cette transformation
@@ -1283,33 +1284,35 @@ utilise alors les $\Yrow - 1$ autres lignes pour calculer les axes factorielles
 notés $\V$ dans nos notations. Cette première étape est comparable à l'étape de
 calcul de $\V$ dans notre méthode ridgeLFMM (voir partie [[sec:estimator_L2]]). Dans
 ridgeLFMM, plutôt que d'enlever complétement les variations de $\Y$ expliquées
-par $\X$ nous la réduisons en fonction de régularisation $\lambRidge$. Comme
-cela a été montré dans cite:wang2015confounder sva et cate estime la même
-matrice des axes factorielles qui correspond en faite à celle estimée par
-ridgeLFMM dans le cas ou $\lambRidge$ vaux zéro. La méthode cate diffère de sva
-dans sa façon de calculer les variables latents et les effets de $\X$ sur $\Y$.
-Pour cela les auteurs de cate ont modélisé explicitement la corrélation entre
-les variables explicatives $\X$ et les variables latentes $\U$ tel que
+par $\X$ nous la réduisons en fonction du paramètre de régularisation
+$\lambRidge$. Comme cela a été montré dans cite:wang2015confounder sva et cate
+estime la même matrice des axes factorielles qui correspond en faite à celle
+estimée par ridgeLFMM dans le cas ou $\lambRidge$ vaux zéro. La méthode cate
+diffère de sva dans sa façon de calculer les variables latents et les effets de
+$\X$ sur $\Y$. Pour cela les auteurs de cate ont modélisé explicitement la
+corrélation entre les variables explicatives $\X$ et les variables latentes $\U$
+tel que
 \begin{equation}
 \label{eq:cateU}
 \U = \X \bm{\alpha}^{T} + \matr{Z}.
 \end{equation}
-Comme la matrice $\Z$ est orthogonal à $\X$ elle déjà été estimée en même temps
-que la matrice des axes factorielles $\V$. Pour estimer la matrice
-$\matr{\alpha}$ la méthode cate utilise la première ligne de la matrice $\Y$
-transformées dans la base où le premier axe est colinéaire à $\X$. En effet en
-injectant eqref:eq:cateU dans l'équation du modèle LFMM eqref:eq:model on peut
-écrire la matrice des coefficients de régression de $\Y$ par $\X$, notée
-$\bm{\tau}$, comme ceci
+Comme la matrice $\Z$ est orthogonale à $\X$ elle est estimée en même temps que
+la matrice des axes factorielles $\V$. Pour estimer la matrice $\bm{\alpha}$ la
+méthode cate utilise la première ligne de la matrice $\Y$ transformées dans la
+base où le premier axe est colinéaire à $\X$. En effet en injectant
+eqref:eq:cateU dans l'équation de LFMM eqref:eq:model on peut écrire la matrice
+des coefficients de régression de $\Y$ par $\X$, notée $\bm{\tau}$, comme ceci
 \begin{equation}
 \bm{\tau} = \B + \V \bm{\alpha}^{T},
 \end{equation}
 où $\B$ est la matrice des effets dans l'équation eqref:eq:model. La méthode
-cate estime ensuite $\matr{\alpha}$ en faisant une régression linéaire robuste
-de $\bm{\tau}$ par son estimation de la matrice des axe factorielles $\V$ et
-$\B$ est calculé comme le résidu de cette régression. La régression robuste
-permet d'enlever de l'estimation de $\bm{\alpha}$ les effets atypiques qui
-correspondent aux colonnes de $\Y$ associés à $\X$ que l'on cherche.
+cate estime ensuite $\bm{\alpha}$ en faisant une régression linéaire robuste de
+$\bm{\tau}$ par son estimation de la matrice des axe factorielles $\V$ et $\B$
+est calculé comme le résidu de cette régression. La régression robuste permet
+d'enlever de l'estimation de $\bm{\alpha}$ les effets atypiques qui
+correspondent aux colonnes de $\Y$ associés à $\X$ que l'on cherche. Nous avons
+utilisé le package R cate fourni par ses auteurs.
+
 
 ** Résultats
 :PROPERTIES:
@@ -1330,14 +1333,15 @@ correspondent aux colonnes de $\Y$ associés à $\X$ que l'on cherche.
 Dans cette partie, nous présentons les expériences numériques que nous avons
 réalisées pour évaluer la performance de nos algorithmes de correction pour les
 facteurs confusions dans les études d'associations qui repose sur une estimation
-$\L1$ et $\L2$ des paramètres de LFMM. Ces deux nouveaux algorithmes ont été
-implémenté dans le langage de programmation R et seront appelés respectivement
-ridgeLFMM pour l'estimation $\L2$ et lassoLFMM pour l'estimation $\L1$. Nous
-nous sommes comparé aux méthodes que nous avons présenté dans la partie
+$L_{1}$ et $L_{2}$ des paramètres de LFMM. Ces deux nouveaux algorithmes ont été
+implémentés dans le langage de programmation R et seront appelés respectivement
+ridgeLFMM pour l'estimation $L_{2}$ et lassoLFMM pour l'estimation $L_{1}$. Nous
+nous sommes comparé aux méthodes que nous avons présentées dans la partie
 [[sec:similar_method]]. Les méthodes de régression linéaires avec et sans les scores
-de l'ACP ont été implémenté dans le langage R et sont respectivement appelé lm
-et PCAlm. Pour les méthodes CATE et sva nous avons respectivement utilisé les
-implémentations R de ces méthodes mises à disposition par leurs auteurs.
+de l'ACP ont été implémenté dans le langage R et sont respectivement appelées lm
+et PCAlm. Pour les méthodes cate, sva-irw et sva-two-step nous avons
+respectivement utilisé leurs implémentations R mises à disposition par leurs
+auteurs respectifs.
 *** Comparaison des méthodes sur des données simulées
 **** Simulation à partir de données réelles
 :LOGBOOK:
@@ -1345,49 +1349,52 @@ implémentations R de ces méthodes mises à disposition par leurs auteurs.
   [[file:Rpackage/R/ExpRsampler-fromTrueData.R::ExpRmouline.ExpRsampler_fromTrueData%20<-%20function(s)%20{][La fonction sampler]]
 :END:
 Afin de comparer la performance des méthodes sur une étude d'association pour
-laquelle nous connaissons la vérité, nous avons réalisé des simulations à partir
-de vrai jeux de données. Pour cela nous réalisons une analyse en composante
-principale de $\Y$ et ne gardons que les $\K$ premières composantes en fonction
-du nombre $\K$ de facteurs de confusion que l'on souhaite simuler. On a alors
+laquelle nous connaissons la vérité, c'est à dire les colonnes de $\Y$ qui sont
+associé à $\X$, nous avons réalisé des simulations à partir d'une matrice $\Y$
+issue d'un vrai jeu de données. Pour cela nous réalisons une analyse en
+composante principale de $\Y$ et ne gardons que les $\K$ premières composantes
+en fonction du nombre $\K$ de facteurs de confusion que l'on souhaite simuler.
+On a alors
 \begin{equation}
 \Y = \U \V^{T} + \E
 \end{equation}
 où $\V$ est la matrice des $\K$ axes principaux orthogonaux et $\U$ la matrice
 des variables latentes calculés par l'ACP. La matrice $\E$ est la matrice
 residuelle. Nous simulons ensuite la variable d'intérêt pour l'association
-$\X^{'}$ et $\K$ variables latentes $\U^{'}$ de sorte qu'elles aient la même
-structure de covariance que les variables latentes calculée par l'ACP. Nous
-choisissons de plus la corrélation entre chaque colonne de $\U^{'}$ et $\X$. Ces
-matrices sont simulé à l'aide de la loi normale multidimensionnelle. Enfin nous
-calculons une matrice des effets $\B^{'}$ de sorte qu'une certaines proportion
-des lignes de $\B^{'}$ soit non nul et simulés grâce à une loi normale. Nous
-calculons alors la nouvelle matrice des variables à tester tel que
+$\X^{'}$ et $\K$ variables latentes $\U^{'}$ en choisissant la corrélation entre
+chaque variable latente et $\X^{'}$. De plus les variables latentes sont
+simulées de sorte quelles aient la même structure de covariance que les
+variables latentes calculées par l'ACP. Les matrices $\U^{'}$ et $\X^{'}$ sont
+simulées à l'aide de la loi normale multidimensionnelle. Enfin nous calculons
+une matrice des effets $\B^{'}$ de sorte qu'une certaines proportion des lignes
+de $\B^{'}$ soit non nul et tiré selon à une loi normale. Nous calculons alors
+la nouvelle matrice des variables explicatives tel que
 \begin{equation}
 \Y^{'} = \U^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
 \end{equation}
 Nous avons ainsi des données pour lesquelles nous savons quelles colonnes de
-$\Y^{'}$ est associées avec la variable $\X$, il s'agit des lignes non nulles de
-la matrice $\B^{'}$. Nous utilisons de plus la structure lattente d'une matrice
-de données déjà existante ce qui permet d'avoir des simulations plus réalistes
-et d'éviter les discussions sur le choix des variables latentes.
+$\Y^{'}$ est associées avec la variable $\X^{'}$, il s'agit des lignes non
+nulles de la matrice $\B^{'}$. Nous utilisons de plus la structure lattente
+d'une matrice de données déjà existante ce qui permet d'avoir des simulations
+plus réalistes.
 
-Les vrais jeu de données que nous avons choisi pour réaliser les simulations
-sont issu du jeux de données 1000 génome que nous présentons dans la partie
-[[sec:GEAS]]. Nous avons garder seulement le chromosome 1 et 2, cela permet de
-simuler une matrice de variable expliquées $\Y^{'}$ composée de 52211 variables
-pour 1758 individus. Nous avons choisi de simuler 5 variables latentes pour
-plusieurs valeurs de la corrélation entre $\X^{'}$ et ces 5 variables latentes.
-Pour chaque variable latente une valeur entre $-1$ et $1$ de la corrélation avec
+Le vrai jeu de données que nous avons choisi pour réaliser les simulations est
+issu du jeu de données 1000Genome que nous présentons dans la partie [[sec:GEAS]].
+Nous avons gardé seulement le chromosome 1 et 2, cela permet de simuler une
+matrice de variable expliquées $\Y^{'}$ composée de 52211 variables pour 1758
+individus. Nous avons choisi de simuler 5 variables latentes pour plusieurs
+valeurs de la corrélation entre $\X^{'}$ et ces 5 variables latentes. Pour
+chaque variable latente une valeur entre $-1$ et $1$ de la corrélation avec
 $\X^{'}$ est tirée selon une loi uniforme et multipliée par un coefficient que
 l'on nome $\rho$ prenant une des valeurs suivantes: $0.1$, $0.3$, $0.5$, $0.8$
 ou $1$. Le même coefficient $\rho$ est utilisé pour calculer toutes les
 corrélations. Plus le coefficient $\rho$ est proche de 1 plus les variables
 latentes seront corrélées à $\X^{'}$ et donc plus la confusion lors du test
-d'association de $\X^{'}$ avec la matrice $\Y^{'}$ sera importante. Nous avons
-de plus choisi la proportion proportions des variables expliquées associées avec
-la variable explicative valant $1\%$, $5\%$, $10\%$, $15\%$ ou $20\%$. Pour
-chaque paramètre de simulation nous avons simulé $5$ jeux de données ce
-qui donne un total de 125 jeux de données.
+d'association de $\X^{'}$ avec $\Y^{'}$ sera importante. Nous avons de plus
+choisi une proportion des variables expliquées associées avec la variable
+explicative valant $1\%$, $5\%$, $10\%$, $15\%$ ou $20\%$. Pour chaque paramètre
+de simulation nous avons simulé $5$ jeux de données ce qui donne un total de 125
+jeux de données.
 
 **** Mesure de comparaison des performances
 Pour comparer les méthodes entre elles nous avons choisi deux critères. Chaque
@@ -1399,19 +1406,23 @@ précision est le nombre de vraies associations dans la liste divisé par la
 taille de la liste et le rappel est le nombre de vraies associations retrouvées
 dans la liste divisé par le nombre total des vraies associations. Le rappel est
 parfois appelé puissance en statistique. Une méthode qui donne les plus petites
-\pvalues d'abord à toutes les vraies associations donne une aire sous la courbe
-de précision-rappel de 1. Le deuxième critère de comparaison des méthodes permet
-d'évaluer la calibration des \pvalues renvoyées par les méthodes. Pour cela nous
-calculons le facteur d'inflation sur les \pvalues attribuées aux variables non
-associées avec $\X$. Si les \pvalues sont bien calibrées alors la distribution
-des \pvalues attribuées aux colonne de $\Y$ non associées avec $\X$ suivent une
-loi uniforme et donc le facteur d'inflation vaux 1. Une méthode qui renvoie des
-\pvalues correctement calibrées permet de calculé une liste de candidats avec un
-taux de fausses découvertes moyen contrôlé à une valeur choisie en utilisant par
-exemple l'algorithme de Benjamini-Hoshberg cite:benjamini1995controlling. Une
-bonne méthode doit donc à la fois être capable de detecter les vrais
-associations sans se tromper mais aussi fournir des \pvalues correctement
-calibrées.
+\pvalues permettant de séparer parfaitement les vraies associations du reste
+donne une aire sous la courbe de précision-rappel de 1. 
+
+Le deuxième critère de comparaison des méthodes permet d'évaluer la calibration
+des \pvalues renvoyées par les méthodes. Pour cela nous calculons le facteur
+d'inflation sur les \pvalues attribuées aux variables non associées avec $\X$.
+Si les \pvalues sont bien calibrées alors la distribution des \pvalues
+attribuées aux colonnes de $\Y$ non associées avec $\X$ suivent une loi uniforme
+et donc le facteur d'inflation vaux 1. Une méthode qui renvoie des \pvalues
+correctement calibrées permet de calculer une liste de candidats avec un taux de
+fausses découvertes moyen contrôlé à une valeur choisie. Pour cela on peut par
+exemple utiliser l'algorithme de Benjamini-Hoshberg
+cite:benjamini1995controlling ou bien le package qvalue cite:Storey_2011. Une
+bonne méthode doit donc à la fois être capable de détecter les vrais
+associations sans se tromper mais aussi de fournir des \pvalues correctement
+calibrées pour permettre une utilisation des algorithmes de contrôle du taux de
+fausse découverte.
 
 **** Résultats
 Sur les 125 jeux de données simulés nous avons lancé les méthodes lm, PCAlm,
@@ -1420,32 +1431,33 @@ lassoLFMM et ridgeLFMM. De plus, nous avons considéré une méthode oracle qui
 fait le test d'association entre $\Y$ et $\X$ en connaissant les variables
 latentes de la simulation. Les résultats sont résumés dans la Figure
 ref:fig:method_comp. Les méthodes cate, lassoLFMM et ridgeLFMM ont les mêmes
-performance que l'oracle sur toutes les simulations. Nous constatons toutefois
-une exception sur les simulations avec un paramètre $\rho$ de corélation entre
+performances que l'oracle sur toutes les simulations. Nous constatons toutefois
+une exception sur les simulations avec un paramètre $\rho$ de corrélation entre
 la variable explicative $\X$ et les variable latentes de $1$ pour cate et
 ridgeLFMM qui renvoie des \pvalues avec un taux d'inflation moyen de $3.3$ alors
 que celui de lassoLFMM vaux $1.3$ et celui de l'oracle $1.0$ (Figure
-ref:fig:method_comp D). Les performance de la méthode lm sont sensible au
-paramètre de corélation $\rho$, lorsque celui-ci vaux $0.1$ l'AUC et le facteur
-d'inflation de lm est presque égal à ceux de l'oracle mais le facteur
-d'inflation croit jusqu'à plus de 30 et l'AUC décroit jusqu'à la moitié de celui
-de l'oracle pour $\rho$ valant 1 (Figure ref:fig:method_comp B et D). Les
-\pvalues de la méthode PCAlm sont toujours corréctement calibré puisque le
+ref:fig:method_comp D). Les méthodes cate et ridgeLFMM donnent des résultats
+très proches sur toutes les simulations. Les performances de la méthode lm sont
+sensible au paramètre de corrélation $\rho$, lorsque celui-ci vaux $0.1$ l'AUC
+et le facteur d'inflation de lm est presque égal à ceux de l'oracle mais le
+facteur d'inflation croit jusqu'à plus de 30 et l'AUC décroit jusqu'à la moitié
+de celui de l'oracle pour $\rho$ valant 1 (Figure ref:fig:method_comp B et D).
+Les \pvalues de la méthode PCAlm sont toujours correctement calibrées puisque le
 facteur d'inflation est toujours autour de 1 (Figure ref:fig:method_comp C et
-D). Cependant la différence de l'oracle avec l'AUC de PCAlm de l'oracle croit
+D). Cependant l'écart de l'AUC de PCAlm avec l'AUC obtenu par l'oracle croit
 avec la proportion de vrais associations et le paramètre de corrélation $\rho$
-(Figure ref:fig:method_comp A et B). Enfin sva-two-step et sva-irw renvoie des
-\pvalues correctement qualibré sauf quand le paramèrte de corélation $\rho$ vaut
-0.8 et 1.0 (Figure ref:fig:method_comp C et D). L'AUC de sva-irw est toujours en
-dessous de l'AUC de l'oracle pour toute les proportion de vrais asociation des
-simulations (Figure ref:fig:method_comp A) et la différence de l'AUC de sva-irw
-avec de l'AUC de l'oracle croit avec le paramèter de corrélation $\rho$ (Figure
-ref:fig:method_comp B). Nous obsevons egualement que l'AUC de sva-two-step est
-très légèrement en dessous de l'AUC de l'oracle pour toute les proportion de
-vrais asociation des simulations (Figure ref:fig:method_comp A) et comme pour
-sva-irw la différence de l'AUC de sva-two-step avec de l'AUC de l'oracle croit
-avec le paramèter de corrélation $\rho$ mais plus faiblement (Figure
-ref:fig:method_comp B).
+(Figure ref:fig:method_comp A et B). Enfin sva-two-step et sva-irw renvoient des
+\pvalues correctement calibrées sauf quand le paramètre de corrélation $\rho$
+vaut 0.8 et 1.0 (Figure ref:fig:method_comp C et D). L'AUC de sva-irw est
+toujours en dessous de l'AUC de l'oracle pour toute les proportions de vrais
+associations dans les simulations (Figure ref:fig:method_comp A) et la
+différence de l'AUC de sva-irw avec de l'AUC de l'oracle croit avec le paramètre
+de corrélation $\rho$ (Figure ref:fig:method_comp B). Nous observons également
+que l'AUC de sva-two-step est très légèrement en dessous de l'AUC de l'oracle
+pour toute les proportions de vrais asociations dans les simulations (Figure
+ref:fig:method_comp A) et comme pour sva-irw la différence de l'AUC de
+sva-two-step avec de l'AUC de l'oracle croit avec le paramètre de corrélation
+$\rho$ mais plus faiblement que pour sva-irw (Figure ref:fig:method_comp B).
 
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[ht]
@@ -1453,11 +1465,11 @@ ref:fig:method_comp B).
 \includegraphics{./OUTPUT/Rplots/method_comp.pdf.png}
 \caption{Comparaison des méthodes sur des simulations faites à partir du jeux de
   données 1000Genomes. A-B) Aire sous la courbe précision-rappel en fonction
-  respectivement de la proportion de colonne de $\Y$ associé à $\X$ et la
-  corrélation de la variable explicative $\X$ et les variables latentes. C-D)
+  respectivement de la proportion de colonnes de $\Y$ associées à $\X$ et la
+  corrélation de la variable explicative $\X$ avec les variables latentes. C-D)
   Facteur d'inflation calculé sur les variables nulles en fonction
-  respectivement de la proportion de colonne de $\Y$ associé à $\X$ et la
-  corrélation de la variable explicative $\X$ et les variables latentes.}
+  respectivement de la proportion de colonnes de $\Y$ associées à $\X$ et la
+  corrélation de la variable explicative $\X$ avec les variables latentes.}
 \label{fig:method_comp}
 \end{sidewaysfigure}
 #+END_EXPORT
@@ -1880,31 +1892,32 @@ développement de la polyarthrite rhumatoïde. La méthylation de l'ADN est un
 processus au cours duquel un groupe méthyle est ajouté au molécule d'ADN. La
 méthylation peut changer l'activité de l'ADN et en particulier modifier sa
 transcription en protéine. Pour cette étude nous nous intéressons au niveau de
-méthylation de $485 577$ site de l'ADN pour 354 individus atteints de
+méthylation de $485 577$ sites de l'ADN pour 354 individus atteints de
 polyarthrite rhumatoïde et 335 individus sains. Il est connu que la methylation
 de l'ADN dépend de l'âge, du sexe et de la consommation de tabac. Nous savons
 aussi que le type de la cellule sur laquelle on pratique la mesure influence le
 niveau de méthylation. Tous ces facteurs peuvent être des facteurs de confusion
 pour l'étude d'association avec la maladie, ils ont d'ailleurs été pris en
-compte dans les études d'association qui ont été faites à partir des mêmes
-données que celle étudié ici cite:Rahmani_2016,Zou_2014,Liu_2013. Afin d'évaluer
-la capacité des méthodes à bien corriger pour les facteurs de confusion, nous
-ne prenons pas en compte les facteurs de confusion connus et nous comparons les
-résultats à ceux obtenus par les études cite:Rahmani_2016 et cite:Zou_2014 qui
-prennent en compte explicitement les facteurs de confusion connus.
+compte explicitement dans les études d'association qui ont été faites à partir
+des mêmes données que celles étudiées ici cite:Rahmani_2016,Zou_2014,Liu_2013.
+Afin d'évaluer la capacité des méthodes à bien corriger pour les facteurs de
+confusion, nous ne prenons pas en compte les facteurs de confusion connus et
+nous comparons les résultats à ceux obtenus par les études cite:Rahmani_2016 et
+cite:Zou_2014 qui prennent en compte explicitement les facteurs de confusion
+connus.
 
 De la même façon que dans cite:Zou_2014 nous avons filtré les sites avec un
-niveau de methylation moyen constitutif, c'est à inférieur à 0.2 ou supérieur à
-0.8. De plus, nous avons centré et divisé par l'écart type les données de
-méthylation. Nous avons ensuite lancé les méthodes cate, lm, PCAlm, sva-irw,
-sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de méthylation de
-l'ADN associés à la polyarthrite. Nous avons choisi $\K = 10$ pour le nombre de
-variable latentes (voir Figure ref:fig:ewas_params A et B). Pour $\K = 10$, les
-valeurs du paramètre de régularisation $L_{2}$ $\lambRidge$ entre $10^{-10}$ et
-$1$ donnent les mêmes valeurs d'erreur de prédiction moyen (Figure
-ref:fig:ewas_params C), nous avons choisi de prendre $\lambRidge = 10^{-5}$.
-Nous avons choisi une proportion de ligne non nulle pour l'estimateur $L_{1}$ de
-$\B$ valant 1\%.
+niveau de methylation moyen constitutif, c'est à dire inférieur à 0.2 ou
+supérieur à 0.8. De plus, nous avons centré et divisé par l'écart type les
+données de méthylation. Nous avons ensuite lancé les méthodes cate, lm, PCAlm,
+sva-irw, sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de
+méthylation de l'ADN associés à la polyarthrite. Nous avons choisi $\K = 10$
+pour le nombre de variables latentes (voir Figure ref:fig:ewas_params A et B).
+Pour $\K = 10$, les valeurs du paramètre de régularisation $L_{2}$ $\lambRidge$
+entre $10^{-10}$ et $1$ donnent les mêmes valeurs d'erreur de prédiction moyen
+(Figure ref:fig:ewas_params C), nous avons choisi de prendre $\lambRidge =
+10^{-5}$ pour ridgeLFMM. Nous avons choisi une proportion de lignes non nulles
+pour de $\B$ valant $1 \%$ pour lassoLFMM.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -1923,20 +1936,20 @@ $\B$ valant 1\%.
 \end{figure}
 #+END_EXPORT
 
-La figure A ref:fig:ewas_qqplot_top montre la distribution observé des \pvalues
-renvoyé par chaque méthode contre la distribution théorique suivit par des
-\pvalues sous l'hypothèse nulle. On constate une inflation du nombre de petites
-\pvalues pour toutes les méthodes. Il y à une forte inflation pour lm et
-sva-irw. La figure B ref:fig:ewas_qqplot_top quelle proportion dans candidat
-pour l'assocaition qui ont été identifié par cite:Zou_2014,Rahmani_2016 sont
-retrouvé dans les top liste pour chaque méthodes. Nous rappelons que les
-cadidats identifié par cite:Zou_2014,Rahmani_2016 ont été identifié en prenant
-en compte les facteurs latents tel que l'age le sex et des méthodes comparable à
-l'ACP pour identifier la conposition cellulaire. Toutes les méthode retrouve ses
-candidats dans leurs top 40 sauf lm et sva_irw. Pour la méthode lm il faut
-prendre le top 11881 pour trouver le premier candidat de
-cite:Zou_2014,Rahmani_2016 et le top 138038 pour tous les avoirs, pour la méthode
-sva-irw ses candidats son tous identifié entre le top 5111 et 87659. 
+La figure ref:fig:ewas_qqplot_top A montre la distribution observée des \pvalues
+pour chaque site de méthylation renvoyées par chaque méthode contre la
+distribution théorique hypothèse nulle. On constate une inflation du nombre de
+petites \pvalues pour toutes les méthodes. Il y à une forte inflation pour lm et
+sva-irw. La figure ref:fig:ewas_qqplot_top B montre la proportion des candidats
+identifiés par cite:Zou_2014,Rahmani_2016 qui sont retrouvé dans les top listes
+de chaque méthode. Nous rappelons que les candidats identifiés par
+cite:Zou_2014,Rahmani_2016 ont été identifié en prenant en compte les facteurs
+latents tel que l'age le sex et des méthodes comparables à l'ACP sur la matrice
+des niveaux de méthylation pour identifier la composition cellulaire. Toutes les
+méthodes retrouvent ces candidats dans leurs liste top 40 sauf lm et sva_irw. Pour la
+méthode lm il faut prendre le top 11881 pour trouver le premier candidat de
+cite:Zou_2014,Rahmani_2016 et le top 138038 pour tous les avoirs, pour la
+méthode sva-irw ses candidats son tous identifié entre le top 5111 et 87659.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -1951,21 +1964,21 @@ sva-irw ses candidats son tous identifié entre le top 5111 et 87659.
 #+END_EXPORT
 
 Enfin pour chaque méthode nous avons calculé la liste renvoyé quand on contrôle
-le taux de fausse découverte à 1\%. Toutefois les algorithme du FDR nécessite
-que les \pvalues soit correctement calibrées. Pour cela nous avons les \pvalues
-grâce à la méthode présenté dans la partie [[sec:calibration]]. Le contrôle du taux
-de fausses découvertes à été fait à l'aide du package R qvalue cite:Storey_2011.
-La figure ref:fig:ewas_venn montre les intersections entre les méthodes. Nous
-avons écarté lm et sva-irw car il renvoyait des listes trop différentes des
-autres. L'intersection de toutes les listes ont une intersection de 19 sites de
-méthylation parmi laquelle on retrouve les 5 candidats identifiés dans
-cite:Zou_2014,Rahmani_2016.
+le taux de fausse découverte (FDR) à $1 \%$. Toutefois les algorithmes de contrôle
+du FDR nécessitent que les \pvalues soient correctement calibrées. Pour cela
+nous avons calibrées les \pvalues grâce à la méthode présenté dans la partie
+[[sec:calibration]]. Le contrôle du FDR a été fait à l'aide du package R qvalue
+cite:Storey_2011. La figure ref:fig:ewas_venn montre les intersections entre les
+méthodes. Nous avons écarté lm et sva-irw car ils renvoyaient des listes trop
+différentes des autres. Parmi les 19 sites de méthylation renvoyés par toutes
+les méthodes on retrouve les 5 candidats identifiés dans cite:Zou_2014 et
+cite:Rahmani_2016.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/ewas_venn.pdf.png}
-\caption{A) Diagramme de Venn de la liste des candidats controlés à un taux de
+\caption{Diagramme de Venn de la liste des candidats controlés à un taux de
   fausses de découvertes de 1 \%.}
 \label{fig:ewas_venn}
 \end{figure}
@@ -3174,8 +3187,10 @@ CLOSED: [2017-08-06 Sun 14:25]
 - State "DONE"       from              [2017-08-06 Sun 14:25]
 :END:
 
-****** TODO Choix des paramètres
+****** DONE Choix des paramètres
+CLOSED: [2017-08-29 mar. 11:46]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-29 mar. 11:46]
 - State "TODO"       from "DONE"       [2017-08-21 lun. 17:19]
 - State "DONE"       from "TODO"       [2017-08-08 mar. 15:08]
 - State "TODO"       from              [2017-08-08 mar. 14:28]
@@ -3232,11 +3247,11 @@ CLOSED: [2017-08-06 Sun 14:25]
     group_by(lambda, K) %>%
     summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
     ungroup()
-  plC <- ggplot(toplot, aes(x = log(lambda), y = err.mean, color = K)) +
+  plC <- ggplot(toplot, aes(x = log10(lambda), y = err.mean, color = K)) +
     geom_point() + 
     geom_errorbar(aes(ymin = err.mean - se,
                       ymax = err.mean + se,
-                      width = 1)) +
+                      width = 0.5)) +
     geom_line() +
     xlab(TeX("Paramètre de regularisation $L_{2}$ en échelle logarithmique ($\\lambda$)")) +
     ylab("Erreur de\nprédiction") +
@@ -3445,31 +3460,30 @@ CLOSED: [2017-08-09 mer. 13:56]
 [[./OUTPUT/Rplots/ewas_top_power_all.png]]
 [[./OUTPUT/Rplots/ewas_venn.png]]
 
-
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
 <<sec:gwas>>
 
-La maladie \celiac est une maladie auto-imune ayant une prévalence de près de
-$1\%$ dans la population général cite:Gujral_2012. Bien que les mécanismes
-d'apparition de cette maladie ne soit pas compris des études montres de forte
-association avec certains gène cite:dubois2010multiple; lassant envisager des
-causes génétiques à la maladie. Comme la maladie \celiac est très étudié faire
+La maladie \celiac est une maladie auto-immune ayant une prévalence de près de
+$1 \%$ dans la population générale cite:Gujral_2012. Bien que les mécanismes
+d'apparition de cette maladie ne soit pas compris des études montres de fortes
+associations avec certains gènes cite:dubois2010multiple; lassant envisager des
+causes génétiques à la maladie. Comme la maladie \celiac est très étudiée faire
 une étude d'association de celle-ci avec des données génomiques constitue un bon
-test pour les méthodes de corréction pour les variables latentes. Nous pourrons
+test pour les méthodes de correction pour les variables latentes. Nous pourrons
 en effet comparer nos résultats à ceux des nombreuses autres GWAS de la maladie
-\celiac. Pour cela nous avons utilisé GWAS catalog pour récupérer les SNPs ayant
-été identifié dans d'autre étude comme étant associé avec la maladie \celiac.
-Par ailleurs, nous s'avons que la stratification des individus en sous
-population peut être un facteur de confusion dans les GWAS. Il est habituelle de
+\celiac. Pour cela nous avons utilisé le GWAS catalog pour récupérer les SNPs
+ayant été identifié dans d'autres études comme étant associés avec la maladie
+\celiac. Par ailleurs, nous s'avons que la stratification des individus en sous
+populations peut être un facteur de confusion dans les GWAS. Il est habituel de
 corriger les GWAS en utilisant les scores de l'ACP des données génétiques pour
 représenter la structure de population cite:Price_2006. Nous proposons ici de
 faire une étude d'association entre la maladie \celiac et des données génétique
 présentées dans cite:dubois2010multiple. Ces données comportent 281122 SNPs
 (single nucléotyde polimorphism) pour 15155 individus, 10659 individus sains et
-4496 atteint de la maladie \celiac. Ce que nous appelons SNP est la mesure pour
-une position données du génome, que l'on appel locus, du nucléotyde présent chez
-les individu. On parle de "single nucléotyde polimorphism" car on s'intéresse
-seulement au locus pour lesquels on a observé seulement deux variants dans la
+4496 atteints de la maladie \celiac. Ce que nous appelons SNP est la mesure pour
+une position donnée du génome, que l'on appel locus, du nucleotide présent chez
+l'individu observé. On parle de "single nucléotyde polimorphism" car on s'intéresse
+seulement aux locus pour lesquels on a observé seulement deux variants dans la
 population étudiée. Il faut de plus que le variant le moins fréquent soit au
 moins observé chez $5\%$ des individus de la population. Ainsi pour cette GWAS
 la matrice des variables expliquées est composée de 0, 1 et 2.
@@ -3477,34 +3491,33 @@ la matrice des variables expliquées est composée de 0, 1 et 2.
 Avant de lancer les méthodes d'étude d'association nous avons filtré les données
 génétique afin de garder seulement les SNPs ayant le variant le moins fréquent
 présent dans au moins $5\%$ des observations. Nous avons de plus filtré les
-individus aparenté, pour cela on mesure la probabilité qu'une séquence
+individus trop apparentés, pour cela on mesure la probabilité qu'une séquence
 consécutive de SNPs prise chez deux individus différents soit identique et si
 celle-ci est supérieur à $0.08$ nous ne gardons qu'un des deux individus. Il est
-connu que les SNPs sont corrélé le long du génome, nous avons donc filtrer les
-SNPs trop corrélé entre eux, cette étape est idéntifié dans la litérature comme
-LD pruning. Pour cela, pour chaque SNPs nous gardons que le SNIPs de variance
-maximum sur une fenêtre de 100 SNPs et cela sur les SNPs ayant un coéficient de
-corélation liénaire au carré est supérieure à $0.2$, cela nous a permis
-d'identifier un sous ensemble de 80275 SNPs. Ces opérations de titrage on été
-faite à l'aide du logiciel plink cite:Purcell_2007. Enfin nous avons utilisé
-beagle pour imputer les données manquante de la matrice de SNPs
+connu que les SNPs sont corrélés le long du génome, nous avons donc filtrer les
+SNPs trop corrélé entre eux, cette étape est identifié dans la littérature comme
+le LD pruning. Pour cela, pour chaque SNP nous ne gardons que le SNP de variance
+maximum sur une fenêtre de 100 SNP et cela sur les SNP ayant un coefficient de
+corélation linéaire au carré qui est supérieure à $0.2$, cela nous a permis
+d'identifier un sous ensemble de 80275 SNPs. Ces opérations de filtrage ont été
+faites à l'aide du logiciel plink cite:Purcell_2007. Enfin nous avons utilisé
+beagle pour imputer les données manquantes de la matrice de SNPs
 cite:Browning_2016. Nous obtenons finalement un jeux de données composée 281122
 SNPs et 15155 individus.
 
 Afin d'estimer les variables latentes pour corriger le test d'association entre
-les SNPS et la maladie \celiac nous avons lancé les méthodes lm, lmPCA, cate,
+les SNPs et la maladie \celiac nous avons lancé les méthodes lm, lmPCA, cate,
 ridgeLFMM et lassoLFMM sur le sous ensemble de SNPs identifié par l'étape de LD
 pruning. Par la suite, nous avons effectué le test d'hypothèse présenté dans la
-partie [[sec:hypothese]] sur le jeux de données génétique complet mais avec
-l'estimation des variables latentes calculé sur le sous ensemble de SNPs. Nous
+partie [[sec:hypothese]] sur le jeux de données génétiques complet mais avec
+l'estimation des variables latentes calculée sur le sous ensemble de SNPs. Nous
 avons choisi 9 variables latentes (voir Figure ref:fig:gwas_params A et B). 
 
-La
-validation croisée du paramètre $\lambRidge$ pousse a choisir une valeur grande
-($10^{10}) ne permet pas de conclure (Figure
-ref:fig:gwas_params C), nous avons choisi $1e^{-5}$ car nous avons remarqué dans
-nos expérimentation que les petites valeurs du paramètres de régularisation
-$L_{2}$ donne les meilleur résultats. 
+La validation croisée du paramètre $\lambRidge$ pousse à choisir une valeur
+grande ($10^{10}) ne permet pas de conclure (Figure ref:fig:gwas_params C), nous
+avons choisi $1e^{-5}$ car nous avons remarqué dans nos expérimentation que les
+petites valeurs du paramètres de régularisation $L_{2}$ donne les meilleur
+résultats.
 
 Enfin comme on s'attend à detecter un
 petit nombre d'association nous avons choisi une proportion de ligne non nulle
@@ -3527,16 +3540,16 @@ pour l'estimateur $L_{1}$ de $\B$ valant 1\%.
 \end{figure}
 #+END_EXPORT
 
-La figure A ref:fig:gwas_qqplot_top montre la distribution observé des \pvalues
-renvoyé par chaque méthode contre la distribution théorique suivit par des
-\pvalues sous l'hypothèse nulle. On constate que les méthodes sont toute bien
-calibré et que la méthode la plus libérale est lm alors que PCAlm est la méthode
-la plus conservative. La Figure ref:fig:gwas_qqplot_top B montre le nombre de
-SNPs idéntifié dans le GWAS catalog comme étant associé avec la maladie celiac
-qui sont retrouvé dans les top liste des différente méthodes. On observe que lm
-retrouve moins facilement dans sa top liste les candidats du GWAS catalogue
-($78\%$ des candidats du GWAS catalogue sont dans le top 3000 de lm contre
-$83\%$ pour PCAlm et $88\%$ pour les trois méthodes restantes). 
+La figure ref:fig:gwas_qqplot_top A montre la distribution observée des \pvalues
+renvoyé par chaque méthode contre la distribution théorique sous l'hypothèse
+nulle. On constate que les méthodes sont toutes bien calibrées et que la méthode
+la plus libérale est lm alors que PCAlm est la méthode la plus conservative. La
+Figure ref:fig:gwas_qqplot_top B montre le nombre de SNPs identifiés dans le
+GWAS catalog comme étant associés avec la maladie \celiac qui sont retrouvés
+dans les top listes des différente méthodes. On observe que lm retrouve moins
+facilement dans sa top liste les candidats du GWAS catalogue, $78\%$ des
+candidats du GWAS catalogue sont dans le top 3000 de lm contre $83\%$ pour PCAlm
+et $88\%$ pour cate, ridgeLFMM et lassoLFMM.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -3551,12 +3564,12 @@ $83\%$ pour PCAlm et $88\%$ pour les trois méthodes restantes).
 #+END_EXPORT
 
 Enfin pour chaque méthode nous avons calculé la liste renvoyée quand on contrôle
-le taux de fausse découverte à 1\%, nous avons procédé de la même façon que pour
+le FDR à 1\%, nous avons procédé de la même façon que pour
 l'EWAS pour calculer cette liste (voir section [[sec:ewas]]). La Figure
-ref:fig:gwas_venn montre l'intersection des listes de candidats controlés a un
+ref:fig:gwas_venn montre l'intersection des listes de candidats contrôlés à un
 FDR de $1\%$ entre les méthodes. C'est PCAlm qui donne la plus petite liste à
 FDR contrôlé avec 777 candidats. Les méthodes cate et lm donne la plus grande
-liste avec 1319 candidats. Nous constatons que l'intersection des liste à FDR
+liste avec 1319 candidats. Nous constatons que l'intersection des listes à FDR
 contrôlé de toutes les méthodes ne contient que $28\%$ des candidats du GWAS
 catalog.
 
@@ -4234,6 +4247,8 @@ GRCh38.
 #+end_example
 ***** RUNNING Scree plot
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-08-29 mar. 12:01]
+- State "DONE"       from "RUNNING"    [2017-08-29 mar. 11:56]
 - State "RUNNING"    from "TODO"       [2017-08-21 lun. 17:59]
 - State "TODO"       from "DONE"       [2017-08-21 lun. 17:19]
 - State "DONE"       from "RUNNING"    [2017-07-30 Sun 11:28]
@@ -4279,7 +4294,7 @@ GRCh38.
   svd.res <- svd(Y,0,0)
   df.res <- tibble(index = seq_along(svd.res$d), singular.value = svd.res$d) %>%
     mutate(var.expl = singular.value / sum(singular.value))
-  save_expr(expr, "gwas_screeplot_expr.rds")
+  save_expr(df.res, "gwas_screeplot_expr.rds")
 
   ## plot
   pl <- ggplot(df.res, aes(x = index, y = var.expl)) +
@@ -4804,10 +4819,8 @@ CLOSED: [2017-08-07 lun. 18:12]
   MaTheseR.params <- get_MaTheseRparams()
 
   ## screeplot
-  expr <- readRDS("./OUTPUT/Expr/gwas_screeplot_expr.rds")
-  toplot <- expr$df.res %>%
-      mutate(lambda = as.factor(lambda))
-  plA <- ggplot(toplot, aes(x = index, y = singular.value, color = lambda)) +
+  df.res <- readRDS("./OUTPUT/Expr/gwas_screeplot_expr.rds")
+  plA <- ggplot(df.res, aes(x = index, y = var.expl)) +
     geom_point() +
     coord_cartesian(xlim = c(1,50)) +
     xlab(TeX("Nombre de variables latentes ($K$)")) +
@@ -4868,9 +4881,12 @@ CLOSED: [2017-08-07 lun. 18:12]
 #+end_src
 
 #+RESULTS: code:gwas_screeplot_CV
-[[./OUTPUT/Rplots/gwas_screeplot.png]]
-[[./OUTPUT/Rplots/gwas_CV_K.png]]
-[[./OUTPUT/Rplots/gwas_CV_lambda.png]]
+: Error in readRDS("./OUTPUT/Expr/gwas_screeplot_expr.rds") : 
+:   error reading from connection
+: [[./OUTPUT/Rplots/gwas_screeplot.png]]
+: [[./OUTPUT/Rplots/gwas_CV_K.png]]
+: [[./OUTPUT/Rplots/gwas_CV_lambda.png]]
+: [[./OUTPUT/Rplots/gwas_hyperparams.pdf.png]]
 
 ****** TODO Résultats des méthodes
 :LOGBOOK:
@@ -5096,49 +5112,51 @@ Removed 344 rows containing non-finite values (stat_qq).
 *** Étude d'association entre des données génétiques et un gradient environmental (GEAS)
 <<sec:GEAS>>
 
-Depuis Darwin nous s'avons que les organismes vivant s'adapte a leur en
-ivironement cite:Darwin. Ainsi les orgnasime les mieux adapté à leur habitat on
-plus de chance de survivre et de se reproduire. Si l'avantage adaptatif à des
-cause génétique, c'est à dire qu'il existe une combinaison de gènes qui confère
-a l'organisme une fonction lui permet d'etre mieux adapté a son habitat, alors
-le patrimoine génétique qui confère l'avantage sera tranmis aux futures
-génération. On peut donc alors chercher a detecter les signatures génétique
-laissé par l'adptation à un envorinement. C'est l'objectif des associations
-génétique-environement. Pour cela nous avons récupéré les données génétiques du
-projet 1000génome phase 3 cite:1000Genome_2015. Ces données regroupes $84.4$
-million de variants génétiques pour 2506 individus venant de 26 populations
-différentes. Par ailleurs nous avons récupéré des données climatiques de la base
-de données WorldClim 2.0 cite:Fick_2017. L'objectif est alors de comparer les
-résutats de l'étude d'assoication entre les données du 1000Genome et un gradient
-envorinmental calculé à partir des données WorlClim. 
+Depuis Darwin nous s'avons que les organismes vivants s'adaptent à leur
+environnement cite:Darwin. Ainsi les organismes les mieux adaptées à leur
+habitat on plus de chance de survivre et de se reproduire. Si l'avantage
+adaptatif à des causes génétiques, c'est à dire qu'il existe une combinaison de
+gènes qui confère à l'organisme une fonction lui permet d'être mieux adapté à
+son habitat, alors le patrimoine génétique qui confère l'avantage adaptatif sera
+transmis aux futures générations. On peut donc alors chercher à détecter les
+signatures génétiques laissé par l'adaptation à un environnement. C'est
+l'objectif des associations génotype-environement. Pour cela nous avons récupéré
+les données génétiques du projet 1000Genome phase 3 cite:1000Genome_2015. Ces
+données regroupes $84.4$ million de variants génétiques pour 2506 individus
+venant de 26 populations différentes. Par ailleurs nous avons récupéré des
+données climatiques à partir de la base de données WorldClim 2.0 cite:Fick_2017.
+Nous avons comparé les résultats des méthodes lm, PCAlm, cate, ridgeLFMM et
+lassoLFMM lancé sur d'association entre les données du 1000Genome et un
+gradient environnemental.
 
 De la même facon que pour la GWAS nous avons filtrer les individus trop
-apparenté et les variants génétiques pas assez fréquents (voir Partie [[sec:gwas]]).
-De plus pour faire une étude d'association entre un génotype et un environement
-il faut garder des individus qui vive dans leur habitat depuis plusieurs
-générations, nous avons donc enlever les populations afro-américaine et
-africaine des caraïbes. Il reste 1409 individus et 5397214 locus. Enfin, de la
-même facon que dans la GWAS nous avons identifier un sous ensemble de 296948
-grace au LD pruning. Nous utilisons ce sous ensembled e locus pour calculer les
-variables latentes avec les méthodes PCAlm, cate, lassoLFMM et ridgeLFMM. On
-calcule ensuite des \pvaleurs pour chacun des 5397214 locus grace au test
-d'hypothèse présenté dans la partie [[sec:hypothese]].
+apparentés et les variants génétiques pas assez fréquents (voir Partie
+[[sec:gwas]]). De plus pour faire une étude d'association entre un génotype et un
+environnemental, il faut garder les individus qui vivent dans leur habitat
+depuis plusieurs générations, nous avons donc enlever les populations
+afro-américaine et africaine des caraïbes. Il reste alors 1409 individus et
+5397214 locus. Enfin, de la même façon que pour la GWAS nous avons identifié un
+sous ensemble de 296948 grâce au LD pruning des 5397214 locus. Nous avons
+utilisé ce sous ensemble de locus pour calculer les variables latentes avec les
+méthodes PCAlm, cate, lassoLFMM et ridgeLFMM. Nous avons calculé ensuite des
+\pvaleurs pour chacun des 5397214 locus grâce au test d'hypothèse présenté dans
+la partie [[sec:hypothese]].
 
-Afin de calculer le gradient environnemental utilisé dans l'étude d'assocaition
-nous avons attribué un position géographique a chaque individu en prenant la
-capital de leur pays d'origine. Cela nous a parmis de recupérer les données de
-la base WorlClim. Nous ne gardons que la première composante principale des
-variables revoyé par la base Wordclim. La Figure ref:fig:eas_gradient rerpésente
-la valeur du gradient climatique pour chaque population. On remarque que celui
-ci est très corélé avec la latitue. Comme les population sont à différente
-latitute il y a de la corrélation entre la structure de population et le
-gradient envorinmental.
+Afin de calculer le gradient environnemental utilisé pour l'étude d'assocaition
+nous avons attribué une position géographique à chaque individu en prenant la
+capital de leur pays d'origine. Cela nous a parmi de récupérer les données de la
+base WorlClim pour les position géographique ainsi calculées. Nous ne gardons
+que la première composante principale des variables de la base Wordclim.
+La Figure ref:fig:eas_gradient représente la valeur du gradient climatique pour
+chaque population. On remarque que celui-ci est très corrélé avec la latitude.
+Comme les populations sont à différentes latitudes il y a de la corrélation entre
+la structure de population et le gradient environnemental.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/eas_climatic_gradient.pdf.png}
-\caption{Gradient climatique utilisé pour l'assocaition génome-environement.}
+\caption{Gradient climatique $\X$ utilisé pour l'association génotype-environement.}
 \label{fig:eas_gradient}
 \end{figure}
 #+END_EXPORT
@@ -5148,8 +5166,8 @@ variables latentes. Ce choix à été motivé par la décroissance des valeurs p
 représenté par la Figure ref:fig:eas_params A. Les erreurs de prédiction
 calculées à partir de la validation croisée donne des résultat compliqué a
 interpréter (Figure ref:fig:eas_params B et C). Nous avons choisi $\lambdaRidge
-= 10^{-5}$ pour l'estimateur $L_{2}$ et une proportion de ligne non nulle de
-pour de $\B$ valant 1\% l'estimateur $L_{1}$.
+= 10^{-5}$ pour ridgeLFMM et une proportion de lignes non nulles de $\B$
+valant $1 \%$ pour lassoLFMM.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -5167,6 +5185,7 @@ pour de $\B$ valant 1\% l'estimateur $L_{1}$.
 \label{fig:eas_params}
 \end{figure}
 #+END_EXPORT
+
 
 
 **** Scripts                                                    :noexport:
@@ -7916,8 +7935,10 @@ On fait un pruning plus fort que celui de [[code:1000g_prunning]]
 #+end_example
 
 ***** DONE Annotation VEP
-CLOSED: [2017-08-22 mar. 15:31]
+CLOSED: [2017-08-29 mar. 14:51]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-29 mar. 14:51]
+- State "RUNNING"    from "DONE"       [2017-08-29 mar. 08:35]
 - State "DONE"       from "RUNNING"    [2017-08-22 mar. 15:31]
 - State "RUNNING"    from "TODO"       [2017-08-22 mar. 12:41]
 - State "TODO"       from              [2017-08-22 mar. 11:53]
@@ -7955,7 +7976,7 @@ run vep option : [[http://www.ensembl.org/info/docs/tools/vep/script/vep_options
 #+CAPTION: Dépend de [[code:1000g_vep_input]]
 #+begin_src shell
   cd ~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/
-  vep --cache -i vep.input.txt -o vep.output.txt --force
+  vep --cache -i vep.input.txt -o vep.output.txt --force --variant_class --sift b
 #+end_src
 
 #+NAME: code:1000g_vep_output
@@ -7964,6 +7985,26 @@ run vep option : [[http://www.ensembl.org/info/docs/tools/vep/script/vep_options
   vep.output <- data.table::fread("./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.txt", skip = "#Uploaded_variation", data.table = FALSE, na.strings = "-")
 
   vep.output <- vep.output %>% as_tibble()
+
+  ## add column
+  library(stringr)
+
+  IMPACT <- vep.output$Extra %>%
+    str_match(pattern = "IMPACT=([:alnum:]*);?")
+  unique(IMPACT[,2])
+  anyNA(IMPACT[,2])
+
+  SIFT <- vep.output$Extra %>%
+    str_match(pattern = "SIFT=([:alpha:]*)\\((.*)\\)[;]?")
+
+  vep.output <- vep.output %>%
+    mutate(IMPACT = as.factor(IMPACT[,2])) %>%
+    mutate(SIFT.score = as.numeric(SIFT[,3]),
+           SIFT.prediction = as.factor(SIFT[,2]))
+
+  pl <- ggplot(vep.output, aes(SIFT.score)) +
+    geom_histogram()
+
 
   ## add snps name
   G.matter <- readRDS("~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds")
@@ -7977,7 +8018,53 @@ run vep option : [[http://www.ensembl.org/info/docs/tools/vep/script/vep_options
   vep.output <- left_join(vep.output, snps.info, by = c('Location'))
 
   saveRDS(vep.output, "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
+
+  summary(vep.output)
 #+end_src
+
+#+RESULTS:
+#+begin_example
+  #Uploaded_variation   Location            Allele              Gene          
+   Length:18311186     Length:18311186    Length:18311186    Length:18311186   
+   Class :character    Class :character   Class :character   Class :character  
+   Mode  :character    Mode  :character   Mode  :character   Mode  :character  
+
+
+
+
+     Feature          Feature_type       Consequence        cDNA_position     
+   Length:18311186    Length:18311186    Length:18311186    Min.   :     1    
+   Class :character   Class :character   Class :character   1st Qu.:   390    
+   Mode  :character   Mode  :character   Mode  :character   Median :  1009    
+                                                            Mean   :  1977    
+                                                            3rd Qu.:  2299    
+                                                            Max.   :204149    
+                                                            NA's   :17780202  
+    CDS_position      Protein_position   Amino_acids           Codons         
+   Min.   :     1     Min.   :    1      Length:18311186    Length:18311186   
+   1st Qu.:   301     1st Qu.:  101      Class :character   Class :character  
+   Median :   768     Median :  256      Mode  :character   Mode  :character  
+   Mean   :  1632     Mean   :  544                                           
+   3rd Qu.:  1655     3rd Qu.:  552                                           
+   Max.   :106324     Max.   :35442                                           
+   NA's   :18123626   NA's   :18123626                                        
+   Existing_variation    Extra                IMPACT           SIFT.score      
+   Mode:logical       Length:18311186    HIGH    :   17099   Min.   :0         
+   NA's:18311186      Class :character   LOW     :   78582   1st Qu.:0         
+                      Mode  :character   MODERATE:  123794   Median :0         
+                                         MODIFIER:18091711   Mean   :0         
+                                                             3rd Qu.:0         
+                                                             Max.   :1         
+                                                             NA's   :18234190  
+      SIFT.prediction         snps          
+   deleterious:   44309   Length:18311186   
+   tolerated  :   32687   Class :character  
+   NA's       :18234190   Mode  :character  
+#+end_example
+
+Understanding variant consequence: 
+- [[https://www.ensembl.org/info/genome/variation/predicted_data.html#consequences][Ensembl Variation - Predicted data]]
+- [[http://gemini.readthedocs.io/en/latest/content/functional_annotation.html#columns-populated-by-snpeff-vep-tools][Annotation with snpEff or VEP]]
 
 ***** DONE Calcule du gradient climatique
 CLOSED: [2017-08-17 jeu. 11:52]
@@ -9040,15 +9127,8 @@ CLOSED: [2017-08-22 mar. 09:41]
 
   vep.output <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
 
-  vep.output <- vep.output %>%
-    mutate(Impact = sub("IMPACT=", "",sub(";.*", "", Extra)))
-
-  pl <- ggplot(vep.output, aes(x = Consequence)) +
-    geom_bar()
-  pl
-
-  mean(is.na(vep.output$Feature_type))
-
+  vep.output$Consequence %>% table()
+  vep.output$IMPACT %>% table() / nrow(vep.output)
 
   message("== vep annotation union ==")
   res.df.union <- res.df %>%
@@ -9057,6 +9137,26 @@ CLOSED: [2017-08-22 mar. 09:41]
     dplyr::left_join(vep.output, by = c('snps'))
 
 
+  res.df.union$IMPACT %>% table() / nrow(res.df.union)
+  res.df.union$Consequence %>% table()
+
+  message("== annotation lfmmRidge ==")
+  res.df.union <- res.df %>%
+    dplyr::filter(method %in% c("ridgeLFMM")) %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate(snps = colname) %>%
+    dplyr::left_join(vep.output, by = c('snps'))
+
+  res.df.union$IMPACT %>% table() / nrow(res.df.union)
+
+  message("== annotation cate ==")
+  res.df.union <- res.df %>%
+    dplyr::filter(method %in% c("cate")) %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate(snps = colname) %>%
+    dplyr::left_join(vep.output, by = c('snps'))
+
+  res.df.union$IMPACT %>% table() / nrow(res.df.union)
 #+end_src
 
 ****** TODO manhattan plot
@@ -9082,8 +9182,10 @@ CLOSED: [2017-08-22 mar. 09:41]
 - State "TODO"       from              [2017-08-17 jeu. 14:32]
 :END:
 
-****** TODO Gradient climatique
+****** DONE Gradient climatique
+CLOSED: [2017-08-29 mar. 11:46]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-29 mar. 11:46]
 - State "TODO"       from              [2017-08-21 lun. 14:48]
 :END:
 #+NAME: code:eas_climatic_gradient_plot
@@ -9099,7 +9201,7 @@ CLOSED: [2017-08-22 mar. 09:41]
 
   mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
   indiv.df <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df_2.rds")
-  pl <- ggplot(indiv.df, aes(x = lon, y = lat, color = X, size = X, text = `Population Description`)) +
+  pl <- ggplot(indiv.df, aes(x = lon, y = lat, color = X, text = `Population Description`)) +
     mapWorld + 
     geom_point() +
     MaTheseR.params$gtheme +
@@ -9199,15 +9301,108 @@ CLOSED: [2017-08-28 lun. 16:07]
 : [[./OUTPUT/Rplots/eas_CV_K.png]]
 : [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 : [[./OUTPUT/Rplots/eas_hyperparams.pdf.png]]
-****** TODO qqplot
+****** RUNNING qqplot and venn diagram
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-08-29 mar. 16:24]
 - State "TODO"       from              [2017-08-21 lun. 16:50]
 :END:
 
-****** TODO Diagrame de venn
-:LOGBOOK:
-- State "TODO"       from              [2017-08-21 lun. 16:50]
-:END:
+#+NAME: code:eas_ggplot_venn
+#+CAPTION: Dépend de [[code:eas_qvalue]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(gridExtra)
+  library(scales)
+  MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
+
+  res.df <- readRDS("./OUTPUT/Expr/eas_all_qvalue_df.rds")
+  ## filter and order method
+  res.df <- res.df %>%
+    transmute(method = factor(article3_method_name(method), method.ordered),
+              index = index,
+              pvalue = pvalue,
+              calibrated.pvalue = calibrated.pvalue,
+              qvalue = qvalue)
+  res.df$method %>% unique()
+
+  #############################################################################
+  ## qqplot
+
+  pl.qq <- ggplot(res.df, aes(sample = -log10(pvalue), color = method)) +
+    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
+    geom_abline(slope = 1, intercept = 0) +
+    gtheme +
+    scale_color_manual(name = "Méthodes", values = color.values) + 
+    theme(legend.position="bottom") +
+    xlab("Quantiles théoriques") +
+    ylab("Quantiles observés")
+
+  ## pl.qq
+  save_plot_png(pl.qq, filename = "eas_qqplot_notcalibrated_all.png")
+  save_plot_MaTheseR(pl.qq, "eas_qqplot_notcalibrated_all.pdf.png",
+                       height = 0.5 * MaTheseR.params$textheightcm,
+                       width = MaTheseR.params$textwidthcm)
+
+  #############################################################################
+  ## venn
+
+  toplot <- res.df %>%
+    dplyr::filter(qvalue <= 0.01)
+  sets <- list(cate = toplot$index[toplot$method == "cate"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"])
+
+  ## VennDiagram
+  inter <- function(...) {
+    id <- list(...)
+    res <- sets[[id[[1]]]]
+    for (i in id) {
+      res <- base::intersect(res, sets[[i]])
+    }
+    length(res)
+  }
+
+  venn <- VennDiagram::draw.quad.venn(
+                         area1 = inter(1),
+                         area2 = inter(2),
+                         area3 = inter(3),
+                         area4 = inter(4),
+                         n12 = inter(1,2),
+                         n13 = inter(1,3),
+                         n14 = inter(1,4),
+                         n23 = inter(2,3),
+                         n24 = inter(2,4),
+                         n25 = inter(2,5),
+                         n34 = inter(3,4),
+                         n123 = inter(1,2,3),
+                         n124 = inter(1,2,4),
+                         n134 = inter(1,3,4),
+                         n234 = inter(2,3,4),
+                         n245 = inter(2,4,5),
+                         n1234 = inter(1,2,3,4),
+                         category = names(sets),
+                         fill = color.values[names(sets)],
+                         cat.col = color.values[names(sets)],
+                         cat.cex = 1.2,
+                         margin = 0.07,
+                         ind = TRUE
+                       )
+
+  save_plot_png(venn, filename = "eas_venn.png")
+  save_plot_MaTheseR(venn, "eas_venn.pdf.png",
+                     height = 0.5 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
+
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/eas_venn.png]]
+[[./OUTPUT/Rplots/eas_qqplot_notcalibrated_all.png]]
 
 ** Discussion                                                     :noexport:
 ** SANDBOX                                                        :noexport:
