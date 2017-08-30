@@ -4245,8 +4245,10 @@ GRCh38.
    [1] "rs10903122" "rs859637"   "rs13010713" "rs1464510"  "rs1020388" 
    [6] "rs1738074"  "rs653178"   "rs1958589"  "rs1893217"  "rs157640" 
 #+end_example
-***** RUNNING Scree plot
+***** DONE Scree plot
+CLOSED: [2017-08-30 mer. 09:31]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-30 mer. 09:31]
 - State "RUNNING"    from "DONE"       [2017-08-29 mar. 12:01]
 - State "DONE"       from "RUNNING"    [2017-08-29 mar. 11:56]
 - State "RUNNING"    from "TODO"       [2017-08-21 lun. 17:59]
@@ -4312,6 +4314,8 @@ On prend K = 9 variables latentes.
 
 ***** RUNNING Validation croisée avec lfmmRidge
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-08-30 mer. 09:37]
+- State "DONE"       from "RUNNING"    [2017-08-30 mer. 08:42]
 - State "RUNNING"    from "DONE"       [2017-08-28 lun. 15:47]
 - State "DONE"       from "RUNNING"    [2017-08-28 lun. 11:53]
 - State "RUNNING"    from "STARTED"    [2017-08-17 Thu 18:17]
@@ -4573,10 +4577,43 @@ On prend K = 9 variables latentes.
 
 #+end_src
 
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_CV_lambda_lfmm_lambda_round2.png]]
 
-***** DONE Étude du jeu de données 
-CLOSED: [2017-07-28 ven. 09:25]
+#+NAME: code:gwas_CV_lambda_round2_encore
+#+CAPTION: Dépend de [[code:gwas_CV_lambda_round2]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## samplers
+  dat <- ExpRsampler_trueData(Y = "./Data/ThesisDataset/3Article/Celiac/G_clumped.rds",
+                              X = "./Data/ThesisDataset/3Article/Celiac/X.rds",
+                              outlier = NULL) %>% ExpRmouline()
+  n <- nrow(dat$Y)
+
+  lambdas <- c(1e-10, 1e5, 1e20)
+  cv <- method_CV_ridgeLFMM(n.fold.col = 2, n.fold.row = 5,
+                            lambdas = lambdas,
+                            Ks = 9)
+
+  ## run
+  res.cv <- ExpRmouline(cv, dat)
+
+  ## retrieve expr
+  res.cv.other <- readRDS("./OUTPUT/Expr/gwas_CV_lambda_lfmm_round2.rds")
+  res.cv$errs <- rbind(res.cv$errs,
+                       res.cv.other$errs)
+  save_expr(res.cv, "gwas_CV_lambda_lfmm_round2_encore.rds")
+
+  pl <- plot_CV_ridgeLFMM(res.cv$errs, major = "lambda")
+  save_plot_png(pl, "gwas_CV_lambda_lfmm_lambda_round2_encore.png")
+
+#+end_src
+
+
+***** RUNNING Étude du jeu de données 
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-08-30 mer. 09:28]
 - State "DONE"       from "RUNNING"    [2017-07-28 ven. 09:25]
 - Note taken on [2017-07-27 jeu. 13:50] \\
   tail -f /home/cayek/tmp/Logfiles/gwas_run.y2017_m07_d27.log
@@ -4606,41 +4643,27 @@ CLOSED: [2017-07-28 ven. 09:25]
   library(MaTheseR)
   library(MatrixFactorizationR)
   library(matter)
+  library(foreach)
+  library(doParallel)
 
+
+  nb.cluster <- 2
   ## param
-  K.method <- 9
-  lambda <- 1e-5
-  nozero.prop <- 0.01
+  param <- list(K.method = 9, lambda = 1e3,
+                nozero.prop = 0.01,lambda.K = 25,
+                relative.err.epsilon = 1e-6)
 
-  ## mask
-  col.mask <- readRDS("./Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
 
   ## methods
   methods <- list()
-  methods$m.lm <- method_lm(col.mask = col.mask,
-                            inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lm.rds",
-                            inter.res.file = "./OUTPUT/Expr/celiac_inter_lm.rds")
-  methods$m.ridgeLfmm <- method_ridgeLFMM(K = K.method,
-                                  col.mask = col.mask,
-                                  inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_ridgelfmm.rds",
-                                  inter.res.file = "./OUTPUT/Expr/celiac_inter_ridgelfmm.rds")
-  methods$m.pca <- method_PCAlm(K = K.method,
-                                col.mask = col.mask,
-                                inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_PCAlm.rds",
-                                inter.res.file = "./OUTPUT/Expr/celiac_inter_PCAlm.rds"
-                                )
-  methods$m.cate <- method_cate(K = K.method,
-                        col.mask = col.mask,
-                        inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_cate.rds",
-                        inter.res.file = "./OUTPUT/Expr/celiac_inter_cate.rds",
-                        hp = "lm"
-                        )
-  methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                              lambda.K = 25, relative.err.epsilon = 1e-6,
-                              col.mask = col.mask,
-                              inter.res.saving.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds",
-                              inter.res.file = "./OUTPUT/Expr/celiac_inter_lassolfmm.rds"
-                              )
+  methods$m.lm <- method_lm()
+  methods$m.ridgeLfmm <- method_ridgeLFMM(K = param$K.method, lambda = param$lambda)
+  methods$m.pca <- method_PCAlm(K = param$K.method)
+  methods$m.cate <- method_cate(K = param$K.method)
+  methods$m.lasso <- method_lassoLFMM(K = param$K.method,
+                                      nozero.prop = param$nozero.prop,
+                                      lambda.K = param$lambda.K,
+                                      relative.err.epsilon = param$relative.err.epsilon)
 
   run_celiac <- function(m) {
     message("=============== ", m$name)
@@ -4648,87 +4671,98 @@ CLOSED: [2017-07-28 ven. 09:25]
     Y <- "./Data/ThesisDataset/3Article/Celiac/G.matter.rds"
     X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
     outlier <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
-    dat <- LfmmMatterDat(Y, X, outlier)
+    dat <- MaTheseR::LfmmMatterDat(Y, X, outlier)
+    col.mask <- readRDS("./Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
+    out.file.res.df <- paste0("./OUTPUT/Expr/Celiac_df","_", m$name)
+    out.file.U <- paste0("./OUTPUT/Expr/Celiac_U","_", m$name)
 
-    out.file <- paste0("celiac_df_", m$name, ".rds")
-    out.file.path <- paste0("./OUTPUT/Expr/", out.file)
-    if (file.exists(out.file.path)) {
-      message("Reading ", out.file.path)
-      df <- readRDS(out.file.path)
-    } else {
-      message("Running method")
-      m <- ExpRmouline(m, dat)
+    if (!exist_res(m, out.file.res.df)) {
+      ## mask data
+      message("mask data")
+      dat.masked <- MatrixFactorizationR::LfmmDat(Y = NULL, X = dat$X, missing = FALSE)
+      dat.masked$Y <- dat$Y[,col.mask]
+
+      ## compute lattente variable
+      message("computing U")
+      if (!exist_res(m, out.file.U)) {
+        m.U <- ExpRmouline(m, dat.masked)
+        save_res(m, m.U, out.file.U)
+      } else {
+        m.U <- retrieve_res(m, out.file.U)
+      }
+
+      ## unmask
+      message("unmask data")
+      rm(dat.masked)
+      gc()
+
+      ## run HP
+      message("running HP")
+      X <- cbind(dat$X, m.U$U)
+      d <- ncol(dat$X)
+      hp <- MatrixFactorizationR::hypothesis_testing_lm(dat, X)
+      m$score <- hp$score[,1:d, drop = FALSE]
+      m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
+      m$B.hp <- hp$B[,1:d, drop = FALSE]
+      ## saving res
+      message("saving res.df")
       df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
-      ## save expr
-      message("Saving output in ", out.file)
-      save_expr(df, out.file)
+      save_res(m, df, out.file.res.df)
+    } else {
+      message("res.df exist !! ")
     }
-    df
   }
 
+
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  foreach(m = methods) %dopar% {
+    run_celiac(m)
+  }
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+
+  ## cbind res
   res.df <- tibble()
   for (m in methods) {
-    res.df <- run_celiac(m) %>%
-      rbind(res.df)
+    out.file.res.df <- paste0("./OUTPUT/Expr/Celiac_df","_", m$name)
+    if (exist_res(m, out.file.res.df)) {
+      message("=============== ", m$name)
+      res.df <- res.df %>%
+        rbind(retrieve_res(m, out.file.res.df))
+    }
   }
+
   save_expr(res.df, "celiac_all_df.rds")
 #+end_src
 
-#+RESULTS:
-#+begin_example
-  =============== lassoLFMM
-  Running method
-  mask data
-  Computing latent variables
-  It = 1/100, err2 = 0.999934015123588
-  It = 2/100, err2 = 0.994766206506411
-  === lambda = 0.130189891797758, no zero B proportion = 0.00059261140565309
-  It = 1/100, err2 = 0.994766373173339
-  === lambda = 0.0976286459727577, no zero B proportion = 0.000878334761950115
-  It = 1/100, err2 = 0.994765532716069
-  === lambda = 0.0732111562799394, no zero B proportion = 0.00126988158354233
-  It = 1/100, err2 = 0.994764638534954
-  === lambda = 0.05490062215286, no zero B proportion = 0.00164026371207552
-  It = 1/100, err2 = 0.994763845022762
-  === lambda = 0.0411696586411789, no zero B proportion = 0.0020106458406087
-  It = 1/100, err2 = 0.994763196094342
-  === lambda = 0.0308728886152139, no zero B proportion = 0.00292072764214737
-  It = 1/100, err2 = 0.994762606837317
-  It = 2/100, err2 = 0.99476121574158
-  === lambda = 0.0231514003979148, no zero B proportion = 0.0106352582621671
-  Saving intermediate res into./OUTPUT/Expr/celiac_inter_lassolfmm.rds
-  unmask data
-  running hp
-       pvalue   colname index outlier    score rep.sampler rep.method    method
-  1 0.5255378 rs3934834     1   FALSE 0.634847           1          1 lassoLFMM
-    method.K method.lambda
-  1        9            NA
-  Saving output in celiac_df_lassoLFMM.rds
-  Expr save in ./OUTPUT/Expr/celiac_df_lassoLFMM.rds
-
-#+end_example
 ****** Que donne la calibration
 
 #+NAME: code:gwas_expr_calibration
 #+CAPTION: Dépend de [[code:gwas_expr]]
 #+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   library(MaTheseR)
-  expr <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
 
-  expr %>%
+  res.df %>%
     group_by(method) %>%
     summarise(mad = mad[1], median = median[1])
 #+end_src
 
 #+RESULTS: code:gwas_expr_calibration
-: # A tibble: 5 x 3
-:      method      mad       median
-:       <chr>    <dbl>        <dbl>
-: 1      cate 1.052221  0.011781682
-: 2 lassoLFMM 1.045186  0.012433327
-: 3        lm 1.201294 -0.023610211
-: 4     PCAlm 1.037876  0.009601749
-: 5 ridgeLFMM 1.061488  0.007643094
+#+RESULTS:
+#+begin_example
+  # A tibble: 5 x 3
+       method      mad       median
+        <chr>    <dbl>        <dbl>
+  1      cate 1.052221  0.011781682
+  2 lassoLFMM 1.045186  0.012433327
+  3        lm 1.201294 -0.023610211
+  4     PCAlm 1.037876  0.009601749
+  5 ridgeLFMM 1.061488  0.007643094
+#+end_example
+
 ****** Gwas catalogue et controle du fdr
 
 #+NAME: code:gwas_expr_fdr
@@ -4854,7 +4888,7 @@ CLOSED: [2017-08-07 lun. 18:12]
   save_plot_png(plB, "gwas_CV_K.png")
 
   ## cross validation lambda
-  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lambda_lfmm_encore.rds")
+  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lambda_lfmm_round2.rds")
   toplot <- expr$errs %>%
     mutate(K = as.factor(K)) %>%
     group_by(lambda, K) %>%
@@ -4885,7 +4919,7 @@ CLOSED: [2017-08-07 lun. 18:12]
 :   error reading from connection
 : [[./OUTPUT/Rplots/gwas_screeplot.png]]
 : [[./OUTPUT/Rplots/gwas_CV_K.png]]
-: [[./OUTPUT/Rplots/gwas_CV_lambda.png]]
+ [[./OUTPUT/Rplots/gwas_CV_lambda.png]]
 : [[./OUTPUT/Rplots/gwas_hyperparams.pdf.png]]
 
 ****** TODO Résultats des méthodes
@@ -5090,7 +5124,6 @@ Removed 344 rows containing non-finite values (stat_qq).
 3 lassoLFMM 148728 0.0030905497       0.004813782   FALSE 0.8775510  3000
 4      cate  86890 0.0027882883       0.004325066   FALSE 0.8775510  3000
 5 ridgeLFMM 266748 0.0032799926       0.005477400   FALSE 0.8775510  3000
-[[./OUTPUT/Rplots/gwas_top_power_all.png]]
 Warning message:
 Removed 344 rows containing non-finite values (stat_qq).
 [[./OUTPUT/Rplots/gwas_qqplot_top.pdf.png]]
@@ -5162,6 +5195,9 @@ la structure de population et le gradient environnemental.
 #+END_EXPORT
 
 Nous avons lancer les méthodes cate ridgeLFMM, lassoLFMM et PCAlm avec 5
+
+Mais il y à ... pop .
+
 variables latentes. Ce choix à été motivé par la décroissance des valeurs propre
 représenté par la Figure ref:fig:eas_params A. Les erreurs de prédiction
 calculées à partir de la validation croisée donne des résultat compliqué a
@@ -5187,7 +5223,25 @@ valant $1 \%$ pour lassoLFMM.
 #+END_EXPORT
 
 
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/eas_qqplot_notcalibrated_all.pdf.png}
+\caption{Diagrame quantile-quantile de l'inverse du logarithme en base 10 des
+  \pvaleur renvoyé par chaques méthodes. Les quantiles théoriques suivent la loi
+  exponentielle.}
+\label{fig:geas_qqplot}
+\end{figure}
+#+END_EXPORT
 
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/eas_venn.pdf.png}
+\caption{}
+\label{fig:geas_venn}
+\end{figure}
+#+END_EXPORT
 **** Scripts                                                    :noexport:
 ***** DONE Téléchargement du jeux de données
 CLOSED: [2017-07-26 mer. 18:17]
@@ -8608,61 +8662,43 @@ CLOSED: [2017-08-17 Thu 18:09]
 - State "RUNNING"    from "TODO"       [2017-07-11 mar. 16:30]
 - State "TODO"       from              [2017-07-10 lun. 09:06]
 :END:
-****** DONE Run all methods
-CLOSED: [2017-08-21 lun. 17:28]
+****** RUNNING Run all methods
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-08-30 mer. 12:06]
 - State "DONE"       from "RUNNING"    [2017-08-21 lun. 17:28]
 - State "RUNNING"    from "TODO"       [2017-08-21 lun. 16:49]
 - State "TODO"       from              [2017-08-21 lun. 16:48]
 :END:
-#+NAME: code:eas_expr_rm
-#+CAPTION: Pour supprimer les résultats avant de relancer ! 
-#+begin_src shell :session *ssh krakenator*
-  cd ~/Projects/Thesis/MaThese/OUTPUT/Expr/
-  ## lm
-  rm -f eas_inter_lm.rds
-  rm -f eas_df_lm.rds
-  ## ridge
-  rm -f eas_inter_ridgeLFMM.rds
-  rm -f eas_df_ridgeLFMM.rds
-  ## lasso
-  rm -f eas_inter_lassoLFMM.rds
-  rm -f eas_df_lassoLFMM.rds
-  ## cate
-  rm -f eas_inter_cate.rds
-  rm -f eas_df_cate.rds
-  ## pca
-  rm -f eas_inter_PCAlm.rds
-  rm -f eas_df_PCAlm.rds
 
-  ls eas*.rds
-#+end_src
-
-#+RESULTS: code:eas_expr_rm
-
-#+NAME: code:eas_expr_lasso
-#+CAPTION: lassoLFMM est un peut plus long on va le lancer a coté. Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]] [[code:1000g_G_noNA_scaled]]
+#+NAME: code:eas_expr
+#+CAPTION: Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]] [[code:1000g_G_noNA_scaled]]
 #+begin_src R 
   library(MaTheseR)
   library(MatrixFactorizationR)
   library(matter)
+  library(foreach)
+  library(doParallel)
 
+
+  nb.cluster <- 1
   ## param
-  K.method <- 5
-  nozero.prop <- 0.01
+  param <- list(K.method = 9,
+                lambda = 1e-5,
+                nozero.prop = 0.01,
+                lambda.K = 25,
+                relative.err.epsilon = 1e-6)
 
-  ## mask
-  col.mask <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_ind_pruning.rds")
 
   ## methods
   methods <- list()
-  methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                                      lambda.K = 100, lambda.eps = 0.001, lambda = 9.5e-2,
-                                      relative.err.epsilon = 1e-6,
-                                      col.mask = col.mask,
-                                      inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lassoLFMM.rds",
-                                      inter.res.file = NULL
-                                      )
+  methods$m.lm <- method_lm()
+  methods$m.ridgeLfmm <- method_ridgeLFMM(K = param$K.method, lambda = param$lambda)
+  methods$m.pca <- method_PCAlm(K = param$K.method)
+  methods$m.cate <- method_cate(K = param$K.method)
+  methods$m.lasso <- method_lassoLFMM(K = param$K.method,
+                                      nozero.prop = param$nozero.prop,
+                                      lambda.K = param$lambda.K,
+                                      relative.err.epsilon = param$relative.err.epsilon)
 
   run_eas <- function(m) {
     message("=============== ", m$name)
@@ -8670,158 +8706,72 @@ CLOSED: [2017-08-21 lun. 17:28]
     Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds"
     X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds"
     outlier <- c()
-    dat <- LfmmMatterDat(Y, X, outlier)
+    dat <- MaTheseR::LfmmMatterDat(Y, X, outlier)
+    col.mask <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_ind_pruning.rds")
+    out.file.res.df <- paste0("./OUTPUT/Expr/Eas_df","_", m$name)
+    out.file.U <- paste0("./OUTPUT/Expr/Eas_U","_", m$name)
 
-    out.file <- paste0("eas_df_", m$name, ".rds")
-    out.file.path <- paste0("./OUTPUT/Expr/", out.file)
-    message("Running method")
-    m <- ExpRmouline(m, dat)
-    df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
-    ## save expr
-    message("Saving output in ", out.file)
-    save_expr(df, out.file)
-    df
-  }
+    if (!exist_res(m, out.file.res.df)) {
+      ## mask data
+      message("mask data")
+      dat.masked <- MatrixFactorizationR::LfmmDat(Y = NULL, X = dat$X, missing = FALSE)
+      dat.masked$Y <- dat$Y[,col.mask]
 
-  res.df <- tibble()
-  for (m in methods) {
-    res.df <- run_eas(m) %>%
-      rbind(res.df)
-  }
+      ## compute lattente variable
+      message("computing U")
+      if (!exist_res(m, out.file.U)) {
+        m.U <- ExpRmouline(m, dat.masked)
+        save_res(m, m.U, out.file.U)
+      } else {
+        m.U <- retrieve_res(m, out.file.U)
+      }
 
-#+end_src
+      ## unmask
+      message("unmask data")
+      rm(dat.masked)
+      gc()
 
-#+RESULTS:
-#+begin_example
-  =============== lassoLFMM
-  Running method
-  mask data
-  Computing latent variables
-  It = 1/100, err2 = 0.999290276780934
-  It = 2/100, err2 = 0.903643187921675
-  It = 3/100, err2 = 0.903566451059916
-  It = 4/100, err2 = 0.903540302588162
-  It = 5/100, err2 = 0.903537790776936
-  It = 6/100, err2 = 0.903543772139505
-  It = 7/100, err2 = 0.903547531654694
-  It = 8/100, err2 = 0.903549843083158
-  It = 9/100, err2 = 0.903551197197631
-  === lambda = 0.095, no zero B proportion = 0.0198856365424249
-  Saving intermediate res into./OUTPUT/Expr/eas_inter_lassoLFMM.rds
-  unmask data
-  running hp
-       pvalue     colname index outlier     score rep.sampler rep.method
-  1 0.6466421 rs575272151     1   FALSE 0.4585309           1          1
-       method method.K method.lambda
-  1 lassoLFMM        5         0.095
-#+end_example
-
-#+NAME: code:eas_expr
-#+CAPTION: Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]] [[code:1000g_G_noNA_scaled]]
-#+begin_src R
-  library(MaTheseR)
-  library(MatrixFactorizationR)
-  library(matter)
-
-  ## param
-  K.method <- 5
-  lambda <- 1e-5
-  nozero.prop <- 0.01
-
-  ## mask
-  col.mask <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_ind_pruning.rds")
-
-  ## methods
-  methods <- list()
-  methods$m.lm <- method_lm(col.mask = col.mask,
-                            inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lm.rds",
-                            inter.res.file = NULL
-                            )
-  methods$m.ridgeLfmm <- method_ridgeLFMM(K = K.method,
-                                  col.mask = col.mask,
-                                  inter.res.saving.file = "./OUTPUT/Expr/eas_inter_ridgeLFMM.rds",
-                                  inter.res.file = NULL
-                                  )
-  methods$m.pca <- method_PCAlm(K = K.method,
-                                col.mask = col.mask,
-                                inter.res.saving.file = "./OUTPUT/Expr/eas_inter_PCAlm.rds",
-                                inter.res.file = NULL
-                                )
-  methods$m.cate <- method_cate(K = K.method,
-                        col.mask = col.mask,
-                        inter.res.saving.file = "./OUTPUT/Expr/eas_inter_cate.rds",
-                        inter.res.file = NULL,
-                        hp = "lm"
-                        )
-  ## methods$m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-  ##                             lambda.K = 100, relative.err.epsilon = 1e-6,
-  ##                             col.mask = col.mask,
-  ##                             inter.res.saving.file = "./OUTPUT/Expr/eas_inter_lassoLFMM.rds",
-  ##                             inter.res.file = NULL
-  ##                             )
-
-  run_eas <- function(m) {
-    message("=============== ", m$name)
-    ## dat
-    Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds"
-    X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds"
-    outlier <- c()
-    dat <- LfmmMatterDat(Y, X, outlier)
-
-    out.file <- paste0("eas_df_", m$name, ".rds")
-    out.file.path <- paste0("./OUTPUT/Expr/", out.file)
-    if (file.exists(out.file.path)) {
-      message("Reading ", out.file.path)
-      df <- readRDS(out.file.path)
-    } else {
-      message("Running method")
-      m <- ExpRmouline(m, dat)
+      ## run HP
+      message("running HP")
+      X <- cbind(dat$X, m.U$U)
+      d <- ncol(dat$X)
+      hp <- MatrixFactorizationR::hypothesis_testing_lm(dat, X)
+      m$score <- hp$score[,1:d, drop = FALSE]
+      m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
+      m$B.hp <- hp$B[,1:d, drop = FALSE]
+      ## saving res
+      message("saving res.df")
       df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
-      ## save expr
-      message("Saving output in ", out.file)
-      save_expr(df, out.file)
+      save_res(m, df, out.file.res.df)
+    } else {
+      message("res.df exist !! ")
     }
-    df
   }
 
+
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  foreach(m = methods) %dopar% {
+    run_eas(m)
+  }
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+
+  ## cbind res
   res.df <- tibble()
   for (m in methods) {
-    res.df <- run_eas(m) %>%
-      rbind(res.df)
+    out.file.res.df <- paste0("./OUTPUT/Expr/Eas_df","_", m$name)
+    if (exist_res(m, out.file.res.df)) {
+      message("=============== ", m$name)
+      res.df <- res.df %>%
+        rbind(retrieve_res(m, out.file.res.df))
+    }
   }
+
   save_expr(res.df, "eas_all_df.rds")
+
 #+end_src
-
-#+NAME: code:eas_expr_log
-#+CAPTION: Dépend de [[code:eas_expr]]
-#+begin_src shell :session *ssh krakenator*
-  cdL
-  tail -n 20 eas_expr.y2017_m08_d17.log
-#+end_src
-
-#+RESULTS: code:eas_expr_log
-#+begin_example
-
-It = 25/100, err2 = 0.90324780008161
-It = 26/100, err2 = 0.903249905129517
-It = 27/100, err2 = 0.903251718074658
-It = 28/100, err2 = 0.903253280197275
-It = 29/100, err2 = 0.903254625943498
-It = 30/100, err2 = 0.903255784660473
-It = 31/100, err2 = 0.903256782150928
-=== lambda = 0.0428274462631357, no zero B proportion = 0.625362016245269
-Saving intermediate res into./OUTPUT/Expr/eas_inter_lassolfmm.rds
-unmask data
-running hp
-     pvalue     colname index outlier     score rep.sampler rep.method
-1 0.4445152 rs575272151     1   FALSE 0.7648066           1          1
-     method method.K method.lambda
-1 lassoLFMM        5            NA
-Saving output in eas_df_lassoLFMM.rds
-Expr save in ./OUTPUT/Expr/eas_df_lassoLFMM.rds
-save_expr(res.df, "eas_all_df.rds")
-Expr save in ./OUTPUT/Expr/eas_all_df.rds
-#+end_example
 
 ****** DONE Rbind results
 CLOSED: [2017-08-21 lun. 17:32]
@@ -8998,6 +8948,7 @@ CLOSED: [2017-08-22 mar. 09:41]
 
 ****** TODO Annotation Biomart
 :LOGBOOK:
+- State "TODO"       from "TODO"       [2017-08-30 mer. 10:22]
 - State "TODO"       from "DONE"       [2017-07-12 mer. 11:10]
 - State "DONE"       from              [2017-07-12 mer. 11:10]
 :END:
@@ -9115,6 +9066,9 @@ CLOSED: [2017-08-22 mar. 09:41]
 
 #+end_src
 
+#+RESULTS:
+[[./OUTPUT/Rplots/eas_inter_manhattan.png]]
+
 ****** TODO Annotation Vep
 :LOGBOOK:
 - State "TODO"       from              [2017-08-22 mar. 11:46]
@@ -9159,6 +9113,84 @@ CLOSED: [2017-08-22 mar. 09:41]
   res.df.union$IMPACT %>% table() / nrow(res.df.union)
 #+end_src
 
+****** TODO Annotation de l'intersection
+:LOGBOOK:
+- State "TODO"       from              [2017-08-30 mer. 10:15]
+:END:
+
+#+NAME: code:eas_inter_annotation
+#+CAPTION: Dépend de [[code:eas_load_res]] [[code:1000g_vep_output]]
+#+begin_src R 
+  require(MaTheseR)
+  library(stringr)
+
+  vep.output <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
+
+  ## filter FDR 1%
+  aux <- res.df %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate(snps = colname)
+
+  ## intersection
+  inter.list <- function(...) {
+    id <- list(...)
+      res <- sets[[id[[1]]]]
+    for (i in id) {
+      res <- base::intersect(res, sets[[i]])
+    }
+    res
+  }
+  sets <- list(cate = aux$index[aux$method == "cate"],
+               lassoLFMM = aux$index[aux$method == "lassoLFMM"],
+               ridgeLFMM = aux$index[aux$method == "ridgeLFMM"],
+               PCAlm = aux$index[aux$method == "PCAlm"]
+               )
+  inter.candidates.df <- aux %>%
+    dplyr::filter(index %in% inter.list(1,2,3,4),
+                  method == "cate") 
+  ## 84 candidates
+  length(inter.candidates.df$colname)
+
+  ## vep annotation
+  inter.candidates.df.vep <- inter.candidates.df %>%
+    dplyr::left_join(vep.output, by = c('snps')) %>%
+    mutate(chrm = str_replace(Location, ":[:digit:]*",""),
+           pos = str_replace(Location, "[:digit:]*:",""))
+
+
+  inter.candidates.df.vep$chrm
+  inter.candidates.df.vep$IMPACT %>% table()
+  inter.candidates.df.vep$Gene %>% table()
+  inter.candidates.df.vep$Consequence %>% table()
+
+  inter.candidates.df.vep %>% dplyr::filter(IMPACT == "MODERATE")
+
+  ## plot
+  pl <- ggplot(inter.candidates.df.vep, aes(x = pos, y = -log10(pvalue))) +
+    geom_point() +
+    facet_grid(~ chrm, scales = "free")
+  save_plot_png(pl, "eas_inter_manhattan.png")
+
+  ## biomart
+  require(biomaRt)
+  biomaRt::listMarts()
+  snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+
+  inter.candidates.df.biomart <- inter.candidates.df %>%
+    mutate_annotation(snp.db)
+
+  inter.candidates.df.vep$phenotype_name
+
+  ## 2 area
+  paste0("2:",
+         min(inter.candidates.df.vep$pos[inter.candidates.df.vep$chrm == "2"]),
+         "-",
+         max(inter.candidates.df.vep$pos[inter.candidates.df.vep$chrm == "2"]))
+  paste0("4:",
+         min(inter.candidates.df.vep$pos[inter.candidates.df.vep$chrm == "4"]),
+         "-",
+         max(inter.candidates.df.vep$pos[inter.candidates.df.vep$chrm == "4"]))
+#+end_src
 ****** TODO manhattan plot
 :LOGBOOK:
 - State "TODO"       from              [2017-07-12 mer. 11:11]
@@ -9301,8 +9333,10 @@ CLOSED: [2017-08-28 lun. 16:07]
 : [[./OUTPUT/Rplots/eas_CV_K.png]]
 : [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 : [[./OUTPUT/Rplots/eas_hyperparams.pdf.png]]
-****** RUNNING qqplot and venn diagram
+****** DONE qqplot and venn diagram
+CLOSED: [2017-08-30 mer. 08:42]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-30 mer. 08:42]
 - State "RUNNING"    from "TODO"       [2017-08-29 mar. 16:24]
 - State "TODO"       from              [2017-08-21 lun. 16:50]
 :END:
@@ -9405,6 +9439,69 @@ CLOSED: [2017-08-28 lun. 16:07]
 [[./OUTPUT/Rplots/eas_qqplot_notcalibrated_all.png]]
 
 ** Discussion                                                     :noexport:
+Les études d'association sont largement utilisé en biologie trouver des lien de
+corrélation des variables. Cependant une corrélation n'est pas une lien de
+causalité. Nous nous somme intressé dans ce chapitre à la situation ou une
+variable non observé induire des associations quand on ne les considère pas
+explicitement dans l'étude. Dans une tel situation on observe que une forte
+inflations les \pvalues renvoyé par la regression linéaire de $\Y$ par $\X$ dans
+les simulation numérique (Figure ref:fig:method_comp C et D) ainsi que dans l'
+EWAS (Figure ref:fig:ewas_qqplot_top A), la GWAS (Figure ref:fig:gwas_qqplot_top
+A) et la GEAS (Figure ref:fig:geas_qqplot A) que nous avons présentés dans ce
+chapitre. La forte inflation des \pvalues renvoyées par lm ne correspond pas
+seulement à une mauvaise calibration de celles-ci car dans les simulations que
+l'AUC obtenu par lm est largement inferieur à celui de la méthode oracle (Figure
+ref:fig:method_comp A et B) ainsi pour les études d'associations à partir de
+données lm donne les moins bon résultat quand il s'agit de retrouver des
+candidats validé par d'autre méthode (Figure ref:fig:ewas_qqplot_top B et Figure
+ref:fig:gwas_qqplot_top B). 
+
+Une méthode de correction pour les facteurs de confusion consite à consite à
+utiliser les scores de l'ACP pour apprendre les facteurs de confusions; nous
+l'avons nommé dans ce chapitre PCAlm. Sur les simulations numériques PCAlm
+renvoie des \pvalues bien calibré (Figure ref:fig:method_comp C et D) mais l'AUC
+de PCAlm décroit avec le nombre de variables associées et la corrélation entre
+les variables latentes et la variable explicative (Figure ref:fig:method_comp A
+et B). On retrouve le fait que les \pvalues sont bien calibré dans les étude sur
+des vrai de données (Figure ref:fig:ewas_qqplot_top A, Figure
+ref:fig:gwas_qqplot_top A et ref:fig:geas_qqplot). Les candidats trouvé par
+d'autr méthodes sont bien retrouvé par PCAlm (Figure ref:fig:ewas_qqplot_top B
+et Figure ref:fig:gwas_qqplot_top B). On peut supposer que PCAlm donne à de
+bonne performance sur la GWAS et l'EWAS car il y à peu de variables à détecter.
+De plus certain candidats trouvés dans d'autre étude ont trouvé avec
+des méthodes similaires à PCAlm cite:Rahmani_2016,Price_2006.
+
+Les deux méthodes SVA comparé dans ce chapitre donne des résultats similaires à
+PCAlm sur les simualtion numérique (Figure ref:fig:method_comp). La méthode
+sva-two-step donne des résultat très similaire à PCAlm sur l'EWAS alors que
+sva-two-step donne des résultats très atypique comparé aux autre méthode
+considéré pour l'EWAS. Avec les bons hyper paramètres, il est possible que sva-irw
+donnerait des résultats comparable autres méthodes. Cependant il n'y a aucune
+garentit de la convergence de sva-irw ce qui rend compliqué l'exploration pour
+trouver les bons hyper paramètres. 
+
+Nous proposons dans ce chapitre deux méthodes, ridgeLFMM et lassoLFMM, de
+correction des étude d'association pour les facteurs latents qui repose sur
+l'optimisation de fonctions objectifs. Sur les jeux de données simulées ces
+méthodes ont les mêmes performances que la méthode oracle (Figure
+ref:fig:method_comp), sont bien calibré sur les vrais jeux de données (Figure
+ref:fig:ewas_qqplot_top A, Figure ref:fig:gwas_qqplot_top A et
+ref:fig:geas_qqplot) et retrouve les candidats validé par la litératures (Figure
+ref:fig:ewas_qqplot_top B et ref:fig:gwas_qqplot_top B). Les performances
+globales de ces méthodes sont très comparable à la méthode cate. Bien que cate,
+ridgeLFMM et lassoLFMM ont des performances très similaire pour nos critère il
+existe tout de même des différence entre les liste de candidat renvoyé pas ces
+trois méthodes (Figure ref:fig:ewas_venn, Figure ref:fig:gwas_venn et Figure
+ref:fig:geas_venn). Dans les études d'association considéré ici il n'y a de
+vérité terrain et une méthodes peut toujours donner de meilleurs résultat qu'un
+autre sur des simulations bien choisis (citer no free lunch th). Ceux deux nouvelles méthodes s'ajoutes a
+l'arsenal es méthodes permettant de corriger pour les facteurs de confusion. Il
+serait interessant de mettre en évidence des situation mettant en défaut une
+méthodes par rapport a une autre. Il existe aussi des méthodes permmettant de
+combiner les résultats vennant de plusieurs méthodes, cela permet de d'augmanter
+la confiance que l'on a en les résultats d'une étude d'association (citer meta
+analysis).
+
 ** SANDBOX                                                        :noexport:
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
@@ -9427,6 +9524,10 @@ Voir cahier le 7/08/2017
 
 * Perspectives et conclusion 
 :LOGBOOK:
+- Note taken on [2017-08-30 mer. 11:58] \\
+  Le choix de K dans les étude d'association c'est ca le vrai pb !! une petite
+  experience qui montre que ca fait n'imp ?? genre sur la GEAS on augment K et on
+  compare les liste controlé à 1% ?
 - Note taken on [2017-08-10 jeu. 12:05] \\
   Les données manquante :D il y en a beaucoups dans les gandes données ! tess3r
   devrais être quand il y a des données manquante. Enfin si il prennait en compre
@@ -9487,7 +9588,7 @@ Voir cahier le 7/08/2017
   validation j'en aurai deja parlé !
 :END:
 
-
 bibliographystyle:apalike
 bibliography:../biblio.bib
 
+ 
