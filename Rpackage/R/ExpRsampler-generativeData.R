@@ -106,7 +106,7 @@ ExpRmouline.ExpRsampler_generativeData_BVcorrelated <- function(s) {
   ## syntheses
   Y = U %*% t(V) + X %*% t(B) + Epsilon
 
-  MatrixFactorizationR::SimulatedLfmmDat(Y = Y,
+  lfmm::SimulatedLfmmDat(Y = Y,
                                          X = X,
                                          outlier = outlier,
                                          U = U,

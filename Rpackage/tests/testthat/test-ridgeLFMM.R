@@ -82,7 +82,7 @@ test_that("test ridge lfmm avec ThesisRpackage", {
                         pca.file = pca.file,
                         rho.B = 1.0)
   dat <- sampl(s)
-  dat.rc <- MatrixFactorizationR::SimulatedLfmmDat(Y = dat$G,
+  dat.rc <- lfmm::SimulatedLfmmDat(Y = dat$G,
                                                    X = dat$X,
                                                    outlier = dat$outlier,
                                                    U = dat$U,

@@ -41,7 +41,7 @@ krakenator_push_hook:
 	scp ./hooks/post-receive.sh cayek@krakenator:/home/cayek/Gits/2017/MaThese.git/hooks/post-receive
 
 krakenator_deploy_all:
-	cd ../MatrixFactorizationR/; make krakenator_deploy
+	cd ../lfmm; make krakenator_deploy
 	cd ../ExpRiment/; make krakenator_deploy
 	make krakenator_deploy
 

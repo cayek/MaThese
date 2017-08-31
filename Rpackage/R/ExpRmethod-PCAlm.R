@@ -23,7 +23,7 @@ ExpRmouline.method_PCA <- function(m, dat) {
 
   if (!is.null(m$lambda)) {
     message("Lambda = ", m$lambda)
-    P.list <- MatrixFactorizationR::compute_P(dat$X, m$lambda)
+    P.list <- lfmm::compute_P(dat$X, m$lambda)
   } else {
     P.list <- list(sqrt.P = diag(1, nrow(dat$Y)))
   }
@@ -88,6 +88,6 @@ ExpRmouline.method_PCAlm <- function(m, dat) {
     m
   }
 
-  method_main(m, dat, main.fun, hp.func = MatrixFactorizationR::hypothesis_testing_lm)
+  method_main(m, dat, main.fun, hp.func = lfmm::hypothesis_testing_lm)
 }
 

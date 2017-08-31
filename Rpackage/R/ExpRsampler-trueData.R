@@ -14,14 +14,14 @@ ExpRsampler_trueData <- function(Y, X, outlier) {
 ##' @export
 ExpRmouline.ExpRsampler_trueData <- function(s) {
   if (!is.null(s$X)) {
-    dat <- MatrixFactorizationR::LfmmDat(s$Y, s$X)
+    dat <- lfmm::LfmmDat(s$Y, s$X)
   } else {
-    dat <- MatrixFactorizationR::Dat(s$Y)
+    dat <- lfmm::Dat(s$Y)
   }
   ## outlier
   dat$meta$outlier <- c()
   if (!is.null(s$outlier)) {
-    dat$meta$outlier <- MatrixFactorizationR::read_input(s$outlier)
+    dat$meta$outlier <- lfmm::read_input(s$outlier)
   }
   dat
 }

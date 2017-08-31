@@ -27,8 +27,8 @@ test_that("test matter", {
   aux2 <- dat$productY(x)
   expect_lte(mean(abs(aux1 - aux2 )), 1e-10)
 
-  hp1 <- MatrixFactorizationR::hypothesis_testing_lm(dat, dat$X)
-  hp2 <- MatrixFactorizationR::hypothesis_testing_lm(dat.big, dat.big$X)
+  hp1 <- lfmm::hypothesis_testing_lm(dat, dat$X)
+  hp2 <- lfmm::hypothesis_testing_lm(dat.big, dat.big$X)
   expect_lte(mean(abs(hp1$pvalue - hp2$pvalue)), 1e-10)
 
 })

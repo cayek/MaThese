@@ -36,7 +36,7 @@ ExpRmouline.method_cate <- function(m, dat) {
   if (m$hp[1] == "cate") {
     method_main(m, dat, main.fun, hp.func = NULL)
   } else if (m$hp[1] == "lm") {
-    method_main(m, dat, main.fun, hp.func = MatrixFactorizationR::hypothesis_testing_lm)
+    method_main(m, dat, main.fun, hp.func = lfmm::hypothesis_testing_lm)
   }
 }
 

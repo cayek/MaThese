@@ -17,6 +17,6 @@ ExpRmouline.method_lm <- function(m, dat) {
     list()
   }
 
-  method_main(m, dat, main.fun, hp.func = MatrixFactorizationR::hypothesis_testing_lm)
+  method_main(m, dat, main.fun, hp.func = lfmm::hypothesis_testing_lm)
 
 }

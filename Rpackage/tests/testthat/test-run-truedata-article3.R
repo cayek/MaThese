@@ -22,7 +22,7 @@ test_that("true dataset article 3 sur un petit sample", {
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
   m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                              lambda.K = 25, relative.err.epsilon = 1e-6)
+                              lambda.num = 25, relative.err.epsilon = 1e-6)
   m.lm <- method_lm()
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)

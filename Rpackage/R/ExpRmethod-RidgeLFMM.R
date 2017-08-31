@@ -17,13 +17,13 @@ ExpRmouline.method_ridgeLFMM <- function(m, dat) {
 
   ## ridge lfmm main
   main.fun <- function(m, dat) {
-    lfmm <- MatrixFactorizationR::ridgeLFMM(K = m$K,
+    lfmm <- lfmm::ridgeLFMM(K = m$K,
                                             lambda = m$lambda)
-    lfmm <- MatrixFactorizationR::MatrixFactorizationR_fit(lfmm, dat)
+    lfmm <- lfmm::lfmm_fit(lfmm, dat)
     lfmm
   }
 
-  method_main(m, dat, main.fun, hp.func = MatrixFactorizationR::hypothesis_testing_lm)
+  method_main(m, dat, main.fun, hp.func = lfmm::hypothesis_testing_lm)
 }
 
 ##' @export
@@ -38,9 +38,9 @@ method_CV_ridgeLFMM <- function(n.fold.row, n.fold.col, lambdas , Ks) {
 
 ##' @export
 ExpRmouline.method_CV_ridgeLFMM <- function(m, dat) {
-  lfmm <- MatrixFactorizationR::ridgeLFMM(K = NULL,
+  lfmm <- lfmm::ridgeLFMM(K = NULL,
                                           lambda = NULL)
-  m$errs <- MatrixFactorizationR::MatrixFactorizationR_CV(m  = lfmm, dat = dat,
+  m$errs <- lfmm::lfmm_CV(m  = lfmm, dat = dat,
                                                           n.fold.row = m$n.fold.row,
                                                           n.fold.col = m$n.fold.col,
                                                           Ks = m$Ks,

@@ -17,7 +17,7 @@ get_MaTheseRparams<- function() {
 #' @import ggplot2
 #' @import dplyr
 #' @import tidyr
-#' @import MatrixFactorizationR
+#' @import lfmm
 #' @import ExpRiment
 #' @importFrom magrittr "%>%"
 #' @importFrom foreach foreach %:% %do% %dopar%

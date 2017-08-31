@@ -30,7 +30,7 @@ LfmmBigStatsrDat <- function(Y, X, outlier) {
   ## outlier
   dat$meta$outlier <- c()
   if (!is.null(outlier)) {
-    dat$meta$outlier <- MatrixFactorizationR::read_input(outlier)
+    dat$meta$outlier <- lfmm::read_input(outlier)
   }
   dat
 }

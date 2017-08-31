@@ -30,7 +30,7 @@ load_sampler_fromTrueData <- function(s) {
   s$load.env <- new.env()
 
   ## dat
-  s$load.env$dat <- MatrixFactorizationR::Dat(s$Y)
+  s$load.env$dat <- lfmm::Dat(s$Y)
 
   ## remove NA
   message("=== remove na if necessary")
@@ -147,7 +147,7 @@ ExpRmouline.ExpRsampler_fromTrueData <- function(s) {
   }
 
   # return
-  dat <- MatrixFactorizationR::SimulatedLfmmDat(Y = Y[sample.ind, sample.loc, drop = FALSE],
+  dat <- lfmm::SimulatedLfmmDat(Y = Y[sample.ind, sample.loc, drop = FALSE],
                                                 X = X[sample.ind,,drop = FALSE],
                                                 U = U[sample.ind,,drop = FALSE],
                                                 V = V[sample.loc,,drop = FALSE],

@@ -1313,7 +1313,6 @@ d'enlever de l'estimation de $\bm{\alpha}$ les effets atypiques qui
 correspondent aux colonnes de $\Y$ associés à $\X$ que l'on cherche. Nous avons
 utilisé le package R cate fourni par ses auteurs.
 
-
 ** Résultats
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -1563,7 +1562,7 @@ CLOSED: [2017-08-14 lun. 11:28]
 
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
-  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.K = 100,
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.num = 100,
                               relative.err.epsilon = 1e-6)
   m.lm <- method_lm()
   m.pca <- method_PCAlm(K = K.method)
@@ -2204,7 +2203,7 @@ CLOSED: [2017-08-22 mar. 09:31]
   dat <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) %>% ExpRmouline()
 
   ## projection
-  P.list <- MatrixFactorizationR::compute_P(dat$X, lambda = 0.0)
+  P.list <- lfmm::compute_P(dat$X, lambda = 0.0)
   Y <- P.list$sqrt.P %*% dat$Y
   rm(P.list)
   rm(dat)
@@ -2474,7 +2473,7 @@ CLOSED: [2017-08-07 lun. 18:35]
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
   m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-                              lambda.K = 25, relative.err.epsilon = 1e-6)
+                              lambda.num = 25, relative.err.epsilon = 1e-6)
   m.lm <- method_lm()
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
@@ -2606,7 +2605,7 @@ CLOSED: [2017-08-07 lun. 18:35]
   ## methods
   m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
   m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = nozero.prop,
-  +                             lambda.K = 25, relative.err.epsilon = 1e-6)
+  +                             lambda.num = 25, relative.err.epsilon = 1e-6)
   m.lm <- method_lm()
   m.pca <- method_PCAlm(K = K.method)
   m.cate <- method_cate(K = K.method)
@@ -3510,18 +3509,12 @@ les SNPs et la maladie \celiac nous avons lancé les méthodes lm, lmPCA, cate,
 ridgeLFMM et lassoLFMM sur le sous ensemble de SNPs identifié par l'étape de LD
 pruning. Par la suite, nous avons effectué le test d'hypothèse présenté dans la
 partie [[sec:hypothese]] sur le jeux de données génétiques complet mais avec
-l'estimation des variables latentes calculée sur le sous ensemble de SNPs. Nous
-avons choisi 9 variables latentes (voir Figure ref:fig:gwas_params A et B). 
-
-La validation croisée du paramètre $\lambRidge$ pousse à choisir une valeur
-grande ($10^{10}) ne permet pas de conclure (Figure ref:fig:gwas_params C), nous
-avons choisi $1e^{-5}$ car nous avons remarqué dans nos expérimentation que les
-petites valeurs du paramètres de régularisation $L_{2}$ donne les meilleur
-résultats.
-
-Enfin comme on s'attend à detecter un
-petit nombre d'association nous avons choisi une proportion de ligne non nulle
-pour l'estimateur $L_{1}$ de $\B$ valant 1\%.
+l'estimation des variables latentes calculées sur le sous ensemble de SNPs. Nous
+avons choisi 9 variables latentes (voir Figure ref:fig:gwas_params A et B). Nous
+avons choisi une proportion de lignes non nulles pour de $\B$ valant $1 \%$ pour
+lassoLFMM. La validation croisée du paramètre $\lambRidge$ tend à faire choisir
+une valeur pour celui-ci (Figure ref:fig:gwas_params C), nous avons choisi
+$1e^{3}$. 
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -3540,13 +3533,15 @@ pour l'estimateur $L_{1}$ de $\B$ valant 1\%.
 \end{figure}
 #+END_EXPORT
 
-La figure ref:fig:gwas_qqplot_top A montre la distribution observée des \pvalues
-renvoyé par chaque méthode contre la distribution théorique sous l'hypothèse
+La Figure ref:fig:gwas_qqplot_top A montre la distribution observée des \pvalues
+renvoyées par chaque méthode contre la distribution théorique sous l'hypothèse
 nulle. On constate que les méthodes sont toutes bien calibrées et que la méthode
 la plus libérale est lm alors que PCAlm est la méthode la plus conservative. La
-Figure ref:fig:gwas_qqplot_top B montre le nombre de SNPs identifiés dans le
+Figure ref:fig:gwas_qqplot_top B montre le nombre de SNPs référencé dans le
 GWAS catalog comme étant associés avec la maladie \celiac qui sont retrouvés
-dans les top listes des différente méthodes. On observe que lm retrouve moins
+dans les top listes des différente méthodes. 
+
+On observe que lm retrouve moins
 facilement dans sa top liste les candidats du GWAS catalogue, $78\%$ des
 candidats du GWAS catalogue sont dans le top 3000 de lm contre $83\%$ pour PCAlm
 et $88\%$ pour cate, ridgeLFMM et lassoLFMM.
@@ -4286,7 +4281,7 @@ CLOSED: [2017-08-30 mer. 09:31]
   dat <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) %>% ExpRmouline()
 
   ## projection
-  P.list <- MatrixFactorizationR::compute_P(dat$X, lambda = 0.0)
+  P.list <- lfmm::compute_P(dat$X, lambda = 0.0)
   Y <- P.list$sqrt.P %*% dat$Y
   rm(P.list)
   rm(dat)
@@ -4312,8 +4307,10 @@ CLOSED: [2017-08-30 mer. 09:31]
 
 On prend K = 9 variables latentes.
 
-***** RUNNING Validation croisée avec lfmmRidge
+***** DONE Validation croisée avec lfmmRidge
+CLOSED: [2017-08-31 jeu. 10:03]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-31 jeu. 10:03]
 - State "RUNNING"    from "DONE"       [2017-08-30 mer. 09:37]
 - State "DONE"       from "RUNNING"    [2017-08-30 mer. 08:42]
 - State "RUNNING"    from "DONE"       [2017-08-28 lun. 15:47]
@@ -4610,6 +4607,9 @@ On prend K = 9 variables latentes.
 
 #+end_src
 
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_CV_lambda_lfmm_lambda_round2_encore.png]]
+
 
 ***** RUNNING Étude du jeu de données 
 :LOGBOOK:
@@ -4641,16 +4641,17 @@ On prend K = 9 variables latentes.
 #+CAPTION: Etude d'association des données Celiac avec cate ridgeLFMM LassoLFMM LM et LMPCAS. Dépend de 
 #+begin_src R
   library(MaTheseR)
-  library(MatrixFactorizationR)
+  library(lfmm)
   library(matter)
   library(foreach)
   library(doParallel)
 
 
+  rerun <- FALSE
   nb.cluster <- 2
   ## param
   param <- list(K.method = 9, lambda = 1e3,
-                nozero.prop = 0.01,lambda.K = 25,
+                nozero.prop = 0.01,lambda.num = 25,
                 relative.err.epsilon = 1e-6)
 
 
@@ -4662,7 +4663,7 @@ On prend K = 9 variables latentes.
   methods$m.cate <- method_cate(K = param$K.method)
   methods$m.lasso <- method_lassoLFMM(K = param$K.method,
                                       nozero.prop = param$nozero.prop,
-                                      lambda.K = param$lambda.K,
+                                      lambda.num = param$lambda.num,
                                       relative.err.epsilon = param$relative.err.epsilon)
 
   run_celiac <- function(m) {
@@ -4676,10 +4677,10 @@ On prend K = 9 variables latentes.
     out.file.res.df <- paste0("./OUTPUT/Expr/Celiac_df","_", m$name)
     out.file.U <- paste0("./OUTPUT/Expr/Celiac_U","_", m$name)
 
-    if (!exist_res(m, out.file.res.df)) {
+    if (!exist_res(m, out.file.res.df) && !rerun) {
       ## mask data
       message("mask data")
-      dat.masked <- MatrixFactorizationR::LfmmDat(Y = NULL, X = dat$X, missing = FALSE)
+      dat.masked <- lfmm::LfmmDat(Y = NULL, X = dat$X, missing = FALSE)
       dat.masked$Y <- dat$Y[,col.mask]
 
       ## compute lattente variable
@@ -4698,15 +4699,16 @@ On prend K = 9 variables latentes.
 
       ## run HP
       message("running HP")
+      m.res <- m
       X <- cbind(dat$X, m.U$U)
       d <- ncol(dat$X)
-      hp <- MatrixFactorizationR::hypothesis_testing_lm(dat, X)
-      m$score <- hp$score[,1:d, drop = FALSE]
-      m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
-      m$B.hp <- hp$B[,1:d, drop = FALSE]
+      hp <- lfmm::hypothesis_testing_lm(dat, X)
+      m.res$score <- hp$score[,1:d, drop = FALSE]
+      m.res$pvalue <- hp$pvalue[,1:d, drop = FALSE]
+      m.res$B.hp <- hp$B[,1:d, drop = FALSE]
       ## saving res
       message("saving res.df")
-      df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
+      df <- ExpRextractor_pvalue1_calibrated(dat, m.res, 1, 1)
       save_res(m, df, out.file.res.df)
     } else {
       message("res.df exist !! ")
@@ -4737,7 +4739,10 @@ On prend K = 9 variables latentes.
   save_expr(res.df, "celiac_all_df.rds")
 #+end_src
 
-****** Que donne la calibration
+****** TODO Que donne la calibration
+:LOGBOOK:
+- State "TODO"       from              [2017-08-31 jeu. 09:10]
+:END:
 
 #+NAME: code:gwas_expr_calibration
 #+CAPTION: Dépend de [[code:gwas_expr]]
@@ -4763,7 +4768,10 @@ On prend K = 9 variables latentes.
   5 ridgeLFMM 1.061488  0.007643094
 #+end_example
 
-****** Gwas catalogue et controle du fdr
+****** TODO Gwas catalogue et controle du fdr
+:LOGBOOK:
+- State "TODO"       from              [2017-08-31 jeu. 09:10]
+:END:
 
 #+NAME: code:gwas_expr_fdr
 #+CAPTION: Dépend de [[code:gwas_expr]]
@@ -4797,22 +4805,22 @@ On prend K = 9 variables latentes.
 : 3        lm 0.5714286
 : 4     PCAlm 0.5102041
 : 5 ridgeLFMM 0.7346939
-****** DONE plot top * power
-CLOSED: [2017-08-07 lun. 18:12]
+****** TODO plot top * power
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-31 jeu. 09:10]
 - State "DONE"       from              [2017-08-07 lun. 18:12]
 :END:
 #+NAME: code:gwas_top_power
 #+CAPTION: Dépend de [[code:gwas_expr]]
 #+begin_src R 
   library(MaTheseR)
-  expr <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
 
   m1 <- length(candidates)
-  expr
+  res.df
 
-  df <- expr %>%
+  df <- res.df %>%
     transmute(method = method,
               index = index,
               pvalue = pvalue,
@@ -4888,7 +4896,7 @@ CLOSED: [2017-08-07 lun. 18:12]
   save_plot_png(plB, "gwas_CV_K.png")
 
   ## cross validation lambda
-  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lambda_lfmm_round2.rds")
+  expr <- readRDS("./OUTPUT/Expr/gwas_CV_lambda_lfmm_round2_encore.rds")
   toplot <- expr$errs %>%
     mutate(K = as.factor(K)) %>%
     group_by(lambda, K) %>%
@@ -5222,7 +5230,6 @@ valant $1 \%$ pour lassoLFMM.
 \end{figure}
 #+END_EXPORT
 
-
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
@@ -5250,6 +5257,8 @@ CLOSED: [2017-07-26 mer. 18:17]
 :END:
 Nous avons téléchargé la dernière version du 1000 genome, il s'agit à
 ce jour de la phase 3.
+
+*Remarque* : il faut utiliser GRCh37 !! [[http://www.internationalgenome.org/faq/which-reference-assembly-do-you-use/][here]]
 
 #+NAME: code:1000g_ddl
 #+CAPTION: Dépend de 
@@ -7989,14 +7998,26 @@ On fait un pruning plus fort que celui de [[code:1000g_prunning]]
 #+end_example
 
 ***** DONE Annotation VEP
-CLOSED: [2017-08-29 mar. 14:51]
+CLOSED: [2017-08-31 jeu. 13:30]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-31 jeu. 13:30]
+- State "RUNNING"    from "DONE"       [2017-08-31 jeu. 11:09]
 - State "DONE"       from "RUNNING"    [2017-08-29 mar. 14:51]
 - State "RUNNING"    from "DONE"       [2017-08-29 mar. 08:35]
 - State "DONE"       from "RUNNING"    [2017-08-22 mar. 15:31]
 - State "RUNNING"    from "TODO"       [2017-08-22 mar. 12:41]
 - State "TODO"       from              [2017-08-22 mar. 11:53]
 :END:
+
+vep cache : [[https://www.ensembl.org/info/docs/tools/vep/script/vep_cache.html#cache][here]]
+
+#+NAME: code:1000g_vep_cache
+#+CAPTION: Dépend de 
+#+begin_src R 
+  cd $HOME/.vep
+  curl -O ftp://ftp.ensembl.org/pub/release-89/variation/VEP/homo_sapiens_vep_89_GRCh37.tar.gz
+  tar -xvf homo_sapiens_vep_89_GRCh37.tar.gz
+#+end_src
 
 vep input format : [[http://www.ensembl.org/info/docs/tools/vep/vep_formats.html#input][here]]
 
@@ -8030,7 +8051,7 @@ run vep option : [[http://www.ensembl.org/info/docs/tools/vep/script/vep_options
 #+CAPTION: Dépend de [[code:1000g_vep_input]]
 #+begin_src shell
   cd ~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/
-  vep --cache -i vep.input.txt -o vep.output.txt --force --variant_class --sift b
+  vep --cache --species homo_sapiens --assembly GRCh37 --offline -i vep.input.txt -o vep.output.txt --force --variant_class --sift b
 #+end_src
 
 #+NAME: code:1000g_vep_output
@@ -8076,45 +8097,48 @@ run vep option : [[http://www.ensembl.org/info/docs/tools/vep/script/vep_options
   summary(vep.output)
 #+end_src
 
-#+RESULTS:
+#+RESULTS: code:1000g_vep_output
 #+begin_example
-  #Uploaded_variation   Location            Allele              Gene          
-   Length:18311186     Length:18311186    Length:18311186    Length:18311186   
-   Class :character    Class :character   Class :character   Class :character  
-   Mode  :character    Mode  :character   Mode  :character   Mode  :character  
-
-
-
-
-     Feature          Feature_type       Consequence        cDNA_position     
-   Length:18311186    Length:18311186    Length:18311186    Min.   :     1    
-   Class :character   Class :character   Class :character   1st Qu.:   390    
-   Mode  :character   Mode  :character   Mode  :character   Median :  1009    
-                                                            Mean   :  1977    
-                                                            3rd Qu.:  2299    
-                                                            Max.   :204149    
-                                                            NA's   :17780202  
-    CDS_position      Protein_position   Amino_acids           Codons         
-   Min.   :     1     Min.   :    1      Length:18311186    Length:18311186   
-   1st Qu.:   301     1st Qu.:  101      Class :character   Class :character  
-   Median :   768     Median :  256      Mode  :character   Mode  :character  
-   Mean   :  1632     Mean   :  544                                           
-   3rd Qu.:  1655     3rd Qu.:  552                                           
-   Max.   :106324     Max.   :35442                                           
-   NA's   :18123626   NA's   :18123626                                        
-   Existing_variation    Extra                IMPACT           SIFT.score      
-   Mode:logical       Length:18311186    HIGH    :   17099   Min.   :0         
-   NA's:18311186      Class :character   LOW     :   78582   1st Qu.:0         
-                      Mode  :character   MODERATE:  123794   Median :0         
-                                         MODIFIER:18091711   Mean   :0         
-                                                             3rd Qu.:0         
-                                                             Max.   :1         
-                                                             NA's   :18234190  
-      SIFT.prediction         snps          
-   deleterious:   44309   Length:18311186   
-   tolerated  :   32687   Class :character  
-   NA's       :18234190   Mode  :character  
+[1] "MODIFIER" "HIGH"     "LOW"      "MODERATE"
+[1] FALSE
+ #Uploaded_variation   Location            Allele              Gene          
+ Length:17113181     Length:17113181    Length:17113181    Length:17113181   
+ Class :character    Class :character   Class :character   Class :character  
+ Mode  :character    Mode  :character   Mode  :character   Mode  :character  
+                                                                             
+                                                                             
+                                                                             
+                                                                             
+   Feature          Feature_type       Consequence        cDNA_position     
+ Length:17113181    Length:17113181    Length:17113181    Min.   :     1    
+ Class :character   Class :character   Class :character   1st Qu.:   333    
+ Mode  :character   Mode  :character   Mode  :character   Median :   917    
+                                                          Mean   :  1685    
+                                                          3rd Qu.:  2171    
+                                                          Max.   :107492    
+                                                          NA's   :16762390  
+  CDS_position      Protein_position   Amino_acids           Codons         
+ Min.   :     1     Min.   :    1      Length:17113181    Length:17113181   
+ 1st Qu.:   288     1st Qu.:   96      Class :character   Class :character  
+ Median :   741     Median :  247      Mode  :character   Mode  :character  
+ Mean   :  1544     Mean   :  515                                           
+ 3rd Qu.:  1602     3rd Qu.:  534                                           
+ Max.   :107267     Max.   :35756                                           
+ NA's   :17017945   NA's   :17017945                                        
+ Existing_variation    Extra                IMPACT           SIFT.score      
+ Mode:logical       Length:17113181    HIGH    :    1535   Min.   :0         
+ NA's:17113181      Class :character   LOW     :   68224   1st Qu.:0         
+                    Mode  :character   MODERATE:   42072   Median :1         
+                                       MODIFIER:17001350   Mean   :1         
+                                                           3rd Qu.:1         
+                                                           Max.   :1         
+                                                           NA's   :17106978  
+    SIFT.prediction         snps          
+ deleterious:     538   Length:17113181   
+ tolerated  :    5665   Class :character  
+ NA's       :17106978   Mode  :character
 #+end_example
+
 
 Understanding variant consequence: 
 - [[https://www.ensembl.org/info/genome/variation/predicted_data.html#consequences][Ensembl Variation - Predicted data]]
@@ -8470,7 +8494,7 @@ CLOSED: [2017-08-28 lun. 15:48]
   dat <- ExpRsampler_trueData(Y = Y, X = X, outlier = NULL) %>% ExpRmouline()
 
   ## projection
-  P.list <- MatrixFactorizationR::compute_P(dat$X, lambda = 0.0)
+  P.list <- lfmm::compute_P(dat$X, lambda = 0.0)
   Y <- P.list$sqrt.P %*% dat$Y
   rm(P.list)
   rm(dat)
@@ -8662,8 +8686,10 @@ CLOSED: [2017-08-17 Thu 18:09]
 - State "RUNNING"    from "TODO"       [2017-07-11 mar. 16:30]
 - State "TODO"       from              [2017-07-10 lun. 09:06]
 :END:
-****** RUNNING Run all methods
+****** DONE Run all methods
+CLOSED: [2017-08-31 jeu. 08:34]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-31 jeu. 08:34]
 - State "RUNNING"    from "DONE"       [2017-08-30 mer. 12:06]
 - State "DONE"       from "RUNNING"    [2017-08-21 lun. 17:28]
 - State "RUNNING"    from "TODO"       [2017-08-21 lun. 16:49]
@@ -8674,18 +8700,18 @@ CLOSED: [2017-08-17 Thu 18:09]
 #+CAPTION: Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]] [[code:1000g_G_noNA_scaled]]
 #+begin_src R 
   library(MaTheseR)
-  library(MatrixFactorizationR)
+  library(lfmm)
   library(matter)
   library(foreach)
   library(doParallel)
 
-
+  rerun <- FALSE
   nb.cluster <- 1
   ## param
   param <- list(K.method = 9,
                 lambda = 1e-5,
                 nozero.prop = 0.01,
-                lambda.K = 25,
+                lambda.num = 25,
                 relative.err.epsilon = 1e-6)
 
 
@@ -8697,7 +8723,7 @@ CLOSED: [2017-08-17 Thu 18:09]
   methods$m.cate <- method_cate(K = param$K.method)
   methods$m.lasso <- method_lassoLFMM(K = param$K.method,
                                       nozero.prop = param$nozero.prop,
-                                      lambda.K = param$lambda.K,
+                                      lambda.num = param$lambda.num,
                                       relative.err.epsilon = param$relative.err.epsilon)
 
   run_eas <- function(m) {
@@ -8711,10 +8737,10 @@ CLOSED: [2017-08-17 Thu 18:09]
     out.file.res.df <- paste0("./OUTPUT/Expr/Eas_df","_", m$name)
     out.file.U <- paste0("./OUTPUT/Expr/Eas_U","_", m$name)
 
-    if (!exist_res(m, out.file.res.df)) {
+    if (!exist_res(m, out.file.res.df) && !rerun) {
       ## mask data
       message("mask data")
-      dat.masked <- MatrixFactorizationR::LfmmDat(Y = NULL, X = dat$X, missing = FALSE)
+      dat.masked <- lfmm::LfmmDat(Y = NULL, X = dat$X, missing = FALSE)
       dat.masked$Y <- dat$Y[,col.mask]
 
       ## compute lattente variable
@@ -8733,15 +8759,16 @@ CLOSED: [2017-08-17 Thu 18:09]
 
       ## run HP
       message("running HP")
+      m.res <- m
       X <- cbind(dat$X, m.U$U)
       d <- ncol(dat$X)
-      hp <- MatrixFactorizationR::hypothesis_testing_lm(dat, X)
-      m$score <- hp$score[,1:d, drop = FALSE]
-      m$pvalue <- hp$pvalue[,1:d, drop = FALSE]
-      m$B.hp <- hp$B[,1:d, drop = FALSE]
+      hp <- lfmm::hypothesis_testing_lm(dat, X)
+      m.res$score <- hp$score[,1:d, drop = FALSE]
+      m.res$pvalue <- hp$pvalue[,1:d, drop = FALSE]
+      m.res$B.hp <- hp$B[,1:d, drop = FALSE]
       ## saving res
       message("saving res.df")
-      df <- ExpRextractor_pvalue1_calibrated(dat, m, 1, 1)
+      df <- ExpRextractor_pvalue1_calibrated(dat, m.res, 1, 1)
       save_res(m, df, out.file.res.df)
     } else {
       message("res.df exist !! ")
@@ -8773,41 +8800,6 @@ CLOSED: [2017-08-17 Thu 18:09]
 
 #+end_src
 
-****** DONE Rbind results
-CLOSED: [2017-08-21 lun. 17:32]
-:LOGBOOK:
-- State "DONE"       from "RUNNING"    [2017-08-21 lun. 17:32]
-- State "RUNNING"    from "TODO"       [2017-08-21 lun. 17:29]
-- State "TODO"       from              [2017-08-21 lun. 16:49]
-:END:
-#+NAME: code:eas_expr_all
-#+CAPTION: Dépend de [[code:eas_expr]] [[code:eas_expr_lasso]]
-#+begin_src R 
-  library(MaTheseR)
-  library(MatrixFactorizationR)
-  library(matter)
-
-  files <- list.files("./OUTPUT/Expr/", "eas_df_.*\\.rds")
-
-  res.df <- tibble()
-  for (f in files) {
-    message("==", f)
-    res.df <- readRDS(paste0("./OUTPUT/Expr/",f)) %>%
-      rbind(res.df)
-  }
-  save_expr(res.df, "eas_all_df.rds")
-
-#+end_src
-
-#+RESULTS:
-#+begin_example
-  ==eas_df_cate.rds
-  ==eas_df_lassoLFMM.rds
-  ==eas_df_lm.rds
-  ==eas_df_PCAlm.rds
-  ==eas_df_ridgeLFMM.rds
-#+end_example
-
 ****** DONE compute qvalue
 CLOSED: [2017-08-21 lun. 17:57]
 :LOGBOOK:
@@ -8815,7 +8807,7 @@ CLOSED: [2017-08-21 lun. 17:57]
 - State "TODO"       from              [2017-08-21 lun. 16:42]
 :END:
 #+NAME: code:eas_qvalue
-#+CAPTION: Dépend de [[code:eas_expr_all]]
+#+CAPTION: Dépend de [[code:eas_expr]]
 #+BEGIN_SRC R
   library(MaTheseR)
   res.df <- readRDS("./OUTPUT/Expr/eas_all_df.rds")
@@ -8836,7 +8828,7 @@ CLOSED: [2017-08-21 lun. 17:57]
 #+CAPTION: Dépend de [[code:eas_qvalue]]
 #+BEGIN_SRC R
   library(MaTheseR)
-  res.df <- readRDS("./OUTPUT/Expr/eas_all_qvalue_df.rds")
+  qval.df <- readRDS("./OUTPUT/Expr/eas_all_qvalue_df.rds")
 #+END_SRC
 
 
@@ -8851,7 +8843,7 @@ CLOSED: [2017-08-22 mar. 09:36]
 #+NAME: code:eas_calibration
 #+CAPTION: Dépend de [[code:eas_load_res]]
 #+BEGIN_SRC R
-  res.df %>%
+  qval.df %>%
     group_by(method) %>%
     summarise(mad = mad[1], median = median[1])
 #+END_SRC
@@ -8860,11 +8852,11 @@ CLOSED: [2017-08-22 mar. 09:36]
 : # A tibble: 5 x 3
 :      method      mad     median
 :       <chr>    <dbl>      <dbl>
-: 1      cate 1.727900 0.12915235
-: 2 lassoLFMM 1.171343 0.02114513
+: 1      cate 1.580635 0.11340787
+: 2 lassoLFMM 1.224637 0.08467967
 : 3        lm 8.760657 0.38152482
-: 4     PCAlm 1.169850 0.02052600
-: 5 ridgeLFMM 1.736133 0.13956344
+: 4     PCAlm 1.046560 0.01363840
+: 5 ridgeLFMM 1.587502 0.11969276
 
 ****** TODO Les qqplots ?
 :LOGBOOK:
@@ -8874,7 +8866,7 @@ CLOSED: [2017-08-22 mar. 09:36]
 #+NAME: code:eas_qqplot
 #+CAPTION: Dépend de [[code:eas_load_res]]
 #+BEGIN_SRC R
-  toplot <- res.df %>%
+  toplot <- qval.df %>%
     mutate(pvalue = calibrated.pvalue) %>%
     dplyr::filter(method %in% c("cate", "PCAlm", "ridgeLFMM", "lassoLFMM"))
 
@@ -8888,9 +8880,9 @@ CLOSED: [2017-08-22 mar. 09:36]
 #+RESULTS:
 [[./OUTPUT/Rplots/EAS_qqplots2.png]]
 
-****** DONE Comparaison des top listes
-CLOSED: [2017-08-22 mar. 09:41]
+****** TODO Comparaison des top listes
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-08-31 jeu. 08:53]
 - State "DONE"       from "TODO"       [2017-08-22 mar. 09:41]
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
 :END:
@@ -8910,18 +8902,18 @@ CLOSED: [2017-08-22 mar. 09:41]
 #+RESULTS: code:eas_top
 [[./OUTPUT/Rplots/eas_top_inter.png]]
 
-****** TODO Comparaison des listes avec contrôle du FDR à $0.01$ and venn diag
+****** DONE Comparaison des listes avec contrôle du FDR à $0.01$ and venn diag
+CLOSED: [2017-08-31 jeu. 10:14]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-08-31 jeu. 10:14]
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
 :END:
 
 #+NAME: code:eas_fdr
 #+CAPTION: Dépend de [[code:eas_load_res]]
 #+BEGIN_SRC R
-  toplot <- res.df %>%
-    dplyr::mutate(pvalue = calibrated.pvalue) %>%
-    group_by(method) %>%
-    filter_candidates_threshold(0.01)
+  toplot <- qval.df %>%
+    dplyr::filter(qvalue <= 0.01)
 
   ## matrix
   pl <- plot_intersection(toplot, by = "colname", plot = "point")
@@ -9127,7 +9119,7 @@ CLOSED: [2017-08-22 mar. 09:41]
   vep.output <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
 
   ## filter FDR 1%
-  aux <- res.df %>%
+  aux <- qval.df %>%
     dplyr::filter(qvalue <= 0.01) %>%
     mutate(snps = colname)
 
@@ -9148,7 +9140,7 @@ CLOSED: [2017-08-22 mar. 09:41]
   inter.candidates.df <- aux %>%
     dplyr::filter(index %in% inter.list(1,2,3,4),
                   method == "cate") 
-  ## 84 candidates
+  ## 14 candidates
   length(inter.candidates.df$colname)
 
   ## vep annotation
@@ -9159,11 +9151,13 @@ CLOSED: [2017-08-22 mar. 09:41]
 
 
   inter.candidates.df.vep$chrm
+  inter.candidates.df.vep$pos
   inter.candidates.df.vep$IMPACT %>% table()
   inter.candidates.df.vep$Gene %>% table()
   inter.candidates.df.vep$Consequence %>% table()
 
-  inter.candidates.df.vep %>% dplyr::filter(IMPACT == "MODERATE")
+  inter.candidates.df.vep %>% dplyr::filter(IMPACT == "MODERATE") %>%
+    dplyr::select(IMPACT, Consequence)
 
   ## plot
   pl <- ggplot(inter.candidates.df.vep, aes(x = pos, y = -log10(pvalue))) +
@@ -9181,16 +9175,91 @@ CLOSED: [2017-08-22 mar. 09:41]
 
   inter.candidates.df.vep$phenotype_name
 
-  ## 2 area
-  paste0("2:",
-         min(inter.candidates.df.vep$pos[inter.candidates.df.vep$chrm == "2"]),
-         "-",
-         max(inter.candidates.df.vep$pos[inter.candidates.df.vep$chrm == "2"]))
-  paste0("4:",
-         min(inter.candidates.df.vep$pos[inter.candidates.df.vep$chrm == "4"]),
-         "-",
-         max(inter.candidates.df.vep$pos[inter.candidates.df.vep$chrm == "4"]))
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/eas_inter_manhattan.png]]
+
+****** TODO Annotation de l'union
+:LOGBOOK:
+- State "TODO"       from              [2017-08-31 jeu. 13:56]
+:END:
+#+NAME: code:eas_inter_annotation
+#+CAPTION: Dépend de [[code:eas_load_res]] [[code:1000g_vep_output]]
+#+begin_src R 
+  require(MaTheseR)
+  library(stringr)
+
+  vep.output <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
+
+  impact.all <- vep.output %>%
+    distinct(snsp, keep_all = TRUE) %>%
+    dplyr::select(IMPACT)
+  impact.all$IMPACT %>% table() / nrow(impact.all)
+
+  ## filter FDR 1%
+  aux <- qval.df %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate(snps = colname)
+
+  ## intersection
+  union.list <- function(...) {
+    id <- list(...)
+      res <- sets[[id[[1]]]]
+    for (i in id) {
+      res <- base::union(res, sets[[i]])
+    }
+    res
+  }
+  sets <- list(cate = aux$index[aux$method == "cate"],
+               lassoLFMM = aux$index[aux$method == "lassoLFMM"],
+               ridgeLFMM = aux$index[aux$method == "ridgeLFMM"],
+               PCAlm = aux$index[aux$method == "PCAlm"]
+               )
+  union.candidates.df <- aux %>%
+    dplyr::filter(index %in% union.list(1,2,3,4))
+  length(union.candidates.df$colname)
+
+  ## vep annotation
+  union.candidates.df.vep <- union.candidates.df %>%
+    dplyr::left_join(vep.output, by = c('snps')) %>%
+    mutate(chrm = str_replace(Location, ":[:digit:]*",""),
+           pos = str_replace(Location, "[:digit:]*:",""))
+
+  union.candidates.df.vep$method %>% unique()
+  union.candidates.df.vep$IMPACT %>% table()
+  impact.union <- union.candidates.df.vep %>%
+    distinct(snsp) %>%
+    dplyr::select(IMPACT)
+  impact.union$IMPACT %>% table() / nrow(impact.union)
+
+  union.candidates.df.vep %>% dplyr::filter(IMPACT == "LOW") %>%
+    dplyr::select(IMPACT, Consequence, method, snps) %>%
+    distinct(snps, method, keep_all = TRUE) %>%
+      print.data.frame()
+
+  ## plot
+  pl <- ggplot(union.candidates.df.vep, aes(x = pos, y = -log10(pvalue))) +
+    geom_point() +
+    facet_grid(~ chrm, scales = "free")
+  save_plot_png(pl, "eas_union_manhattan.png")
+
+  ## biomart
+  require(biomaRt)
+  biomaRt::listMarts()
+  snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+
+  union.candidates.df.biomart <- union.candidates.df %>%
+    mutate_annotation(snp.db)
+
+
+  ## amiGo2
+  panter.input <- (union.candidates.df.vep %>%
+    distinct(Gene))$Gene %>%
+    paste0(collapse=" ")
+#+end_src
+
+
 ****** TODO manhattan plot
 :LOGBOOK:
 - State "TODO"       from              [2017-07-12 mer. 11:11]
@@ -9334,8 +9403,10 @@ CLOSED: [2017-08-28 lun. 16:07]
 : [[./OUTPUT/Rplots/eas_CV_lambda.png]]
 : [[./OUTPUT/Rplots/eas_hyperparams.pdf.png]]
 ****** DONE qqplot and venn diagram
-CLOSED: [2017-08-30 mer. 08:42]
+CLOSED: [2017-08-31 jeu. 12:12]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-08-31 jeu. 12:12]
+- State "RUNNING"    from "DONE"       [2017-08-31 jeu. 08:57]
 - State "DONE"       from "RUNNING"    [2017-08-30 mer. 08:42]
 - State "RUNNING"    from "TODO"       [2017-08-29 mar. 16:24]
 - State "TODO"       from              [2017-08-21 lun. 16:50]
@@ -9438,38 +9509,39 @@ CLOSED: [2017-08-30 mer. 08:42]
 [[./OUTPUT/Rplots/eas_venn.png]]
 [[./OUTPUT/Rplots/eas_qqplot_notcalibrated_all.png]]
 
-** Discussion                                                     :noexport:
-Les études d'association sont largement utilisé en biologie trouver des lien de
-corrélation des variables. Cependant une corrélation n'est pas une lien de
-causalité. Nous nous somme intressé dans ce chapitre à la situation ou une
-variable non observé induire des associations quand on ne les considère pas
-explicitement dans l'étude. Dans une tel situation on observe que une forte
-inflations les \pvalues renvoyé par la regression linéaire de $\Y$ par $\X$ dans
-les simulation numérique (Figure ref:fig:method_comp C et D) ainsi que dans l'
-EWAS (Figure ref:fig:ewas_qqplot_top A), la GWAS (Figure ref:fig:gwas_qqplot_top
-A) et la GEAS (Figure ref:fig:geas_qqplot A) que nous avons présentés dans ce
-chapitre. La forte inflation des \pvalues renvoyées par lm ne correspond pas
-seulement à une mauvaise calibration de celles-ci car dans les simulations que
-l'AUC obtenu par lm est largement inferieur à celui de la méthode oracle (Figure
-ref:fig:method_comp A et B) ainsi pour les études d'associations à partir de
-données lm donne les moins bon résultat quand il s'agit de retrouver des
-candidats validé par d'autre méthode (Figure ref:fig:ewas_qqplot_top B et Figure
-ref:fig:gwas_qqplot_top B). 
+** Discussion
+Les études d'association sont largement utilisées en biologie pour trouver des
+liens de corrélation entre des variables. Cependant une corrélation n'est pas
+une lien de causalité. Nous nous sommes intéressé dans ce chapitre à la
+situation ou des variables non observées provoquent des fausses associations si
+on ne les considère pas explicitement dans l'étude. Dans une telle situation on
+observe une forte inflation des \pvalues renvoyées par la régression linéaire de
+$\Y$ par $\X$ dans les simulations numérique (Figure ref:fig:method_comp C et D)
+ainsi que dans l'EWAS (Figure ref:fig:ewas_qqplot_top A), la GWAS (Figure
+ref:fig:gwas_qqplot_top A) et la GEAS (Figure ref:fig:geas_qqplot A) que nous
+avons présentés dans ce chapitre. En plus de la forte inflation des \pvalues on
+observe également que lm ne permet de trouver les bonnes associations, on
+observe ainsi dans les simulations numérique que l'AUC obtenu par lm est
+largement inférieur à celui de la méthode oracle (Figure ref:fig:method_comp A
+et B). De plus pour les études d'associations à partir de données réelle lm
+donne les moins bon résultat quand il s'agit de retrouver les candidats pour
+l'association trouvés par ailleurs dans la littérature (Figure
+ref:fig:ewas_qqplot_top B et Figure ref:fig:gwas_qqplot_top B).
 
-Une méthode de correction pour les facteurs de confusion consite à consite à
-utiliser les scores de l'ACP pour apprendre les facteurs de confusions; nous
-l'avons nommé dans ce chapitre PCAlm. Sur les simulations numériques PCAlm
-renvoie des \pvalues bien calibré (Figure ref:fig:method_comp C et D) mais l'AUC
-de PCAlm décroit avec le nombre de variables associées et la corrélation entre
-les variables latentes et la variable explicative (Figure ref:fig:method_comp A
-et B). On retrouve le fait que les \pvalues sont bien calibré dans les étude sur
-des vrai de données (Figure ref:fig:ewas_qqplot_top A, Figure
+Une méthode de correction pour les facteurs de confusion consiste à utiliser les
+scores de l'ACP pour apprendre les facteurs de confusions; nous l'avons nommée
+dans ce chapitre PCAlm. Sur les simulations numériques PCAlm renvoie des
+\pvalues bien calibrées (Figure ref:fig:method_comp C et D) mais l'AUC de PCAlm
+décroit avec le nombre de variables associées et la corrélation entre les
+variables latentes et la variable explicative (Figure ref:fig:method_comp A et
+B). On retrouve le fait que les \pvalues sont bien calibré dans les études
+d'association sur des vrais données (Figure ref:fig:ewas_qqplot_top A, Figure
 ref:fig:gwas_qqplot_top A et ref:fig:geas_qqplot). Les candidats trouvé par
-d'autr méthodes sont bien retrouvé par PCAlm (Figure ref:fig:ewas_qqplot_top B
+d'autre méthodes sont bien retrouvés par PCAlm (Figure ref:fig:ewas_qqplot_top B
 et Figure ref:fig:gwas_qqplot_top B). On peut supposer que PCAlm donne à de
 bonne performance sur la GWAS et l'EWAS car il y à peu de variables à détecter.
-De plus certain candidats trouvés dans d'autre étude ont trouvé avec
-des méthodes similaires à PCAlm cite:Rahmani_2016,Price_2006.
+De plus certain candidats trouvés dans d'autre étude ont trouvé avec des
+méthodes similaires à PCAlm cite:Rahmani_2016,Price_2006.
 
 Les deux méthodes SVA comparé dans ce chapitre donne des résultats similaires à
 PCAlm sur les simualtion numérique (Figure ref:fig:method_comp). La méthode
@@ -9480,27 +9552,30 @@ donnerait des résultats comparable autres méthodes. Cependant il n'y a aucune
 garentit de la convergence de sva-irw ce qui rend compliqué l'exploration pour
 trouver les bons hyper paramètres. 
 
-Nous proposons dans ce chapitre deux méthodes, ridgeLFMM et lassoLFMM, de
-correction des étude d'association pour les facteurs latents qui repose sur
-l'optimisation de fonctions objectifs. Sur les jeux de données simulées ces
-méthodes ont les mêmes performances que la méthode oracle (Figure
-ref:fig:method_comp), sont bien calibré sur les vrais jeux de données (Figure
-ref:fig:ewas_qqplot_top A, Figure ref:fig:gwas_qqplot_top A et
-ref:fig:geas_qqplot) et retrouve les candidats validé par la litératures (Figure
-ref:fig:ewas_qqplot_top B et ref:fig:gwas_qqplot_top B). Les performances
-globales de ces méthodes sont très comparable à la méthode cate. Bien que cate,
-ridgeLFMM et lassoLFMM ont des performances très similaire pour nos critère il
-existe tout de même des différence entre les liste de candidat renvoyé pas ces
-trois méthodes (Figure ref:fig:ewas_venn, Figure ref:fig:gwas_venn et Figure
-ref:fig:geas_venn). Dans les études d'association considéré ici il n'y a de
-vérité terrain et une méthodes peut toujours donner de meilleurs résultat qu'un
-autre sur des simulations bien choisis (citer no free lunch th). Ceux deux nouvelles méthodes s'ajoutes a
-l'arsenal es méthodes permettant de corriger pour les facteurs de confusion. Il
-serait interessant de mettre en évidence des situation mettant en défaut une
-méthodes par rapport a une autre. Il existe aussi des méthodes permmettant de
-combiner les résultats vennant de plusieurs méthodes, cela permet de d'augmanter
-la confiance que l'on a en les résultats d'une étude d'association (citer meta
-analysis).
+Nous avons proposé dans ce chapitre deux méthodes, ridgeLFMM et lassoLFMM, de
+correction des étude d'association pour les facteurs latents qui reposent sur
+les solutions optimal de problèmes de moindres carré régularisé. Sur les jeux de
+données simulées ces méthodes ont les mêmes performances que la méthode oracle
+(Figure ref:fig:method_comp), elles sont bien calibré sur les vrais jeux de
+données (Figure ref:fig:ewas_qqplot_top A, Figure ref:fig:gwas_qqplot_top A et
+ref:fig:geas_qqplot) et on retrouve les candidats validés par la littératures
+(Figure ref:fig:ewas_qqplot_top B et ref:fig:gwas_qqplot_top B). Les
+performances globales de ces méthodes sont très comparable à la méthode cate.
+Bien que cate, ridgeLFMM et lassoLFMM ont des performances très similaires pour
+nos critères d'évaluation il existe tout de même des différences entre les
+listes de candidats renvoyés pas ces trois méthodes (Figure ref:fig:ewas_venn,
+Figure ref:fig:gwas_venn et Figure ref:fig:geas_venn). Dans les études
+d'association considérées ici il n'y a de vérité terrain et une méthodes peut
+toujours donner de meilleurs résultats qu'une autre sur des simulations bien
+choisis cite:Wolpert_1997. Ceux deux nouvelles méthodes s'ajoutes à l'arsenal
+des méthodes permettant de corriger pour les test d'association statistique pour
+les facteurs de confusion. Il serait intéressant de mettre en évidence des
+situation mettant en défaut une méthodes par rapport à une autre. Il existe
+aussi des méthodes permettant de combiner les résultats venant de plusieurs
+méthodes, cela permet de d'augmenter la confiance que l'on a en les résultats
+d'une étude d'association 
+
+nous on a utilisé l'inter etc... mais il y a plus soffistiqué 
 
 ** SANDBOX                                                        :noexport:
 :PROPERTIES:
