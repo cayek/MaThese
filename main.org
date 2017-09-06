@@ -336,21 +336,27 @@ généralement plus rapides que les méthodes basées sur un modèle probabilist
 *** Méthodes d'estimation des coefficients de métissage à l'aide de données géographiques
 
 Parmi les approches basées sur un modèle probabiliste de l'estimation des
-coefficients de metissage, une importante classe de méthodes a amélioré le
-modèle bayésien de {\ tt structure} en incorporant des données géographiques à
-travers la loi de distribution à prorie des coefficient de metissage ~ \ citep
-{Chen2007, Corander2008}. Sous les modèles d'isolation par distance ~ \ citep
-{Wright1943, Malecot1948}, les algorithmes spatiaux fournissent des estimations
-de structure de population plus robustes que des algorithmes non spatiaux qui
-peuvent conduire à des estimations biaisées du nombre de clusters ~ \ citep
-{Durand2009}. Certaines méthodes bayésiennes sont basées sur des algorithmes de
-Monte Carlo de chaîne de Markov qui nécessite beaucoup de calcul ~ \ citep
-{Francois2010}. Les efforts récents visant à améliorer l'inférence des coefficients
-ancestrales dans un contexte géographique ont principalement porté sur la
-localisation des ancêtres récents ~ \ citep {Baran2013, Lao2014, Yang2014,
-bhaskar2016, ranola2014}. Dans ces applications, l'information spatiale est
-utilisée dans un cadre prédictif qui attribue aux ancêtres des origines
-géographiques supposé. 
+coefficients de métissage, une classe importante de méthodes a amélioré le
+modèle bayésien de =structure= en incorporant des données géographiques à
+travers la loi de distribution à priori des coefficient de métissage
+cite:CHEN_2007,Corander2008. Les algorithmes spatiaux fournissent des
+estimations de la structure de population plus robustes que des algorithmes non
+spatiaux qui peuvent conduire à des estimations biaisées du nombre de clusters
+cite:Durand_2009. 
+
+
+Certaines méthodes bayésiennes sont basées sur des algorithmes
+de Monte Carlo de chaîne de Markov qui nécessite beaucoup de calcul ~ \ citep
+{Francois2010}. 
+
+Les efforts récents visant à améliorer l'inférence des
+coefficients ancestrales dans un contexte géographique ont principalement porté
+sur la localisation des ancêtres récents cite:Baran_2013
+
+
+Dans ces applications, l'information
+spatiale est utilisée dans un cadre prédictif qui attribue aux ancêtres des
+origines géographiques supposé.
 
 En gros il faut que je dise que ma méthode faire comme sNMF pour structure
 c'est quoi ce bradburd2016 ????, j'ai l'impression que c'est un peu différent. 
