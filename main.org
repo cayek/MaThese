@@ -78,6 +78,11 @@
 
   ## github
   devtools::install_github("privefl/bigsnpr")
+
+  ## my pkgs
+  devtools::install_github("cayek/MaTheseR/Rpackage")
+  devtools::install_github("bcm-uga/tess3_encho_sen")
+  devtools::install_github("bcm-uga/lfmm")
 #+END_SRC
 ** Ligne de commande
 *** ms
@@ -150,7 +155,6 @@ developper lors de cette thèse repose sur la factorisation de matrice. Nous
 allons maintenant introduire plus en détails les problématiques ainsi que la
 factorisation de matrice en statistique.
 
-
 ** La génomique des populations
 :LOGBOOK:
 - Note taken on [2017-06-07 Mer 14:42] \\
@@ -191,6 +195,212 @@ factorisation de matrice en statistique.
   analyse mais très proprement :D, y compris pour l'étude stat à la fin
   (recalibration propre !)
 :END:
+** Introduction
+:PROPERTIES:
+:header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+:END:
+Les individus d'une même population ce reproduise entre eux, ce transmettant
+ainsi leurs patrimoines génétiques. Quand on observe des les génomes d'individus
+provenant de plusieurs population différentes, on remarque des différences dans
+les distributions génomiques des populations. Par exemple la Figure ? montre les
+fréquences de distribution des allèle du gène ... dans des populations Europèen,
+Africaine et Afro-americaine. En pratique la réalité est plus complexe que des
+populations isolés qui ne s'échange pas d'individus. Le modèle de métissage en
+génétiques des population s'uppose que les individus que l'on observe sont le
+produit de la reproduction sexué entre des individus provenant de plusieurs
+population que l'on appel ancestral. Connessant les fréquence d'allèle dans les
+populations ancestrales il est possible de messurer pour chaque individu la
+proportion de son génome qui provient de chaque population ancestrale. La Figure
+... montre un example de mesure des coéficient d'une population Afroaméricaine
+en supoosant que les population ancestral sont les population Européen et
+Africaine. Bien souvent on ne connait pas les fréquence d'allèles dans les
+populations ancestrals et toute la difficulter est de l'estimer conjointement
+avec les coéficients de métissage.
+
+La mesure des coefficient de métissage est une étape importante dans l'étude de
+données génétique. 
+
+Comprendre comment l'organisation en sous populations permet de vizualiser le
+variation observé dans les données génétique afin d'étudier par exemple la démographie d'une
+espece citer....
+
+
+
+De plus nous somme obliger d'étudier la
+variation génétique provoqué par la structuration en sous population quand on
+veut comprehenssion les variations génétique provoqué par des pressions
+envinomental. De même que la structure de population constitue une facteur de
+confusion dans les étude d'association avec des phénotypes ou bien des maladies
+cite the effect of human population structure on larger genetic associatio
+suties ..., nous parlerons plus en détail de la notion de facteur de confusion
+dans le chapitre suivant. Enfin, la comprehention de la structure de population
+est très imporante en medical genetics.
+**** Scripts
+***** Africain Européen et Afro américain 
+#+begin_src R :results output :exports both
+  library("tidyverse")
+
+  ## 1000Genome dataset
+  dat <- readRDS("./Data/1000Genomes/Phase3/Eu_Af_Afam.chr1.maf.05.rds")
+
+#+end_src
+*** Méthodes d'estimation des coefficients de métissage
+*** Méthodes d'estimation des coefficients de métissage à l'aide de données géographiques
+*** Plan du chapitre
+** Nouvelles méthodes
+Dans cette section, nous présentons deux nouveaux algorithmes pour estimer les
+coefficients de metisse individuels et les fréquences génotypiques ancestrales
+en supposant $\K$ populations ancestrales. En plus des génotypes, les nouveaux
+algorithmes nécessitent les coordonnées géographiques de chaque individu.
+*** Matrices $\Q$ et $\G$
+Nous considérons une matrice de génotypique, $\Y$, enregistrant des données pour
+$n$ individus à des loci polymorphes $ L $ pour une espèce ayant une ploidy de
+$d$. 
+
+
+Pour les SNP autosomiques dans un organisme diploïde, le génotype au locus
+$ \ ell $ est un nombre entier, 0, 1 ou 2, correspondant au nombre d'allèles de
+référence à ce lieu. Dans nos algorithmes, des formes disjonctives sont
+utilisées pour coder chaque valeur génotypique comme indicateur d'un
+hétérozygote ou d'un locus homozygote (Frichot et al., 2014). Pour un organisme
+diploïde, chaque valeur génotypique $, 0,1,2 $ est encodée comme $ 100 $, $ 010
+$ et $ 001 $. Pour les organismes dédiés $ p $, il existe des valeurs
+génotypiques $ (p + 1) $ possibles à chaque locus, et chaque valeur correspond à
+une forme disjonctif unique. Bien que notre attention soit centrée sur les SNP,
+les algorithmes présentés dans cette section s'étendent aux loci multialaciques
+sans perte de généralité. En outre, la méthode peut être facilement étendue aux
+probabilités génotypiques en utilisant la probabilité de coder chaque valeur
+génotypique ~ \ citep {Korneliussen2014}.
+*** Problèmes d'optimisation des moindres carrés
+*** Choix des hyperparamètre
+*** Statistique de différentiation des populations ancestrales pour les cribles génomique pour l'adaptation locale
+** Données simulées et réelles
+** Résultats
+:PROPERTIES:
+:header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+:END:
+*** Erreur statistique
+*** Bénéfice apporté par l'ajout de l'information spatiale
+*** Sensibilité des estimateurs aux mesure spatiales
+*** Analyse de la convergence et temps de calcul 
+*** Application à des données humaines
+**** Scripts
+***** DONE Run de tess3r sur les données du 1000Genomes
+CLOSED: [2017-09-06 mer. 09:24]
+:LOGBOOK:
+- State "DONE"       from              [2017-09-06 mer. 09:24]
+:END:
+#+NAME: code:tess3r_1000G
+#+CAPTION: Dépend de 
+#+begin_src R 
+  ## lib
+  require(tess3r)
+
+  dat.file = "./Data/1000Genomes/Phase3/Eu_Af_Afam.maf.05.rds"
+  K = 3
+  openMP.core.num = 1
+  save = TRUE
+
+  dat <- readRDS(dat.file)
+
+
+  ## compute XBin
+  ploidy <- computePloidy(dat$G)
+  XBin <- computeXBin(dat$G, ploidy)
+
+  exp <- list()
+  ## snmf
+  message("Run of snmf")
+  exp$snmf.method <- sNMFMethod(K = K,
+                                openMP.core.num = ifelse(!is.null(openMP.core.num), openMP.core.num, 1))
+  exp$snmf.method <- fit(m = exp$snmf.method, dat)
+
+
+  ## tess3
+  message("Run of tess3")
+  exp$tess3r <- tess3r::tess3Main(X = NULL,
+                                  XProba = XBin,
+                                  coord = dat$coord,
+                                  K = K,
+                                  ploidy = ploidy,
+                                  lambda = 1.0,
+                                  W = dat$W,
+                                  method = "projected.ls",
+                                  max.iteration = 200,
+                                  tolerance = 1e-5,
+                                  openMP.core.num = openMP.core.num,
+                                  Q.init = NULL,
+                                  mask = 0.0,
+                                  copy = FALSE,
+                                  algo.copy = FALSE,
+                                  verbose = TRUE,
+                                  o wnly.ancestry = TRUE)
+
+
+  ## save exp
+  save_expr(exp, "tess3r_1000G.rds")
+
+
+#+end_src
+***** DONE Résultats
+CLOSED: [2017-09-06 mer. 09:24]
+:LOGBOOK:
+- State "DONE"       from              [2017-09-06 mer. 09:24]
+:END:
+#+NAME: code:tess3r_1000G_res
+#+CAPTION: Dépend de [[code:tess3r_1000G]]
+#+begin_src R 
+  exp <- readRDS("./OUTPUT/Expr/tess3_1000G.rds")
+  dat <- readRDS("~/Projects/Thesis/Data/1000Genomes/Phase3/Eu_Af_Afam.maf.05.sample.rds")
+  indiv <- dat$indiv
+
+  df.res <- tibble()
+
+
+  pops <- list()
+  pops[["EU"]] <- c("TSI", "GBR")
+  pops[["AFAM"]] <- c("ASW")
+  pops[["AF"]] <- c("YRI", "LWK")
+  pops[["AF_East"]] <- c("LWK")
+  pops[["AF_West"]] <- c("YRI")
+
+  ## tess3
+  cluster.mean <- list()
+  Q <- exp$tess3r$Q
+  for (n in names(pops)) {
+    cluster.mean[[n]] <- apply(Q[indiv$pop %in% pops[[n]],], 2, mean)
+  }
+  df.res <- as_tibble(cluster.mean) %>%
+    mutate(method = "tess3") %>%
+    rbind(df.res)
+
+  ## snmf
+  cluster.mean <- list()
+  Q <- exp$snmf.method$Q
+  for (n in names(pops)) {
+    cluster.mean[[n]] <- apply(Q[indiv$pop %in% pops[[n]],], 2, mean)
+  }
+  df.res <- as_tibble(cluster.mean) %>%
+    mutate(method = "snmf") %>%
+    rbind(df.res)
+
+  df.res
+#+end_src
+
+#+RESULTS:
+#+begin_example
+  # A tibble: 6 x 6
+             EU       AFAM          AF     AF_East      AF_West method
+          <dbl>      <dbl>       <dbl>       <dbl>        <dbl>  <chr>
+  1 0.989908389 0.22213109 0.005763050 0.010570104 1.356584e-03   snmf
+  2 0.002622910 0.68385885 0.580945529 0.177235864 9.510127e-01   snmf
+  3 0.007468701 0.09401008 0.413291396 0.812194030 4.763065e-02   snmf
+  4 0.013114647 0.51804568 0.516530277 0.325146852 6.919651e-01  tess3
+  5 0.975247418 0.21433237 0.000639551 0.001319068 1.666043e-05  tess3
+  6 0.011637935 0.26762196 0.482830172 0.673534080 3.080183e-01  tess3
+#+end_example
+*** Application à des données Arabidopsis Thaliana
+** Discussion
 * Estimation de facteurs latents pour corriger les tests d'association
 ** Introduction
 *** Les études d'association
@@ -402,24 +612,24 @@ où $\bare{\U}$ est la matrice des variables latents calculé à priori et $\V_{
 la matrice des effets des variables latentes sur $\Y_{j}$. Par exemple, les
 méthodes EIGENSTRAT et Refactor calculent les variables latentes à l'aide de
 l'analyse en composantes principales (ACP) de $\Y$ cite:Price_2006,Rahmani_2016.
-**** Les modèles mixes
+**** Les modèles mixtes
 Une autre approche de correction pour les facteurs de confusions est le modèle
-mixe. Dans un tel modèle on ajoute un effet aléatoire à la régression
+mixte. Dans un tel modèle on ajoute un effet aléatoire à la régression
 \begin{equation}
 \Y_{j} = \X \B^{T} + \matr{\Gamma}_{j} + \E_{j}
 \end{equation}
 où $\matr{\Gamma}_{j}$ est la matrice des effets aléatoires à estimer. Dans les
-modèles mixes on suppose de plus que la matrice de covariance de l'effet
+modèles mixtes on suppose de plus que la matrice de covariance de l'effet
 aléatoire est connue. On parle d'effet aléatoire mais il s'agit en faite du
 facteur de confusion dont à parlé jusque ici. Ainsi, la matrice de covariance
 doit correspondre à la variance du facteur de confusion, elle est en générale
-calculé à partir de $\Y$. Les modèles mixes ont été largement utilisés pour les
+calculé à partir de $\Y$. Les modèles mixtes ont été largement utilisés pour les
 GWAS cite:Kang_2008,Zhou_2014. Dans le cas des GWAS, l'effet aléatoire permet
 d'expliquer la variation de $\Y_{j}$ qui est dû à la structure de population.
 Dans ce cas la matrice de covariance est estimé à priori sur les données
 génétiques.
-**** Les modèles mixes à facteurs latents (LFMM latent factor mixed model)
-Nous introduisons maintenant les modèles mixes à facteurs latents. L'équation de
+**** Les modèles mixtes à facteurs latents (LFMM latent factor mixted model)
+Nous introduisons maintenant les modèles mixtes à facteurs latents. L'équation de
 régression peut s'écrire comme ceci : 
 \begin{equation}
 \label{eq:glfmm}
@@ -451,7 +661,6 @@ de méthodes, on distingue des autres les méthodes dites à contrôles négatif
 suppose connu un sous ensemble de colonnes de $\Y$ qui ne sont pas associées
 avec $\X$. Les méthodes à contrôles négatifs utilisent ces variables dîtes
 nulles pour estimer les variables latentes.
-
 
 *** Source de confusion                                          :noexport:
 :LOGBOOK:
@@ -489,9 +698,9 @@ objectif respective. Enfin, nous comparons nos méthodes à SVA et CATE sur des
 simulations numériques ainsi que des exemples de GWAS, EWAS et GEA.
 
 ** Nouvelles méthodes 
-*** Modèle 
+*** Modèle mixte à facteurs latents
 <<sec:model>>
-Dans cette partie nous introduisons les notations du modèle mixes à facteurs
+Dans cette partie nous introduisons les notations du modèle mixtes à facteurs
 latents que nous utilisons pour corriger les tests d'association : 
 \begin{equation}
 \label{eq:model}
@@ -9784,7 +9993,6 @@ simulations bien choisis cite:Wolpert_1997. Ces deux nouvelles méthodes
 s'ajoutent à l'arsenal des méthodes permettant de corriger pour les facteurs de
 confusion les test d'association statistique pour les facteurs de confusion.
 
-
 ** SANDBOX                                                        :noexport:
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none
@@ -9875,3 +10083,15 @@ bibliographystyle:apalike
 bibliography:../biblio.bib
 
  
+* Soutenance                                                       :noexport:
+:LOGBOOK:
+- Note taken on [2017-09-05 mar. 10:31] \\
+  Je vais suivre le plan de la thèse: 
+  - une intro pour le context, très générals, présentation de quelque
+    problématique importante en génétique de populations en association.
+  - Problématique
+  - Plan
+    celui de la thèse
+  - developpement des deux axes
+  - Conclusion et résumé de la thèse
+:END:
