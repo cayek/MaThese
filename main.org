@@ -60,6 +60,9 @@
   install.packages("raster")
   install.packages("latex2exp")
   install.packages('printr')
+  install.packages("units", configure.args = "--with-udunits2-include=/usr/include/udunits2")
+  install.packages("ggforce")
+  install.packages("scatterpie")
 
     ## bioconductor
   source("https://bioconductor.org/biocLite.R")
@@ -199,17 +202,17 @@ factorisation de matrice en statistique.
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
 :END:
-Les individus d'une même population ce reproduise entre eux, ce transmettant
+Les individus d'une même population se reproduisent entre eux, se transmettant
 ainsi leurs patrimoines génétiques. Quand on observe des les génomes d'individus
-provenant de plusieurs population différentes, on remarque des différences dans
+provenant de plusieurs populations différentes, on remarque des différences dans
 les distributions génomiques des populations. Par exemple la Figure ? montre les
 fréquences de distribution des allèle du gène ... dans des populations Europèen,
 Africaine et Afro-americaine. En pratique la réalité est plus complexe que des
 populations isolés qui ne s'échange pas d'individus. Le modèle de métissage en
-génétiques des population s'uppose que les individus que l'on observe sont le
+génétiques des population s'suppose que les individus que l'on observe sont le
 produit de la reproduction sexué entre des individus provenant de plusieurs
-population que l'on appel ancestral. Connessant les fréquence d'allèle dans les
-populations ancestrales il est possible de messurer pour chaque individu la
+population que l'on appel ancestral. Connaissant les fréquences d'allèle dans
+les populations ancestrales il est possible de mesurer pour chaque individu la
 proportion de son génome qui provient de chaque population ancestrale. La Figure
 ... montre un example de mesure des coéficient d'une population Afroaméricaine
 en supoosant que les population ancestral sont les population Européen et
@@ -224,8 +227,6 @@ Comprendre comment l'organisation en sous populations permet de vizualiser le
 variation observé dans les données génétique afin d'étudier par exemple la démographie d'une
 espece citer....
 
-
-
 De plus nous somme obliger d'étudier la
 variation génétique provoqué par la structuration en sous population quand on
 veut comprehenssion les variations génétique provoqué par des pressions
@@ -234,18 +235,132 @@ confusion dans les étude d'association avec des phénotypes ou bien des maladie
 cite the effect of human population structure on larger genetic associatio
 suties ..., nous parlerons plus en détail de la notion de facteur de confusion
 dans le chapitre suivant. Enfin, la comprehention de la structure de population
-est très imporante en medical genetics.
+est très imporante en medical genetics. 
+
+
 **** Scripts
-***** Africain Européen et Afro américain 
+***** STARTED Africain Européen et Afro américain 
+:LOGBOOK:
+- State "STARTED"    from              [2017-09-06 mer. 10:45]
+:END:
+
+Tudo pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-for-plotting-pies-on-ggplot/][here]]
+#+NAME: code:tess3_intro
+#+CAPTION: Dépend de 
 #+begin_src R :results output :exports both
   library("tidyverse")
+  library(tess3r)
+  library(MaTheseR)
 
   ## 1000Genome dataset
   dat <- readRDS("./Data/1000Genomes/Phase3/Eu_Af_Afam.chr1.maf.05.rds")
+  dim(dat$G)
+
+  expr <- list()
+  ## compute Fst
+  snmf.res <- sNMFMethod(K = 2) %>% fit(dat)
+  expr$G <- snmf.res$G
+  expr$Q <- snmf.res$Q
+  expr$fst <- ComputeFst(expr$Q, expr$G, 3)
+
+
+  save_expr(expr, "tess3_intro.rds")
+#+end_src
+
+#+NAME: code:tess3_intro_plot
+#+CAPTION: Dépend de [[code:tess3_intro]]
+#+begin_src R 
+  library("tidyverse")
+  library(tess3r)
+  library(MaTheseR)
+  library(scatterpie)
+  MaTheseR.params <- get_MaTheseRparams()
+  gtheme <- MaTheseR.params$gtheme
+
+  ## plot freq
+
+  ## barplot
+  toplot <- data.frame(Q.ordered, index = seq_along(Q.ordered[,1])) %>% reshape2::melt(id = "index")
+    brplot <- ggplot(toplot, aes(x = index, y = value)) +
+      geom_bar(stat = "identity", aes(color = variable)) +
+      Article2.env$gtheme +
+      theme(legend.position = "none",
+            axis.ticks.x = element_blank(),
+            axis.text.x = element_blank(),
+            panel.background = element_blank(),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank()) +
+      xlab("Individual") +
+      ylab("Admixture\n\ coefficient (Q)") +
+      scale_y_continuous(breaks = c(0.0,0.5,1.0)) +
+      scale_color_manual(values = cols)
 
 #+end_src
+
 *** Méthodes d'estimation des coefficients de métissage
+:LOGBOOK:
+- Note taken on [2017-09-06 mer. 11:57] \\
+  Rmk : ici je parle de modèle probabiliste au sens de Kevin p murphy :D
+:END:
+Le modèle du structure de populations que nous venons de décrire a été introduit
+par cite:Pritchard2000 et le logiciel =structure=. Le modéle présenté dans
+cite:Pritchard2000 est formalisé avec une approche bayesiennes. Les données de
+plus en plus grands on provoquer l'emergence de plusieurs des algorithme plus
+rapide que celui de =structure= ~ \ citep { Tang2005, Alexander2011,
+Frichot2014, Raj2014}. Parmis les logicielles d'inférence de la structure de
+population on les modèles basé sur un modèle probabiliste et des modèles basé
+l'optimisation une fonction objective.
+
+Parmi les approches basées sur un modèle probabiliste, une fonction de
+vraisemblance est définie pour la matrice des coefficients de metissage et
+l'estimation est effectuée en maximisant la fonction log-vraisemblance. Pour {\
+tt structure} et les modèles connexes, les hypothèses du modèle incluent
+l'équilibre de liaison et l'équilibre de Hardy-Weinberg dans les populations
+ancestrales. La première amélioration de l'algorithme d'origine était basée sur
+un algorithme EM ~ \ citep {Tang2005}, et des algorithmes de vraisemblance plus
+récents sont implémentés dans les programmes {\ tt adjuvant} et {\ tt
+faststructure} \ citep {Alexander2011, Raj2014} . Dans les approches sans
+modèles probabiliste, les coefficients de métissage sont estimés à l'aide de
+méthodes de moindres carrés ou d'analyse factorielle. Les méthodes sans modèle
+probabiliste ne font aucune hypothèse sur les processus biologiques qui ont
+généré les données. Pour estimer les matrices de métissage, \ cite
+{Engelhardt2010} a proposé d'utiliser l'analyse des facteurs épars, \ cite
+{Frichot2014} a utilisé des algorithmes de factorisation de matrice non négative
+scindés et \ cite {Popescu2014} a utilisé l'analyse des composants principaux du
+noyau. Les méthodes des moindres carrés permettent de reproduire avec précision
+les résultats des approches de vraisemblance selon les hypothèses types de ces
+méthodes. En outre, les méthodes sans modèle fournissent des approches qui sont
+valides lorsque les hypothèses des approches de vraisemblance ne sont pas
+respectées ~ \ citep {Frichot2014}. Les méthodes sans modèle probabiliste sont
+généralement plus rapides que les méthodes basées sur un modèle probabiliste.
 *** Méthodes d'estimation des coefficients de métissage à l'aide de données géographiques
+
+Parmi les approches basées sur un modèle probabiliste de l'estimation des
+coefficients de metissage, une importante classe de méthodes a amélioré le
+modèle bayésien de {\ tt structure} en incorporant des données géographiques à
+travers la loi de distribution à prorie des coefficient de metissage ~ \ citep
+{Chen2007, Corander2008}. Sous les modèles d'isolation par distance ~ \ citep
+{Wright1943, Malecot1948}, les algorithmes spatiaux fournissent des estimations
+de structure de population plus robustes que des algorithmes non spatiaux qui
+peuvent conduire à des estimations biaisées du nombre de clusters ~ \ citep
+{Durand2009}. Certaines méthodes bayésiennes sont basées sur des algorithmes de
+Monte Carlo de chaîne de Markov qui nécessite beaucoup de calcul ~ \ citep
+{Francois2010}. Les efforts récents visant à améliorer l'inférence des coefficients
+ancestrales dans un contexte géographique ont principalement porté sur la
+localisation des ancêtres récents ~ \ citep {Baran2013, Lao2014, Yang2014,
+bhaskar2016, ranola2014}. Dans ces applications, l'information spatiale est
+utilisée dans un cadre prédictif qui attribue aux ancêtres des origines
+géographiques supposé. 
+
+En gros il faut que je dise que ma méthode faire comme sNMF pour structure
+c'est quoi ce bradburd2016 ????, j'ai l'impression que c'est un peu différent. 
+
+Alors que l'estimation géographique rapide des
+proportions d'ascendance individuelle a été proposée précédemment ~ \ citep
+{Caye2016, bradburd2016}, il est de plus en plus nécessaire de développer des
+algorithmes d'estimation d'ascendance individuels qui réduisent le coût de
+calcul dans un cadre géographiquement explicite.
+
 *** Plan du chapitre
 ** Nouvelles méthodes
 Dans cette section, nous présentons deux nouveaux algorithmes pour estimer les
@@ -274,11 +389,15 @@ génotypique ~ \ citep {Korneliussen2014}.
 *** Problèmes d'optimisation des moindres carrés
 *** Choix des hyperparamètre
 *** Statistique de différentiation des populations ancestrales pour les cribles génomique pour l'adaptation locale
+** Autres méthodes existantes comparées
+*** Tess 2.3
+*** sNMF
 ** Données simulées et réelles
 ** Résultats
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
 :END:
+*** Comparaison avec TESS 2.3
 *** Erreur statistique
 *** Bénéfice apporté par l'ajout de l'information spatiale
 *** Sensibilité des estimateurs aux mesure spatiales
@@ -400,6 +519,11 @@ CLOSED: [2017-09-06 mer. 09:24]
   6 0.011637935 0.26762196 0.482830172 0.673534080 3.080183e-01  tess3
 #+end_example
 *** Application à des données Arabidopsis Thaliana
+**** Scripts
+***** Choix des params
+***** Run tess3r
+***** Map et barplot
+***** Manhattan plot
 ** Discussion
 * Estimation de facteurs latents pour corriger les tests d'association
 ** Introduction

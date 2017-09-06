@@ -3,11 +3,9 @@
 #'
 #' @export
 Method <- function(name = "A method", hypothesis.testing.method = NULL,
-                   impute.genotype.method = imputeByMean(),
                    nickname = NULL) {
   structure(list(name = name,
                  hypothesis.testing.method = hypothesis.testing.method,
-                 impute.genotype.method = impute.genotype.method,
                  nickname = nickname), class = "Method")
 }
 
