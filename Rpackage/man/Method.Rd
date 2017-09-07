@@ -5,7 +5,7 @@
 \title{Sampler class}
 \usage{
 Method(name = "A method", hypothesis.testing.method = NULL,
-  impute.genotype.method = imputeByMean(), nickname = NULL)
+  nickname = NULL)
 }
 \description{
 Sampler class

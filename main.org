@@ -202,10 +202,13 @@ factorisation de matrice en statistique.
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
 :END:
+
 Les individus d'une même population se reproduisent entre eux, se transmettant
-ainsi leurs patrimoines génétiques. Quand on observe des les génomes d'individus
+ainsi leurs patrimoines génétiques. Quand on observe les génomes d'individus
 provenant de plusieurs populations différentes, on remarque des différences dans
-les distributions génomiques des populations. Par exemple la Figure ? montre les
+les distributions génomiques des populations. 
+
+Par exemple la Figure ? montre les
 fréquences de distribution des allèle du gène ... dans des populations Europèen,
 Africaine et Afro-americaine. En pratique la réalité est plus complexe que des
 populations isolés qui ne s'échange pas d'individus. Le modèle de métissage en
@@ -276,6 +279,9 @@ Tudo pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
   library(scatterpie)
   MaTheseR.params <- get_MaTheseRparams()
   gtheme <- MaTheseR.params$gtheme
+
+
+  expr <- readRDS("./OUTPUT/Expr/")
 
   ## plot freq
 
