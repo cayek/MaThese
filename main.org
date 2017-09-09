@@ -212,6 +212,12 @@ Pas claire ! voir : https://en.wikipedia.org/wiki/Population_stratification
 https://www.ncbi.nlm.nih.gov/pubmed/10835412
 https://www.ncbi.nlm.nih.gov/pubmed/12930761
 
+Intro duire les données qu'on utilise avec notion de SNPs et locus et allèle
+et 
+l'ascendance !! les méthode d'estimation de l'acendance !!! on ne parle pas
+structure de population
+
+
 Les individus d'une même population se reproduisent entre eux, se transmettant
 ainsi leurs patrimoines génétiques. Quand on observe les génomes d'individus
 provenant de plusieurs populations différentes, on remarque des différences dans
@@ -477,73 +483,70 @@ géographiques individuelles et géométriques sont disponibles ~ \ citep
 
 ** Nouvelles méthodes
 Dans cette section, nous présentons deux nouveaux algorithmes pour estimer les
-coefficients de metisse individuels et les fréquences de génotypes ancestraux en
-supposant $\K$ populations ancestrales. En plus des génotypes, les nouveaux algorithmes nécessitent les coordonnées géographiques de
-chaque individu.
+coefficients de métisse individuel et les fréquences de génotypes ancestraux en
+supposant $\K$ populations ancestrales. En plus des génotypes, les nouveaux
+algorithmes présenté ici nécessitent les coordonnées géographiques de chaque
+individu.
 *** Matrices $\Q$ et $\G$
-Nous considérons une matrice de génotypique, $\Y$, enregistrant des données pour
-$n$ individus à des locus (un locus est une position sur l'ADN) polymorphes $p$
-pour une espèce ayant une ploidy de $d$, c'est à a dire qui possède un génome
-composé de $d$ exemplaire de chaque chromosome. Pour les SNP autosomiques dans
-un organisme diploïde, le génotype au locus $\ell$ est un nombre entier, 0, 1 ou
-2, correspondant au nombre d'allèles de référence observé à ce locus. Dans nos
-algorithmes, des formes disjonctives sont utilisées pour coder chaque valeur
-génotypique comme indicateur d'un hétérozygote ou d'un locus homozygote
-cite:Frichot_2014. Pour un organisme diploïde, chaque valeur génotypique
-$,0,1,2$ est encodée comme $100$, $010$ et $001$. Pour les organismes de ploidy
-$d$, il existe $(d + 1)$ valeurs génotypiques possibles à chaque locus, et
-chaque valeur est encodée sous une forme disjonctif unique. Bien nous nous
-interessons ici données génétyque composé de SNP, les algorithmes présentés dans
-ce chapitre s'étendent aux locus multialaciques sans perte de généralité. De
-plus, la méthode peut être facilement étendue aux probabilités d'observation
-d'un génotype plutot que la valeur observé étant le plus probable.
+Nous considérons une matrice de génotype, $\Y$, enregistrant des données de $n$
+individus à des locus polymorphes $p$ pour une espèce ayant une ploidy de $d$,
+c'est à dire qui possède un génome composé de $d$ exemplaire de chaque
+chromosome. Pour les SNPs autosomiques dans un organisme diploïde, le génotype
+au locus $\ell$ est un nombre entier, 0, 1 ou 2, correspondant au nombre
+d'allèles de référence observé à ce locus. De même que dans cite:Frichot_2014,
+dans nos algorithmes nous utilisons des formes disjonctives pour coder les
+génotypes. Par exemple pour un organisme diploïde, le nombre d'allèle observé à
+chaque locus $,0,1,2$ est encodée comme $100$, $010$ et $001$. Pour les
+organismes de ploidy $d$, il existe $(d + 1)$ génotypes possibles à chaque
+locus, et chaque valeur est encodée sous une forme disjonctif unique. 
 
 De la même manière que dans cite:Frichot_2014, si l'on suppose qu'il y a $K$
-population ancestral, nous cherchons à décomposer la matrice $\Y$ en une matrice
-de coefficient de métissage $\Q$, de taille $\n \times K$ et une matrice de
-fréquence de génotype dans les $K$ populations ancestrale $G$, de taille $p
-\times K$. Nous notons $\Q_{i,k}$ le coéficient de métissage de l'individu $i$
-population ancestrale $k$. Nous avons de plus 
+populations ancestrales, nous cherchons à décomposer la matrice $\Y$ en une
+matrice de coefficients de métissage $\Q$, de taille $n \times K$ et une matrice
+de fréquences de génotypes dans les $K$ populations ancestrales $G$, de taille $p
+\times K$. Nous notons $\Q_{i,k}$ le coefficient de métissage de l'individu $i$
+pour la population ancestrale $k$. Nous avons de plus
 \begin{equation}
 \label{eq:QConst}
 \Q \geq 0 \, , \quad \sum_{k=1}^K {\bf Q}_{i,k} = 1 .
 \end{equation}
-Nous notons $\G_{(d + 1\ell + j, k} la fréquence du génotype $j$ au locus $\ell$
+Nous notons $\G_{(d + 1)\ell + j, k}$ la fréquence du génotype $j$ au locus $\ell$
 dans la population $k$ et nous avons
 \begin{equation}
 \label{eq:GConst}
-\G \geq 0 \, , \quad \sum_{j=0}^{d} {\bf G}_{(p+1)\ell + j, k} = 1.
+\G \geq 0 \, , \quad \sum_{j=0}^{d} {\bf G}_{(d+1)\ell + j, k} = 1.
 \end{equation}
-Enfin, une estimation du des matrice $\Q$ et $\G$ peuvent être obtenu en
-factorisant la matrice de génotype de la façon suivante 
+Enfin, nous voulons estimer les matrices $\Q$ et $\G$ en factorisant la matrice
+de génotype de la façon suivante
 \begin{equation*}
 \Y = \Q \G^{T}.
 \end{equation*}
-Ainsi le problème d'inférence peut être résolu en utilisant les méthode
-factorization de matrice non négatives avec les contraintes convexe décrite par
-les équations ref:eq:QConst et ref:eq:GConst en plus
+Ainsi le problème d'inférence peut être résolu en utilisant les méthodes de
+factorization de matrice non négatives avec en plus les contraintes convexe
+décrite par les équations ref:eq:QConst et ref:eq:GConst
 cite:lee1999learning,Cichocki2009. Dans la suite, nous utiliserons les notations
 $\DQ$ et $\DG$ pour représenter les ensembles formé à partir des contraintes sur
 $\Q$ et $\G$.
 *** Information géographique
 L'information géographique est introduite dans le problème de factorisation de
-matrice en utilisant des poids entre les individus. Les poids sont utilisé pour
-imposer une contrainte de régularité de l'éstimateur des coéficient de métissage
-sur l'espace géographique. Nous voulons souhaitons que des individu proche dans
-l'espace géographique est des coéficient de métissage proche. Les poids sont
-définis à partir coordonnées géographiques des individus que l'on note $x_{i}$
-pou chaque individu $i$. Nous atribuons aux individu proche dans l'espace un
-poid plus grand que des individu éloigné. Les poids son calculé en construisant
-un graphe complet poudéré entre les individus. Entre chaque individu $i$ et $j$,
-on construit la matrice des poids du graphe $\W$ de la manière suivante
+matrice en utilisant des poids entre les individus. Les poids sont utilisés pour
+imposer une contrainte de régularité de l'estimation des coefficients de
+métissage sur l'espace géographique. En effet, nous souhaitons que des individus
+proches dans l'espace géographique aient des coefficients de métissage proche.
+Les poids sont définis à partir des coordonnées géographiques des individus que
+l'on note $x_{i}$ pour chaque individu $i$. Nous attribuons aux individus
+proches dans l'espace un poids plus grand que pour des individus éloignés. Les
+poids sont calculés en construisant un graphe complet pondéré entre les
+individus. Entre chaque individu $i$ et $j$, nous construisons la matrice des
+poids du graphe $\W$ de la manière suivante
 \begin{equation}
 \label{eq:tess3Graph}
-\W_{ij} = \exp( - {\rm dist}( x_i, x_j )^2/ \sigma^2),
+\W_{i,j} = \exp( - {\rm dist}( x_i, x_j )^2/ \sigma^2),
 \end{equation}
 où la fonction ${\rm dist}( x_i, x_j)$ définie n'importe quelle distance entre
-les coordonnées géographique $x_{i}$ et $x_{j}$ des individus $i$ et $j$. 
+les coordonnées géographique $x_{i}$ et $x_{j}$ des individus d'indice $i$ et $j$. 
 
-Ensuite nous introduisons la matrice laplacienne associé à la matrice des poids
+Ensuite, nous introduisons la matrice laplacienne associée à la matrice des poids
 géographique $\W$. La matrice laplacienne est définie de la manière suivante
 \begin{equation}
 \label{eq:tess3Laplace}
@@ -554,15 +557,15 @@ où $\D$ est la matrice diagonale tel que
 \label{eq:tess3Diag}
 \left\{ \D_{i,i} \right\}_{i = 1..n}= \left\{\sum_{j = 1}^n \W_{i,j}\right\}_{i = 1..n}.
 \end{equation}
-Par le calcul,  cite:DengCai2011 ont montré que 
+Par le calcul, les auteurs de cite:DengCai2011 ont montré que 
 \begin{equation}
 \label{eq:tess3Reg}
 {\rm Tr} (\Q^{T} \Laplacienne \Q)  = \frac{1}{2} \sum_{i,j = 1}^n  \W_{i,j}  \|   \Q_{i,.}  \Q_{j,.} \|^2.
 \end{equation}
-Dans notre approche, nous supposons que les individus géographiquement proche
-ont plus de chance d'avoir des ancettres commun que des individus éloigné. Ainsi
-nous utilisons le terme défini par l'equation ref:eq:tess3Reg pour regulariser
-l'estimateur de la matrice des coéficient de métissage.
+Dans notre approche, nous supposons que les individus géographiquement proches
+ont plus de chance d'avoir des ancêtres communs que des individus éloigné. Ainsi
+nous utilisons le terme défini par l'équation ref:eq:tess3Reg pour régulariser
+l'estimateur de la matrice des coefficients de métissage $\Q$.
 
 *** Problèmes d'optimisation des moindres carrés
 L'estimation des matrices $\Q$ et $\G$ à partir de la matrice de génotype $\Y$
@@ -571,38 +574,45 @@ est réalisé en optimisant la fonction suivante
 \mathcal{L}(\Q, \G) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \alpha {\rm Tr} (\Q^{T} \Laplacienne \Q), 
 \label{eq:tess3LS}
 \end{equation}
-où la matrice $\Q$ appartient a $\DQ$ l'ensemble définie par les contraintes
+où la matrice $\Q$ appartient à $\DQ$ l'ensemble définie par les contraintes
 ref:eq:QConst et la matrice $\G$ appartient à $\DG$ l'ensemble définie par les
-contraintes ref:eq:GConst. La notation $ \| \matr{M} \| _ {\ rm F} $ désigne la
-norme Frobenius d'une matrice, $\matr{M}$. Le paramètre de régularisation
-$\alpha$ contrôle la régularité des estimations des coefficients de métissage
-dans l'espace géographique. Les grandes valeurs de $\alpha$ impliquent que les
-coefficients de métissage ont des valeurs similaires pour les personnes proches,
-alors que les valeurs faibles ignorent l'autocorrélation spatiale dans les
-fréquences alléliques observées.
+contraintes ref:eq:GConst. La notation $\| \matr{M} \|_{\rm F}$ désigne la norme
+de Frobenius de la matrice $\matr{M}$. Le paramètre de régularisation $\alpha$
+contrôle la régularité des estimations des coefficients de métissage dans
+l'espace géographique. Les grandes valeurs de $\alpha$ impliquent que les
+coefficients de métissage ont des valeurs proches pour les personnes
+géographiquement proches.
 
 *** Algorithme d'optimisation quadratique alterné (AQP)
 Parce que les polyèdres $\DQ$ et $\DG$ sont des ensembles convexes et que la
-fonction $\mathcal{L}$ est convexe par rapport à chaque variable $\Q$ ou $\G$ lorsque
+fonction $\LS$ est convexe par rapport à chaque variable $\Q$ ou $\G$ lorsque
 l'autre est fixé, nous pouvons appliquer l'algorithme de descente par bloc de
 coordonnées au problème ref:eq:tess3LS présenté à la page 267 de
-cite:Bertsekas_1997. L'algorithme APQ commence a partir de valeurs initiales
-pour les matrices $\G$ et $\Q$, et alternent deux étapes d'optimisation. La
-première étape calcule la matrice $\G$ tandis que $\Q$ est fixé, et inversement.
-Nous supposons que $\Q$ est fixé et écrivons $\G$ sous une forme
-vectorielle
+cite:Bertsekas_1997. L'algorithme de descente par bloque de coordonnées consiste
+à progresser dans l'ensemble de définition de la fonction a optimiser en
+alternant des étapes d'optimisation selon chacune des coordonnées de la fonction
+à optimiser. Cette algorithme permet de converger vers un minimum local du la
+fonction à optimiser quand celle ci est convexe et définie du un ensemble
+convexe. Le problème d'optimisation selon $\G$ quand $\Q$ est fixé est un
+problème d'optimisation quadratique, il en va de même quand on échange les rôles
+de $\G$ et $\Q$, c'est pour cela que l'algorithme est dit d'optimisation
+quadratique alterné (AQP). L'algorithme APQ commence à partir de valeurs
+initiales pour les matrices $\G$ et $\Q$, et alternent deux étapes
+d'optimisation. La première étape calcule la matrice $\G$ tandis que $\Q$ est
+fixé, et inversement. Nous supposons que $\Q$ est fixé et écrivons $\G$ sous une
+forme vectorielle
 \begin{equation*} 
-g = {\rm vec}(\G) \in \mathbb{R} ^ {K(d + 1) p} 
-\end{equation*}. 
+g = {\rm vec}(\G) \in \mathbb{R} ^ {K(d +1)p}.
+\end{equation*}
 La première étape de l'algorithme résout le sous problème d'optimisation
 quadratique suivant 
 \begin{equation}
 \begin{aligned}
-\underset{g \in \DG}{\arg \min}  ( -2  v^T_Q \, g + g^T \D_Q g ) \, ,
+\underset{g \in \DG}{\min}  ( -2  v^T_Q \, g + g^T \D_Q g ) ,
 \end{aligned}
 \label{eq:AQPg}
 \end{equation}
-où $\D_Q = \Id_{(d + 1) p} \otimes \Q^T \Q$ et $v_Q = {\rm vec} (\Q^T \Y$. Ici,
+où $\D_Q = \Id_{(d + 1) p} \otimes \Q^T \Q$ et $v_Q = {\rm vec} (\Q^T \Y)$. Ici,
 $\otimes$ désigne le produit Kronecker et $\Id_{d}$ est la matrice identité de
 taille $d$. La structure en bloc de la matrice $\D_Q$ nous permet de
 décomposer le sous-problème ref:eq:AQPg en $p$ problèmes de
@@ -610,13 +620,12 @@ programmation quadratiques indépendants à $K(d + 1)$ variables.
 Nous considérons ensuite que $\G$ est la valeur obtenue après la première
 étape de l'algorithme, et écrivons $\Q$ sous une forme vectorielle 
 \begin{equation}
-\label{eq:4}
 q = {\rm vec}(\Q) \in \mathbb{R}^{nK} 
 \end{equation}
 La deuxième étape résout le sous-problème de programmation quadratique suivant
 \begin{equation}
 \begin{aligned}
-\underset{q \in \DQ}{\arg \min} ( -2 v^T_G \, q + q^T \D_G q ) \,  ,
+\underset{q \in \DQ}{\min} ( -2 v^T_G \, q + q^T \D_G q ) ,
 \end{aligned}
 \label{eq:AQPq}
 \end{equation}
@@ -625,41 +634,170 @@ où $\D_G = \Id_{n} \otimes \G^T \G + \alpha \Laplacienne \otimes \Id_K$ et $v_G
 sous-problème ref:eq:AQPq ne peut pas être séparer en plus petits problèmes.
 Ainsi, la deuxième étape de l'algorithme AQP implique de résoudre un problème de
 programmation quadratique à $nK$ variables qui peut être problématiques pour les
-jeux de données avec beaucoup d'individus. Pour l'algorithme AQP nous pouvons
-énoncer le résultat de convergence suivant. 
+jeux de données avec beaucoup d'individus. Nous alternons ces deux étapes jusque
+convergence de l'algorithme AQP en un minimum local de $\LS$. Par ailleurs, nous
+pouvons énoncer le résultat de convergence suivant.
 #+BEGIN_theorem
 <<AQP_theorem>> L'algorithme AQP qui alterne les étapes d'optimisation définis
-par ref:eq:AQPg et ref:eq:AQPq converge vers minimum local de la fonction $\mathcal{L}$
-défini par l'équation ref:eq:tess3LS.
+par ref:eq:AQPg et ref:eq:AQPq converge vers un minimum local de la fonction
+$\mathcal{L}$ défini par l'équation ref:eq:tess3LS.
 #+END_theorem
 
 #+BEGIN_proof
 La fonction $\mathcal{L}$ définie par l'équation ref:eq:tess3LS est convexe par
 rapport à $\Q$ quand $\G$ est fixé et inversement. De plus les ensembles
 définition $\DQ$ et $\DG$ sont convexe. Alors d'après le corollaire 2 de
-cite:Grippo_2000 tout point limite de l'algorithme AQP converge vers un point
-de minimum local de la fonction $\mathcal{L}$.
+cite:Grippo_2000 tout point limite de l'algorithme AQP converge vers un point de
+minimum local de la fonction $\mathcal{L}$.
 #+END_proof
 
 *** Algorithme des moindres carrés alternés projetés (APLS)
 Dans cette partie nous présentons l'algorithme APLS de calcul d'un minimum local
 de la fonction $\LS$ définie par ref:eq:tess3LS. Contrairement à AQP, il n'y a
-pas de résultat sur la convergence d'APLS mais à une complexité algorithme plus
-faible que l'algorithme AQP. L'algorithme APLS commence par initialiser au
-hasard les matrice $\Q$ et $\G$ et alterne deux étapes. La matrice $\Q$ est
-mis a jour pendant que la matrice $\G$ est fixé et vice versa. La première étape
-consiste à calculer 
+pas de résultat sur la convergence de d'APLS. Cependant l'algorithme APLS a une
+complexité algorithme plus faible que l'algorithme AQP. L'algorithme APLS
+commence par initialiser au hasard les matrices $\Q$ et $\G$ et alterne deux
+étapes jusque la convergence de celui-ci. La matrice $\Q$ est mis à jour pendant
+que la matrice $\G$ est fixé et vice versa. La première étape de mis a jour de
+la matrice $\G$ consiste à calculer
 \begin{equation}
+\label{eq:tess3:apls:g}
 {\bf G}^\star = \arg \min  \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} \, .
 \end{equation}
-Cette étape peut être séparé en $(d+1) p$ (le nombre de colonnes de $\Y$)
-problème indépendant. Cette opération peut être parallélisé. Ensuite nous
+Cette étape peut être séparée en $(d+1) p$ (le nombre de colonnes de $\Y$)
+problèmes indépendants. Cette opération peut être parallélisé. Ensuite nous
 projetons $\G^{\star}$ sur le polyèdre $\DG$. Pour la seconde étape nous
-supposons que 
+commençons par calculer la matrice des vecteurs propres de la matrice laplacienne
+$\laplacienne$ que nous notons $\U$, ainsi que la matrice diagonale $\LapVp$
+formée des valeurs propres de $\Laplacienne$. Comme la matrice laplacienne est
+symétrique et positive ses valeurs propres sont des nombres réels non négatif.
+D'après le théorème spectral nous avons
+\begin{equation}
+\Laplacienne = {\U}^T {\LapVp} \U.
+\end{equation}
+Après cette opération nous projetons la matrice des données $\Y$ sur la base des
+vecteurs propres de la façon suivante
+\begin{equation}
+\label{eq:3}
+\mathcal{P}(\Y) = \U \Y,
+\end{equation}
+et, pour chaque individu, nous calculons 
+\begin{equation}
+\label{eq:tess3:apls:q}
+q_i^\star = \arg \min \| \mathcal{P}(\Y}_i - \G q) \|^{2}_{2} + \alpha \lambda_i \| q \|^{2}_{2}  ,
+\end{equation}
+où $\mathcal{P}(\Y)_{i}$ est ligne d'indice $i$ de la matrice des données
+projetée, et $\lambda_{i}$ désigne la valeur propre d'indice $i$ de
+$\Laplacienne$. Les solutions, $q_{i}^{\star}$, sont concaténées en une matrice,
+$\hat{\Q}$, puis la matrice $\Q$ est mise à jour par la projection de $\U
+\hat{\Q}$ sur le polyèdre $\DQ$. La complexité de l'étape ref:eq:tess3:apls:q
+croit linéairement avec $\n$, le nombre d'individus. Alors que la propriété
+théorique de convergence de algorithme AQP est perdu pour l'algorithme APLS,
+l'algorithme APLS devrait être de bonne approximation de l'algorithme AQP. C'est
+ce que nous observons dans nos expériences numériques.
 
-*** Choix des hyperparamètre
-*** Statistique de différentiation des populations ancestrales pour les cribles génomique pour l'adaptation locale
-** Autres méthodes existantes comparées
+*** Choix des hyperparamètres
+Le choix des hyper paramètre est un problème qui est commum a toutes les
+méthodes d'estimation de l'ascendance. La méthode que nous avons présenté ici
+nécessite le choix a priori de 3 hyperparamètre : le nombre de facteurs, $K$, le
+paramètre de régularisation, $\alpha$ et le paramètre d'échelle géographique,
+$\sigma$. Nous présentons ici des méthodes qui permette d'aider le choix de ces
+paramètres.
+
+**** Le paramètre d'échelle géographique $\sigma$
+Le test de la corrélation entre la variable génétique et géographique à une
+longue tradition en génétique des populations. Des approches populaire sont basé
+sur le test de Mantel cite:mantel1967 et la mesure de l'autocorélation spatial
+cite:HARDY_1999,Epperson_1996. Avant d'utiliser notre méthode spatiale
+d'estimation de l'ascendance, nous proposons de choisi des valeurs de l'echelle
+géographique en visualisant le variogramme spatial cite:Cressie1993. Le
+variogramme peut être étendu aux données génétique de la facons suivante 
+
+\begin{equation}
+\label{eq:tess3:variogram}
+\gamma(h) = \frac{1}{2 |N(h)|} \sum_{i,j \in N(h)} \frac{1}{L} \sum_{l = 1}^{(p+1)L} |\Y_{i,l} - \Y_{j,l}|,
+\end{equation}
+où $N(h)$ est défini comme l'ensemble des individus à une distance géographique
+$h$. Visualisé le variogramme fourni des informations sur le niveau de
+l'autocorélation spatial dans les données génétique et donne une estimation
+empirique de l'echelle géographique $\sigma$. Une autre approche consiste à
+prendre pour paramètre d'echelle géographique la distance géographique moyenne
+entre les individus.
+
+**** Le paramètre de régularisation $\alpha$
+:LOGBOOK:
+- Note taken on [2017-09-09 sam. 17:08] \\
+  Je ne sais pas ou est le détail de ce calcule :D
+:END:
+La valeur par défaut du paramètre de régularisation $\alpha$ a été choisi de
+sorte que le terme t'attache au données et le terme de régularisation de la
+fonction $\LS$ soit du même ordre de grandeur. Nous proposons de diviser chaque
+terme par sa valeur maximal. Cela revient à considérer $\alha$ égal à $p /
+\lambda_{max}$, où $\lambda_{max}$ est la plus grande valeur propre de la
+matrice laplacienne. 
+
+**** Le nombre de population ancestrale $K$
+Le nombre de populations ancestrales, $K$, peut être évalué en utilisant une
+technique de validation croisée basée sur l'imputation des génotypes masqués
+cite:Wold_1978,Eastment_1982,Alexander_2011,Frichot_2014. La procédure de
+validation croisée divise les entrées matricielles génotypiques en un ensemble
+d'apprentissage et un ensemble de tests. Les probabilités de génotype pour les
+entrées masquées sont prédites à partir des estimations de facteurs obtenues à
+partir d'entrées non masquées. Ensuite, l'erreur de prédiction est calculé en
+utilisant l'entropie croisée entre les fréquences de génotype prédite et le
+génotype réellement observées.
+
+*** Statistique de différentiation des populations ancestrales pour les cribles génomiques pour l'adaptation locale
+Il faut que j'explique un peut pourquoi on fait ca : 
+- il y a une différentiation de base entre le population 
+- on veut trouver la différentiation annormal etc...
+
+En supposant qu'il y à $K$ population ancestrale, les matrice $\Q$ et $\G$
+obtenues a partir des algorithmes AQP et APLS peut être utilisé pour calculer
+une statistique de différentiation entre les populations ancestrale pour chaque
+locus. La statistique est calculé de la façon suivante cite:Martins_2016
+\begin{equation}
+F^{Q}_{\rm ST} = 1 - \sum_{k=1}^K q_k \frac{f_k (1-f_k)}{f(1-f)},
+\end{equation}
+où $q_{k}$ est la mesure du coéficient de métissage dans la population $k$
+moyenné sur tous les individus 
+\begin{equation}
+q_k = \sum_{i =1}^n \Q_{i,k} / n,
+\end{equation}
+$f_{k}$ est la fréquence d'allèle dans la population $k$ au locus considéré 
+\begin{equation}
+f_k =  \sum_{j = 1}^p  j \G_{(p+1)(\ell) + j, k}/p,
+\end{equation}
+et 
+\begin{equation}
+f = \sum_{k = 1}^K q_k f_k.
+\end{equation}
+A un locus donné, la formule de $F^{Q}_{\mathrm{ST}}$ correspond à la proportion
+de la variance génétique qui peut être expliqué par la structure de population
+latente 
+\begin{equation}
+F^Q _{\rm ST}  =  \frac{\sigma^2_T - \sigma^2_S}{\sigma^2_T },
+\end{equation}
+où $ \sigma^2_T $ est la variance totale et $\sigma^2_S$ est la variance de
+l'erreur cite:Weir1996. En suivant la théorie ANOVA nous utilisons les
+statistiques $ F^Q_{\rm ST}$ pour effectuer des tests statistiques de neutralité
+à chaque locus, en comparant les valeurs observées à la valeur de
+différentiation génomique de fond.
+
+Le test porte sur la statistique du $z$-score au carré, $z^2 = (nK) F^{Q}_{\rm
+ST} / (1 - F^{Q}_{\rm ST})$ , pour lequel une distribution de chi2 $K-1$ degrés
+de liberté est attendu sous l'hypothèse nulle. 
+
+Pour éviter un
+nombre accru de tests faussement positifs, nous avons adopté une approche
+empirique de test d'hypothèse nulle qui recalibre l'hypothèse nulle pour un
+niveau de base de la différenciation de population attendus pour des SNP qui ne
+sont pas selectionné . L'étalonnage de l'hypothèse nulle a
+été réalisé en utilisant le contrôle génomique pour ajuster les statistiques de
+test ~ \ citep {Devlin1999, Francois2016}. Après un recalibrage de l'hypothèse
+nulle, le contrôle du taux de découverte fausse a été obtenu en utilisant
+l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
+** Autres méthodes d'estimation de l'ascendance comparées
 *** Tess 2.3
 *** sNMF
 ** Données simulées et réelles
@@ -10489,7 +10627,9 @@ bibliography:../biblio.bib
 :END:
 ** FAQ                                                            :noexport:
 *** tess3
-**** Pourquoi cette fonction de poid pour le graphe ?
+**** Pourquoi cette fonction de poid pour le graphe ? Tester d'autre ?
+**** Quelle est l'influence de $\sigma$ sur les estimations ?
+**** Quelle est l'influence de $\alpha$ sur les estimations ?
 **** Pourquoi une matrice laplacienne apparait ici ?
 C'est purement numérique... j'ai pas d'intuition.
 *** lfmm
