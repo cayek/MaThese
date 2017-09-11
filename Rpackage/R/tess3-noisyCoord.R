@@ -150,6 +150,7 @@ long_tess3_noisyCoord <- function(ns = c(50, 500),
   exp
 }
 
+#' @export
 plot_tess3_noisyCoord_toplot <- function(exp) {
 
   ## L floor

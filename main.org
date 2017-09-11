@@ -806,8 +806,25 @@ l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
 :END:
 *** Analyse de la convergence et temps de calcul 
+
+#+BEGIN_EXPORT latex
+\begin{sidewaysfigure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_vitesse.pdf.png}
+\caption{Nombre d'itérations et temps de calcul pour les algorithmes AQP et
+  APLS. A-B) Nombre total d'itération avant que l'algorithmes ai atteint une
+  solution stable. C-D) Temps de calcul d'une seul itération en secondes. Le
+  nombre de SNPs a été fixé à $p = 50$k pour A et C. Le nombre d'individus a été
+  fixé à $n = 150$ pour B et D.}
+\label{fig:tess3:vitesse}
+\end{sidewaysfigure}
+#+END_EXPORT
 **** Scripts                                                    :noexport:
-***** Expérience 
+***** DONE Expérience 
+CLOSED: [2017-09-11 lun. 12:21]
+:LOGBOOK:
+- State "DONE"       from              [2017-09-11 lun. 12:21]
+:END:
 #+NAME: code:tess3:vitesse:run
 #+CAPTION: Dépend de [[code:tess3:AhalianaRegMapLines]]
 #+begin_src R 
@@ -841,7 +858,11 @@ l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
   expr <- list( df.L = df.L, df.n = df.n)
   save_expr(expr, "tess3_vitesse.rds")
 #+end_src
-***** Plots
+***** DONE Plots
+CLOSED: [2017-09-11 lun. 12:21]
+:LOGBOOK:
+- State "DONE"       from              [2017-09-11 lun. 12:21]
+:END:
 #+NAME: code:tess3:vitesse:plot
 #+CAPTION: Dépend de [[code:tess3:vitesse:run]]
 #+begin_src R 
@@ -850,7 +871,7 @@ l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
   library(scales)
   library(latex2exp)
   MaTheseR.params <- get_MaTheseRparams()
-  Article.env <- MaTheseR.params$Article.env
+  Article2.env <- MaTheseR.params$Article2.env
 
   ## expr res
   expr <- readRDS("./OUTPUT/Expr/tess3_vitesse.rds")
@@ -875,7 +896,7 @@ l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
     theme_bw() +
     xlab("") +
     ylab("Nombre\nd'itérations") +
-    Article2.env$gtheme +
+    MaTheseR.params$gtheme +
     theme(legend.position = "none") +
     Article2.env$scale.linetype +
     Article2.env$scale.color
@@ -890,9 +911,9 @@ l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
                       width = (max(n) - min(n)) * 0.02)) +
     theme_bw() +
     scale_y_log10() +
-    xlab(Tex("Nombre d'individus ($n$)")) +
+    xlab(TeX("Nombre d'individus ($n$)")) +
     ylab("Temps par itération \n(seconds)") +
-    Article2.env$gtheme +
+    MaTheseR.params$gtheme +
     theme(legend.position = "none") +
     Article2.env$scale.linetype +
     Article2.env$scale.color
@@ -909,7 +930,7 @@ l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
     theme_bw() +
     xlab("") +
     ylab("") +
-    Article2.env$gtheme +
+    MaTheseR.params$gtheme +
     theme(legend.position = "none") +
     Article2.env$scale.linetype +
     Article2.env$scale.color
@@ -925,9 +946,9 @@ l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
                       width = (max(L) - min(L)) * 0.02 / 1000)) +
     theme_bw() +
     scale_y_log10() +
-    xlab(TeX("Nombre de locus $\\times 1000$ ($L$)")) +
+    xlab(TeX("Nombre de locus $\\times 1000$ ($p$)")) +
     ylab("") +
-    Article2.env$gtheme +
+    MaTheseR.params$gtheme +
     theme(legend.position = c(0.61,0.22)) +
     Article2.env$scale.linetype +
     Article2.env$scale.color +
@@ -936,12 +957,143 @@ l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
   pl <- cowplot::plot_grid(pl.it.n, pl.it.L, pl.time.n, pl.time.L, ncol = 2, labels = c("A", "B", "C", "D"))
   save_plot_png(pl, "tess3_vitesse.png")
   save_plot_MaTheseR(pl, "tess3_vitesse.pdf.png",
-                     height = 0.9 * MaTheseR.params$textheightcm,
+                     height = 14,
+                     width = 20)
+#+end_src
+
+#+RESULTS: code:tess3:vitesse:plot
+: [[./OUTPUT/Rplots/tess3_vitesse.png]]
+: [[./OUTPUT/Rplots/tess3_vitesse.pdf.png]]
+
+*** Comparaison avec une méthode spatial bayésienne : TESS 2.3
+
+#+BEGIN_EXPORT latex
+\begin{figure}[h!]\centering
+\begin{minipage}{0.49\textwidth}
+\includegraphics[width=\linewidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseG.pdf}
+\end{minipage}
+\begin {minipage}{0.49\textwidth}
+\includegraphics[width=\linewidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
+\end{minipage}
+\caption{Erreurs statistiques des estimations de TESS3 (APLS) et TESS 2.3 sur
+  des simulations de population métissé de populations ancestrale pour lesquelle
+  on connait les coéficients de métissage. A) RMSEs des esimations de $\G$ en
+  fonction du niveau de diférentiation entre les populations ancestrale $F_{\rm
+    ST}$. B) RMSEs des esimations de $\Q$ en fonction du niveau de
+  diférentiation entre les populations ancestrale $F_{\rm ST}$.}
+\label{fig:tess3:tess23}
+\end{figure}    
+
+
+#+END_EXPORT
+
+**** Scripts                                                    :noexport:
+***** Experience
+Code trop vieux...
+***** Plots
+*** Comparaison avec une méthode non spatial : sNMF
+**** Scripts                                                    :noexport:
+***** Experience
+#+NAME: code:
+#+CAPTION: Dépend de 
+#+begin_src R 
+
+#+end_src
+***** Plots
+*** Sensibilité des estimateurs aux erreurs dans les mesures spatiales
+**** Scripts                                                    :noexport:
+***** DONE Experience
+CLOSED: [2017-09-11 lun. 17:28]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 17:28]
+- State "TODO"       from              [2017-09-11 lun. 15:07]
+:END:
+#+NAME: code:tess3:noise
+#+CAPTION: 
+#+begin_src R 
+  library(MaTheseR)
+
+  expr <- long_tess3_noisyCoord(ns = c(50, 500),
+                               nsites.neutral = c(1.5 * 1e4,
+                                                  1.2 * 1e5),
+                               m.neutral =  c(0.25 * 0.5 * 1e-6,
+                                              0.25 * 1 * 1e-6,
+                                              0.25 * 1.5 * 1e-6,
+                                              0.25 * 2 * 1e-6,
+                                              0.25 * 2.5 * 1e-6,
+                                              0.25 * 3 * 1e-6,
+                                              0.25 * 5 * 1e-6),
+                               noise.signal = c(0.0, 0.2, 0.5,0.8, 1.0, 2.0, 3.0, 10.0),
+                               nb.rep = 10,
+                               compute.vario = TRUE,
+                               cluster.nb = 4,
+                               save = TRUE, bypass = TRUE)
+  save_expr(expr, "tess3_noise.rds")
+
+  dev.off()
+  ## with 
+#+end_src
+
+***** TODO Plot
+:LOGBOOK:
+- State "TODO"       from              [2017-09-11 lun. 15:08]
+:END:
+#+NAME: code:tess3:noise:plot
+#+CAPTION: Dépend de [[code:tess3:noise]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  Article2.env <- MaTheseR.params$Article2.env
+
+  ## get data
+  expr <- readRDS("./OUTPUT/Expr/tess3_noise.rds")
+
+  ## remove Fst <= 0.5
+  expr$df.res <- expr$df.res %>%
+    dplyr::filter(Fst.theorical <= 0.5) %>%
+    dplyr::filter(noise.signal <= 3.0)
+
+  toplot <- plot_tess3_noisyCoord_toplot(expr) %>%
+    dplyr::mutate(Fst.theorical = format(Fst.theorical, digits = 2))
+
+
+  labbeler <- function(variable, value) {
+    if (as.character(variable) == "n") {
+      paste0("n = ",value, "")
+    } else if (as.character(variable) == "L") {
+      paste0("p ~ 10^", ceiling(log(value,base = 10)), "")
+    }
+  }
+
+  pl <- ggplot(toplot, aes(x = noise.signal, y = rel.diff.rmse.Q.mean,
+                           color = as.factor(Fst.theorical),
+                           shape = as.factor(Fst.theorical))) +
+    geom_point() +
+    geom_line() +
+    geom_errorbar(aes(ymin = rel.diff.rmse.Q.mean - rel.diff.rmse.Q.mean.se, ymax = rel.diff.rmse.Q.mean + rel.diff.rmse.Q.mean.se,
+                      width = (max(noise.signal) - min(noise.signal)) * 0.02)) +
+    facet_grid(L ~ n, labeller = labbeler) +
+    theme_bw() +
+                                          # xlab("$Fst = 1 / (1 + 4 N_0 m)$") +
+    xlab("Rapport signal sur bruit") +
+    ylab("Erreur relative") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = c(0.75,0.63)) +
+    guides( color = guide_legend(title = "Fst", nrow = 2),
+           linetype = guide_legend(title = "Fst", nrow = 3),
+           shape = guide_legend(title = "Fst", nrow = 3)) +
+    scale_color_manual(values = Article2.env$cbPalette) + 
+    geom_hline(yintercept = 0, alpha = 0.8, col = "grey")
+  pl
+
+  save_plot_png(pl, "tess3_noise.png")
+  save_plot_MaTheseR(pl, "tess3_noise.pdf.png",
+                     height = 0.4 * MaTheseR.params$textheightcm,
                      width = MaTheseR.params$textwidthcm)
 #+end_src
-*** Comparaison avec une méthode spatial bayésienne : TESS 2.3
-*** Comparaison avec une méthode non spatial : sNMF
-*** Sensibilité des estimateurs aux erreurs dans les mesures spatiales
 *** Application à des données humaines
 **** Scripts                                                    :noexport:
 ***** DONE Run de tess3r sur les données du 1000Genomes
@@ -10198,7 +10350,7 @@ CLOSED: [2017-09-01 ven. 13:11]
     dplyr::filter(qvalue <= 0.01) %>%
     mutate(snps = colname)
 
-  ## intersection
+  ## union
   union.list <- function(...) {
     id <- list(...)
       res <- sets[[id[[1]]]]
