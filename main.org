@@ -805,11 +805,143 @@ l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
 :END:
-*** Comparaison avec TESS 2.3
-*** Erreur statistique
-*** Bénéfice apporté par l'ajout de l'information spatiale
-*** Sensibilité des estimateurs aux mesure spatiales
 *** Analyse de la convergence et temps de calcul 
+**** Scripts                                                    :noexport:
+***** Expérience 
+#+NAME: code:tess3:vitesse:run
+#+CAPTION: Dépend de [[code:tess3:AhalianaRegMapLines]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## loda data
+  load("./Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR8.RData")
+
+  sample.data.at <- sampler.from.data(call_method_75_TAIR8.europe$X,
+    call_method_75_TAIR8.europe$coord)
+
+  data.list <- sample.data.at(50, 5000)
+
+  cores = 16
+  registerDoParallel(cores = cores)
+
+  ns = c(1e2, 2e2, 3e2, 4e2, 5e2, 6e2)
+  Ls = c(1e3, 5e3, 1e4, 5e4, 1e5, 2e5)
+  rep = 5
+  L = 50000
+  n = 150
+  K = 6
+  tess3Old.alpha = 0.03
+
+  df.n <- data.frame()
+  df.n <- rbind(fig4.exp.n(sample.data = sample.data.at, ns = ns, rep = rep, L = L, K = K, tess3Old.alpha = tess3Old.alpha), df.n)
+
+  df.L <- data.frame()
+  df.L <- rbind(fig4.exp.L(sample.data = sample.data.at, Ls = Ls, rep = rep, n = n, K = K, tess3Old.alpha = tess3Old.alpha), df.L)
+
+  expr <- list( df.L = df.L, df.n = df.n)
+  save_expr(expr, "tess3_vitesse.rds")
+#+end_src
+***** Plots
+#+NAME: code:tess3:vitesse:plot
+#+CAPTION: Dépend de [[code:tess3:vitesse:run]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  Article.env <- MaTheseR.params$Article.env
+
+  ## expr res
+  expr <- readRDS("./OUTPUT/Expr/tess3_vitesse.rds")
+
+  g_legend <- function(a.gplot){
+    tmp <- ggplot_gtable(ggplot_build(a.gplot))
+    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+    legend <- tmp$grobs[[leg]]
+    return(legend)}
+
+
+
+  toplot <- expr$df.n  %>% group_by(method, n) %>%
+    mutate(mean = mean(it), N = length(it), sd = sd(it), se = sd / sqrt(N)) %>%
+    rename(Methods = method)
+  pl.it.n <- ggplot(toplot ,aes(x = n, y = mean, col = Methods, linetype = Methods, shape = Methods)) +
+    geom_line() +
+    geom_point(size = 2) +
+    geom_errorbar(aes(ymin = mean - se,
+                      ymax = mean + se,
+                      width = (max(n) - min(n)) * 0.02)) +
+    theme_bw() +
+    xlab("") +
+    ylab("Nombre\nd'itérations") +
+    Article2.env$gtheme +
+    theme(legend.position = "none") +
+    Article2.env$scale.linetype +
+    Article2.env$scale.color
+
+  toplot <- expr$df.n  %>% group_by(n, method) %>%
+    mutate(mean = mean(time.per.it.mean), N = length(time.per.it.mean), sd = sd(time.per.it.mean), se = sd / sqrt(N)) %>%
+    rename(Methods = method)
+  pl.time.n <- ggplot(toplot ,aes(x = n, y = mean, col = Methods, linetype = Methods, shape = Methods)) +
+    geom_line() +
+    geom_point(size = 2) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se,
+                      width = (max(n) - min(n)) * 0.02)) +
+    theme_bw() +
+    scale_y_log10() +
+    xlab(Tex("Nombre d'individus ($n$)")) +
+    ylab("Temps par itération \n(seconds)") +
+    Article2.env$gtheme +
+    theme(legend.position = "none") +
+    Article2.env$scale.linetype +
+    Article2.env$scale.color
+
+  toplot <- expr$df.L  %>% group_by(method, L) %>%
+    mutate(mean = mean(it), N = length(it), sd = sd(it), se = sd / sqrt(N)) %>%
+    rename(Methods = method)
+  pl.it.L <- ggplot(toplot ,aes(x = L / 1000, y = mean, col = Methods, linetype = Methods, shape = Methods)) +
+    geom_line() +
+    geom_point(size = 2) +
+    geom_errorbar(aes(ymin = mean - se,
+                      ymax = mean + se,
+                      width = (max(L) - min(L)) * 0.02 / 1000)) +
+    theme_bw() +
+    xlab("") +
+    ylab("") +
+    Article2.env$gtheme +
+    theme(legend.position = "none") +
+    Article2.env$scale.linetype +
+    Article2.env$scale.color
+
+  toplot <- expr$df.L  %>% group_by(L, method) %>%
+    mutate(mean = mean(time.per.it.mean), N = length(time.per.it.mean), sd = sd(time.per.it.mean), se = sd / sqrt(N)) %>%
+    rename(Methods = method)
+
+  pl.time.L <- ggplot(toplot ,aes(x = L / 1000, y = mean, col = Methods, linetype = Methods, shape = Methods)) +
+    geom_line() +
+    geom_point(size = 2) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se,
+                      width = (max(L) - min(L)) * 0.02 / 1000)) +
+    theme_bw() +
+    scale_y_log10() +
+    xlab(TeX("Nombre de locus $\\times 1000$ ($L$)")) +
+    ylab("") +
+    Article2.env$gtheme +
+    theme(legend.position = c(0.61,0.22)) +
+    Article2.env$scale.linetype +
+    Article2.env$scale.color +
+    guides(linetype = guide_legend(nrow = 2))
+
+  pl <- cowplot::plot_grid(pl.it.n, pl.it.L, pl.time.n, pl.time.L, ncol = 2, labels = c("A", "B", "C", "D"))
+  save_plot_png(pl, "tess3_vitesse.png")
+  save_plot_MaTheseR(pl, "tess3_vitesse.pdf.png",
+                     height = 0.9 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
+#+end_src
+*** Comparaison avec une méthode spatial bayésienne : TESS 2.3
+*** Comparaison avec une méthode non spatial : sNMF
+*** Sensibilité des estimateurs aux erreurs dans les mesures spatiales
 *** Application à des données humaines
 **** Scripts                                                    :noexport:
 ***** DONE Run de tess3r sur les données du 1000Genomes
@@ -928,6 +1060,12 @@ CLOSED: [2017-09-06 mer. 09:24]
 #+end_example
 *** Application à des données Arabidopsis Thaliana
 **** Scripts                                                    :noexport:
+***** Données AthalianaGegMapLines
+#+NAME: code:tess3:AhalianaRegMapLines
+#+CAPTION: Dépend de 
+#+begin_src R 
+
+#+end_src
 ***** Choix des params
 ***** Run tess3r
 ***** Map et barplot
