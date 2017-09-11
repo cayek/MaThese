@@ -84,6 +84,7 @@
 
   ## my pkgs
   devtools::install_github("cayek/MaTheseR/Rpackage")
+  devtools::install_github("cayek/Thesis/ThesisRpackage")
   devtools::install_github("bcm-uga/tess3_encho_sen")
   devtools::install_github("bcm-uga/lfmm")
 #+END_SRC
@@ -1011,7 +1012,7 @@ CLOSED: [2017-09-11 lun. 17:28]
 #+NAME: code:tess3:noise
 #+CAPTION: 
 #+begin_src R 
-  library(MaTheseR)
+  library(ThesisRpackage)
 
   expr <- long_tess3_noisyCoord(ns = c(50, 500),
                                nsites.neutral = c(1.5 * 1e4,
@@ -1023,15 +1024,18 @@ CLOSED: [2017-09-11 lun. 17:28]
                                               0.25 * 2.5 * 1e-6,
                                               0.25 * 3 * 1e-6,
                                               0.25 * 5 * 1e-6),
-                               noise.signal = c(0.0, 0.2, 0.5,0.8, 1.0, 2.0, 3.0, 10.0),
+                               noise.signal = c(0.0, 0.2, 0.5,0.8, 1.0, 2.0, 3.0),
                                nb.rep = 10,
                                compute.vario = TRUE,
                                cluster.nb = 4,
-                               save = TRUE, bypass = TRUE)
+                               save = FALSE, bypass = TRUE)
   save_expr(expr, "tess3_noise.rds")
 
-  dev.off()
-  ## with 
+
+  pl.all <- plot_tess3_noisyCoord(expr)
+  save_plot_png(pl.all, "tess3_noise_debug.png")
+  pl.var <- plot_tess3_noisyCoord_vario(expr)
+  save_plot_png(pl.var, "tess3_noise_var_debug.png")
 #+end_src
 
 ***** TODO Plot
