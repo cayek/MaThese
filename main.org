@@ -63,8 +63,13 @@
   install.packages("units", configure.args = "--with-udunits2-include=/usr/include/udunits2")
   install.packages("ggforce")
   install.packages("scatterpie")
+  install.packages("sp")
+  install.packages("raster")
+  install.packages("rgeos")
+  install.packages("rasterVis")
+  install.packages("fields")
 
-    ## bioconductor
+  ## bioconductor
   source("https://bioconductor.org/biocLite.R")
   biocLite("matter", ask = FALSE)
   biocLite("qvalue",ask = FALSE)
@@ -993,19 +998,483 @@ CLOSED: [2017-09-11 lun. 12:21]
 Code trop vieux...
 ***** Plots
 *** Comparaison avec une méthode non spatial : sNMF
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_comp_rmse_snmf.pdf.png}
+\caption{Erreurs statistiques des estimations de TESS3 (APLS) et sNMF sur
+  des simulations de population métissé de populations ancestrale pour lesquelle
+  on connait les coéficients de métissage.}
+\label{fig:tess3:comp:rmse:snmf}
+\end{figure}
+#+END_EXPORT
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_comp_auc_snmf.pdf.png}
+\caption{}
+\label{fig:ewas_venn}
+\end{figure}
+#+END_EXPORT
 **** Scripts                                                    :noexport:
-***** Experience
-#+NAME: code:
-#+CAPTION: Dépend de 
+***** DONE RMSE APLS et sNMF
+CLOSED: [2017-09-11 lun. 18:17]
+:LOGBOOK:
+- State "DONE"       from              [2017-09-11 lun. 18:17]
+:END:
+#+NAME: code:tess3:rmse:snmf
+#+CAPTION: 
 #+begin_src R 
+  ######################################
+  ## Setup
+
+  ## Install if not function
+  pkgTest <- function(x)
+  {
+    if (!require(x,character.only = TRUE))
+    {
+      install.packages(x,dep=TRUE)
+      if(!require(x,character.only = TRUE)) stop("Package not found")
+    }
+  }
+
+
+  pkgTest("raster")
+  pkgTest("ggplot2")
+  pkgTest("reshape2")
+  pkgTest("dplyr")
+  pkgTest("gridExtra")
+  pkgTest("cowplot")
+  pkgTest("DescTools")
+  pkgTest("doParallel")
+  pkgTest("foreach")
+  pkgTest("devtools")
+  pkgTest("permute")
+  pkgTest("crayon")
+
+                                          # sNMF
+  if (!require("LEA")) {
+    source("https://bioconductor.org/biocLite.R")
+    biocLite("LEA")
+    if(!require("LEA",character.only = TRUE)) stop("Package not found")
+  }
+
+  res.dir <- "./"
+  fig.dir <- "./"
+
+                                          # personal packages
+                                          #devtools::install_github("cayek/TESS3_encho_sen@experiment")
+  require("tess3rExperiment")
+
+                                          #devtools::install_github("cayek/TESS3_encho_sen@master")
+  require("tess3r")
+
+  cat(green(paste("DEBUG =", DEBUG,"\n")))
+  ######################################
+                                          # Functions
+
+
+  fst.LEA <- function(project,run = 1, K, ploidy = 2){
+                                          #require(LEA)
+    ll = dim(LEA::G(project, K = K, run = run))[1]
+    if (ploidy == 2) {freq = LEA::G(project, K = K, run = run)[seq(2,ll,by = 3),]/2 + LEA::G(project, K = K, run = run)[seq(3,ll,by = 3),] }
+    else {freq = LEA::G(project, K = K, run = run)[seq(2,ll,by = 2),]}
+    q = apply(LEA::Q(project, K = K, run = run), MARGIN = 2, mean)
+    H.s = apply(freq*(1 - freq), MARGIN = 1, FUN = function(x) sum(q*x) )
+    P.t = apply(freq, MARGIN = 1, FUN = function(x) sum(q*x) )
+    return(1 - H.s/P.t/(1 - P.t))
+  }
+
+
+  tess3.wrapper <- function(data.list, K, method) {
+    if (is.null(data.list$admixed.genotype)) {
+      capture.output(res <- tess3rExperiment::tess3(X = data.list$X,
+                                                    coord = data.list$coord,
+                                                    K = K,
+                                                    ploidy = data.list$ploidy,
+                                                    lambda = 1.0,
+                                                    W = data.list$W,
+                                                    method = method,
+                                                    max.iteration = 200,
+                                                    tolerance = 1e-05,
+                                                    openMP.core.num = 1,
+                                                    Q.init = NULL,
+                                                    mask = 0), file = "/dev/null")
+    } else {
+      capture.output(res <- tess3rExperiment::tess3(X = data.list$admixed.genotype,
+                                                    coord = data.list$coord,
+                                                    K = K,
+                                                    ploidy = data.list$ploidy,
+                                                    lambda = 1.0,
+                                                    W = data.list$W,
+                                                    method = method,
+                                                    max.iteration = 200,
+                                                    tolerance = 1e-05,
+                                                    openMP.core.num = 1,
+                                                    Q.init = NULL,
+                                                    mask = 0), file = "/dev/null")
+    }
+    return(res)
+  }
+
+
+  snmf.wrapper <- function(data.list, K, alpha = 10) {
+    file.geno <- paste0(tempfile(),".geno")
+    if (is.null(data.list$admixed.genotype)) {
+      LEA::write.geno(data.list$X, file.geno)
+    } else {
+      LEA::write.geno(data.list$admixed.genotype, file.geno)
+    }
+    capture.output(aux <- LEA::snmf(input.file = file.geno,
+                                    K = K,
+                                    project = "new",
+                                    repetitions = 1,
+                                    alpha = alpha,
+                                    tolerance = 1e-05,
+                                    entropy = FALSE,
+                                    percentage = 0.05,
+                                    I = 0,
+                                    iterations = 200,
+                                    ploidy = data.list$ploidy,
+                                    seed = -1,
+                                    CPU = 1,
+                                    Q.input.file = ""), file = "/dev/null")
+    snmf.run <- list(Q = LEA::Q(aux, K = K, run = 1),
+                     G = LEA::G(aux, K = K, run = 1),
+                     Fst = fst.LEA(aux, run = 1, K = K, ploidy = 1))
+    return(snmf.run)
+  }
+
+
+  fig2.experiment <- function(simu.param, m.neutral, rep) {
+    df <- foreach(m = m.neutral, .combine = 'rbind') %:%
+      foreach(r = 1:rep, .combine = 'rbind') %dopar% {
+        simu.param$m.neutral <- m
+        boolFalse <- FALSE
+        while (boolFalse == FALSE)
+        {
+          tryCatch({
+            data.list <- sample.data(simu.param)
+            boolFalse <- TRUE
+          },error = function(e){
+          },finally = {})
+        }
+        tess3.res <- tess3.wrapper(data.list, 2, "MCPA")
+        snmf.res <- snmf.wrapper(data.list, 2)
+        rbind( data.frame(rmseQ = tess3r::ComputeRmseWithBestPermutation(data.list$Q, tess3.res$Q),
+                          rmseG = tess3r::ComputeRmseWithBestPermutation(data.list$Freq, GtoFreq(tess3.res$G, 1)),
+                          method = "TESS3-APLS",
+                          n = nrow(data.list$admixed.genotype),
+                          L = ncol(data.list$admixed.genotype),
+                          rep = r,
+                          Fst = mean(data.list$Fst),
+                          Fst.theorical = data.list$Fst.theorical,
+                          m.neutral = m,
+                          nsites.neutral = data.list$nsites.neutral,
+                          migration.rate = 4 * m * simu.param$N0),
+              data.frame(rmseQ = tess3r::ComputeRmseWithBestPermutation(data.list$Q, snmf.res$Q),
+                         rmseG = tess3r::ComputeRmseWithBestPermutation(data.list$Freq, GtoFreq(snmf.res$G, 1)),
+                         method = "sNMF",
+                         n = nrow(data.list$admixed.genotype),
+                         L = ncol(data.list$admixed.genotype),
+                         rep = r,
+                         Fst = mean(data.list$Fst),
+                         Fst.theorical = data.list$Fst.theorical,
+                         m.neutral = m,
+                         nsites.neutral = data.list$nsites.neutral,
+                         migration.rate = 4 * m * simu.param$N0))
+      }
+    return(df)
+  }
+
+
+  sample.data <- function(simu.param) {
+    res <- tess3r::SampleGenoOFWithMs(n = simu.param$n,
+                                      nsites.neutral = simu.param$nsites.neutral,
+                                      nsites.selected = simu.param$nsites.selected,
+                                      crossover.proba = simu.param$crossover.proba,
+                                      m.neutral = simu.param$m.neutral,
+                                      m.selected = simu.param$m.selected,
+                                      mutation.rate.per.site = simu.param$mutation.rate.per.site,
+                                      N0 = simu.param$N0,
+                                      k = simu.param$k,
+                                      min.maf = simu.param$min.maf,
+                                      plot.debug = FALSE,
+                                      tess3.ms = getOption("tess3.ms"))
+    res$Fst.theorical <- 1 / (1 + 4 * simu.param$N0 * simu.param$m.neutral)
+    return(res)
+  }
+
+
+  ######################################
+                                          # Params
+
+  cat(green("== Test params\n"))
+  simu.param <- list(n = 500,
+                     nsites.neutral = 1.2 * 1e5,
+                     nsites.selected = 0,
+                     crossover.proba = 0.25 * 1e-8,
+                     m.neutral = 0.25 * 3 * 1e-6,
+                     m.selected = NULL,
+                     mutation.rate.per.site = 0.25 * 1e-7,
+                     N0 = 1e6,
+                     k = 0.5,
+                     min.maf = 0.05)
+  data.list <- sample.data(simu.param)
+
+  plot(data.list$coord, col = rep(rainbow(2),each = data.list$n / 2))
+  mean(data.list$Fst)
+  dim(data.list$admixed.genotype)
+
+
+  barplot(t(data.list$Q), col = rainbow(2))
+                                          # data.list$W <- NULL
+  tess3.run <- tess3.wrapper(data.list, K = 2, method = "MCPA")
+  barplot(t(tess3.run$Q), col = rainbow(2))
+
+  snmf.run <- snmf.wrapper(data.list, K = 2)
+  barplot(t(snmf.run$Q), col = rainbow(2))
+
+  ComputeRmseWithBestPermutation(snmf.run$Q, data.list$Q)
+  ComputeRmseWithBestPermutation(tess3.run$Q, data.list$Q)
+
+  ComputeRmseWithBestPermutation(GtoFreq(snmf.run$G,1), data.list$Freq)
+  ComputeRmseWithBestPermutation(GtoFreq(tess3.run$G,1), data.list$Freq)
+
+
+  ######################################
+                                          # Run experiments
+
+
+  simu.param <- list(n = 500,
+                     nsites.neutral = 1.5 * 1e5,
+                     nsites.selected = 0,
+                     crossover.proba = 0.25 * 1e-8,
+                     m.neutral = 0.25 * 3 * 1e-6,
+                     m.selected = NULL,
+                     mutation.rate.per.site = 0.25 * 1e-7,
+                     N0 = 1e6,
+                     k = 0.5,
+                     min.maf = 0.05)
+
+  cores = 16
+  registerDoParallel(cores = cores)
+
+  if (DEBUG) {
+    m.neutral =  c(0.25 * 0.05 * 1e-6,
+                   0.25 * 0.5 * 1e-6,
+                   0.25 * 1 * 1e-6,
+                   0.25 * 1.5 * 1e-6,
+                   0.25 * 2 * 1e-6,
+                   0.25 * 2.5 * 1e-6,
+                   0.25 * 3 * 1e-6,
+                   0.25 * 5 * 1e-6)
+    rep <- 5
+  } else {
+    m.neutral =  c(0.25 * 0.05 * 1e-6,
+                   0.25 * 0.5 * 1e-6,
+                   0.25 * 1 * 1e-6,
+                   0.25 * 1.5 * 1e-6,
+                   0.25 * 2 * 1e-6,
+                   0.25 * 2.5 * 1e-6,
+                   0.25 * 3 * 1e-6,
+                   0.25 * 5 * 1e-6)
+    rep <- 5 #  do not work ... why?
+  }
+
+  df <- data.frame()
+
+                                          # n = 50
+  simu.param$n = 50
+  ## L = 10k
+  cat(green("== n = 50 & L = 10k \n"))
+  simu.param$nsites.neutral = 1.5 * 1e4
+  df <- rbind(fig2.experiment(simu.param, m.neutral = m.neutral, rep = rep), df)
+
+  ## L = 200k
+  cat(green("== n = 50 & L = 100k \n"))
+  simu.param$nsites.neutral = 1.2 * 1e5
+  df <- rbind(fig2.experiment(simu.param, m.neutral = m.neutral, rep = rep), df)
+
+                                          # n = 500
+  simu.param$n = 500
+  ## L = 10k
+  cat(green("== n = 500 & L = 10k \n"))
+  simu.param$nsites.neutral = 1.5 * 1e4
+  df <- rbind(fig2.experiment(simu.param, m.neutral = m.neutral, rep = rep), df)
+
+  ## L = 100k
+  cat(green("== n = 500 & L = 100k \n"))
+  simu.param$nsites.neutral = 1.2 * 1e5
+  df <- rbind(fig2.experiment(simu.param, m.neutral = m.neutral, rep = rep), df)
+
+  cat(green("== Save result\n"))
+  saveRDS(df, file = "./OUTPUT/Expr/tess3_comp_rmse_sNMF.rds")
 
 #+end_src
-***** Plots
+***** DONE Plots RMSE APLS et sNMF
+CLOSED: [2017-09-11 lun. 18:30]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 18:30]
+- State "TODO"       from "DONE"       [2017-09-11 lun. 18:23]
+- State "DONE"       from              [2017-09-11 lun. 18:23]
+:END:
+#+NAME: code:tess3:rmse:snmf:plot
+#+CAPTION: Dépend de [[code:tess3:rmse:snmf]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  Article2.env <- MaTheseR.params$Article2.env
+
+  ## retrieve results
+  df <- readRDS("./OUTPUT/Expr/tess3_comp_rmse_sNMF.rds")
+
+  labbeler <- function(variable, value) {
+    if (as.character(variable) == "n") {
+      paste0("$n = ",value, "$")
+    } else if (as.character(variable) == "L") {
+      paste0("$L \\approx 10^", floor(log(value,base = 10)), "$")
+    }
+  }
+
+  toplot <- df %>%
+    group_by(nsites.neutral) %>%
+    dplyr::mutate(L = round(mean(L))) %>%
+    group_by(method, m.neutral, n, L) %>%
+    dplyr::mutate(Fst = mean(Fst), rmse.mean = mean(rmseQ), N = length(rmseQ), sd = sd(rmseQ), se = sd / sqrt(N)) %>%
+    rename(Methods = method )
+  levels(toplot$Methods)[1] <- "APLS"
+
+
+  pl <- ggplot(toplot ,
+               aes(x = Fst.theorical,
+                   y = rmse.mean,
+                   col = Methods,
+                   shape = Methods,
+                   linetype = Methods)) +
+    geom_errorbar(aes(ymin = rmse.mean - se, ymax = rmse.mean + se,
+                      width = (max(Fst.theorical) - min(Fst.theorical)) * 0.02)) +
+    geom_line() +
+    geom_point(size = 2) +
+    facet_grid(L ~ n, labeller = labbeler) +
+    theme_bw() +
+                                          # xlab("$Fst = 1 / (1 + 4 N_0 m)$") +
+    xlab("Fixation index $(F_{\\rm ST})$") +
+    ylab("RMSE") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = c(0.85,0.3)) +
+    Article2.env$scale.color +
+    Article2.env$scale.linetype
+  save_plot_png(pl, "tess3_comp_rmse_snmf.png")
+  save_plot_MaTheseR(pl, "tess3_comp_rmse_snmf.pdf.png",
+                       height = 0.4 * MaTheseR.params$textheightcm,
+                       width = MaTheseR.params$textwidthcm)
+
+#+end_src
+
+#+RESULTS: code:tess3:rmse:snmf:plot
+: Warning message:
+: The labeller API has been updated. Labellers taking `variable`and `value` arguments are now deprecated. See labellers documentation.
+[[./OUTPUT/Rplots/tess3_comp_rmse_snmf.png]]
+: [[./OUTPUT/Rplots/tess3_comp_rmse_snmf.pdf.png]]
+***** DONE AUC APLS et sNMF
+CLOSED: [2017-09-11 lun. 18:41]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 18:41]
+- State "TODO"       from              [2017-09-11 lun. 18:35]
+:END:
+#+NAME: code:tess3:auc:snmf
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(ThesisRpackage)
+  Article2.env <- get_Article2()
+  attach(Article2.env)
+
+  simu.param <- list(n = 100,
+                     nsites.neutral = 1 * 1e5,
+                     nsites.selected = 1 * 1e2,
+                     crossover.proba = 0.25 * 1e-8,
+                     m.neutral = 0.25 * 10 * 1e-6,
+                     m.selected = 0.25 * 0.1 * 1e-6,
+                     mutation.rate.per.site = 0.25 * 1e-7,
+                     N0 = 1e6,
+                     k = 0.5,
+                     min.maf = 0.05)
+
+                                          # Experiment
+
+  cores = 16
+  registerDoParallel(cores = cores)
+
+  m.ms <- c(10, 40, 80, 100, 150)
+
+  df <- data.frame()
+  df <- rbind(fig3.experiment(simu.param, m.ms = m.ms, rep = 10), df)
+
+  saveRDS(df, "./OUTPUT/Expr/tess3_comp_auc_sNMF.rds")
+#+end_src
+***** DONE Plots AUC APLS et sNMF
+CLOSED: [2017-09-11 lun. 18:57]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 18:57]
+- State "TODO"       from              [2017-09-11 lun. 18:41]
+:END:
+#+NAME: code:tess3:auc:snmf:plots
+#+CAPTION: Dépend de [[code:tess3:auc:snmf]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  Article2.env <- MaTheseR.params$Article2.env
+
+  ## retrieve data
+  df <- readRDS("./OUTPUT/Expr/tess3_comp_auc_sNMF.rds")
+
+  ## plot
+  toplot <- df %>%
+    group_by(method, m.ms) %>%
+    dplyr::mutate(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N)) %>%
+    rename(Methods = method)
+  levels(toplot$Methods)[1] <- "APLS"
+  levels(toplot$Methods)[3] <- "before-admixure"
+
+  pl <- ggplot(toplot ,aes(x = m.ms, y = auc.mean, col = Methods, linetype = Methods, shape = Methods)) +
+    geom_errorbar(aes(ymin = auc.mean - se,
+                      ymax = auc.mean + se,
+                      width = (max(m.ms) - min(m.ms)) * 0.02)) +
+    geom_line() +
+    geom_point(size = 2) +
+    theme_bw() +
+    xlab("Intensity of selection ($m/m_s$)") +
+    ylab("AUC") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = c(0.8,0.2)) +
+    Article2.env$scale.linetype +
+    Article2.env$scale.color
+
+  save_plot_png(pl, "tess3_comp_auc_snmf.png")
+  save_plot_MaTheseR(pl, "tess3_comp_auc_snmf.pdf.png",
+                     height = 0.4 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
+
+#+end_src
+
+#+RESULTS: code:tess3:auc:snmf:plots
+[[./OUTPUT/Rplots/tess3_comp_auc_snmf.png]]
+: [[./OUTPUT/Rplots/tess3_comp_auc_snmf.pdf.png]]
+
 *** Sensibilité des estimateurs aux erreurs dans les mesures spatiales
 **** Scripts                                                    :noexport:
-***** DONE Experience
-CLOSED: [2017-09-11 lun. 17:28]
+***** RUNNING Experience
 :LOGBOOK:
+- State "RUNNING"    from "DONE"       [2017-09-11 lun. 17:44]
 - State "DONE"       from "TODO"       [2017-09-11 lun. 17:28]
 - State "TODO"       from              [2017-09-11 lun. 15:07]
 :END:
@@ -1098,6 +1567,16 @@ CLOSED: [2017-09-11 lun. 17:28]
                      height = 0.4 * MaTheseR.params$textheightcm,
                      width = MaTheseR.params$textwidthcm)
 #+end_src
+
+#+RESULTS: code:tess3:noise:plot
+: Error in plot_tess3_noisyCoord_toplot(expr) : 
+:   could not find function "plot_tess3_noisyCoord_toplot"
+: Warning message:
+: The labeller API has been updated. Labellers taking `variable`and `value` arguments are now deprecated. See labellers documentation.
+: Error in FUN(X[[i]], ...) : object 'noise.signal' not found
+: Error in FUN(X[[i]], ...) : object 'noise.signal' not found
+: Error in FUN(X[[i]], ...) : object 'noise.signal' not found
+
 *** Application à des données humaines
 **** Scripts                                                    :noexport:
 ***** DONE Run de tess3r sur les données du 1000Genomes
@@ -1215,17 +1694,682 @@ CLOSED: [2017-09-06 mer. 09:24]
   6 0.011637935 0.26762196 0.482830172 0.673534080 3.080183e-01  tess3
 #+end_example
 *** Application à des données Arabidopsis Thaliana
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_AT_params.pdf.png}
+\caption{}
+\label{fig:tess3:at:param}
+\end{figure}
+#+END_EXPORT
+
+
+#+BEGIN_EXPORT latex
+\begin{sidewaysfigure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_AT_map.pdf.png}
+\caption{}
+\label{fig:tess3:at:map}
+\end{sidewaysfigure}
+#+END_EXPORT
+
+#+BEGIN_EXPORT latex
+\begin{sidewaysfigure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_AT_manhattanplot.pdf.png}
+\caption{}
+\label{fig:tess3:at:manhattanplot}
+\end{sidewaysfigure}
+#+END_EXPORT
 **** Scripts                                                    :noexport:
-***** Données AthalianaGegMapLines
-#+NAME: code:tess3:AhalianaRegMapLines
+***** TODO Données AthalianaGegMapLines
+:LOGBOOK:
+- State "TODO"       from              [2017-09-11 lun. 18:48]
+:END:
+****** TODO Get dataset
+:LOGBOOK:
+- State "TODO"       from              [2017-09-11 lun. 19:37]
+:END:
+#+NAME: code:tess3:AthalianaRegMapLines
 #+CAPTION: Dépend de 
 #+begin_src R 
 
 #+end_src
-***** Choix des params
-***** Run tess3r
-***** Map et barplot
-***** Manhattan plot
+****** TODO Vep annotation
+:LOGBOOK:
+- State "TODO"       from              [2017-09-11 lun. 19:37]
+:END:
+#+NAME: code:
+#+CAPTION: Dépend de 
+#+begin_src R 
+  ################################################################################
+                                          # Setup
+
+                                          # Install if not function
+  pkgTest <- function(x)
+  {
+    if (!require(x,character.only = TRUE))
+    {
+      install.packages(x,dep=TRUE)
+      if(!require(x,character.only = TRUE)) stop("Package not found")
+    }
+  }
+
+
+  pkgTest("raster")
+  pkgTest("ggplot2")
+  pkgTest("reshape2")
+  pkgTest("dplyr")
+  pkgTest("gridExtra")
+  pkgTest("cowplot")
+  pkgTest("DescTools")
+  pkgTest("doParallel")
+  pkgTest("foreach")
+  pkgTest("devtools")
+  pkgTest("permute")
+  pkgTest("crayon")
+
+                                          # personal packages
+                                          #devtools::install_github("BioShock38/TESS3_encho_sen@master")
+  require("tess3r")
+
+
+  library(data.table)
+
+  ################################################################################
+  # load data
+  at.dir <- "./Data/AthalianaGegMapLines/")
+
+  TAIR9.snps <- t(fread(
+    paste0(at.dir,"call_method_75/call_method_75_TAIR9.csv"), sep = ",",
+    header=TRUE, skip = 1, data.table = FALSE))
+  aux <- apply(TAIR9.snps[-(1:2),], 2, unique)
+  # find col0, the reference genome
+  call_method_75_info <- fread(
+    paste0(at.dir,"call_method_75/call_method_75_info.tsv"))
+  col0 <- call_method_75_info[grepl("Col", call_method_75_info$nativename)]
+  ancestral.allele <- TAIR9.snps[as.character(col0$ecotype_id),]
+  # find variants allele
+  variant.allele <- sapply(seq_along(ancestral.allele), function(i) aux[which(!(aux[,i] %in% ancestral.allele[i])),i])
+  alleles <- data.frame(variant.allele = variant.allele, ancestral.allele = ancestral.allele, chr = as.numeric(TAIR9.snps[1,]), pos = as.numeric(TAIR9.snps[2,]))
+  # load data for colnames
+  data.file <-
+    paste0(data.dir, "AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData")
+  load(data.file)
+
+  ################################################################################
+  # vep
+  vep.input <- alleles %>% mutate(start = pos, end = pos, allele = paste0(ancestral.allele,"/",variant.allele), strand = NA, identifier = colnames(call_method_75_TAIR9.europe$X)) %>% select(chr, pos, start, end, allele, strand, identifier)
+
+  # check if no error
+  head(vep.input)
+  tail(vep.input)
+
+  .Options$vep = "variant_effect_predictor.pl"
+  runVEP <- function(vep.input, vep = .Options$vep) {
+    input <- tempfile()
+    write.table(vep.input, file = input, row.names = FALSE, col.names = FALSE, na = "", quote = FALSE)
+    output <- tempfile()
+    cmd <- paste0("variant_effect_predictor.pl -i ", input, " -o ", output, " --cache --dir ../Data/vep/ --species arabidopsis_thaliana --format ensembl --genomes --cache_version 31")
+    system(cmd)
+    vep.output <- data.table::fread(output, skip = "#Uploaded_variation", data.table = FALSE, na.strings = "-")
+    return(vep.output)
+  }
+
+  vep.res <- runVEP(vep.input)
+
+  saveRDS(vep.res, "./OUTPUT/Expr/tess3_snpsTAIR9vepTAIR10.rds")
+
+#+end_src
+***** DONE Choix des params
+CLOSED: [2017-09-11 lun. 19:09]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 19:09]
+- State "TODO"       from              [2017-09-11 lun. 18:48]
+:END:
+****** DONE Variogram
+CLOSED: [2017-09-11 lun. 18:58]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 18:58]
+- State "TODO"       from              [2017-09-11 lun. 18:57]
+:END:
+#+NAME: code:tess3_AT_vario
+#+CAPTION: Dépend de 
+#+begin_src R 
+  ################################################################################
+  # Setup
+
+  # Install if not function
+  pkgTest <- function(x)
+  {
+    if (!require(x,character.only = TRUE))
+    {
+      install.packages(x,dep=TRUE)
+      if(!require(x,character.only = TRUE)) stop("Package not found")
+    }
+  }
+
+
+  pkgTest("raster")
+  pkgTest("ggplot2")
+  pkgTest("reshape2")
+  pkgTest("dplyr")
+  pkgTest("gridExtra")
+  pkgTest("cowplot")
+  pkgTest("DescTools")
+  pkgTest("doParallel")
+  pkgTest("foreach")
+  pkgTest("devtools")
+  pkgTest("permute")
+  pkgTest("crayon")
+
+  # personal packages
+  #devtools::install_github("BioShock38/TESS3_encho_sen@master")
+  require("tess3r")
+
+  # load data
+  data.file <- "./Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData"
+  load(data.file)
+
+  # variogram
+  vario.gen <- CalculateEmpiricalGenSemivariogram(call_method_75_TAIR9.europe$X, 1,  call_method_75_TAIR9.europe$coord)
+  saveRDS(vario.gen, "./OUTPUT/Expr/tess3_AT_vario.rds")
+#+end_src
+****** DONE K selection
+CLOSED: [2017-09-11 lun. 19:04]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 19:04]
+- State "TODO"       from              [2017-09-11 lun. 18:58]
+:END:
+#+NAME: code:tess3_AT_K
+#+CAPTION: Dépend de 
+#+begin_src R 
+    ################################################################################
+    # Setup
+
+    # Install if not function
+    pkgTest <- function(x)
+    {
+      if (!require(x,character.only = TRUE))
+      {
+        install.packages(x,dep=TRUE)
+        if(!require(x,character.only = TRUE)) stop("Package not found")
+      }
+    }
+
+
+    pkgTest("raster")
+    pkgTest("ggplot2")
+    pkgTest("reshape2")
+    pkgTest("dplyr")
+    pkgTest("gridExtra")
+    pkgTest("cowplot")
+    pkgTest("DescTools")
+    pkgTest("doParallel")
+    pkgTest("foreach")
+    pkgTest("devtools")
+    pkgTest("permute")
+    pkgTest("crayon")
+
+    # personal packages
+    #devtools::install_github("BioShock38/TESS3_encho_sen@master")
+    require("tess3r")
+
+  # load data
+  data.file <- "./Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData"
+  load(data.file)
+
+  XBin <- matrix(0.0, nrow(call_method_75_TAIR9.europe$X),
+                 ncol(call_method_75_TAIR9.europe$X) * 2)
+  X2XBin(call_method_75_TAIR9.europe$X, 1, XBin)
+  coord <- call_method_75_TAIR9.europe$coord
+  rm(call_method_75_TAIR9.europe) # free memory
+  gc()
+
+  # Run tess3
+  cat(green(paste("== Runing TESS3 \n")))
+  tess3.obj <- tess3(X = NULL,
+                           XBin = XBin,
+                           coord = coord,
+                           K = 1:10,
+                           ploidy = 1,
+                           lambda = 1.0,
+                           rep = 5,
+                           W = NULL,
+                           method = "MCPA",
+                           max.iteration = 200,
+                           tolerance = 1e-05,
+                           openMP.core.num = 16,
+                           Q.init = NULL,
+                           mask = 0.05,
+                           keep = "best",
+                           copy = FALSE,
+                           algo.copy = TRUE)
+
+
+  cat(green(paste("== Save result\n")))
+  saveRDS(tess3.obj, "./OUTPUT/Expr/tess3_AT_K110,rep5.rds"))
+
+  # keep only rmse
+  err.df <- data.frame()
+  for (t in tess3.obj) {
+    err.df <- rbind(err.df,
+      data.frame(rmse = t$rmse,
+                  crossvalid.rmse = t$crossvalid.rmse,
+                  crossentropy = t$crossentropy,
+                  crossvalid.crossentropy = t$crossvalid.crossentropy,
+                  K = t$K,
+                  rep = seq_along(t$rmse)))
+
+  }
+  saveRDS(err.df, "./OUTPUT/Expr/tess3_AT_K.rds")
+#+end_src
+****** DONE Plot
+CLOSED: [2017-09-11 lun. 19:09]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 19:09]
+- State "TODO"       from              [2017-09-11 lun. 18:57]
+:END:
+#+NAME: code:tess3_AT_params
+#+CAPTION: Dépend de [[code:tess3_AT_K]] [[code:tess3_AT_vario]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  Article2.env <- MaTheseR.params$Article2.env
+
+
+  ## get variogram
+  vario.gen <- readRDS("./OUTPUT/Expr/tess3_AT_vario.rds")
+  err.df <- readRDS( "./OUTPUT/Expr/tess3_AT_K.rds")
+
+  variogram.pl <- ggplot(vario.gen, aes(x = h, y = semi.variance, size = size)) +
+    geom_point(shape = 1) +
+    geom_vline(xintercept = 1.5, colour = "red") +
+    labs(y = "Semivariogram",
+         x = "$\\sigma$ ($100$ km)") +
+    theme_gray(base_size = 12) +
+    scale_size_continuous(range = c(1,3)) +
+    guides(size = guide_legend(title = "Bin size", nrow = 3)) +
+    MaTheseR.params$gtheme +
+    theme(legend.position = c(0.6,0.25)) +
+    scale_shape_discrete(solid = FALSE)
+
+
+
+  ################################################################################
+                                          # K selection
+  toplot <- err.df %>% group_by(K) %>%
+    summarise(med = median(rmse), min = min(rmse), max = max(rmse),
+              mean = mean(rmse), sd = sd(rmse), se = sd/sqrt(length(rmse)))
+
+  selection.pl <- ggplot(toplot) +
+    geom_point(aes(x = as.factor(K), y = med)) +
+    geom_line(aes(x = K, y = med)) +
+                                          #geom_errorbar(aes(x = K, y = med,
+                                          #                  ymin=min, ymax=max), width=.1) +
+    labs(y = "Cross validation error", x = "$K$") +
+    theme_gray() +
+    theme(legend.position = "none") +
+    MaTheseR.params$gtheme +
+    geom_vline(xintercept = 6, colour = "red")
+
+
+
+  pl <- cowplot::plot_grid(variogram.pl, selection.pl, nrow = 1, labels = c("A", "B"))
+
+  save_plot_png(pl, "tess3_AT_params.png")
+  save_plot_MaTheseR(pl, "tess3_AT_params.pdf.png",
+                     height = 0.4 * MaTheseR.params$textheightcm,
+                     width = MaTheseR.params$textwidthcm)
+
+#+end_src
+
+#+RESULTS: code:tess3_AT_params
+: Warning message:
+: Removed 11 rows containing missing values (geom_point).
+[[./OUTPUT/Rplots/tess3_AT_params.png]]
+: [[./OUTPUT/Rplots/tess3_AT_params.pdf.png]]
+
+***** DONE Run de tess3r avec K = 6 et sigma = 1.5
+CLOSED: [2017-09-11 lun. 19:15]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 19:15]
+- State "TODO"       from              [2017-09-11 lun. 18:48]
+:END:
+#+NAME: code:tess3_AT_run
+#+CAPTION: Dépend de 
+#+begin_src R 
+  ################################################################################
+                                          # Setup
+
+                                          # Install if not function
+  pkgTest <- function(x)
+  {
+    if (!require(x,character.only = TRUE))
+    {
+      install.packages(x,dep=TRUE)
+      if(!require(x,character.only = TRUE)) stop("Package not found")
+    }
+  }
+
+
+  pkgTest("raster")
+  pkgTest("ggplot2")
+  pkgTest("reshape2")
+  pkgTest("dplyr")
+  pkgTest("gridExtra")
+  pkgTest("cowplot")
+  pkgTest("DescTools")
+  pkgTest("doParallel")
+  pkgTest("foreach")
+  pkgTest("devtools")
+  pkgTest("permute")
+  pkgTest("crayon")
+
+                                          # personal packages
+                                          #devtools::install_github("BioShock38/TESS3_encho_sen@master")
+  require("tess3r")
+
+                                          # load data
+  data.file <- "./Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData"
+  load(data.file)
+
+  # compute W
+  W <- ComputeHeatKernelWeight(call_method_75_TAIR9.europe$coord,
+                               sigma = 1.5)
+
+  # Run tess3
+  cat(green(paste("== Runing TESS3 \n")))
+  tess3Main.obj <- tess3Main(X = call_method_75_TAIR9.europe$X,
+                           XBin = NULL,
+                           coord = call_method_75_TAIR9.europe$coord,
+                           K = 6,
+                           ploidy = 1,
+                           lambda = 1.0,
+                           W = W,
+                           method = "MCPA",
+                           max.iteration = 200,
+                           tolerance = 1e-05,
+                           openMP.core.num = 16)
+
+  ## saving result
+  cat(green(paste("== Save result\n")))
+  saveRDS(tess3Main.obj, "./OUTPUT/Expr/tess3_AT_tess3r.rds")
+
+#+end_src
+***** DONE Map et barplot
+CLOSED: [2017-09-11 lun. 19:35]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 19:35]
+- State "TODO"       from              [2017-09-11 lun. 18:48]
+:END:
+#+NAME: code:tess3_AT_map
+#+CAPTION: Dépend de [[code:tess3_AT_run]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  Article2.env <- MaTheseR.params$Article2.env
+
+  ## result
+  tess3Main.obj <- readRDS("./OUTPUT/Expr/tess3_AT_tess3r.rds")
+
+  ################################################################################
+                                          # load data
+  data.file <- "./Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData"
+  load(data.file)
+  coord <- call_method_75_TAIR9.europe$coord
+  rm(call_method_75_TAIR9.europe)
+
+  ################################################################################
+                                          # Q
+  Q <- tess3Main.obj$Q
+                                          # northen cluster
+  id.northers <- which(apply(Q, 1, which.max) == 2)
+  Q.notnorthers <- Q[!(1:nrow(Q) %in% id.northers),]
+  coord.notnorthers <- coord[!(1:nrow(Q) %in% id.northers),]
+  id <- sort(coord.notnorthers[,1], index.return = TRUE)
+  Q.ordered <- rbind(Q[id.northers,], Q.notnorthers[id$ix,])
+
+  ################################################################################
+                                          # Color palette
+  gg_color_hue <- function(n) {
+    hues = seq(15, 375, length = n + 1)
+    hcl(h = hues, l = 65, c = 100)[1:n]
+  }
+  n = 6
+  cols = gg_color_hue(n)
+
+  col.palette = list(
+    colorRampPalette(c("white",cols[1]))(9)[5:9],
+    colorRampPalette(c("white",cols[2]))(9)[5:9],
+    colorRampPalette(c("white",cols[3]))(9)[5:9],
+    colorRampPalette(c("white",cols[4]))(9)[5:9],
+    colorRampPalette(c("white",cols[5]))(9)[5:9],
+    colorRampPalette(c("white",cols[6]))(9)[5:9]
+  )
+                                          # plot(rep(1,5),col = col.palette[[2]],pch=19,cex=3)
+
+  ################################################################################
+                                          # Interpolation
+  require(sp)
+  require(raster)
+  require(rworldmap)
+  require(rgeos)
+  require(rasterVis)
+  require(fields)
+
+  ## param
+  window <- c(-16,42,33,67)
+  resolution <- c(300, 300)
+  theta <- 10
+
+  ## get europe
+  newmap <- getMap(resolution = "low")
+  CP <- as(extent(window), "SpatialPolygons")
+  europe <- gIntersection(newmap, CP)
+                                          # Or
+                                          # europe <- crop(newmap, extent(window))
+  plot(europe)
+
+  ## make grid
+  raster.grid <- raster(extent(window), ncol = resolution[1], nrow = resolution[2], vals = 1)
+                                          # plot(grid)
+
+  ## interpolation with krig
+  interpol <- stack()
+  for (j in seq_along(Q[1,])) {
+    model <- Krig(coord, Q[,j], theta = theta)
+    interpol <- stack(interpolate(raster.grid, model), interpol)
+  }
+  interpol <- mask(interpol, europe)
+                                          # plot(interpol)
+                                          # levelplot(interpol)
+  ## plot with tess3r package
+
+                                          # plot(Q = Q,
+                                          #      coord = coord, plot.type = "max",
+                                          #      resolution = c(300, 300), window = c(-16,42,33,67), background = TRUE,
+                                          #      raster.filename = NULL, interpolation.function = kriging(), col = NULL,
+                                          #      col.palette = col.palette, map = TRUE, palette.step = 9,
+                                          #      axes = FALSE, xlab = '', ylab = '', cex = 0.25)
+
+
+  ################################################################################
+                                          # Plot map
+
+  toplot <- data.frame(rasterToPoints(interpol))
+  ## compute breaks
+  col.breaks <- apply(toplot[3:8], 2,
+                      function(c) seq(min(c),
+                                      max(c),
+                                      length.out = length(col.palette[[1]]) + 1))
+                                          # ## compute color for each tile
+                                          # color <- function(coef, col.palette, col.breaks) {
+                                          #   max.i <- which.max(coef)
+                                          #   c <- max(which(col.breaks[,max.i] - as.numeric(coef[max.i]) >= 0)[1] - 1,1)
+                                          #   return(col.palette[[max.i]][c])
+                                          #   # return(c)
+                                          # }
+                                          # toplot$color <- apply(toplot[3:8], 1,
+                                          #                       function(r) color(r, col.palette, col.breaks))
+
+  ## with removed artefact
+  color.rm.art <- function(r, col.palette, col.breaks) {
+    coef <- r[3:8]
+    pos <- r[1:2]
+    if (pos[1] > 28 && pos[2] < 46) {
+      max.i <- 5
+    } else {
+      max.i <- which.max(coef)
+    }
+    c <- max(which(col.breaks[,max.i] - as.numeric(coef[max.i]) >= 0)[1] - 1,1)
+    return(col.palette[[max.i]][c])
+                                          # return(c)
+  }
+  toplot$color <- apply(toplot[1:8], 1,
+                        function(r) color.rm.art(r, col.palette, col.breaks))
+
+  mappl <- ggplot() +
+    geom_tile(data = toplot, aes(x = x, y = y, fill = color)) +
+    scale_fill_identity() +
+    geom_path(data = europe, aes(x = long, y = lat, group = group)) +
+    coord_equal() +
+    geom_point(data = as.data.frame(coord), aes(x = long, y = lat), size = 0.1) +
+    MaTheseR.params$gtheme +
+    xlab("Longitude (°E)") +
+    ylab("Latitude (°N)")
+
+  ################################################################################
+                                          # barplot
+  toplot <- data.frame(Q.ordered, index = seq_along(Q.ordered[,1])) %>% reshape2::melt(id = "index")
+  brplot <- ggplot(toplot, aes(x = index, y = value)) +
+    geom_bar(stat = "identity", aes(color = variable)) +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none",
+          axis.ticks.x = element_blank(),
+          axis.text.x = element_blank(),
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()) +
+    xlab("Individual") +
+    ylab("Admixture\n\ coefficient (Q)") +
+    scale_y_continuous(breaks = c(0.0,0.5,1.0)) +
+    scale_color_manual(values = cols)
+
+  ################################################################################
+                                          # Plot
+
+
+  pl <- cowplot::plot_grid(mappl, brplot, ncol = 1, labels = c("A", "B"), rel_heights = c(3,1), vjust = c(1.5, -0.5))
+  save_plot_png(pl, "tess3_AT_map.png")
+  save_plot_MaTheseR(pl, "tess3_AT_map.pdf.png",
+                     height = 14,
+                     width = 20)
+
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/tess3_AT_map.png]]
+
+***** DONE Manhattan plot
+CLOSED: [2017-09-11 lun. 19:44]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-11 lun. 19:44]
+- State "TODO"       from              [2017-09-11 lun. 18:48]
+:END:
+#+NAME: code:tess3_AT_manhattan
+#+CAPTION: Dépend de [[code:tess3_AT_run]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  Article2.env <- MaTheseR.params$Article2.env
+
+  ## result
+  tess3Main.obj <- readRDS("./OUTPUT/Expr/tess3_AT_tess3r.rds")
+  vep.res <-readRDS("./OUTPUT/Expr/tess3_snpsTAIR9vepTAIR10.rds")
+
+  ################################################################################
+                                          # load data
+  data.file <- "./Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData"
+  load(data.file)
+  coord <- call_method_75_TAIR9.europe$coord
+
+  ################################################################################
+                                          # flowering genes
+                                          # search on http://plants.ensembl.org/
+                                          # SHORT VEGETATIVE PHASE (SVP), a MADS box gene that negatively regulates the transition to flowering (Differentiating Fennoscandia and Eastern Europe/Russia)
+  flowering.gene <- vep.res %>% dplyr::filter(Gene == "AT2G22540") %>% dplyr::mutate(label = "SVP")
+                                          # COP1-interacting protein 4.1 (CIP4.1)
+  flowering.gene <- rbind(flowering.gene, vep.res %>% dplyr::filter(Gene == "AT4G00930") %>% dplyr::mutate(label = "CIP4.1"))
+                                          # FRIGIDA (FRI)
+  flowering.gene <- rbind(flowering.gene, vep.res %>% dplyr::filter(Gene == "AT4G00650") %>% dplyr::mutate(label = "FRI"))
+                                          # FLOWERING LOCUS C (FLC),
+  flowering.gene <- rbind(flowering.gene, vep.res %>% dplyr::filter(Gene == "AT5G10140") %>% dplyr::mutate(label = "FLC"))
+                                          # DELAY OF GERMINATION 1 (DOG1)
+  flowering.gene <- rbind(flowering.gene, vep.res %>% dplyr::filter(Gene == "AT5G45830") %>% dplyr::mutate(label = "DOG1"))
+
+
+  ################################################################################
+                                          # Plot TESS3 manhattanplot
+  toplot <- data.frame(fst = tess3Main.obj$Fst,
+                       pvalue = tess3Main.obj$pvalue,
+                       call_method_75_TAIR9.europe$locus.coord,
+                       index = seq_along(tess3Main.obj$Fst)) %>%
+    dplyr::mutate(Location = paste0(Chromosome,":",Positions))
+
+  alert <- merge(toplot, flowering.gene, by = c("Location"))
+  label <- alert %>% group_by(Gene) %>% filter(row_number(index) == 1)
+  label$index[2] = label$index[2] + 8000
+  label$index[3] = label$index[3] - 8000
+  ## plot with annotation
+  pl <- ggplot(toplot, aes(x = index, y = -log(pvalue),
+                           color = as.factor(Chromosome), fill = Chromosome)) +
+    geom_point() +
+    labs(y = "-log(pvalue)", x = "locus index") +
+    theme_gray() +
+    theme(legend.position = "none") +
+    geom_point(data = alert, colour = "red") +
+    geom_text(data = label, aes(x = index, y = 0, label = label), vjust = 1.8, check_overlap = FALSE)
+
+  ## plot without annotation
+  toplot <- toplot %>% dplyr::filter(pvalue != 0.0)
+  pl <- ggplot(toplot, aes(x = index, y = -log(pvalue),
+                           color = as.factor(Chromosome), fill = Chromosome)) +
+    geom_point(size = 0.25) +
+    labs(y = "-log(pvalue)", x = "locus index") +
+    scale_y_continuous(limits = c(0,510)) +
+    scale_x_continuous(breaks = sapply(1:5, function(i) mean(toplot[toplot$Chromosome == i, ]$index)),
+                       labels = 1:5) +
+    xlab("Chromosome") +
+    ylab("log(p-value)") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none") +
+    scale_color_manual(values = c(Article2.env$cbPalette[6], Article2.env$cbPalette[2],
+                                  Article2.env$cbPalette[6], Article2.env$cbPalette[2],
+                                  Article2.env$cbPalette[6]))
+
+
+  ## rm data
+  rm(call_method_75_TAIR9.europe)
+  save_plot_png(pl, "tess3_AT_manhattanplot.png")
+  save_plot_MaTheseR(pl, "tess3_AT_manhattanplot.pdf.png",
+                     height = 14,
+                     width = 20)
+
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/tess3_AT_manhattanplot.png]]
 ** Discussion
 * Estimation de facteurs latents pour corriger les tests d'association
 ** Introduction
