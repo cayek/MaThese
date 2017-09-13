@@ -12736,4 +12736,7 @@ bibliography:../biblio.bib
 **** Quelle est l'influence de $\alpha$ sur les estimations ?
 **** Pourquoi une matrice laplacienne apparait ici ?
 C'est purement numérique... j'ai pas d'intuition.
+**** Est ce que tess3 est sensible au LD ?
+**** Est ce que tess3 est sensible à la taille des pops ?
+Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
 *** lfmm
