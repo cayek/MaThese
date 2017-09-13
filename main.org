@@ -128,8 +128,17 @@
   dans l'intro il faut que je motive la problématique !! et le plan répond a cette
   problématique.
 :END:
-** Contexte
 :LOGBOOK:
+- Note taken on [2017-09-13 mer. 10:33] \\
+  Biblio: 
+  - cite:slides_sfds2015_saporta
+  - cite:endOfTheory
+  - [[http://callingbullshit.org/syllabus.html#Statistical][Calling Bullshit: Data Reasoning for the Digital Age]]
+  - [[http://freakonometrics.hypotheses.org/19023][BIG DATA : PASSER D’UNE ANALYSE DE CORRÉLATION À UNE INTERPRÉTATION
+    CAUSALE]] : je suis pas d'accord avec ce qu'il dit (je pense pas qu'il sache
+    vraiment de quoi il parle). Il vent l'inférence causale. Faut que je
+    comprenne en quoi l'inference causale permet de trouver des lien de
+    causalité, c'est juste des modèles avec plus de variable non ?
 - Note taken on [2017-06-09 Ven 11:47] \\
   c'est un context de fouille de données trop grosse !! Il faut amener de
   l'information à un niveau inteligible.
@@ -139,49 +148,117 @@
   suffisament de données pour se rendre compte que nos test d'hypothèse sont faux
   :D et la on fait le lien avec les tests d'hypothèe multiple....
 :END:
-*** COMMENT 
-Cette dernière décennie a été marquée par une accumulation des données dans tous les
-domaines de la sciences. Cette accumulation de données est une aubaine pour les
-scientifiques. Cependant, que faire d'autant de données et comment en tirer
-l'information qui permettrait de mieux comprendre le monde qui nous entoure ? Il
-s'agit là d'un défi majeur pour les statistiques cite:slides_sfds2015_saporta. 
+Cette dernière décennie a été marquée par une accumulation des données dans tous
+les domaines de la sciences. Cette accumulation de données est une aubaine pour
+les scientifiques. En particulier en biologie l'abondance des données permet de
+comprendre toujours mieux le vivant. Cependant, que faire d'autant de données et
+comment en tirer l'information qui permettrait de mieux comprendre le monde qui
+nous entoure ? Il s'agit là d'un défi majeur pour les statistiques. 
 
-Les grandes données posent plusieurs problèmes. En effet, si l'on est capable d'obtenir
-des données rapidement, on veut pouvoir les analyser rapidement. Cependant de
-nombreux modèle statistiques classiques ne passent pas l'échelle des grands jeux
-de données. Il est donc nécessaire de repenser les modèles et algorithmes afin
-de les adapter au nous volumes des données. 
-... parler de l'inversement du processus d'aquisition des données .. cf
-seminaire Bosson
+Le premier problème qui se pose avec les grands jeux de données est celui de la
+vitesse des algorithmes utilisés pour les traiter. Si nous avons beaucoup de
+données rapidement nous voulons aussi des algorithmes rapides pour les traiter
+et les visualiser. L'augmentation de la puissance des ordinateurs ne suffis pas
+toujours à adapter un modèle à un plus grand jeux de données. Il faut parfois
+trouver de nouvelles méthodes pour passer à une échelle de données plus grande.
 
+Par ailleurs, plus nous avons d'observation de deux variables plus il est
+possible de détecter une corrélation faible entre celles ci. Ce qui
+paradoxalement n'est pas forcément une bonne chose puisque toutes corrélations
+aussi faible soit elle est significative quand on à trop de données. De plus,
+une corrélation n'est pas un lien de cause à effet. Une corrélation entre deux
+variables peut ne plus être observé quand on considère dans l'étude une
+troisième variable qui serai corrélé au deux premières (paradoxe de Simpson). Il
+faut donc être très prudent dans la recherche de corrélation dans des données,
+surtout dans le contexte actuelle où l'accès au données est très facile.
 
-
-Dans le cadre de cette thèse nous nous sommes intéressé a développer des méthodes
-statistiques utiles à deux problématique scientifiques. Le premier est l'estimation
-de la structure de population à partir de données génomique. Le deuxièmes est les
-problèmes des test d'association multiple. Toutes les méthodes statistiques
-developper lors de cette thèse repose sur la factorisation de matrice. Nous
-allons maintenant introduire plus en détails les problématiques ainsi que la
-factorisation de matrice en statistique.
+Dans le cadre de cette thèse nous nous sommes intéressé a développer des
+méthodes statistiques adapté au traitement de données biologique afin de
+répondre à deux problématiques. Le premier est l'estimation de la structure de
+population à partir de données génomique et géographique. Le deuxième est
+l'estimation de facteurs de confusion pour corriger les tests d'association. Les
+méthodes statistiques développer lors de cette thèse repose sur la factorisation
+de matrice. Nous allons maintenant introduire plus en détails les contextes
+biologiques dans lesquels interviennent les méthodes développé durant cette
+thèse.
 
 ** La génomique des populations
 :LOGBOOK:
+- Note taken on [2017-09-13 mer. 11:00] \\
+  Biblio: 
+  - [[https://fr.wikipedia.org/wiki/G%25C3%25A9n%25C3%25A9tique_des_populations#D.C3.A9finition_de_la_population][wiki : Génétique des populations]]
+  - [[https://en.wikipedia.org/wiki/Evolutionary_pressure][wiki : Evolutionary pressure]]
+  - [[https://en.wikipedia.org/wiki/Population_genetics][wiki : Population genetics]]
+  - [[http://www.institutlejeune.org/Trisomie-21-et-autres-pathologies-genetiques/les-decouvertes-sur-la-genetique-en-quelques-dates.html][génétique dates]]
+  - [[https://fr.wikipedia.org/wiki/S%25C3%25A9quen%25C3%25A7age_de_l%2527ADN#S.C3.A9quen.C3.A7age_haut_d.C3.A9bit_.28HTS.29][wikipedia sequencage de l'adn]]
+  - [[https://fr.wikipedia.org/wiki/Polymorphisme_nucl%25C3%25A9otidique][SNP]]
 - Note taken on [2017-06-07 Mer 14:42] \\
   - analyse de la structure de variance covariance: PCA
   - analyse de la structure de population: structure, snmf, etc
 
- En faite je ne vais def ca ici ! c'est juste le genet des pops ici !!
+  En faite je ne vais def ca ici ! c'est juste le genet des pops ici !!
   - ewas: refactor
   - gwas: gemma etc
   - eas: ...
 :END:
+La génétique des population est l'étude de la distribution et des changement de
+la fréquence des versions d'un gêne, que l'on appel allèle, quand des
+populations d'être vivant. La génomique des population est un néologisme qui
+souligne le fait que l'on n'étudie plus les différences génétiques dans et entre
+les populations à l'échelle d'un seul gêne mais à l'échelle du génome complet.
+La génomique des populations a des applications en épidémiologie où elle permet
+de comprendre la transmission des maladies génétiques. En agronomie, des
+programmes de sélection modifient le patrimoine génétique de certains organismes
+pour créer des races ou variétés plus performantes, ou plus résistantes à des
+maladies. Elle permet également de comprendre les mécanismes de conservation et
+de disparition des populations et des espèces.
+
+On considère 4 pressions évolutives qui permettent d'expliquer des changements
+de fréquences d'allèle dans les populations : la mutation, la sélection, la
+dérive génétique, et la migration. La mutation créer de nouveau allèle, elle
+peut être neutre, c'est a dire sans effet sur l'organisme, ou non et avoir par
+exemple un effet sur la capacité de l'organisme à s'adapter à son environement.
+La selection est l'hypohtèse central de la théorie de Darwin, ainsi si un allèle
+permet à l'organisme d'être mieux adapté à son environement alors cette allèle
+aura plus de chance d'être transmis aux générations future car l'organisme
+porteur de l'allèle peut se reproduire plus facilement. La dérive génétique
+provient du fait qu'il n'existe pas de populations infinis. Ainsi au file des
+générations les distributions allélique change à cause de la reproduction au
+hasard des individus. Ce processus peut engendrer la disparition ou la fixation
+d'un allèle neutre juste par hasard. Enfin la migration est le passage de gène
+d'une population à une autre (par des individus qui passent d'une population à
+l'autre, par exemple sous forme de graines ou de pollen chez les plantes). Si
+cet échange se fait entre des population ayant des fréquences alléliques
+différentes, elle va tendre à modifier les fréquences alléliques.
+
+Bien que la génétique des populations trouve ses origines dans les travaux de
+Sewall Wright, J. B. S. Haldane et Ronald Fisher qui sont anterieurs à la
+découverte de la structure de l'ADN par Watson et Crick en 1953, la génomique
+des populations moderne utilise des données d'observation de génome de plusieurs
+individus provenant de plusieurs populations. De plus, les récentes
+améliorations en séquence de l'ADN on permit le séquence, qui était jusqu'alors
+réservé aux espèces modèles, à de nombreuses espèces. Dans le cadre de cette
+thèse nous nous somme intéresse seulement au données dite de SNPs
+(single-nucleotide polymorphism) qui sont les polymorphismes génétiques simple
+d'un seul nucleotide. Un SNP est la variation (polymorphisme) d'une seule paire
+de bases du génome, entre individus d'une même espèce. Les SNP représentent 90 \%
+de l'ensemble des variations génétiques humaines, et des SNPs avec une fréquence
+allélique supérieure à 1 \% sont présents toutes les cent à trois cents paires
+de bases en moyenne dans le génome humain. Nous appelons locus une position sur
+l'ADN, nous parlons ainsi du locus d'un SNP. Nous représentons les données
+génétique comme une matrice avec une ligne par individu et une colonne par
+locus.
+
+DESSINS matrice ?
+
+
 ** Test d'association
 :LOGBOOK:
 - Note taken on [2017-08-22 mar. 09:56] \\
   parler des méthode classsique pour controlé l hétérogénéité en stat (experience
   jardin commum, vidéo les stat expliqué a mon chat :D)
 :END:
-** La factorisation de matrice en statistique
+** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
 - Note taken on [2017-07-18 Tue 08:55] \\
   Kenneth lange, factorisation de matrice = avenir des stat ! a retrouver !
