@@ -249,8 +249,13 @@ l'ADN, nous parlons ainsi du locus d'un SNP. Nous représentons les données
 génétique comme une matrice avec une ligne par individu et une colonne par
 locus.
 
-DESSINS matrice ?
-
+Une étape très imporante en génétique des populations et particulier quand on
+étudie des données de SNPs est d'inférer la structure de population à partir des
+données de SNPs. C'est à dire de trouver comment les individus observés
+s'organise en sous populations. Dans cette thèse nous proposons une méthode
+permettant l'inférence de la structure de population à partir de données de SNPs
+en utilisant en plus une information géographique des individus permettant de
+renforcer l'inférence de la structure de population.
 
 ** Test d'association
 :LOGBOOK:
@@ -258,6 +263,8 @@ DESSINS matrice ?
   parler des méthode classsique pour controlé l hétérogénéité en stat (experience
   jardin commum, vidéo les stat expliqué a mon chat :D)
 :END:
+
+
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
 - Note taken on [2017-07-18 Tue 08:55] \\
