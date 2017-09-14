@@ -183,6 +183,7 @@ biologiques dans lesquels interviennent les méthodes développé durant cette
 thèse.
 
 ** La génomique des populations
+<<intro_genet>>
 :LOGBOOK:
 - Note taken on [2017-09-13 mer. 11:00] \\
   Biblio: 
@@ -201,7 +202,7 @@ thèse.
   - gwas: gemma etc
   - eas: ...
 :END:
-La génétique des population est l'étude de la distribution et des changement de
+La génétique des populations est l'étude de la distribution et des changement de
 la fréquence des versions d'un gêne, que l'on appel allèle, quand des
 populations d'être vivant. La génomique des population est un néologisme qui
 souligne le fait que l'on n'étudie plus les différences génétiques dans et entre
@@ -213,6 +214,10 @@ pour créer des races ou variétés plus performantes, ou plus résistantes à d
 maladies. Elle permet également de comprendre les mécanismes de conservation et
 de disparition des populations et des espèces.
 
+Les populations étudiée par la génétique des populations est un ensemble
+d'individus qui montrent une unité de reproduction : les individus d'une
+population peuvent se croiser entre eux, ils se reproduisent moins avec les
+individus des populations voisines, desquelles ils sont géographiquement isolés.
 On considère 4 pressions évolutives qui permettent d'expliquer des changements
 de fréquences d'allèle dans les populations : la mutation, la sélection, la
 dérive génétique, et la migration. La mutation créer de nouveau allèle, elle
@@ -249,14 +254,13 @@ l'ADN, nous parlons ainsi du locus d'un SNP. Nous représentons les données
 génétique comme une matrice avec une ligne par individu et une colonne par
 locus.
 
-Une étape très imporante en génétique des populations et particulier quand on
-étudie des données de SNPs est d'inférer la structure de population à partir des
-données de SNPs. C'est à dire de trouver comment les individus observés
-s'organise en sous populations. Dans cette thèse nous proposons une méthode
-permettant l'inférence de la structure de population à partir de données de SNPs
-en utilisant en plus une information géographique des individus permettant de
-renforcer l'inférence de la structure de population.
-
+Une étape très imporante en génétique des populations et particulièrement quand
+on étudie des données de SNPs est d'inférer une représentation synthétique qui
+de la structure de population à partir des données de SNPs. Dans cette thèse
+nous proposons une méthode permettant l'inférence des coefficients de métissage
+individuel à partir de données de SNPs et géographique de chaque individu. Nous
+expliquons plus en détail ce que sont les coefficients de métissage dans la
+partie [[tess3_intro]].
 ** Test d'association
 :LOGBOOK:
 - Note taken on [2017-08-22 mar. 09:56] \\
@@ -295,83 +299,62 @@ renforcer l'inférence de la structure de population.
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
 :END:
+<<tess3_intro>>
 
-A voir utilisation du terme allèle ...
+Représenter la structure de population est une étape importante dans l'étude de
+données génétique. La structure de population permet de visualiser la variation
+provoquée par la stratification en sous population des données génétiques qui
+sont des données volumineuse et multivariées. La stratification en population
+ainsi observée fourni des informations sur l'histoire et l'évolution
+démographique de l'espèce étudié cite:Li_2008; il est également indispensable de
+l'utiliser comme facteur de correction dans les études d'associations avec un
+phénotype, un gradient environnementale ou encore une maladie
+cite:marchini2004effects. De même, il existe de nombreuses application en
+médecine génétique nécessitant de connaitre la structure de population comme par
+exemple le calcule d'un score de risque génétique pour une maladie
+cite:Wray_2013. Enfin, l'étude de la répartition en population d'une espèce dans
+son habitat est une étape clée en génétique du paysage cite:Fran_ois_2015.
 
-Pas claire ! voir : https://en.wikipedia.org/wiki/Population_stratification
-https://www.ncbi.nlm.nih.gov/pubmed/10835412
-https://www.ncbi.nlm.nih.gov/pubmed/12930761
+Pour représenter la structure de population nous supposons que le génome de
+chaque individu est la combinaison de morceau de génome provenant de $K$ cluster
+génétiques. Dans chaque cluster génétique nous devons estimer les fréquences
+d'allèle pour chaque SNPs, et pour chaque individu la proportion de son génotype
+qui provient de chaque population ancestral appelé coefficient de
+métissage individuel. 
 
-Intro duire les données qu'on utilise avec notion de SNPs et locus et allèle
-et 
-l'ascendance !! les méthode d'estimation de l'acendance !!! on ne parle pas
-structure de population
+DESSIN
 
-
-Les individus d'une même population se reproduisent entre eux, se transmettant
-ainsi leurs patrimoines génétiques. Quand on observe les génomes d'individus
-provenant de plusieurs populations différentes, on remarque des différences dans
-les distributions des génotypes au sein des différentes populations. Pour
-illustrer cela nous avons pris un jeux de données composé des mesures du
-nucléotide pour plusieurs positions de l'ADN chez plusieurs individus humains
-venant de populations européenne, africaine et afro-americaine des États Unis
-d'Amérique. Les position de l'ADN observée sont choisi car on y a observé deux
-variants de nucléotide possible. De plus la fréquence pour le nucleotide le
-moins observé dans la population étudié est d'au moins $1 \%$, on nomme cette
-variation de l'ADN un SNP pour single nucléotyde polimorphism. Chez l'humain les
-SNPs représente $90 \%$ de l'ensemble des variations génétiques Les SNP. La
-Figure ref:fig:tess3_intro A montre les fréquences des différentes version du
-SNP rs499627 dans des populations européennes, africaines et afro-americaine.
-Nous constatons une différence de distribution allélique dans les 3 populations
-européenne, africaine et afro-américaine des États Unis d'Amérique.
-
-En pratique la réalité est plus complexe que des populations isolés qui ne se
-mélange pas. Le modèle de métissage en génétiques des populations suppose que
-les individus observés sont le produit de la reproduction sexué entre des
-individus provenant de plusieurs populations que l'on nomme populations
-ancestrales. Le terme de population ancestrale fait référence au fait que les
-individus métisses sont issu de la rencontre de populations qui dans le passé
-était isolé les unes des autres. Connaissant les fréquences de génotype dans les
-populations ancestrales il est possible d'estimer pour chaque individu la
-proportion de génome observé provenant de chaque population ancestrale, il
-s'agit du coefficient de métissage. Par exemple, la Figure ref:fig:tess3_intro B
-montre l'estimation des coefficients de métissage d'une population
-afro-americaine en supposant que cette population est composée d'individu
-métisse venant des populations européennes et africaines. Bien souvent on ne
-connait pas les fréquences de génotype dans les populations ancestrales ni même le
-nombre de populations ancestrales. Toute la difficulté est alors d'estimer
-conjointement avec les coefficients de métissage et les fréquences de génotype
-dans les populations ancestrales en ayant choisi le nombre de populations
-ancestrales. Nous parlons alors d'estimation de la structure de population.
-
-L'inférence de la structure de population est une étape importante dans l'étude
-de données génétique. La structure de population permet de visualiser la
-variation provoquée par la stratification en population des données génétiques
-qui sont des données volumineuse et multivariées. La stratification en
-population ainsi observée fourni des information sur l'histoire et la
-l'évolution démographique de l'espèce étudié cite:Li_2008. Par ailleurs, il est
-indispensable de détecter la stratification des données génétiques en sous
-population avant de réalisé une étude d'associations avec un phénotype, un
-gradient environnementale ou encore une maladie cite:marchini2004effects. De
-même, il existe de nombreuses application en médecine génétique nécessitant de
-connaitre la structure de population comme par exemple le calcule d'un score de
-risque génétique pour une maladie cite:Wray_2013.
+Les clusters génétiques se forment par les processus de différenciation des
+distributions allélique dont nous avons parlé dans la partie [[intro_genet]]. Pour
+illustrer cela nous avons pris un jeux de données de SNPs d'individu humain
+provenant de populations européennes, africaines et afro-américaines des États
+Unis d'Amérique. La Figure ref:fig:tess3_intro A montre les fréquences des
+différentes version du SNP rs499627 dans des populations européennes, africaines
+et afro-américaine. Nous constatons une différence de distribution allélique
+dans les différentes populations. La Figure ref:fig:tess3_intro B montre les
+coefficients de métissage individuel estimé par le logiciel sNMF pour deux
+clusters génétiques. Nous constatons que l'algorithme sNMF trouve un cluster
+génétique africain et un autre européen, et que les individus afro-américain ont
+des génomes provenant des cluster africain et européen. Il s'agit la du résultat
+attendu connaissant l'ascendance des individus afro-américain.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/tess3_intro.pdf.png}
+\includegraphics{./OUTPUT/Rplots/tess3_intro.pdf}
 \caption{A) Distribution des allèle du SNP rs499627 dans des populations
-  européennes, africaine et afro-américaines. B) Estimation de la proportion de
-  génome observé pour chaque individu afro-américain provenant des populations ancestrales
-  Africaines et Européenne.}
+  européennes, africaine et afro-américaines. B) Estimation par le logiciel sNMF
+  de la proportion pour chaque individus de SNPs provenant des cluster
+  génétiques africain et européen.}
 \label{fig:tess3_intro}
 \end{figure}
 #+END_EXPORT
 
 **** Scripts                                                    :noexport:
-***** STARTED Africain Européen et Afro américain 
+***** DONE Africain Européen et Afro américain 
+CLOSED: [2017-09-14 jeu. 11:38]
 :LOGBOOK:
+- State "DONE"       from "STARTED"    [2017-09-14 jeu. 11:38]
 - State "STARTED"    from              [2017-09-06 mer. 10:45]
 :END:
 
@@ -457,13 +440,17 @@ Tudo pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
 
   ## barplot
   expr$indiv.df$pop %>% unique()
-  Q <- expr$Q[expr$indiv.df$pop == "ASW", ]
-  toplot <- data.frame(Q, index = seq_along(Q)) %>% reshape2::melt(id = "index") %>%
-    mutate(`Population ancetrale` = factor(variable, labels = c("africaine",
-                                                  "européenne")))
+  ## ordering
+  expr$indiv.df$pop %>% unique()
+  Q <- expr$Q[expr$indiv.df$pop %in% c("YRI"), ]
+  Q <- expr$Q[expr$indiv.df$pop %in% c("GRB","TSI"), ] %>% rbind(Q)
+  Q <- expr$Q[expr$indiv.df$pop %in% c("ASW"), ] %>% rbind(Q)
+  toplot <- data.frame(Q, index = 1:nrow(Q)) %>% reshape2::melt(id = "index") %>%
+    dplyr::mutate(`Cluster génétique` = factor(variable, labels = c("africain",
+                                                  "européen")))
   brplot <- ggplot(toplot, aes(x = index, y = value)) +
-    geom_bar(stat = "identity", aes(color =`Population ancetrale` , fill = `Population ancetrale`)) +
-    xlab("Individus afro-américains") +
+    geom_bar(stat = "identity", aes(color =`Cluster génétique` , fill = `Cluster génétique`)) +
+    xlab("Individus") +
     ylab("Coefficient\nde métissage") +
     scale_y_continuous(breaks = c(0.0,0.5,1.0)) +
     gtheme + 
@@ -475,108 +462,122 @@ Tudo pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
   ## gather plots
   pl <- plot_grid(pl.res, brplot, ncol = 1, labels = c("A", "B"),
                   rel_heights = c(6,4))
-  save_plot_MaTheseR(pl, "tess3_intro.pdf.png",
-                     height = 0.8 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+  ThesisRpackage::Plots_export_pdf(pl, "tess3_intro", MaTheseR.params,
+                                   height = 0.8 * MaTheseR.params$textheightinch,
+                                   width = MaTheseR.params$textwidthinch)
 #+end_src
 
 #+RESULTS:
 [[./OUTPUT/Rplots/tess3_intro_freq.png]]
 [[./OUTPUT/Rplots/tess3_intro_barplot.png]]
 
-*** Méthodes d'estimation de la structure de population
+*** Méthodes d'inférence des coefficients de métissage 
 :LOGBOOK:
 - Note taken on [2017-09-06 mer. 11:57] \\
   Rmk : ici je parle de modèle probabiliste au sens de Kevin p murphy :D
 :END:
 
-L'estimation de la structure de population a été largement éduiée et il existe
-de nombreuse méthodes qui permète d'estimer à la fois les coéficient de
-métissage et les fréquence de génotype dans les population ancestrale. On
-distingue deux type d'approche pour l'inférence de la structure de population :
-les approches repose sur un modèle probabiliste et les approches fondées sur
-l'optimisation une fonction objective.
+L'inférence des coefficients de métissage a été largement étudié et il existe de
+nombreuse méthodes. On distingue deux types d'approche : les approches reposant
+sur un modèle probabiliste et les approches fondées sur l'optimisation une
+fonction objective.
 
-Parmi les approche reposant sur un modèle probabiliste on compte le logiciel
-=structure= introduit par cite:Pritchard2000 à été le premier a proposer
-l'estimation de structure de population à partir de données génétique. L'acces à
-des données génétype de plus en plus grandes on provoquer l'émergence de
-plusieurs algorithmes plus rapides que celui de =structure=. En effet
-l'algorithme du logiciel =structure= implémente un algorithme d'echatillonage de
-monte carlo pour estimer la distribution a posteriori des coefficient de
-metissage et les fréquence de génotype dans les popualtions ancestrale. Cependant
-les algorithmes de monte carlo ne passe à l'echelle sur les grand jeux de
-donénes génétiques. Les améliorations du logicielle structure repose une
-fonction de vraisemblance est définie pour la matrice des coefficients de
-métissage et les fréquence de génotype dans les population ancestrale. L'estimation
-est effectuée en maximisant la fonction log-vraisemblance. La première
-amélioration de l'algorithme =structure= est basée sur un algorithme EM
-(Expectation Maximisation) maximisant la fonction de vraisemblance
-cite:Tang_2005. Des des algorithmes de vraisemblance plus récents sont
-implémentés dans les programmes =admixture= et =fastStructure=
-cite:Alexander_2011,Raj_2014.
+Parmi les approches reposant sur un modèle probabiliste on compte le logiciel
+=structure= introduit par cite:Pritchard2000 qui à introduit le modèle de
+structure de population dont nous avons parlé dans l'introduction. L'acces à des
+données génétype de plus en plus grandes on provoquer l'émergence de plusieurs
+algorithmes plus rapides que celui de =structure=. En effet l'algorithme du
+logiciel =structure= implémente un algorithme d'échantillonnage de monte carlo
+pour estimer la distribution à posteriori des coefficients de métissage et les
+fréquence de génotype dans les clusters génétiques. Cependant les algorithmes de
+monte carlo ne passe à l'échelle sur les grands jeux de données génétiques
+utilisé aujourd'hui. Il a été proposé des améliorations du logicielle structure
+reposant une fonction de vraisemblance définie pour la matrice des coefficients
+de métissage et les fréquence d'allèle dans les clusters. L'estimation est
+effectuée en maximisant la fonction log-vraisemblance. La première amélioration
+de l'algorithme =structure= est basée sur un algorithme EM (Expectation
+Maximisation) maximisant la fonction de vraisemblance cite:Tang_2005. Des
+algorithmes de vraisemblance plus récents sont implémentés dans les programmes
+=admixture= et =fastStructure= cite:Alexander_2011,Raj_2014.
 
 Dans les approches reposant sur l'optimisation d'un fonction objective, les
 coefficients de métissage sont estimés à l'aide de méthodes de moindres carrés
-ou d'analyse factorielle. Pour estimer les matrices des coéficients de métissage
-et de fréquence des génotypes ancestraux, cite:Engelhardt_2010 a proposé d'utiliser
-l'analyse des facteurs parcimonieuse, cite:Frichot_2014 a utilisé des
-algorithmes de factorisation de matrice non négative scindés et
-cite:Popescu_2014 à utilise l'analyse en composantes principales. Les méthodes
-reposant sur des problème d'optimisation permettent de reproduire avec précision
-les résultats des approches basé sur une vraisemblance cite:Frichot_2014. En
-outre, cette catégorie de méthodes fournissent des approches sont généralement
-plus rapides que les méthodes fondé sur un modèle probabiliste.
+ou d'analyse factorielle. Pour estimer les matrices des coefficients de
+métissage et de fréquence d'allèle dans les cluster, cite:Engelhardt_2010
+propose d'utiliser l'analyse des facteurs parcimonieuse, cite:Frichot_2014
+utilise des algorithmes de factorisation de matrice non négative et
+cite:Popescu_2014 utilise l'analyse en composantes principales. Ces méthodes
+reposant sur des problèmes d'optimisation permettent de reproduire avec
+précision les résultats des approches basé sur une vraisemblance
+cite:Frichot_2014. En outre, cette catégorie de méthode fournissent des
+algorithme qui sont généralement plus rapides que ceux des méthodes fondé sur un
+modèle probabiliste.
 
-*** Méthodes d'estimation de la structure dans des population continue spatialement
+*** Méthodes d'inférence des coefficients de métissage à l'aide de données géographique
 
-L'étude réalisé par cite:Novembre_2008 a montré que pour des individus répartis
-en population continue spatialement il est possible de prédire la position des
-individu a partir de l'étude la structure de population. De nombreuse méthodes
-on permis d'améliorer la prédiction de la position géographique des individu à
-partir de leur génome cite:Baran_2013,Yang_2012,Bhaskar_2016,Ra_ola_2014. Si la
-structure de population permet de prédire la position spatial des individus
-alors il est possible d'améliorer l'estimation de la structure de population en
-utilisant l'information géographique. Cette idée a été exploité par pour
-amméliorer le modèle bayésien de =structure= en incorporant des données les
-géographiques à travers la loi de distribution à priori des coefficient de
-métissage cite:CHEN_2007,Corander2008. Les algorithmes spatiaux fournissent des
+Dans la natures les individus d'une espèce évolue dans un environnement
+géographique et les cluster génétique identifié par les méthodes d'estimations
+de la structure de populations sont en faite généré par a des phénomène (les
+pressions évolutive) qui ont une réalité dans l'environnement géographique de
+l'espèce. Les clusters génétiques peuvent par exemple être causé par une
+isolation des populations à cause d'une mer qui sépare des populations ou bien
+des différences d'altitude entre celles-ci. L'étude réalisé par
+cite:Novembre_2008 a montré qu'il est possible de prédire la position des
+individus à partir de l'étude leur structure de population. De nombreuse
+méthodes ont permis d'améliorer la prédiction de la position géographique des
+individus à partir de leur génome
+cite:Baran_2013,Yang_2012,Bhaskar_2016,Ra_ola_2014. Si la structure de
+population permet de prédire la position spatiale des individus alors il est
+possible d'améliorer l'estimation de la structure de population en utilisant
+l'information géographique. Cette idée a été exploité pour améliorer le modèle
+bayésien de =structure= en incorporant des données géographiques à travers la
+loi de distribution à priori des coefficients de métissage
+cite:CHEN_2007,Corander2008. Les algorithmes spatiaux fournissent des
 estimations de la structure de population plus robustes que des algorithmes non
 spatiaux qui peuvent conduire à des estimations biaisées du nombre de clusters
 cite:Durand_2009. Certaines méthodes bayésiennes sont basées sur des algorithmes
 de Monte Carlo de chaîne de Markov qui nécessite beaucoup de calcul
 cite:FRAN_OIS_2010. Ainsi les méthodes d'estimation de structure de population
-continue spatialement sont pas adapté au grand jeux de données. Nous proposons
-donc une méthode d'estimation de la structure dans des population continue
-spatialement reposant l'optimisation d'une fonction objective.
+continue spatialement ne sont pas adapté au grand jeux de données. Nous
+proposons donc une méthode d'estimation de la structure dans des population
+continue spatialement reposant l'optimisation d'une fonction objective.
 
 *** Plan du chapitre
 
-Dans ce chapitre, nous présentons deux nouveaux algorithmes pour l'estimation
-des matrices d'ascendance basées sur des données géographiques et génétiques.
-Les nouveaux algorithmes résolvent un problème d'optimisation des moindres
+Dans ce chapitre, nous présentons une nouvelle méthode pour l'estimation des
+coefficients de métissage individuels basées sur des données géographiques et
+génétiques. Cette méthode repose un problème de factorisation matrice régularisé
+avec des contraintes convexes. Nous appelons cette nouvelle méthode TESS3. Nous
+proposons deux algorithmes qui résolvent le problème de factorisation de matrice
+de TESS3. Les algorithmes résolvent un problème d'optimisation des moindres
 carrés, l'un repose sur une optimisation quadratique alterné (AQP pour
 alternated quadratic programing), l'autre sur un algorithme des moindres carrés
 alternés projetés (APLS pour alternated projected least square). Le terme
 alterné dans les deux algorithmes fait référence au fait que l'on alterne une
 étape d'optimisation selon la matrice de coefficient de métissage puis la
-matrice des fréquences de génotypes ancestraux. Alors que les algorithmes AQP ont un
-fondement théorique bien établi par cite:Bertsekas_1997, ce n'est pas le cas des
-algorithmes APLS. En utilisant des simulations coalescentes, nous montrons que
-les estimations calculées par les algorithmes APLS sont de bonnes approximations
-des solutions des algorithmes AQP. En outre, nous montrons que les performances
-des algorithmes APLS s'élèvent aux dimensions des ensembles de données modernes.
-Ensuite nous Nous discutons de l'application de nos algorithmes aux données des
-écotypes européens de {\ it Arabidopsis thaliana}, pour lesquelles des données
-géographiques individuelles et géométriques sont disponibles ~ \ citep
-{Horton2012}.
+matrice des fréquences de génotypes ancestraux. Alors que les algorithmes AQP
+ont un fondement théorique bien établi par cite:Bertsekas_1997, ce n'est pas le
+cas des algorithmes APLS. En utilisant des simulations coalescentes, nous
+montrons que les estimations calculées par l'algorithme APLS sont de bonnes
+approximations des solutions de l'algorithme AQP. En outre, nous montrons que
+les performances de l'algorithmes APLS s'élèvent aux dimensions des ensembles de
+données modernes. Sur des simulations, nous montrons que l'erreur statistique
+des estimateurs des coefficients de métissage et des fréquence d'allèle dans les
+cluster fourni par notre méthode TESS3 est du même que l'erreur obtenu avec le
+logicielle tess 2.3, une méthode bayésienne. Toujours sur des simulations nous
+montrons que notre méthode spatial TESS3 estime mieux la structure de population
+que la méthode sNMF qui repose aussi sur un problème de factorisation de matrice
+mais n'utilise pas l'information spatiale. Enfin, nous discutons de
+l'application de nos algorithmes aux données des écotypes européens de {\ it
+Arabidopsis thaliana}, pour lesquelles des données géographiques individuelles
+et géométriques sont disponibles cite:Horton_2012.
 
 ** Nouvelles méthodes
 Dans cette section, nous présentons deux nouveaux algorithmes pour estimer les
-coefficients de métisse individuel et les fréquences de génotypes ancestraux en
-supposant $\K$ populations ancestrales. En plus des génotypes, les nouveaux
-algorithmes présenté ici nécessitent les coordonnées géographiques de chaque
-individu.
+coefficients de métisse individuel et les fréquences de génotypes dans les
+clusters génétiques en supposant $\K$ cluster génétique. En plus des
+génotypes, les nouveaux algorithmes présenté ici nécessitent les coordonnées
+géographiques de chaque individu.
 *** Matrices $\Q$ et $\G$
 Nous considérons une matrice de génotype, $\Y$, enregistrant des données de $n$
 individus à des locus polymorphes $p$ pour une espèce ayant une ploidy de $d$,
@@ -591,17 +592,17 @@ organismes de ploidy $d$, il existe $(d + 1)$ génotypes possibles à chaque
 locus, et chaque valeur est encodée sous une forme disjonctif unique. 
 
 De la même manière que dans cite:Frichot_2014, si l'on suppose qu'il y a $K$
-populations ancestrales, nous cherchons à décomposer la matrice $\Y$ en une
-matrice de coefficients de métissage $\Q$, de taille $n \times K$ et une matrice
-de fréquences de génotypes dans les $K$ populations ancestrales $G$, de taille $p
+clusters génétiques, nous cherchons à décomposer la matrice $\Y$ en une matrice
+de coefficients de métissage $\Q$, de taille $n \times K$ et une matrice de
+fréquences de génotypes dans les $K$ clusters génétiques $G$, de taille $p
 \times K$. Nous notons $\Q_{i,k}$ le coefficient de métissage de l'individu $i$
-pour la population ancestrale $k$. Nous avons de plus
+pour le cluster $k$. Nous avons de plus
 \begin{equation}
 \label{eq:QConst}
 \Q \geq 0 \, , \quad \sum_{k=1}^K {\bf Q}_{i,k} = 1 .
 \end{equation}
 Nous notons $\G_{(d + 1)\ell + j, k}$ la fréquence du génotype $j$ au locus $\ell$
-dans la population $k$ et nous avons
+dans le cluster $k$ et nous avons
 \begin{equation}
 \label{eq:GConst}
 \G \geq 0 \, , \quad \sum_{j=0}^{d} {\bf G}_{(d+1)\ell + j, k} = 1.
@@ -620,7 +621,7 @@ $\Q$ et $\G$.
 *** Information géographique
 L'information géographique est introduite dans le problème de factorisation de
 matrice en utilisant des poids entre les individus. Les poids sont utilisés pour
-imposer une contrainte de régularité de l'estimation des coefficients de
+imposer une contrainte de régularité de l'estimateur des coefficients de
 métissage sur l'espace géographique. En effet, nous souhaitons que des individus
 proches dans l'espace géographique aient des coefficients de métissage proche.
 Les poids sont définis à partir des coordonnées géographiques des individus que
@@ -652,10 +653,12 @@ Par le calcul, les auteurs de cite:DengCai2011 ont montré que
 \label{eq:tess3Reg}
 {\rm Tr} (\Q^{T} \Laplacienne \Q)  = \frac{1}{2} \sum_{i,j = 1}^n  \W_{i,j}  \|   \Q_{i,.}  \Q_{j,.} \|^2.
 \end{equation}
-Dans notre approche, nous supposons que les individus géographiquement proches
-ont plus de chance d'avoir des ancêtres communs que des individus éloigné. Ainsi
-nous utilisons le terme défini par l'équation ref:eq:tess3Reg pour régulariser
-l'estimateur de la matrice des coefficients de métissage $\Q$.
+où $\mathrm{Tr}$ est la fonction qui renvoie la somme des valeurs diagonaux
+d'une matrice carrées, la trace. Dans notre approche, nous
+supposons que les individus géographiquement proches ont plus de chance d'avoir
+des ancêtres communs que des individus éloignés. Ainsi nous utilisons le terme
+défini par l'équation ref:eq:tess3Reg pour régulariser l'estimateur de la
+matrice des coefficients de métissage $\Q$.
 
 *** Problèmes d'optimisation des moindres carrés
 L'estimation des matrices $\Q$ et $\G$ à partir de la matrice de génotype $\Y$
@@ -677,24 +680,29 @@ géographiquement proches.
 Parce que les polyèdres $\DQ$ et $\DG$ sont des ensembles convexes et que la
 fonction $\LS$ est convexe par rapport à chaque variable $\Q$ ou $\G$ lorsque
 l'autre est fixé, nous pouvons appliquer l'algorithme de descente par bloc de
-coordonnées au problème ref:eq:tess3LS présenté à la page 267 de
-cite:Bertsekas_1997. L'algorithme de descente par bloque de coordonnées consiste
-à progresser dans l'ensemble de définition de la fonction a optimiser en
-alternant des étapes d'optimisation selon chacune des coordonnées de la fonction
-à optimiser. Cette algorithme permet de converger vers un minimum local du la
-fonction à optimiser quand celle ci est convexe et définie du un ensemble
-convexe. Le problème d'optimisation selon $\G$ quand $\Q$ est fixé est un
-problème d'optimisation quadratique, il en va de même quand on échange les rôles
-de $\G$ et $\Q$, c'est pour cela que l'algorithme est dit d'optimisation
-quadratique alterné (AQP). L'algorithme APQ commence à partir de valeurs
-initiales pour les matrices $\G$ et $\Q$, et alternent deux étapes
-d'optimisation. La première étape calcule la matrice $\G$ tandis que $\Q$ est
-fixé, et inversement. Nous supposons que $\Q$ est fixé et écrivons $\G$ sous une
-forme vectorielle
+coordonnées au problème pour trouver un minimum local de la fonction $\LS$
+définie par l'équation ref:eq:tess3LS cite:Bertsekas_1997. L'algorithme de
+descente par bloque de coordonnées consiste à alterner des étapes d'optimisation
+selon chacune des coordonnées de la fonction à optimiser. 
+
+DESSIN de https://en.wikipedia.org/wiki/Coordinate_descent ??
+
+
+Cette algorithme permet de converger vers un minimum local quand la fonction
+objectif est convexe et définie sur un ensemble convexe. Le problème
+d'optimisation selon $\G$ quand $\Q$ est fixé est un problème d'optimisation
+quadratique, il en va de même quand on échange les rôles de $\G$ et $\Q$, c'est
+pour cela que l'algorithme est dit d'optimisation quadratique alterné (AQP).
+
+
+L'algorithme APQ commence à partir de valeurs initiales pour les matrices $\G$
+et $\Q$, et alternent deux étapes d'optimisation. La première étape calcule la
+matrice $\G$ tandis que $\Q$ est fixé. Nous supposons que $\Q$
+est fixé et écrivons $\G$ sous une forme vectorielle comme ceci
 \begin{equation*} 
 g = {\rm vec}(\G) \in \mathbb{R} ^ {K(d +1)p}.
 \end{equation*}
-La première étape de l'algorithme résout le sous problème d'optimisation
+La première étape de l'algorithme résout le problème d'optimisation
 quadratique suivant 
 \begin{equation}
 \begin{aligned}
@@ -704,15 +712,16 @@ quadratique suivant
 \end{equation}
 où $\D_Q = \Id_{(d + 1) p} \otimes \Q^T \Q$ et $v_Q = {\rm vec} (\Q^T \Y)$. Ici,
 $\otimes$ désigne le produit Kronecker et $\Id_{d}$ est la matrice identité de
-taille $d$. La structure en bloc de la matrice $\D_Q$ nous permet de
-décomposer le sous-problème ref:eq:AQPg en $p$ problèmes de
-programmation quadratiques indépendants à $K(d + 1)$ variables.
-Nous considérons ensuite que $\G$ est la valeur obtenue après la première
-étape de l'algorithme, et écrivons $\Q$ sous une forme vectorielle 
+taille $d$. La structure en bloc de la matrice $\D_Q$ nous permet de décomposer
+le problème ref:eq:AQPg en $p$ problèmes de programmation quadratiques
+indépendants à $K(d + 1)$ variables. 
+
+Nous considérons ensuite que $\G$ est la valeur obtenue après la première étape
+de l'algorithme, et écrivons $\Q$ sous une forme vectorielle
 \begin{equation}
 q = {\rm vec}(\Q) \in \mathbb{R}^{nK} 
 \end{equation}
-La deuxième étape résout le sous-problème de programmation quadratique suivant
+La deuxième étape résout le problème de programmation quadratique suivant
 \begin{equation}
 \begin{aligned}
 \underset{q \in \DQ}{\min} ( -2 v^T_G \, q + q^T \D_G q ) ,
@@ -720,48 +729,48 @@ La deuxième étape résout le sous-problème de programmation quadratique suiva
 \label{eq:AQPq}
 \end{equation}
 où $\D_G = \Id_{n} \otimes \G^T \G + \alpha \Laplacienne \otimes \Id_K$ et $v_G
-= {\rm vec}(\G^T \Y^T)$. Contrairement au sous-problème ref:eq:AQPg, le
-sous-problème ref:eq:AQPq ne peut pas être séparer en plus petits problèmes.
-Ainsi, la deuxième étape de l'algorithme AQP implique de résoudre un problème de
-programmation quadratique à $nK$ variables qui peut être problématiques pour les
-jeux de données avec beaucoup d'individus. Nous alternons ces deux étapes jusque
-convergence de l'algorithme AQP en un minimum local de $\LS$. Par ailleurs, nous
-pouvons énoncer le résultat de convergence suivant.
+= {\rm vec}(\G^T \Y^T)$. Contrairement au problème ref:eq:AQPg de la première
+étape, le problème ref:eq:AQPq ne peut pas être séparer en plus petits
+problèmes. Ainsi, la deuxième étape de l'algorithme AQP nécessite de résoudre un
+problème de programmation quadratique à $nK$ variables, cela peut être très long
+pour les jeux de données avec beaucoup d'individus. Nous alternons ces deux
+étapes jusque convergence de l'algorithme AQP en un minimum local de $\LS$.
+Enfin nous pouvons énoncer le résultat de convergence suivant.
 #+BEGIN_theorem
 <<AQP_theorem>> L'algorithme AQP qui alterne les étapes d'optimisation définis
 par ref:eq:AQPg et ref:eq:AQPq converge vers un minimum local de la fonction
-$\mathcal{L}$ défini par l'équation ref:eq:tess3LS.
+$\LS$ définie par l'équation ref:eq:tess3LS.
 #+END_theorem
 
 #+BEGIN_proof
-La fonction $\mathcal{L}$ définie par l'équation ref:eq:tess3LS est convexe par
-rapport à $\Q$ quand $\G$ est fixé et inversement. De plus les ensembles
-définition $\DQ$ et $\DG$ sont convexe. Alors d'après le corollaire 2 de
+La fonction $\LS$ définie par l'équation ref:eq:tess3LS est convexe par
+rapport à $\Q$ quand $\G$ est fixé et inversement. De plus les ensembles de
+définition $\DQ$ et $\DG$ sont convexes. Alors d'après le corollaire 2 de
 cite:Grippo_2000 tout point limite de l'algorithme AQP converge vers un point de
-minimum local de la fonction $\mathcal{L}$.
+minimum local de la fonction $\LS$.
 #+END_proof
 
 *** Algorithme des moindres carrés alternés projetés (APLS)
 Dans cette partie nous présentons l'algorithme APLS de calcul d'un minimum local
 de la fonction $\LS$ définie par ref:eq:tess3LS. Contrairement à AQP, il n'y a
-pas de résultat sur la convergence de d'APLS. Cependant l'algorithme APLS a une
-complexité algorithme plus faible que l'algorithme AQP. L'algorithme APLS
-commence par initialiser au hasard les matrices $\Q$ et $\G$ et alterne deux
-étapes jusque la convergence de celui-ci. La matrice $\Q$ est mis à jour pendant
-que la matrice $\G$ est fixé et vice versa. La première étape de mis a jour de
-la matrice $\G$ consiste à calculer
+pas de résultat qui garentisse la convergence de d'APLS vers un minimum local de
+la fonction $\LS$. Cependant l'algorithme APLS a une complexité algorithmique
+plus faible que l'algorithme AQP. L'algorithme APLS commence par initialiser au
+hasard les matrices $\Q$ et $\G$ puis alterne deux étape. La matrice $\Q$ est
+calculé pendant que la matrice $\G$ est fixé et vice versa. La première étape de
+calcul de $\G$ de consiste à calculer
 \begin{equation}
 \label{eq:tess3:apls:g}
 {\bf G}^\star = \arg \min  \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} \, .
 \end{equation}
 Cette étape peut être séparée en $(d+1) p$ (le nombre de colonnes de $\Y$)
 problèmes indépendants. Cette opération peut être parallélisé. Ensuite nous
-projetons $\G^{\star}$ sur le polyèdre $\DG$. Pour la seconde étape nous
-commençons par calculer la matrice des vecteurs propres de la matrice laplacienne
-$\laplacienne$ que nous notons $\U$, ainsi que la matrice diagonale $\LapVp$
-formée des valeurs propres de $\Laplacienne$. Comme la matrice laplacienne est
-symétrique et positive ses valeurs propres sont des nombres réels non négatif.
-D'après le théorème spectral nous avons
+projetons $\G^{\star}$ sur le polyèdre $\DG$. Pour la seconde étape de calcul de
+la matrice $\Q$ nous commençons par calculer la matrice des vecteurs propres de
+la matrice laplacienne $\laplacienne$ que nous notons $\U$, ainsi que la matrice
+diagonale $\LapVp$ formée des valeurs propres de $\Laplacienne$. Comme la
+matrice laplacienne est symétrique et positive ses valeurs propres sont des
+nombres réels non négatif. D'après le théorème spectral nous avons
 \begin{equation}
 \Laplacienne = {\U}^T {\LapVp} \U.
 \end{equation}
@@ -779,29 +788,35 @@ q_i^\star = \arg \min \| \mathcal{P}(\Y}_i - \G q) \|^{2}_{2} + \alpha \lambda_i
 où $\mathcal{P}(\Y)_{i}$ est ligne d'indice $i$ de la matrice des données
 projetée, et $\lambda_{i}$ désigne la valeur propre d'indice $i$ de
 $\Laplacienne$. Les solutions, $q_{i}^{\star}$, sont concaténées en une matrice,
-$\hat{\Q}$, puis la matrice $\Q$ est mise à jour par la projection de $\U
-\hat{\Q}$ sur le polyèdre $\DQ$. La complexité de l'étape ref:eq:tess3:apls:q
-croit linéairement avec $\n$, le nombre d'individus. Alors que la propriété
-théorique de convergence de algorithme AQP est perdu pour l'algorithme APLS,
-l'algorithme APLS devrait être de bonne approximation de l'algorithme AQP. C'est
-ce que nous observons dans nos expériences numériques.
+$\hat{\Q}$, puis la matrice $\Q$ est calculé par la projection de $\U \hat{\Q}$
+sur le polyèdre $\DQ$. La complexité de la deuxième étape de APLS croit
+linéairement avec $\n$, le nombre d'individus. Alors que la propriété théorique
+de convergence de algorithme AQP est perdu pour l'algorithme APLS, l'algorithme
+APLS devrait être de bonne approximation de l'algorithme AQP. C'est ce que nous
+observons dans nos expériences numériques.
 
 *** Choix des hyperparamètres
-Le choix des hyper paramètre est un problème qui est commum a toutes les
-méthodes d'estimation de l'ascendance. La méthode que nous avons présenté ici
-nécessite le choix a priori de 3 hyperparamètre : le nombre de facteurs, $K$, le
-paramètre de régularisation, $\alpha$ et le paramètre d'échelle géographique,
-$\sigma$. Nous présentons ici des méthodes qui permette d'aider le choix de ces
-paramètres.
+Le choix des hyperparamètres est un problème qui est commun à toutes les
+méthodes d'estimation des coefficients de métissage. La méthode que nous avons
+présenté ici nécessite le choix de 3 hyperparamètres : le nombre de
+facteurs, $K$, le paramètre de régularisation, $\alpha$ et le paramètre
+d'échelle géographique, $\sigma$. Nous présentons ici des méthodes qui permette
+d'aider le choix de ces paramètres.
 
 **** Le paramètre d'échelle géographique $\sigma$
-Le test de la corrélation entre la variable génétique et géographique à une
-longue tradition en génétique des populations. Des approches populaire sont basé
-sur le test de Mantel cite:mantel1967 et la mesure de l'autocorélation spatial
-cite:HARDY_1999,Epperson_1996. Avant d'utiliser notre méthode spatiale
-d'estimation de l'ascendance, nous proposons de choisi des valeurs de l'echelle
-géographique en visualisant le variogramme spatial cite:Cressie1993. Le
-variogramme peut être étendu aux données génétique de la facons suivante 
+:LOGBOOK:
+- Note taken on [2017-09-14 jeu. 13:55] \\
+  variogramme ou semivariogramme :D ?? https://fr.wikipedia.org/wiki/Variogramme
+  je crois que c'est la même chose ...
+:END:
+Tester la corrélation entre le génotype et les coordonnées géographiques à une
+longue tradition en génétique des populations. Des approches populaires sont
+basées sur le test de Mantel cite:mantel1967 et la mesure de l'auto-corrélation
+spatial cite:HARDY_1999,Epperson_1996. Avant d'utiliser notre méthode spatiale
+d'estimation des coefficients de métissage, nous proposons de choisir des
+valeurs de l'échelle géographique en visualisant le variogramme spatial
+cite:Cressie1993. Le variogramme peut être étendu aux données génétique de la
+facons suivante
 
 \begin{equation}
 \label{eq:tess3:variogram}
@@ -820,11 +835,11 @@ entre les individus.
   Je ne sais pas ou est le détail de ce calcule :D
 :END:
 La valeur par défaut du paramètre de régularisation $\alpha$ a été choisi de
-sorte que le terme t'attache au données et le terme de régularisation de la
-fonction $\LS$ soit du même ordre de grandeur. Nous proposons de diviser chaque
-terme par sa valeur maximal. Cela revient à considérer $\alha$ égal à $p /
-\lambda_{max}$, où $\lambda_{max}$ est la plus grande valeur propre de la
-matrice laplacienne. 
+sorte que le terme t'attache aux données et le terme de régularisation de la
+fonction $\LS$ soit du même ordre de grandeur. Ainsi, nous proposons de diviser
+chaque terme par sa valeur maximale. Cela revient à considérer $\alha$ égal à $p
+/ \lambda_{max}$, où $\lambda_{max}$ est la plus grande valeur propre de la
+matrice laplacienne.
 
 **** Le nombre de population ancestrale $K$
 Le nombre de populations ancestrales, $K$, peut être évalué en utilisant une
@@ -833,28 +848,42 @@ cite:Wold_1978,Eastment_1982,Alexander_2011,Frichot_2014. La procédure de
 validation croisée divise les entrées matricielles génotypiques en un ensemble
 d'apprentissage et un ensemble de tests. Les probabilités de génotype pour les
 entrées masquées sont prédites à partir des estimations de facteurs obtenues à
-partir d'entrées non masquées. Ensuite, l'erreur de prédiction est calculé en
-utilisant l'entropie croisée entre les fréquences de génotype prédite et le
-génotype réellement observées.
+partir d'entrées non masquées. Ensuite, l'erreur de prédiction est calculée en
+utilisant le RMSE (Root-Mean-Square Error) entre le génotype prédi et le
+génotype réellement observé.
 
-*** Statistique de différentiation des populations ancestrales pour les cribles génomiques pour l'adaptation locale
-Il faut que j'explique un peut pourquoi on fait ca : 
-- il y a une différentiation de base entre le population 
-- on veut trouver la différentiation annormal etc...
+*** Statistique de différentiation des clusters génétiques pour détecter les locus sous adaptation locale
 
-En supposant qu'il y à $K$ population ancestrale, les matrice $\Q$ et $\G$
-obtenues a partir des algorithmes AQP et APLS peut être utilisé pour calculer
-une statistique de différentiation entre les populations ancestrale pour chaque
-locus. La statistique est calculé de la façon suivante cite:Martins_2016
+Si les méthodes d'estimation de la structure de population arrive à détecter des
+clusters génétiques c'est parce que il existe des pressions évolutives (décrient
+dans la partie [[intro_genet]]) qui provoquent la différenciation des distributions
+alléliques entre les différent clusters génétiques. À l'origine de cette
+différentiation il y a la migration, la dérive génétique et l'adaptation à
+l'environnement. Les locus qui ne sont pas impliqués dans un processus
+d'adaptation à l'environnement sont dit neutres et nous faisons l'hypothèse
+qu'une large majorité des locus sont neutres. La migration et la dérive
+génétique influence de la même façon les distribution allélique de tous les
+locus neutre induisant une différentiation typique entre les différents cluster
+génétiques identifié par les méthode d'estimation de la structure. Les locus
+sous adaptation locale peuvent alors être identifier en cherchant les locus où on
+observe une différentiation anormal entre les clusters génétiques
+cite:Lewontin175. Nous proposons de calculer une statistique de différentiation
+entre les distributions génomiques des clusters génétiques identifié par notre
+méthode pour détecter les locus sous adaptation à l'environnement.
+
+En supposant qu'il y à $K$ cluster génétiques, les matrices $\Q$ et $\G$
+obtenues à partir des algorithmes AQP et APLS sont utilisées pour calculer la
+statistique de différentiation entre les clusters génétiques pour chaque locus
+de la façon suivante cite:Martins_2016
 \begin{equation}
 F^{Q}_{\rm ST} = 1 - \sum_{k=1}^K q_k \frac{f_k (1-f_k)}{f(1-f)},
 \end{equation}
-où $q_{k}$ est la mesure du coéficient de métissage dans la population $k$
+où $q_{k}$ est la mesure du coefficient de métissage dans le cluster $k$
 moyenné sur tous les individus 
 \begin{equation}
 q_k = \sum_{i =1}^n \Q_{i,k} / n,
 \end{equation}
-$f_{k}$ est la fréquence d'allèle dans la population $k$ au locus considéré 
+$f_{k}$ est la fréquence d'allèle dans la cluster $k$ au locus considéré 
 \begin{equation}
 f_k =  \sum_{j = 1}^p  j \G_{(p+1)(\ell) + j, k}/p,
 \end{equation}
@@ -875,18 +904,14 @@ statistiques $ F^Q_{\rm ST}$ pour effectuer des tests statistiques de neutralit�
 différentiation génomique de fond.
 
 Le test porte sur la statistique du $z$-score au carré, $z^2 = (nK) F^{Q}_{\rm
-ST} / (1 - F^{Q}_{\rm ST})$ , pour lequel une distribution de chi2 $K-1$ degrés
-de liberté est attendu sous l'hypothèse nulle. 
+ST} / (1 - F^{Q}_{\rm ST})$, pour lequel une distribution du chi2 à $K-1$ degrés
+de liberté est attendue sous l'hypothèse nulle. L'hypothèse nulle est ensuite
+calibrée empiriquement en mesurant le niveau différentiation correspondant une
+différentiation neutre. Nous utilisons pour cela le facteur d'inflation
+génomique cite:Devlin_1999,Fran_ois_2016. . Après un calibration du test, le
+contrôle du taux de découverte fausse est effectué en utilisant l'algorithme de
+Benjamini-Hochberg cite:benjamini1995controlling.
 
-Pour éviter un
-nombre accru de tests faussement positifs, nous avons adopté une approche
-empirique de test d'hypothèse nulle qui recalibre l'hypothèse nulle pour un
-niveau de base de la différenciation de population attendus pour des SNP qui ne
-sont pas selectionné . L'étalonnage de l'hypothèse nulle a
-été réalisé en utilisant le contrôle génomique pour ajuster les statistiques de
-test ~ \ citep {Devlin1999, Francois2016}. Après un recalibrage de l'hypothèse
-nulle, le contrôle du taux de découverte fausse a été obtenu en utilisant
-l'algorithme Benjamini-Hochberg ~ \ citep {Benjamini1995}.
 ** Autres méthodes d'estimation de l'ascendance comparées
 *** Tess 2.3
 *** sNMF
@@ -12651,6 +12676,8 @@ Voir cahier le 7/08/2017
 
 * Perspectives et conclusion 
 :LOGBOOK:
+- Note taken on [2017-09-14 jeu. 13:25] \\
+  L'ancestry local ? utiliser l'information spatial pour l'ancestry locale ???
 - Note taken on [2017-08-30 mer. 11:58] \\
   Le choix de K dans les étude d'association c'est ca le vrai pb !! une petite
   experience qui montre que ca fait n'imp ?? genre sur la GEAS on augment K et on

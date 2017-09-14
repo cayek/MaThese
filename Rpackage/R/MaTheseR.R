@@ -33,6 +33,8 @@ MaTheseR.params$gtheme <- theme_bw(base_size = 12, base_family = "serif") +
   theme(strip.background = element_rect(fill = NA))
 MaTheseR.params$textheightcm <- 19.4028
 MaTheseR.params$textwidthcm <- 12.1708
+MaTheseR.params$textheightinch <- 7.638897638
+MaTheseR.params$textwidthinch <- 4.724409449
 
 ## color
 MaTheseR.params$color.values <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
@@ -40,6 +42,8 @@ names(MaTheseR.params$color.values) <- c("lm", "sva-two-step", "oracle", "lassoL
                                          "PCAlm", "ridgeLFMM", "sva-irw", "cate")
 MaTheseR.params$method.ordered <- c("lm", "PCAlm", "sva-two-step", "sva-irw",
                                     "lassoLFMM", "cate", "ridgeLFMM", "oracle")
+
+MaTheseR.params$fig.dir <- "~/Projects/Thesis/MaThese/OUTPUT/Rplots/"
 
 #################################################################################
 ## tess3
