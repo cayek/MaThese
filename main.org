@@ -1013,10 +1013,30 @@ impliqués dans l'adaptation locale de /A.thaliana/ en Europe.
 :END:
 *** Analyse de la convergence et temps de calcul 
 
+Nous avons sous-échantillonné un grand jeux de données de SNPs d'écotypes de
+/A.thaliana/ pour comparer les propriétés de convergence et les temps
+d'exécution des algorithmes AQP et APLS. Dans ces expériences, nous avons
+utilisé les méthodes avec $6$ cluster génétiques et avons répliqué 5 fois chaque
+simulation. Pour un nombre d'individus allant 500 à 600 et un nombre de 50k
+locus, l'algorithme APLS nécessite plus d'itérations (25 itérations) que
+l'algorithme AQP (20 itérations) pour converger vers sa solution (Figure
+ref:fig:tess3:vitesse). Pour un nombre de locus allant de 10k à 200k et 150
+individus, on observe des résultats similaires. Pour 50k SNPs, les temps
+d'exécution sont significativement plus bas pour l'algorithme APLS que pour les
+algorithmes AQP. Pour 50k SNPs et 600 individus, cela a pris en moyenne 1,0 min
+pour l'algorithme APLS et 100 min pour l'algorithme AQP pour calculer leurs
+résultats. Pour 100k SNPs et 150 individus, il a fallu en moyenne 0,6 min (9,0
+min) pour l'algorithme APLS (AQP) pour calculer leurs résultats. Pour les
+valeurs du nombre d'individus et locus considéré ici, l'implémentation de
+l'algorithme APLS a été d'environs 2 à 100 fois plus rapide que celle de
+l'algorithme AQP.
+
+IL MANQUE UN PLOT !!
+
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/tess3_vitesse.pdf.png}
+\includegraphics{./OUTPUT/Rplots/tess3_vitesse.pdf}
 \caption{Nombre d'itérations et temps de calcul pour les algorithmes AQP et
   APLS. A-B) Nombre total d'itération avant que l'algorithmes ai atteint une
   solution stable. C-D) Temps de calcul d'une seul itération en secondes. Le
@@ -1071,7 +1091,7 @@ CLOSED: [2017-09-11 lun. 12:21]
 :END:
 #+NAME: code:tess3:vitesse:plot
 #+CAPTION: Dépend de [[code:tess3:vitesse:run]]
-#+begin_src R 
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
   library(MaTheseR)
   library(cowplot)
   library(scales)
@@ -1166,41 +1186,42 @@ CLOSED: [2017-09-11 lun. 12:21]
 
   pl <- cowplot::plot_grid(pl.it.n, pl.it.L, pl.time.n, pl.time.L, ncol = 2, labels = c("A", "B", "C", "D"))
   save_plot_png(pl, "tess3_vitesse.png")
-  save_plot_MaTheseR(pl, "tess3_vitesse.pdf.png",
-                     height = 14,
-                     width = 20)
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "tess3_vitesse",
+                                        env = MaTheseR.params,
+                                        height = 5,51181,
+                                        width = 7,87402)
 #+end_src
 
 #+RESULTS: code:tess3:vitesse:plot
 : [[./OUTPUT/Rplots/tess3_vitesse.png]]
-: [[./OUTPUT/Rplots/tess3_vitesse.pdf.png]]
 
 *** Comparaison avec une méthode spatial bayésienne : TESS
 
 #+BEGIN_EXPORT latex
-\begin{figure}[h!]\centering
-\begin{minipage}{0.49\textwidth}
-\includegraphics[width=\linewidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseG.pdf}
+\begin{sidewaysfigure}[!t]
+\centering
+\begin{minipage}{0.49\textheight}
+\includegraphics[width=\textwidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseG.pdf}
 \end{minipage}
-\begin {minipage}{0.49\textwidth}
-\includegraphics[width=\linewidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
+\begin {minipage}{0.49\textheight}
+\includegraphics[width=\textwidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
 \end{minipage}
-\caption{Erreurs statistiques des estimations de TESS3 (APLS) et TESS 2.3 sur
+\caption{Erreurs statistiques des estimations de APLS et TESS 2.3 sur
   des simulations de population métissé de populations ancestrale pour lesquelle
   on connait les coéficients de métissage. A) RMSEs des esimations de $\G$ en
   fonction du niveau de diférentiation entre les populations ancestrale $F_{\rm
     ST}$. B) RMSEs des esimations de $\Q$ en fonction du niveau de
   diférentiation entre les populations ancestrale $F_{\rm ST}$.}
 \label{fig:tess3:tess23}
-\end{figure}    
-
-
+\end{sidewaysfigure}    
 #+END_EXPORT
 
 **** Scripts                                                    :noexport:
 ***** Experience
 Code trop vieux...
 ***** Plots
+J'ai mis un petit coup ink scape à des plot qui trainait :D
 *** Comparaison avec une méthode non spatial : sNMF
 
 #+BEGIN_EXPORT latex
