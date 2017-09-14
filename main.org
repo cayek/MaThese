@@ -547,30 +547,28 @@ continue spatialement reposant l'optimisation d'une fonction objective.
 Dans ce chapitre, nous présentons une nouvelle méthode pour l'estimation des
 coefficients de métissage individuels basées sur des données géographiques et
 génétiques. Cette méthode repose un problème de factorisation matrice régularisé
-avec des contraintes convexes. Nous appelons cette nouvelle méthode TESS3. Nous
-proposons deux algorithmes qui résolvent le problème de factorisation de matrice
-de TESS3. Les algorithmes résolvent un problème d'optimisation des moindres
-carrés, l'un repose sur une optimisation quadratique alterné (AQP pour
-alternated quadratic programing), l'autre sur un algorithme des moindres carrés
-alternés projetés (APLS pour alternated projected least square). Le terme
-alterné dans les deux algorithmes fait référence au fait que l'on alterne une
-étape d'optimisation selon la matrice de coefficient de métissage puis la
-matrice des fréquences de génotypes ancestraux. Alors que les algorithmes AQP
-ont un fondement théorique bien établi par cite:Bertsekas_1997, ce n'est pas le
-cas des algorithmes APLS. En utilisant des simulations coalescentes, nous
-montrons que les estimations calculées par l'algorithme APLS sont de bonnes
-approximations des solutions de l'algorithme AQP. En outre, nous montrons que
-les performances de l'algorithmes APLS s'élèvent aux dimensions des ensembles de
-données modernes. Sur des simulations, nous montrons que l'erreur statistique
-des estimateurs des coefficients de métissage et des fréquence d'allèle dans les
-cluster fourni par notre méthode TESS3 est du même que l'erreur obtenu avec le
-logicielle tess 2.3, une méthode bayésienne. Toujours sur des simulations nous
-montrons que notre méthode spatial TESS3 estime mieux la structure de population
-que la méthode sNMF qui repose aussi sur un problème de factorisation de matrice
-mais n'utilise pas l'information spatiale. Enfin, nous discutons de
-l'application de nos algorithmes aux données des écotypes européens de {\ it
-Arabidopsis thaliana}, pour lesquelles des données géographiques individuelles
-et géométriques sont disponibles cite:Horton_2012.
+avec des contraintes convexes. Nous proposons deux algorithmes qui résolvent le
+problème de factorisation. Le première algorithme repose sur une optimisation
+quadratique alterné (AQP pour alternated quadratic programing), l'autre sur un
+algorithme des moindres carrés alternés projetés (APLS pour alternated projected
+least square). Le terme alterné dans les deux algorithmes fait référence au fait
+que l'on alterne une étape d'optimisation selon la matrice de coefficient de
+métissage puis la matrice des fréquences de génotypes ancestraux. Alors que les
+algorithmes AQP ont un fondement théorique bien établi par cite:Bertsekas_1997,
+ce n'est pas le cas des algorithmes APLS. En utilisant des simulations
+coalescentes, nous montrons que les estimations calculées par l'algorithme APLS
+sont de bonnes approximations des solutions de l'algorithme AQP. En outre, nous
+montrons que les performances de l'algorithme APLS s'élève aux dimensions des
+ensembles de données modernes. Sur des simulations, nous montrons que l'erreur
+statistique des estimateurs des coefficients de métissage et des fréquences
+d'allèle dans les clusters génétique fournis par notre méthode est du même que
+l'erreur obtenu avec le logicielle =TESS= 2.3, une méthode bayésienne. Toujours
+sur des simulations nous montrons que notre méthode spatial estime mieux la
+structure de population que la méthode sNMF qui repose aussi sur un problème de
+factorisation de matrice mais n'utilise pas l'information spatiale. Enfin, nous
+discutons de l'application de nos algorithmes aux données des écotypes européens
+de {\ it Arabidopsis thaliana}, pour lesquelles des données géographiques
+individuelles et géométriques sont disponibles cite:Horton_2012.
 
 ** Nouvelles méthodes
 Dans cette section, nous présentons deux nouveaux algorithmes pour estimer les
@@ -817,7 +815,6 @@ d'estimation des coefficients de métissage, nous proposons de choisir des
 valeurs de l'échelle géographique en visualisant le variogramme spatial
 cite:Cressie1993. Le variogramme peut être étendu aux données génétique de la
 facons suivante
-
 \begin{equation}
 \label{eq:tess3:variogram}
 \gamma(h) = \frac{1}{2 |N(h)|} \sum_{i,j \in N(h)} \frac{1}{L} \sum_{l = 1}^{(p+1)L} |\Y_{i,l} - \Y_{j,l}|,
@@ -849,7 +846,7 @@ validation croisée divise les entrées matricielles génotypiques en un ensembl
 d'apprentissage et un ensemble de tests. Les probabilités de génotype pour les
 entrées masquées sont prédites à partir des estimations de facteurs obtenues à
 partir d'entrées non masquées. Ensuite, l'erreur de prédiction est calculée en
-utilisant le RMSE (Root-Mean-Square Error) entre le génotype prédi et le
+utilisant l'erreur quadratique moyenne (RMSE) entre le génotype prédi et le
 génotype réellement observé.
 
 *** Statistique de différentiation des clusters génétiques pour détecter les locus sous adaptation locale
@@ -912,10 +909,104 @@ génomique cite:Devlin_1999,Fran_ois_2016. . Après un calibration du test, le
 contrôle du taux de découverte fausse est effectué en utilisant l'algorithme de
 Benjamini-Hochberg cite:benjamini1995controlling.
 
-** Autres méthodes d'estimation de l'ascendance comparées
-*** Tess 2.3
+*** Implémentation en R
+Les deux algorithmes APLS et AQP que nous avons présenté dans cette partie ont
+été implémenté en langage R dans un package que nous avons appelé =tess3r=. Le
+nom du package fait référence au logiciel =TESS= 2.3 qui permet aussi d'estimer
+les coefficients de métissage à partir de données génétique et géographique.
+
+** Autres méthodes d'estimation des coefficients de métissage comparées
+*** TESS 
 *** sNMF
 ** Données simulées et réelles
+*** Données simulées
+**** Simulations à partir de données réelle
+Des sous-échantillons provenant du jeux de données réelles 
+d'/Arabidopsis thaliana/ (données décrites dans la partie [[simu_At]]) ont été utilisés pour
+effectuer une analyse de la convergence et du temps de calcule des algorithmes
+AQP et APLS . Les temps d'exécution ont été évalués en utilisant un seul
+processeur informatique Intel Xeon 2.0 GHz.
+**** Simulations coalescentes
+Nous avons utilisé le programme informatique =ms= pour effectuer des simulations
+coalescentes de SNPs neutres et de SNPs sous adaptation à l'environnement
+cite:Hudson_2002. Deux clusters génétiques ont été créées à partir de la
+simulation du modèle à deux îles de Wright's. Ensuite nous avons généré des
+génotypes en mélangeant les deux clusters génétiques simulé avec =ms= pour $n$
+individus pour lesquels les proportions de mélange varient continuellement selon
+un gradient longitudinal cite:Durand_2009,FRAN_OIS_2010. Dans ces scénarios, les
+individus à chaque extrémité de la zone géographique étaient représentatifs de
+leur population d'origine, tandis que les individus au centre de la gamme
+partagent des niveaux intermédiaires d'ascendance dans les deux populations
+ancestrales. Pour ces simulations, la matrice des coefficients de métissage,
+noté $\Q_0$, est entièrement décrite par la position des individus
+échantillonnés.
+
+DESSIN comme celui que je met dans mes slides
+
+Les segments de chromosome neutre des cluster génétique ont été générés en
+simulant des séquences d'ADN avec une taille de population efficace de $N_0 =
+10^6$ pour chaque cluster. Le taux de mutation par paire de base et génération a
+été réglé sur $\mu = 0,25 \times 10^{-7}$, le taux de recombinaison par
+génération a été réglé sur $r = 0,25 \times 10^{-8}$, et le paramètre $m$ a été
+choisi pour obtenir des niveaux neutres de $F_{\rm ST}$ compris entre des
+valeurs de $0.005$ et $0.10$. Le nombre de paires de bases pour chaque séquence
+d'ADN variait entre 10k et 300k pour obtenir un nombre de locus polymorphe
+compris entre 1k et 200k après avoir filtré les SNPs avec une fréquence d'allèle
+mineure inférieure à 5 $\%$. Pour créer des SNPs avec des valeurs de $F_{\rm
+ST}$ atypique par rapport au $F_{\rm ST}$ des locus neutres, des segments
+chromosomiques ancestraux supplémentaires ont été générés en simulant des
+séquences d'ADN avec un taux de migration $m_s$ inférieur à $m$. Les simulations
+ont permis de reproduire pour les SNPs sous adaptation local les niveaux de
+diversité attendu lors d'un balayage sélectifs d'un segment chromosomique
+particulier cite:Martins_2016. Pour chaque simulation, la taille de
+l'échantillon a varié pour un nombre d'individu allant de 50 à 700.
+
+Nous avons comparé les estimations de l'algorithme APLS avec celles obtenues par
+le logiciel =TESS= 2.3. Chaque programme a été exécuté 5 fois sur les mêmes
+données simulées en utilisant $K = 2$ clusters génétiques comme hyperparamètres.
+Nous avons calculé l'erreur quadratique moyenne (RMSE) entre les valeurs
+estimées et connues de la matrice $\Q$, et entre les valeurs estimées et connues
+de la matrice $\G$. Ensuite, pour évaluer le bénéfice des algorithmes spatiaux,
+nous avons comparé les erreurs statistiques de l'algorithme APLS aux erreurs
+obtenues avec la méthode sNMF qui reproduit les résultats du programme
+=structure= avec précision cite:Frichot_2014,Frichot_2015. Pour quantifier les
+performances des tests de détection de l'adaptation local en fonction de
+l'intensité de la sélection environnementale, nous avons utilisé l'aire sous la
+courbe précision-rappel du test d'adaptation local (AUC) pour plusieurs valeurs
+de l'intensité de la sélection ($m/m_s$).
+
+*** Application à des données humaines
+Pour évaluer la robustesse de notre approche à une situation où le mélange a été
+la conséquence d'un grand déplacement plutôt que d'un contact entre des
+populations proche géographiquement, nous avons étudié le cas des populations
+afro-américaines. Il s'agit d'un cas intéressant pour lequel l'incorporation de
+données géographiques pourrait potentiellement nuire à l'estimation des
+coefficients de métissage. Les génotypes avec une fréquence d'allèle mineure
+supérieure à 5 $\%$ ont été obtenus à partir des données du projet 1000 Genomes
+phase 3 pour les Afro-Américains (ASW, 61 individus), des Africains (YRI du
+Nigeria et LWK du Kenya, 207 individus) et Européens (GBR du Royaume-Uni et TSI
+d'Italie, 198 personnes) cite:1000Genome_2015. Au total, 6 994 677 SNPs ont été
+analysés avec des données géographiques correspondant au pays d'origine des
+échantillons individuels. Nous avons comparé les estimations de l'algorithme
+APLS appliqué avec ces paramètres par défaut aux résultats du programme =snmf=
+qui n'utilise pas l'informations géographiques.
+
+*** Application à des écotypes européen d'Arabidopsis thaliana
+<<simu_At>>
+
+Nous avons utilisé l'algorithme APLS pour étudier la structure de population
+spatiale et pour détecter les locus sous adaptions local en considérant 214k SNP à
+partir de 1 095 écotypes européens des espèces végétales /A.thaliana/
+cite:Horton_2012. Le critère de validation croisée a été utilisé pour évaluer le
+nombre de cluster génétique dans l'échantillon, et nous avons utilisé le
+variogramme spatial des données génétique pour évaluer l'échelle de
+l'auto-corrélation spatiale. Nous avons utilisé les fonctions du package
+=tess3r= pour afficher les coefficients de métissage interpolés sur une carte
+géographique d'Europe. Une analyse d'enrichissement de l'ontologie des gènes
+utilisant le logiciel =AMIGO= cite:Carbon_2008 a été réalisée afin d'évaluer
+quelles fonctions moléculaires et processus biologiques pourraient être
+impliqués dans l'adaptation locale de /A.thaliana/ en Europe.
+
 ** Résultats
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -984,12 +1075,16 @@ CLOSED: [2017-09-11 lun. 12:21]
   library(MaTheseR)
   library(cowplot)
   library(scales)
-  library(latex2exp)
   MaTheseR.params <- get_MaTheseRparams()
   Article2.env <- MaTheseR.params$Article2.env
 
   ## expr res
   expr <- readRDS("./OUTPUT/Expr/tess3_vitesse.rds")
+  expr$df.n <- expr$df.n %>%
+    dplyr::filter(method != "TESS3")
+  expr$df.L <- expr$df.L %>%
+    dplyr::filter(method != "TESS3")
+
 
   g_legend <- function(a.gplot){
     tmp <- ggplot_gtable(ggplot_build(a.gplot))
@@ -1026,7 +1121,7 @@ CLOSED: [2017-09-11 lun. 12:21]
                       width = (max(n) - min(n)) * 0.02)) +
     theme_bw() +
     scale_y_log10() +
-    xlab(TeX("Nombre d'individus ($n$)")) +
+    xlab("Nombre d'individus ($n$)") +
     ylab("Temps par itération \n(seconds)") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none") +
@@ -1061,7 +1156,7 @@ CLOSED: [2017-09-11 lun. 12:21]
                       width = (max(L) - min(L)) * 0.02 / 1000)) +
     theme_bw() +
     scale_y_log10() +
-    xlab(TeX("Nombre de locus $\\times 1000$ ($p$)")) +
+    xlab("Nombre de locus $\\times 1000$ ($p$)") +
     ylab("") +
     MaTheseR.params$gtheme +
     theme(legend.position = c(0.61,0.22)) +
@@ -1080,7 +1175,7 @@ CLOSED: [2017-09-11 lun. 12:21]
 : [[./OUTPUT/Rplots/tess3_vitesse.png]]
 : [[./OUTPUT/Rplots/tess3_vitesse.pdf.png]]
 
-*** Comparaison avec une méthode spatial bayésienne : TESS 2.3
+*** Comparaison avec une méthode spatial bayésienne : TESS
 
 #+BEGIN_EXPORT latex
 \begin{figure}[h!]\centering
@@ -1688,6 +1783,74 @@ CLOSED: [2017-09-11 lun. 18:57]
 
 *** Application à des données humaines
 **** Scripts                                                    :noexport:
+***** DONE map des individus et matrice W
+CLOSED: [2017-09-14 jeu. 17:24]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-14 jeu. 17:24]
+- State "TODO"       from              [2017-09-14 jeu. 17:21]
+:END:
+#+NAME: code:tess3_1000G_map
+#+CAPTION: Dépend de 
+#+begin_src R 
+  dat <- readRDS("~/Projects/Thesis/Data/1000Genomes/Phase3/Eu_Af_Afam.chr1.maf.05.rds")
+  library(maps)
+  map()
+  points(dat$coord, col = as.factor(dat$indiv$pop))
+  image(dat$W)
+
+#+end_src
+***** DONE Variogram sur le chromosome 1
+CLOSED: [2017-09-14 jeu. 17:28]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-14 jeu. 17:28]
+- State "TODO"       from              [2017-09-14 jeu. 17:24]
+:END:
+#+NAME: code:tess3_1000G_vario
+#+CAPTION: Dépend de 
+#+begin_src R 
+  require(ThesisRpackage)
+  require(tess3r)
+
+  dat <- readRDS("~/Projects/Thesis/Data/1000Genomes/Phase3Chrm22/Eu_Af_Afam.chr1.maf.05.rds")
+
+  exp <- Experiment(name = "1000genome_chrm1_variogram", 
+                    description = "1000genome_chrm1_variogram")
+
+
+  ## subsample G
+  prop <- 0.25
+  L <- ncol(dat$G)
+  ploidy <- max(dat$G)
+  loci.index <- sample.int(L, prop * L)
+  X <- dat$G[,loci.index]
+  XBin <- matrix(as.double(X), nrow(X), ncol(X) * (ploidy + 1))
+  X2XBin(X, ploidy, XBin)
+  rm(X)
+  Dx <- dat$dist.matrix
+  rm(dat)
+  gc()
+
+  Dz <- stats::dist(XBin, method = "manhattan") / ncol(XBin)
+  exp$variogram <- CalculateEmpiricalSemivariogram(Dz = Dz, Dx = Dx)
+
+  dumpExperiment(exp)
+#+end_src
+
+#+NAME: code:tess3_1000G_vario_plot
+#+CAPTION: Dépend de [[code:tess3r_1000G_vario_res]]
+#+begin_src R 
+  library(ThesisRpackage)
+  library(MaTheseR)
+
+  exp <- retrieveExperiment(61)
+  pl <- ggplot(exp$variogram, aes(x = h, y = semi.variance, size = size)) +
+    geom_point(shape = 1)
+  save_plot_png(pl, "tess3r_1000G_vario.png")
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/tess3r_1000G_vario.png]]
+
 ***** DONE Run de tess3r sur les données du 1000Genomes
 CLOSED: [2017-09-06 mer. 09:24]
 :LOGBOOK:
