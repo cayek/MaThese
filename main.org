@@ -929,21 +929,21 @@ processeur informatique Intel Xeon 2.0 GHz.
 **** Simulations coalescentes
 Nous avons utilisé le programme informatique =ms= pour effectuer des simulations
 coalescentes de SNPs neutres et de SNPs sous adaptation à l'environnement
-cite:Hudson_2002. Deux clusters génétiques ont été créées à partir de la
+cite:Hudson_2002. Deux populations sources ont été créées à partir de la
 simulation du modèle à deux îles de Wright's. Ensuite nous avons généré des
-génotypes en mélangeant les deux clusters génétiques simulé avec =ms= pour $n$
-individus pour lesquels les proportions de mélange varient continuellement selon
-un gradient longitudinal cite:Durand_2009,FRAN_OIS_2010. Dans ces scénarios, les
-individus à chaque extrémité de la zone géographique étaient représentatifs de
-leur population d'origine, tandis que les individus au centre de la gamme
-partagent des niveaux intermédiaires d'ascendance dans les deux populations
-ancestrales. Pour ces simulations, la matrice des coefficients de métissage,
-noté $\Q_0$, est entièrement décrite par la position des individus
+génotypes en mélangeant les génotype des deux populations simulées avec
+=ms= pour $n$ individus pour lesquels les proportions de mélange varient
+continuellement selon un gradient longitudinal cite:Durand_2009,FRAN_OIS_2010.
+Dans ces scénarios, les individus à chaque extrémité de la zone géographique
+sont représentatifs de leur population d'origine, tandis que les individus au
+centre de la gamme partagent des niveaux intermédiaires d'ascendance dans les
+deux populations ancestrales. Pour ces simulations, la matrice des coefficients
+de métissage, noté $\Q_0$, est entièrement décrite par la position des individus
 échantillonnés.
 
 DESSIN comme celui que je met dans mes slides
 
-Les segments de chromosome neutre des cluster génétique ont été générés en
+Les segments de chromosome neutre des population source ont été générés en
 simulant des séquences d'ADN avec une taille de population efficace de $N_0 =
 10^6$ pour chaque cluster. Le taux de mutation par paire de base et génération a
 été réglé sur $\mu = 0,25 \times 10^{-7}$, le taux de recombinaison par
@@ -951,18 +951,19 @@ génération a été réglé sur $r = 0,25 \times 10^{-8}$, et le paramètre $m$
 choisi pour obtenir des niveaux neutres de $F_{\rm ST}$ compris entre des
 valeurs de $0.005$ et $0.10$. Le nombre de paires de bases pour chaque séquence
 d'ADN variait entre 10k et 300k pour obtenir un nombre de locus polymorphe
-compris entre 1k et 200k après avoir filtré les SNPs avec une fréquence d'allèle
-mineure inférieure à 5 $\%$. Pour créer des SNPs avec des valeurs de $F_{\rm
-ST}$ atypique par rapport au $F_{\rm ST}$ des locus neutres, des segments
-chromosomiques ancestraux supplémentaires ont été générés en simulant des
-séquences d'ADN avec un taux de migration $m_s$ inférieur à $m$. Les simulations
-ont permis de reproduire pour les SNPs sous adaptation local les niveaux de
-diversité attendu lors d'un balayage sélectifs d'un segment chromosomique
-particulier cite:Martins_2016. Pour chaque simulation, la taille de
-l'échantillon a varié pour un nombre d'individu allant de 50 à 700.
+compris entre 1k et 200k après avoir filtré les SNPs ayant une fréquence
+d'allèle mineure inférieure à 5 $\%$. Pour créer des SNPs avec des valeurs de
+$F_{\rm ST}$ atypique par rapport au $F_{\rm ST}$ des locus neutres, des
+segments chromosomiques ancestraux supplémentaires ont été générés en simulant
+des séquences d'ADN avec un taux de migration $m_s$ inférieur à $m$. Les
+simulations ont permis de reproduire pour les SNPs sous adaptation local les
+niveaux de diversité attendu lors d'un balayage sélectifs d'un segment
+chromosomique particulier cite:Martins_2016. Pour chaque simulation, la taille
+de l'échantillon a varié pour un nombre d'individu allant de 50 à 700.
 
-Nous avons comparé les estimations de l'algorithme APLS avec celles obtenues par
-le logiciel =TESS= 2.3. Chaque programme a été exécuté 5 fois sur les mêmes
+Nous avons comparer les estimateurs des algorithmes APLS et AQP entre eux. De
+plus, nous avons comparé les résultats de l'algorithme APLS avec ceux obtenue
+par le logiciel =TESS= 2.3. Chaque programme a été exécuté 5 fois sur les mêmes
 données simulées en utilisant $K = 2$ clusters génétiques comme hyperparamètres.
 Nous avons calculé l'erreur quadratique moyenne (RMSE) entre les valeurs
 estimées et connues de la matrice $\Q$, et entre les valeurs estimées et connues
@@ -1013,6 +1014,36 @@ impliqués dans l'adaptation locale de /A.thaliana/ en Europe.
 :END:
 *** Analyse de la convergence et temps de calcul 
 
+Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
+un modèle spatial de mélange pour comparer les erreurs statistiques des
+estimations de $\Q$ et $\G$ obtenu avec AQP et APLS. La référence pour la
+matrice $\Q$, noté $\Q_0$, a été calculée à partir des proportions de mélange
+utilisées pour générer les génotype à partir des deux populations sources
+simulées par =ms=. Pour la matrice $\G$, la matrice de vérité noté ($\G_0$) a
+été calculée à partir des fréquences empiriques des génotypes des deux
+populations sources. Les erreurs quadratique moyenne (RMSE) pour les estimations
+les estimations des matrice $\Q$ et $\G$ diminuent à mesure que la taille de
+l'échantillon et le nombre de locus augmentaient (Figure ref:fig:tess3:comp).
+Pour tous les algorithmes, les erreurs statistiques sont généralement faibles
+lorsque le nombre de locus est supérieur à 10k. Ces résultats permette de
+prouver que les deux algorithmes produises des estimations équivalentes des
+matrices $\Q_0$ et $\G_0$. Les résultats ont également permis de vérifier que
+l'algorithmes APLS converge vers les mêmes estimations que celles obtenues par
+l'algorithme AQP, qui est garanti pour converger mathématiquement.
+
+#+BEGIN_EXPORT latex
+\begin{sidewaysfigure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_APLS_AQP_rmse_comp.pdf}
+\caption{{\bf Racine carré de l'erreur quadratique moyenne (RMSE) pour les
+    estimations des matrices $\Q$ et $\G$}. Simulations de génotype métissé
+  spatialement. A-B) Erreur statistique des estimations de APLS et AQP en
+  fonction du nombre d'individu $n$ ($p \sim 10^4$). C-D) Erreur statistique des
+  estimations de APLS et AQP en fonction du nombre de locus $p$ ($n = 200$)}
+\label{fig:tess3:comp}
+\end{sidewaysfigure}
+#+END_EXPORT
+
 Nous avons sous-échantillonné un grand jeux de données de SNPs d'écotypes de
 /A.thaliana/ pour comparer les propriétés de convergence et les temps
 d'exécution des algorithmes AQP et APLS. Dans ces expériences, nous avons
@@ -1031,14 +1062,12 @@ valeurs du nombre d'individus et locus considéré ici, l'implémentation de
 l'algorithme APLS a été d'environs 2 à 100 fois plus rapide que celle de
 l'algorithme AQP.
 
-IL MANQUE UN PLOT !!
-
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_vitesse.pdf}
-\caption{Nombre d'itérations et temps de calcul pour les algorithmes AQP et
-  APLS. A-B) Nombre total d'itération avant que l'algorithmes ai atteint une
+\caption{{\bf Nombre d'itérations et temps de calcul pour les algorithmes AQP et
+  APLS}. A-B) Nombre total d'itération avant que l'algorithmes ai atteint une
   solution stable. C-D) Temps de calcul d'une seul itération en secondes. Le
   nombre de SNPs a été fixé à $p = 50$k pour A et C. Le nombre d'individus a été
   fixé à $n = 150$ pour B et D.}
@@ -1046,7 +1075,167 @@ IL MANQUE UN PLOT !!
 \end{sidewaysfigure}
 #+END_EXPORT
 **** Scripts                                                    :noexport:
-***** DONE Expérience 
+***** DONE Expérience comparaison
+CLOSED: [2017-09-15 ven. 10:43]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-15 ven. 10:43]
+- State "TODO"       from              [2017-09-15 ven. 10:35]
+:END:
+#+NAME: code:tess3:comparison:run
+#+CAPTION: Dépend de 
+#+begin_src R 
+  ## setup
+  library(ThesisRpackage)
+  Article2.env <- get_Article2()
+  attach(Article2.env)
+
+  ## Experiment along L
+  simu.param <- list(n = 100,
+                     nsites.neutral = 1e4,
+                     nsites.selected = 0,
+                     crossover.proba = 0.25 * 10 ^ -8,
+                     m.neutral = 0.25 * 10 ^ -6,
+                     m.selected = NULL,
+                     mutation.rate.per.site = 0.25 * 10 ^ -7,
+                     N0 = 10 ^ 6,
+                     k = 0.5,
+                     min.maf = 0.05)
+
+  cores = 16
+  registerDoParallel(cores = cores)
+
+  simu.param$nsites.neutral <- 1e5
+
+  simu.param$n <- 200
+  df.L <- fig1.exp.L(simu.param, Ls = c(1e4, 2.5e4, 5e4, 1e5, 2e5, 3e5), rep = 5)
+
+  saveRDS(df.L, file = "./OUTPUT/Expr/tess3_L.rmse.R")
+
+
+  ## Experiment along n
+  simu.param <- list(n = 100,
+                     nsites.neutral = 1e4,
+                     nsites.selected = 0,
+                     crossover.proba = 0.25 * 10 ^ -8,
+                     m.neutral = 0.25 * 10 ^ -6,
+                     m.selected = NULL,
+                     mutation.rate.per.site = 0.25 * 10 ^ -7,
+                     N0 = 10 ^ 6,
+                     k = 0.5,
+                     min.maf = 0.05)
+
+  cores = 16
+  registerDoParallel(cores = cores)
+
+  simu.param$nsites.neutral <- 1e5
+  df.n <- fig1.exp.n(simu.param, ns = c(50,100, 200, 500, 700), rep = 5)
+  saveRDS(df.n, file = "./OUTPUT/Expr/tess3_n.rmse.R")
+#+end_src
+***** DONE Plot comparaison
+CLOSED: [2017-09-15 ven. 11:09]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-15 ven. 11:09]
+- State "TODO"       from              [2017-09-15 ven. 10:35]
+:END:
+#+NAME: code:tess3:comparison:plot
+#+CAPTION: Dépend de [[code:tess3:comparison:run]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  Article2.env <- MaTheseR.params$Article2.env
+
+  ## retrieve results
+  df.n <- readRDS("./OUTPUT/Expr/tess3_n.rmse.R") %>%
+    dplyr::filter(method != "TESS3")
+  df.L <- readRDS("./OUTPUT/Expr/tess3_L.rmse.R") %>%
+    dplyr::filter(method != "TESS3")
+  ## plot
+  toplot <- df.n  %>%
+    reshape2::melt(id = c("n", "rep", "L", "method"), value.name = "rmse") %>%
+    group_by(n, method, variable) %>%
+    mutate(rmse.mean = mean(rmse), N = length(rmse), sd = sd(rmse), se = sd / sqrt(N)) %>%
+    mutate(Methods = method)
+
+  pl.n.A <- ggplot(toplot %>% dplyr::filter(variable == "rmseG"),
+                   aes(x = n, y = rmse.mean, col = method, linetype = method, shape = method)) +
+    geom_line() +
+    geom_errorbar(aes(ymin = rmse.mean - se,
+                      ymax = rmse.mean + se,
+                      width = (max(n) - min(n)) * 0.02 )) +
+    geom_point(size = 2) +
+    xlab("Nombre d'individus ($n$)") +
+    ylab("RMSE") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none",
+          plot.title = element_text(size = 16)) +
+    Article2.env$scale.linetype +
+    Article2.env$scale.color +
+    ggtitle("Matrice $G$")
+
+  pl.n.B <- ggplot(toplot %>% dplyr::filter(variable == "rmseQ"),
+                   aes(x = n, y = rmse.mean, col = Methods, linetype = Methods, shape = Methods)) +
+    geom_errorbar(aes(ymin = rmse.mean - se, ymax = rmse.mean + se,
+                      width = (max(n) - min(n)) * 0.02 )) +
+    geom_line() +
+    geom_point(size = 2) +
+    xlab("Nombre d'individus ($n$)") +
+    ylab("") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none",
+          plot.title = element_text(size = 16)) +
+    Article2.env$scale.linetype +
+    Article2.env$scale.color +
+    ggtitle("Matrice $Q$")
+
+  toplot <- df.L  %>%
+    reshape2::melt(id = c("nsites.neutral", "rep", "L", "method"), value.name = "rmse") %>%
+    group_by(nsites.neutral, method, variable) %>%
+    mutate(rmse.mean = mean(rmse), N = length(rmse), sd = sd(rmse), se = sd / sqrt(N), L = mean(L))
+
+  pl.L.C <- ggplot(toplot %>% dplyr::filter(variable == "rmseG"), aes(x = L / 1000, y = rmse.mean, col = method, linetype = method, shape = method)) +
+    geom_errorbar(aes(ymin = rmse.mean - se, ymax = rmse.mean + se,
+                      width = (max(L) - min(L)) * 0.00002 )) +
+    geom_line() +
+    geom_point(size = 2) +
+    xlab("Nombre de locus $\\times 1000$ ($p$)") +
+    ylab("RMSE") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none") +
+    Article2.env$scale.linetype +
+    Article2.env$scale.color
+
+  pl.L.D <- ggplot(toplot %>% dplyr::filter(variable == "rmseQ"), aes(x = L / 1000, y = rmse.mean, col = method, linetype = method, shape = method)) +
+    geom_errorbar(aes(ymin = rmse.mean - se, ymax = rmse.mean + se,
+                      width = (max(L) - min(L)) * 0.00002 )) +
+    geom_line() +
+    geom_point(size = 2) +
+    xlab("Nombre de locus $\\times 1000$ ($p$)") +
+    ylab("") +
+    MaTheseR.params$gtheme +
+    Article2.env$scale.linetype +
+    Article2.env$scale.color +
+    theme(legend.position = c(0.75,0.60))
+
+
+  pl <- cowplot::plot_grid(pl.n.A, pl.n.B, pl.L.C, pl.L.D, ncol = 2, labels = c("A", "B", "C", "D"))
+
+  save_plot_png(pl, "tess3_APLS_AQP_rmse_comp.png")
+  ThesisRpackage::Plots_export_tikz_pdf(pl = pl, 
+                        basename.output = "tess3_APLS_AQP_rmse_comp", 
+                        env = MaTheseR.params,
+                        width =  MaTheseR.params$textheightinch,
+                        height =  MaTheseR.params$textwidthinch)
+
+#+end_src
+
+#+RESULTS: code:tess3:comparison:plot
+: [[./OUTPUT/Rplots/tess3_APLS_AQP_rmse_comp.png]]
+: Measuring dimensions of:  Nombre de locus $\times 1000$ ($p$)
+
+***** DONE Expérience vitesse
 CLOSED: [2017-09-11 lun. 12:21]
 :LOGBOOK:
 - State "DONE"       from              [2017-09-11 lun. 12:21]
@@ -1084,7 +1273,7 @@ CLOSED: [2017-09-11 lun. 12:21]
   expr <- list( df.L = df.L, df.n = df.n)
   save_expr(expr, "tess3_vitesse.rds")
 #+end_src
-***** DONE Plots
+***** DONE Plots vitesse
 CLOSED: [2017-09-11 lun. 12:21]
 :LOGBOOK:
 - State "DONE"       from              [2017-09-11 lun. 12:21]
@@ -1195,8 +1384,20 @@ CLOSED: [2017-09-11 lun. 12:21]
 
 #+RESULTS: code:tess3:vitesse:plot
 : [[./OUTPUT/Rplots/tess3_vitesse.png]]
-
 *** Comparaison avec une méthode spatial bayésienne : TESS
+
+Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
+un modèle spatial de mélange pour évaluer les capacités de l'algorithme APLS à
+reproduire les estimations obtenues avec le logiciel =TESS= 2.3. Nous avons deux
+clusters génétiques de 2k de 100 échantillon de 2k locus pour différent de
+niveau de différentiation moyen $F_{\rm ST}$ pour créer des jeux de données pour
+lesquels il est plus ou moins dure d'estimer la structure de population. Les
+erreurs statistiques, mesurées par RMSE, pour l'estimation des matrices $\Q$ et
+$\G$ varie entre $0.02$ et $0.15$ (Figure ref:fig:tess3:tess23). Les erreurs
+statistiques augmentent à mesure que les niveaux de différenciation entre les
+deux populations sources diminue, mais elles reste dans une gamme acceptable
+pour les valeurs de $F_{\rm ST}> 0.016$. Dans l'ensemble, les performances
+statistiques sont du même ordre pour =TESS= 2.3 et APLS.
 
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[!t]
@@ -1207,12 +1408,13 @@ CLOSED: [2017-09-11 lun. 12:21]
 \begin {minipage}{0.49\textheight}
 \includegraphics[width=\textwidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
 \end{minipage}
-\caption{Erreurs statistiques des estimations de APLS et TESS 2.3 sur
-  des simulations de population métissé de populations ancestrale pour lesquelle
-  on connait les coéficients de métissage. A) RMSEs des esimations de $\G$ en
-  fonction du niveau de diférentiation entre les populations ancestrale $F_{\rm
-    ST}$. B) RMSEs des esimations de $\Q$ en fonction du niveau de
-  diférentiation entre les populations ancestrale $F_{\rm ST}$.}
+\caption{{\bf Erreurs statistiques des estimations de APLS et TESS 2.3 sur des
+    simulations de génotype métissé.} A) Racine carrée de l'erreur quadratique
+  moyenne (RMSE) des esimations de $\G$ en fonction du niveau de diférentiation
+  entre les deus clusters génétiques avant le métissage $F_{\rm ST}$. B) Racine
+  carrée de l'erreur quadratique moyenne (RMSE) des esimations de $\Q$ en
+  fonction du niveau de diférentiation entre les deux cluster génétiques avant
+  le métissage $F_{\rm ST}$.}
 \label{fig:tess3:tess23}
 \end{sidewaysfigure}    
 #+END_EXPORT
