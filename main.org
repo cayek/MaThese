@@ -77,6 +77,7 @@
   biocLite("LEA",ask = FALSE)
   biocLite("impute",ask = FALSE)
   biocLite("sva",ask = FALSE)
+  ## biocLite("IlluminaHumanMethylation450kanno.ilmn12.hg19", ask = FALSE)
 
   install.packages("cate")
   install.packages("FAMT")
@@ -86,6 +87,9 @@
 
   ## github
   devtools::install_github("privefl/bigsnpr")
+  devtools::install_github("bcm-uga/pcadapt")
+  devtools::install_github("perishky/meffil") ## cpG site annotation
+
 
   ## my pkgs
   devtools::install_github("cayek/MaTheseR/Rpackage")
@@ -1400,39 +1404,45 @@ pour les valeurs de $F_{\rm ST}> 0.016$. Dans l'ensemble, les performances
 statistiques sont du même ordre pour =TESS= 2.3 et APLS.
 
 #+BEGIN_EXPORT latex
-\begin{sidewaysfigure}[!t]
+\begin{figure}[!t]
 \centering
-\begin{minipage}{0.49\textheight}
-\includegraphics[width=\textwidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseG.pdf}
+\begin{minipage}{0.49\textwidth}
+  \includegraphics[height=0.4\textheight]{./OUTPUT/Rplots/tess3_tess2_3_rmseG.pdf}
 \end{minipage}
-\begin {minipage}{0.49\textheight}
-\includegraphics[width=\textwidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
+\begin {minipage}{0.49\textwidth}
+  \includegraphics[height=0.4\textheight]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
 \end{minipage}
-\caption{{\bf Erreurs statistiques des estimations de APLS et TESS 2.3 sur des
-    simulations de génotype métissé.} A) Racine carrée de l'erreur quadratique
-  moyenne (RMSE) des esimations de $\G$ en fonction du niveau de diférentiation
-  entre les deus clusters génétiques avant le métissage $F_{\rm ST}$. B) Racine
-  carrée de l'erreur quadratique moyenne (RMSE) des esimations de $\Q$ en
-  fonction du niveau de diférentiation entre les deux cluster génétiques avant
-  le métissage $F_{\rm ST}$.}
+\caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation de
+    $\Q$ (figure A) et $\G$ (figure B).} Simulations de génotype métissé
+  spatialement pour plusieurs niveaux de différenciation($F_{\rm ST}$) entre les
+  populations sources. Les populations sources sont simulées par un modèle de
+  Wright'sà deux iles et le la statistique de différenciation est définie comme
+  $1 / (1 + 4 N_0 m)$ où $m$ est le taux de migration et $N_0$ la taille
+  effective de la population. Les erreurs statistique de TESS 2.3 et APLS sont
+  représentées comme des fonctions de $F_{\rm ST}$.}
 \label{fig:tess3:tess23}
-\end{sidewaysfigure}    
+\end{figure}    
 #+END_EXPORT
 
 **** Scripts                                                    :noexport:
 ***** Experience
 Code trop vieux...
 ***** Plots
-J'ai mis un petit coup ink scape à des plot qui trainait :D
+J'ai mis un petit coup ink scape à des plot qui trainaient :D
 *** Comparaison avec une méthode non spatial : sNMF
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/tess3_comp_rmse_snmf.pdf.png}
-\caption{Erreurs statistiques des estimations de TESS3 (APLS) et sNMF sur
-  des simulations de population métissé de populations ancestrale pour lesquelle
-  on connait les coéficients de métissage.}
+\includegraphics{./OUTPUT/Rplots/tess3_comp_rmse_snmf.pdf}
+\caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation
+    de $\Q$.} Simulations de génotype métissé spatialement pour plusieurs
+  niveaux de différenciation($F_{\rm ST}$) entre les populations sources. Les
+  populations sources sont simulées par un modèle de Wright'sà deux iles et le
+  la statistique de différenciation est définie comme $1 / (1 + 4 N_0 m)$ où $m$
+  est le taux de migration et $N_0$ la taille effective de la population. Les
+  erreurs statistique de sNMF et APLS sont représentées comme des fonctions de
+  $F_{\rm ST}$.}
 \label{fig:tess3:comp:rmse:snmf}
 \end{figure}
 #+END_EXPORT
@@ -1440,7 +1450,7 @@ J'ai mis un petit coup ink scape à des plot qui trainait :D
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/tess3_comp_auc_snmf.pdf.png}
+\includegraphics{./OUTPUT/Rplots/tess3_comp_auc_snmf.pdf}
 \caption{}
 \label{fig:ewas_venn}
 \end{figure}
@@ -1750,11 +1760,10 @@ CLOSED: [2017-09-11 lun. 18:30]
 :END:
 #+NAME: code:tess3:rmse:snmf:plot
 #+CAPTION: Dépend de [[code:tess3:rmse:snmf]]
-#+begin_src R 
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
   library(MaTheseR)
   library(cowplot)
   library(scales)
-  library(latex2exp)
   MaTheseR.params <- get_MaTheseRparams()
   Article2.env <- MaTheseR.params$Article2.env
 
@@ -1798,17 +1807,16 @@ CLOSED: [2017-09-11 lun. 18:30]
     Article2.env$scale.color +
     Article2.env$scale.linetype
   save_plot_png(pl, "tess3_comp_rmse_snmf.png")
-  save_plot_MaTheseR(pl, "tess3_comp_rmse_snmf.pdf.png",
-                       height = 0.4 * MaTheseR.params$textheightcm,
-                       width = MaTheseR.params$textwidthcm)
 
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "tess3_comp_rmse_snmf",
+                                        env = MaTheseR.params,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
 #+end_src
 
 #+RESULTS: code:tess3:rmse:snmf:plot
-: Warning message:
-: The labeller API has been updated. Labellers taking `variable`and `value` arguments are now deprecated. See labellers documentation.
 [[./OUTPUT/Rplots/tess3_comp_rmse_snmf.png]]
-: [[./OUTPUT/Rplots/tess3_comp_rmse_snmf.pdf.png]]
 ***** DONE AUC APLS et sNMF
 CLOSED: [2017-09-11 lun. 18:41]
 :LOGBOOK:
@@ -4594,6 +4602,7 @@ entre $10^{-10}$ et $1$ donnent les mêmes valeurs d'erreur de prédiction moyen
 (Figure ref:fig:ewas_params C), nous avons choisi de prendre $\lambRidge =
 10^{-5}$ pour ridgeLFMM. Nous avons choisi la proportion de lignes non nulles
 pour de la matrice des effets $\B$ valant $1 \%$ pour lassoLFMM.
+
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
@@ -5652,7 +5661,6 @@ CLOSED: [2017-07-27 jeu. 11:32]
 [[./OUTPUT/Rplots/EWAS_qqplots.png]]
 [[./OUTPUT/Rplots/EWAS_qqplots2.png]]
 
-
 ****** DONE Le top et rank des candidats
 CLOSED: [2017-07-27 jeu. 11:35]
 :LOGBOOK:
@@ -5781,7 +5789,7 @@ CLOSED: [2017-07-27 jeu. 11:39]
 #+end_src
 
 #+RESULTS: code:ewas_venn
-: [[./OUTPUT/Rplots/ewas_fdr01_venn.png]]
+[[./OUTPUT/Rplots/ewas_fdr01_venn.png]]
 
 ****** DONE Venn diagram top 100
 CLOSED: [2017-08-07 lun. 18:02]
@@ -5822,7 +5830,6 @@ CLOSED: [2017-08-07 lun. 18:02]
 [[./OUTPUT/Rplots/ewas_top100_venn.png]]
 : [1] 81.019
 
-
 ****** DONE plot top * power
 CLOSED: [2017-08-07 lun. 17:56]
 :LOGBOOK:
@@ -5859,12 +5866,180 @@ CLOSED: [2017-08-07 lun. 17:56]
 #+RESULTS: code:ewas_top_power
 [[./OUTPUT/Rplots/ewas_top_power.png]]
 
+****** DONE Meta analysis avec la distance de mahalanobis
+CLOSED: [2017-09-15 ven. 17:51]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-15 ven. 17:51]
+- State "TODO"       from              [2017-09-15 ven. 16:35]
+:END:
+On va combiner les zscores avec la distance de mahalanobis: 
+- https://fr.wikipedia.org/wiki/Distance_de_Mahalanobis : le test d'hypotèse est
+  décrit ici.
+- https://en.wikipedia.org/wiki/Mahalanobis_distance
+
+Ca fait une union des méthodes, plus une variable sort de l'elispe plus 
+sa pvalue sera petite.
+
+On ne garde que cate, lassoLFMM, ridgeLFMM, PCAlm et sva_twostep
+
+On utilise l'implémentation de pcadapt qui estime la matrice de covariance
+avec l'estimateur robuste : *Orthogonalized Gnanadesikan-Kettenring pairwise estimator*
+
+#+NAME: code:ewas:mahalanobis
+#+CAPTION: Dépend de [[code:ewas_load_res]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese
+  library(pcadapt)
+
+  ## meta-analisis with mahanalobis
+  ## I do not understand why it do not work without ind...
+  ## solution found https://stackoverflow.com/questions/43259380/spread-with-duplicate-identifiers-using-tidyverse-and
+  Z.df <- expr$df.res %>%
+    dplyr::filter(method %in% c("cate", "lassoLFMM", "ridgeLFMM", "PCAlm", "sva_two-step")) %>%
+    dplyr::select(method, calibrated.score, colname, index,outlier) %>%
+    group_by(method) %>%
+    tidyr::spread(method, calibrated.score)
+  Z.df
+  Z <- Z.df[,c(-1,-2,-3)] %>% as.matrix()
+  dim(Z)
+  colnames(Z)
+  anyNA(Z)
+
+  mahalanobis.res <- covRob_cpp(Z)
+
+  ## dist
+  Z.df <- Z.df %>%
+    mutate(mahalanobis.dist = mahalanobis.res$dist%>%as.numeric())
+  ggplot(Z.df, aes(mahalanobis.dist)) +
+    geom_histogram()
+  ggplot(Z.df, aes(y = mahalanobis.dist, x = seq_along(mahalanobis.dist), color = outlier)) +
+    geom_point()
+
+
+  ## compute pvalue
+  Z.df <- Z.df %>%
+    mutate(pvalue = pchisq(mahalanobis.dist, df = 5, lower.tail = FALSE))
+  ggplot(Z.df, aes(pvalue)) +
+    geom_histogram() ## :D
+
+  ## recalibration
+  gif <- median(Z.df$mahalanobis.dist) / qchisq(0.5, df = 1)
+  Z.df <- Z.df %>%
+    mutate(recalibrated.pvalue = pchisq(mahalanobis.dist / gif, df = 1, lower.tail = FALSE))
+  ggplot(Z.df, aes(pvalue)) +
+    geom_histogram()
+
+  ## top by dist
+  Z.df %>%
+    dplyr::arrange(desc(mahalanobis.dist)) %>%
+    dplyr::filter(row_number() < 20) %>%
+    print.data.frame()
+
+
+  ## save res
+  save_expr(Z.df, "ewas_mahanalobis.rds")
+#+end_src
+
+#+RESULTS: code:
+#+begin_example
+# A tibble: 162,038 x 8
+      colname index outlier       cate   lassoLFMM       PCAlm  ridgeLFMM
+ *      <chr> <int>   <lgl>      <dbl>       <dbl>       <dbl>      <dbl>
+ 1 cg00000029     1   FALSE -0.3761422 -0.12796535  0.01532402 -0.3664368
+ 2 cg00000165     2   FALSE -0.3660100 -0.26239103 -0.26650002 -0.4112348
+ 3 cg00000236     3   FALSE -0.1827646 -0.08431626  0.09560440 -0.1333556
+ 4 cg00000289     4   FALSE  1.2829818  1.12346217  1.06928797  1.3040504
+ 5 cg00000321     5   FALSE -0.1397402 -0.23408087 -0.26268544 -0.1548929
+ 6 cg00000363     6   FALSE  0.6435748  0.61728208  0.59508989  0.6252669
+ 7 cg00000658     7   FALSE -1.3271343 -1.27313197 -1.29301157 -1.3955362
+ 8 cg00000807     8   FALSE -1.2751202 -1.39045154 -1.48968175 -1.2928754
+ 9 cg00000924     9   FALSE -1.0563266 -0.77330602 -0.70157261 -1.0659883
+10 cg00001099    10   FALSE -0.5107669 -0.42094594 -0.44711010 -0.5382614
+# ... with 162,028 more rows, and 1 more variables: `sva_two-step` <dbl>
+[1] 162038      5
+[1] "cate"         "lassoLFMM"    "PCAlm"        "ridgeLFMM"    "sva_two-step"
+[1] FALSE
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+      colname  index outlier      cate lassoLFMM     PCAlm ridgeLFMM
+1  cg16411857 101455    TRUE -6.865840 -7.008935 -7.142457 -6.897722
+2  cg07839457  51546    TRUE -6.445807 -6.586964 -6.713112 -6.471476
+3  cg05428452  36714    TRUE -6.492214 -6.583422 -6.560629 -6.486125
+4  cg26244575 153700   FALSE  6.218716  5.950348  4.965036  5.876325
+5  cg02508743  17619   FALSE  5.561682  5.557813  5.545263  5.552689
+6  cg26164488 153263   FALSE -6.037328 -5.906131 -4.906335 -5.669689
+7  cg03280622  22680   FALSE -5.821323 -5.847969 -5.037990 -5.500901
+8  cg20821042 125220    TRUE -5.333727 -5.416535 -5.403386 -5.326584
+9  cg16171858 100108   FALSE  5.560155  5.240551  5.040972  5.498666
+10 cg02030958  14387   FALSE  5.418047  5.370905  5.069725  5.307414
+11 cg13081526  81184   FALSE -5.200270 -5.297436 -5.249608 -5.182162
+12 cg14989316  93666   FALSE -5.370882 -5.415048 -4.953549 -5.192574
+13 cg24150157 142554   FALSE  5.235941  5.119322  4.985110  5.192011
+14 cg01373248   9879   FALSE  5.305933  5.270222  4.931840  5.156338
+15 cg18052547 110532   FALSE -5.123051 -5.220443 -5.216318 -5.118463
+16 cg05874806  39305   FALSE  5.038504  4.864156  4.864469  5.005384
+17 cg02435083  17139   FALSE -5.559756 -5.301292 -4.273959 -5.243371
+18 cg05370853  36316   FALSE -5.103511 -5.121673 -4.959630 -5.051942
+19 cg25372449 149131    TRUE -5.046244 -5.153984 -5.155173 -5.044186
+   sva_two-step mahalanobis.dist pvalue recalibrated.pvalue
+1      76.85285         8106.560      0       1.284598e-128
+2      67.55958         6275.212      0       5.264320e-100
+3      66.28534         6046.792      0        1.955346e-96
+4      46.22117         3233.695      0        1.960667e-52
+5      48.21138         3201.969      0        6.155444e-52
+6      45.34648         3197.396      0        7.258918e-52
+7      43.77251         2916.795      0        1.803876e-47
+8      45.19053         2828.148      0        4.417261e-46
+9      43.47836         2626.962      0        6.283704e-43
+10     42.79226         2557.593      0        7.685553e-42
+11     41.76834         2424.779      0        9.293237e-40
+12     40.25901         2344.918      0        1.662163e-38
+13     40.94076         2321.189      0        3.916290e-38
+14     40.44027         2304.669      0        7.112326e-38
+15     40.55306         2284.542      0        1.471451e-37
+16     40.08606         2238.044      0        7.892910e-37
+17     36.77867         2233.849      0        9.184228e-37
+18     39.54110         2185.929      0        5.187371e-36
+19     39.42279         2160.502      0        1.300001e-35
+#+end_example
+
+Les pvalues sont assez énorme... Il faut 20 site de méthylation pour trouver les
+5 ...
+
+****** TODO Gene annotation
+:LOGBOOK:
+- State "TODO"       from              [2017-09-15 ven. 17:51]
+:END:
+
+Les données on été faite à partir d'une puce Illumina 450K. Du coup : https://www.biostars.org/p/92569/. Finnalement, le pkg de ce post est deprecated. Je vais utiliser ce pkg : https://github.com/perishky/meffil/wiki/CpG-annotations
+
+#+NAME: code:ewas:annotation
+#+CAPTION: Dépend de [[code:ewas:mahalanobis]]
+#+begin_src R 
+  library(MaTheseR)
+  library(meffil)
+
+  ## get data annotation
+  meffil.list.featuresets()
+  cpG.df <- meffil.get.features("450k")
+  cpG.df %>% head()
+
+  Z.df <- readRDS("./OUTPUT/Expr/ewas_mahanalobis.rds")
+  top.cpg.df <- Z.df %>%
+    dplyr::arrange(desc(mahalanobis.dist)) %>%
+    dplyr::filter(row_number() < 20) %>%
+    mutate(name = colname) %>%
+    left_join(cpG.df,by = "name")
+
+  top.cpg.df %>%
+    dplyr::select(colname, outlier, recalibrated.pvalue, gene.symbol) %>%
+    knitr::kable()
+#+end_src
 ***** DONE Plots
 CLOSED: [2017-08-06 Sun 14:25]
 :LOGBOOK:
 - State "DONE"       from              [2017-08-06 Sun 14:25]
 :END:
-
 ****** DONE Choix des paramètres
 CLOSED: [2017-08-29 mar. 11:46]
 :LOGBOOK:
