@@ -58,7 +58,6 @@
   install.packages("ggmap")
   install.packages("rvest")
   install.packages("raster")
-  install.packages("latex2exp")
   install.packages('printr')
   install.packages("units", configure.args = "--with-udunits2-include=/usr/include/udunits2")
   install.packages("ggforce")
@@ -68,6 +67,11 @@
   install.packages("rgeos")
   install.packages("rasterVis")
   install.packages("fields")
+
+  ## output to document
+  install.packages("ascii")
+  install.packages("xtable")
+  install.packages("latex2exp")
 
   ## bioconductor
   source("https://bioconductor.org/biocLite.R")
@@ -4671,6 +4675,83 @@ cite:Zou_2014,Rahmani_2016.
 \end{figure}
 #+END_EXPORT
 
+#+NAME: code:ewas_table
+#+CAPTION: Dépend de [[ewas_venn]]
+#+begin_src R :results output latex :exports results
+  library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
+
+  inter.cpg.df <- readRDS( "./OUTPUT/Expr/ewas_table.rds")
+
+  ## scientific notation
+  inter.cpg.df <- inter.cpg.df %>%
+    mutate(cate = format(cate, digits = 2, scientific = TRUE),
+           PCAlm = format(PCAlm, digits = 2, scientific = TRUE),
+           lassoLFMM = format(lassoLFMM, digits = 2, scientific = TRUE),
+           ridgeLFMM = format(ridgeLFMM, digits = 2, scientific = TRUE))
+
+  ## bold candidates
+  bold <- function(id) {
+    paste0("\\textbf{",id,"}")
+  }
+  eval(quote(inter.cpg.df$ID[Outlier] <<- sapply(ID, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$cate[Outlier] <<- sapply(cate, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$PCAlm[Outlier] <<- sapply(PCAlm, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$ridgeLFMM[Outlier] <<- sapply(ridgeLFMM, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$lassoLFMM[Outlier] <<- sapply(lassoLFMM, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$Position[Outlier] <<- sapply(Position, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$Chr[Outlier] <<- sapply(Chr, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$Gene[Outlier] <<- sapply(Gene, bold)[Outlier]), inter.cpg.df)
+
+  ## remove repetition
+  inter.cpg.df <- inter.cpg.df %>%
+    mutate(Gene = sub(";.*", "", Gene))
+
+  ## print
+  inter.cpg.df %>%
+    dplyr::select(-Outlier) %>%
+    xtable(digits = -2,
+           type = "latex",
+           caption = "Sites de méthylation trouvées par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\cite{Zou_2014, Rahmani_2016}") %>%
+    print(include.rownames=FALSE,
+          sanitize.text.function=identity,
+          floating.environment = "sidewaystable")
+#+end_src
+
+#+RESULTS: code:ewas_table
+#+BEGIN_EXPORT latex
+% latex table generated in R 3.4.1 by xtable 1.8-2 package
+% Sat Sep 16 16:57:05 2017
+\begin{sidewaystable}[ht]
+\centering
+\begin{tabular}{llllllll}
+  \hline
+ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\ 
+  \hline
+\textbf{cg16411857} & \textbf{16} & \textbf{57023191} & \textbf{NLRC5} & \textbf{9.2e-13} & \textbf{2.4e-12} & \textbf{6.6e-12} & \textbf{5.3e-12} \\ 
+  \textbf{cg07839457} & \textbf{16} & \textbf{57023022} & \textbf{NLRC5} & \textbf{1.9e-11} & \textbf{4.5e-11} & \textbf{1.1e-10} & \textbf{9.7e-11} \\ 
+  \textbf{cg05428452} & \textbf{6} & \textbf{32712979} & \textbf{HLA-DQA2} & \textbf{5.4e-11} & \textbf{4.6e-11} & \textbf{8.5e-11} & \textbf{8.8e-11} \\ 
+  cg02508743 & 8 & 56903623 & LYN & 2.9e-08 & 2.7e-08 & 2.7e-08 & 2.8e-08 \\ 
+  \textbf{cg20821042} & \textbf{6} & \textbf{32709158} & \textbf{HLA-DQA2} & \textbf{6.5e-08} & \textbf{6.1e-08} & \textbf{9.6e-08} & \textbf{1.0e-07} \\ 
+  cg13081526 & 6 & 32449961 &  & 1.5e-07 & 1.2e-07 & 2.0e-07 & 2.2e-07 \\ 
+  cg18052547 & 6 & 32552547 & HLA-DRB1 & 1.8e-07 & 1.8e-07 & 3.0e-07 & 3.1e-07 \\ 
+  \textbf{cg25372449} & \textbf{6} & \textbf{32490350} & \textbf{HLA-DRB5} & \textbf{2.5e-07} & \textbf{2.6e-07} & \textbf{4.5e-07} & \textbf{4.6e-07} \\ 
+  cg02030958 & 13 & 110386267 &  & 4.0e-07 & 7.8e-08 & 6.0e-08 & 1.1e-07 \\ 
+  cg16171858 & 3 & 58472734 &  & 4.6e-07 & 1.6e-07 & 2.7e-08 & 3.8e-08 \\ 
+  cg03280622 & 8 & 145023013 & PLEC1 & 4.7e-07 & 5.0e-09 & 5.8e-09 & 3.8e-08 \\ 
+  cg24150157 & 19 & 51891210 & LIM2 & 6.2e-07 & 3.1e-07 & 1.6e-07 & 2.1e-07 \\ 
+  cg26244575 & 12 & 76354015 &  & 6.9e-07 & 2.7e-09 & 5.0e-10 & 4.2e-09 \\ 
+  cg05370853 & 6 & 32606634 & HLA-DQA1 & 7.1e-07 & 3.0e-07 & 3.3e-07 & 4.4e-07 \\ 
+  cg14989316 & 10 & 80757927 & LOC283050 & 7.3e-07 & 6.1e-08 & 7.8e-08 & 2.1e-07 \\ 
+  cg17360552 & 6 & 32725332 & HLA-DQB2 & 8.1e-07 & 6.1e-07 & 1.1e-06 & 1.2e-06 \\ 
+  cg01373248 & 3 & 18480297 & SATB1 & 8.1e-07 & 1.4e-07 & 1.1e-07 & 2.5e-07 \\ 
+  cg26164488 & 2 & 64440295 &  & 9.3e-07 & 3.5e-09 & 1.6e-09 & 1.4e-08 \\ 
+  cg05874806 & 2 & 102350276 & MAP4K4 & 1.1e-06 & 1.1e-06 & 4.7e-07 & 5.6e-07 \\ 
+   \hline
+\end{tabular}
+\caption{Sites de méthylation trouvées par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \cite{Zou_2014, Rahmani_2016}} 
+\end{sidewaystable}
+#+END_EXPORT
+
 **** Scripts                                                    :noexport:
 ***** DONE Télécharger les données
 CLOSED: [2017-08-06 Sun 14:40]
@@ -5895,7 +5976,7 @@ avec l'estimateur robuste : *Orthogonalized Gnanadesikan-Kettenring pairwise est
   ## solution found https://stackoverflow.com/questions/43259380/spread-with-duplicate-identifiers-using-tidyverse-and
   Z.df <- expr$df.res %>%
     dplyr::filter(method %in% c("cate", "lassoLFMM", "ridgeLFMM", "PCAlm", "sva_two-step")) %>%
-    dplyr::select(method, calibrated.score, colname, index,outlier) %>%
+    dplyr::select(method, score, colname, index,outlier) %>%
     group_by(method) %>%
     tidyr::spread(method, calibrated.score)
   Z.df
@@ -5925,7 +6006,7 @@ avec l'estimateur robuste : *Orthogonalized Gnanadesikan-Kettenring pairwise est
   gif <- median(Z.df$mahalanobis.dist) / qchisq(0.5, df = 1)
   Z.df <- Z.df %>%
     mutate(recalibrated.pvalue = pchisq(mahalanobis.dist / gif, df = 1, lower.tail = FALSE))
-  ggplot(Z.df, aes(pvalue)) +
+  ggplot(Z.df, aes(recalibrated.pvalue)) +
     geom_histogram()
 
   ## top by dist
@@ -6006,18 +6087,23 @@ avec l'estimateur robuste : *Orthogonalized Gnanadesikan-Kettenring pairwise est
 Les pvalues sont assez énorme... Il faut 20 site de méthylation pour trouver les
 5 ...
 
-****** TODO Gene annotation
+****** DONE Gene annotation
+CLOSED: [2017-09-16 sam. 15:18]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-16 sam. 15:18]
 - State "TODO"       from              [2017-09-15 ven. 17:51]
 :END:
 
 Les données on été faite à partir d'une puce Illumina 450K. Du coup : https://www.biostars.org/p/92569/. Finnalement, le pkg de ce post est deprecated. Je vais utiliser ce pkg : https://github.com/perishky/meffil/wiki/CpG-annotations
 
+On annote le top 20 du test de mahalanobis
+
 #+NAME: code:ewas:annotation
 #+CAPTION: Dépend de [[code:ewas:mahalanobis]]
-#+begin_src R 
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results output org
   library(MaTheseR)
   library(meffil)
+  library(ascii)
 
   ## get data annotation
   meffil.list.featuresets()
@@ -6031,10 +6117,18 @@ Les données on été faite à partir d'une puce Illumina 450K. Du coup : https:
     mutate(name = colname) %>%
     left_join(cpG.df,by = "name")
 
-  top.cpg.df %>%
-    dplyr::select(colname, outlier, recalibrated.pvalue, gene.symbol) %>%
-    knitr::kable()
+  ## names(top.cpg.df)
+
+  res <- top.cpg.df %>%
+    dplyr::select(recalibrated.pvalue,
+                  colname, gene.symbol, outlier, chromosome, position) %>%
+    as.data.frame() %>%
+    ascii(include.rownames = FALSE)
+  print(res, type = "org")
 #+end_src
+
+#+RESULTS: code:ewas:annotation
+
 ***** DONE Plots
 CLOSED: [2017-08-06 Sun 14:25]
 :LOGBOOK:
@@ -6135,7 +6229,7 @@ CLOSED: [2017-08-09 mer. 13:56]
 - State "TODO"       from              [2017-08-08 mar. 14:28]
 :END:
 
-#+NAME: code:ewas_qqplot_top_venn
+#+NAME: code:ewas_qqplot_top
 #+CAPTION: Dépend de [[code:ewas_expr]]
 #+BEGIN_SRC R
   library(MaTheseR)
@@ -6210,6 +6304,46 @@ CLOSED: [2017-08-09 mer. 13:56]
   save_plot_MaTheseR(pl.leg, "ewas_qqplot_top.pdf.png",
                      height = 0.9 * MaTheseR.params$textheightcm,
                      width = MaTheseR.params$textwidthcm)
+
+#+END_SRC
+
+#+RESULTS: code:ewas_qqplot_top_venn
+[[./OUTPUT/Rplots/ewas_qqplot_notcalibrated_all.png]]
+[[./OUTPUT/Rplots/ewas_top_power_all.png]]
+
+****** DONE Diagramme de venn et annotation de l'intersection
+CLOSED: [2017-09-16 sam. 16:02]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-16 sam. 16:02]
+- State "TODO"       from              [2017-09-16 sam. 15:20]
+:END:
+#+NAME: code:ewas_venn
+#+CAPTION: Dépend de [[code:ewas_expr]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(gridExtra)
+  library(scales)
+  MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
+
+  expr <- readRDS("./OUTPUT/Expr/EWAS_all.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
+  m1 <- length(candidates)
+
+  ## filter and order method
+  expr$df.res$method %>% unique()
+  df.res <- expr$df.res %>%
+    dplyr::filter(!(method %in% c("famt"))) %>%
+    transmute(method = factor(article3_method_name(method), method.ordered),
+              index = index,
+              pvalue = pvalue,
+              calibrated.pvalue = calibrated.pvalue,
+              outlier = index %in% candidates,
+              name = colname)
+
 
   #############################################################################
   ## venn
@@ -6308,11 +6442,32 @@ CLOSED: [2017-08-09 mer. 13:56]
   }
   l <- inter.list(1,2,3,4,5)
   mean(candidates %in% l)
-#+END_SRC
 
-#+RESULTS: code:ewas_qqplot_top_venn
-[[./OUTPUT/Rplots/ewas_qqplot_notcalibrated_all.png]]
-[[./OUTPUT/Rplots/ewas_top_power_all.png]]
+  ## annotation of intersection
+  library(meffil)
+  library(xtable)
+
+  cpG.df <- meffil.get.features("450k")
+
+  inter.cpg.df <- df.res %>%
+    dplyr::filter(index %in% l, method %in%
+                                c("cate", "lassoLFMM", "ridgeLFMM", "PCAlm", "sva_two-step")) %>%
+    left_join(cpG.df, by = "name") %>%
+    dplyr::transmute(ID = name,
+                     Chr = sub("chr","",chromosome),
+                     Position = as.character(position),
+                     Gene = gene.symbol,
+                     pvalue = calibrated.pvalue,
+                     method = method,
+                     Outlier = outlier
+                     ) %>%
+    spread(method, pvalue) %>%
+    arrange(PCAlm)
+  save_expr(inter.cpg.df, "ewas_table.rds")
+
+#+end_src
+
+#+RESULTS:
 [[./OUTPUT/Rplots/ewas_venn.png]]
 
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
@@ -7955,6 +8110,8 @@ CLOSED: [2017-09-12 mar. 14:55]
 
   candidates.snp <- (res.df %>% dplyr::filter(index %in% candidates))$colname %>% unique()
 
+
+  ## clump with candidates
   df <- clumped.res.df %>%
     transmute(method = method,
               pvalue = P,
@@ -8078,7 +8235,7 @@ CLOSED: [2017-09-01 ven. 13:13]
 - State "DONE"       from "TODO"       [2017-09-01 ven. 13:13]
 - State "TODO"       from              [2017-08-14 lun. 11:50]
 :END:
-#+NAME: code:gwas_qqplot_venn
+#+NAME: code:gwas_qqplot
 #+CAPTION: Dépend de [[code:gwas_expr]]
 #+BEGIN_SRC R
   library(MaTheseR)
@@ -8162,6 +8319,100 @@ CLOSED: [2017-09-01 ven. 13:13]
                      height = 0.9 * MaTheseR.params$textheightcm,
                      width = MaTheseR.params$textwidthcm)
 
+#+END_SRC
+
+#+RESULTS: code:gwas_qqplot_venn
+#+begin_example
+  [1] lm        ridgeLFMM PCAlm     cate      lassoLFMM
+  Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
+  Warning message:
+  Removed 310 rows containing non-finite values (stat_qq).
+  [[./OUTPUT/Rplots/gwas_qqplot_notcalibrated_all.png]]
+  Warning message:
+  Removed 310 rows containing non-finite values (stat_qq).
+  == Top all ==
+
+
+  |method    |    top|
+  |:---------|------:|
+  |lm        | 213444|
+  |PCAlm     | 259689|
+  |lassoLFMM | 151172|
+  |cate      | 156858|
+  |ridgeLFMM | 247464|
+  == Top 3000 ==
+
+
+  |method    |  index|    pvalue| calibrated.pvalue|outlier |     power|  top|
+  |:---------|------:|---------:|-----------------:|:-------|---------:|----:|
+  |lm        | 274194| 0.0005995|         0.0040140|FALSE   | 0.7755102| 3000|
+  |PCAlm     |  68895| 0.0047380|         0.0066796|FALSE   | 0.8367347| 3000|
+  |lassoLFMM | 148728| 0.0030905|         0.0048138|FALSE   | 0.8775510| 3000|
+  |cate      |  86890| 0.0027883|         0.0043251|FALSE   | 0.8775510| 3000|
+  |ridgeLFMM |  28408| 0.0045857|         0.0062832|FALSE   | 0.8367347| 3000|
+  == Top 1000 ==
+
+
+  |method    |  index|    pvalue| calibrated.pvalue|outlier |     power|  top|
+  |:---------|------:|---------:|-----------------:|:-------|---------:|----:|
+  |lm        | 103211| 0.0000000|          0.000000|FALSE   | 0.1224490| 1000|
+  |PCAlm     | 103161| 0.0001711|          0.000303|FALSE   | 0.5714286| 1000|
+  |lassoLFMM | 102648| 0.0000000|          0.000000|FALSE   | 0.1836735| 1000|
+  |cate      | 103120| 0.0000000|          0.000000|FALSE   | 0.1428571| 1000|
+  |ridgeLFMM |  28634| 0.0001809|          0.000310|FALSE   | 0.6326531| 1000|
+  [[./OUTPUT/Rplots/gwas_top_power_all.png]]
+  Warning message:
+  Removed 310 rows containing non-finite values (stat_qq).
+  [[./OUTPUT/Rplots/gwas_qqplot_top.pdf.png]]
+  == List with fdr controle ==
+  # A tibble: 5 x 3
+       method     n     power
+       <fctr> <int>     <dbl>
+  1        lm  1319 0.4489796
+  2     PCAlm   777 0.3673469
+  3 lassoLFMM  1267 0.6122449
+  4      cate  1319 0.6734694
+  5 ridgeLFMM   754 0.3673469
+  [[./OUTPUT/Rplots/gwas_venn.png]]
+  [[./OUTPUT/Rplots/gwas_venn.pdf.png]]
+  == Prop of candidate in inter all ==
+  [1] 0.2857143
+  == Prop of candidate in inter cate lfmm pcalm ==
+  [1] 0.3673469
+#+end_example
+
+****** DONE Diagramme de venn
+CLOSED: [2017-09-16 sam. 17:21]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-16 sam. 17:21]
+- State "TODO"       from              [2017-09-16 sam. 17:18]
+:END:
+#+NAME: code:gwas_qqplot_venn
+#+CAPTION: Dépend de [[code:gwas_expr]]
+#+BEGIN_SRC R
+  library(MaTheseR)
+  library(cowplot)
+  library(gridExtra)
+  library(scales)
+  MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
+
+
+  celiac.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  m1 <- length(candidates)
+
+  ## filter and order method
+  ## celiac.df$method %>% unique()
+  df.res <- celiac.df %>%
+    transmute(method = factor(article3_method_name(method), method.ordered),
+              index = index,
+              pvalue = pvalue,
+              calibrated.pvalue = calibrated.pvalue,
+              outlier = index %in% candidates)
+  df.res$method %>% unique()
   #############################################################################
   ## venn
 
@@ -8252,70 +8503,208 @@ CLOSED: [2017-09-01 ven. 13:13]
   l <- inter.list(1,2,3,4,5)
   mean(candidates %in% l)
   message("== Prop of candidate in inter cate lfmm pcalm ==")
-  l <- inter.list(1,2,3)
+  l <- inter.list(1,2,3, 4)
   mean(candidates %in% l)
 #+END_SRC
 
-#+RESULTS: code:gwas_qqplot_venn
-#+begin_example
-  [1] lm        ridgeLFMM PCAlm     cate      lassoLFMM
-  Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
-  Warning message:
-  Removed 310 rows containing non-finite values (stat_qq).
-  [[./OUTPUT/Rplots/gwas_qqplot_notcalibrated_all.png]]
-  Warning message:
-  Removed 310 rows containing non-finite values (stat_qq).
-  == Top all ==
+***** CANCELLED Etude de l'intersection des clumps à 1%
+CLOSED: [2017-09-16 sam. 18:05]
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2017-09-16 sam. 18:05]
+- State "TODO"       from              [2017-09-16 sam. 17:28]
+:END:
+
+#+NAME: code:gwas_inter_clumps
+#+CAPTION: Dépend de [[code:gwas_expr]]
+#+begin_src R 
+  library(MaTheseR)
+  library(stringr)
+  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
 
 
-  |method    |    top|
-  |:---------|------:|
-  |lm        | 213444|
-  |PCAlm     | 259689|
-  |lassoLFMM | 151172|
-  |cate      | 156858|
-  |ridgeLFMM | 247464|
-  == Top 3000 ==
+  clumps.df <- res.df %>%
+    dplyr::filter(method %in% c("cate", "PCAlm", "lassoLFMM", "ridgeLFMM")) %>%
+    group_by(method) %>%
+    dplyr::mutate(qvalue = qvalue::qvalue(calibrated.pvalue)$qvalues) %>%
+    ungroup()
 
 
-  |method    |  index|    pvalue| calibrated.pvalue|outlier |     power|  top|
-  |:---------|------:|---------:|-----------------:|:-------|---------:|----:|
-  |lm        | 274194| 0.0005995|         0.0040140|FALSE   | 0.7755102| 3000|
-  |PCAlm     |  68895| 0.0047380|         0.0066796|FALSE   | 0.8367347| 3000|
-  |lassoLFMM | 148728| 0.0030905|         0.0048138|FALSE   | 0.8775510| 3000|
-  |cate      |  86890| 0.0027883|         0.0043251|FALSE   | 0.8775510| 3000|
-  |ridgeLFMM |  28408| 0.0045857|         0.0062832|FALSE   | 0.8367347| 3000|
-  == Top 1000 ==
+  res <- tibble()
+  for (m in methods) {
+    tmp.file <- tempfile(tmpdir = "~/Projects/Thesis/Data/Celiac/dubois_2010/")
+    clumps.df %>% dplyr::filter(method == m) %>%
+      dplyr::transmute(P = qvalue, SNP = colname) %>%
+        readr::write_delim(path = tmp.file, delim = "\t")
+    plink.cmd <- paste("~/BiocompSoftware/plink/plink",
+                       "--bfile ~/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ",
+                       "--clump",
+                       tmp.file,
+                       "--clump-p1 0.01",
+                       "--clump-p2 0.1",
+                       "--clump-r2 0.20",
+                       "--clump-kb 250",
+                       "--out plink.clump",
+                       "--threads 8")
+    system(plink.cmd)
+    clumping.res <- data.table::fread(file = "~/Projects/Thesis/MaThese/plink.clump.clumped",
+                                      data.table = FALSE) %>% as_tibble()
+
+    res <- clumping.res %>%
+      mutate(method = m) %>%
+      rbind(res)
+
+    file.remove(tmp.file)
+  }
+
+  res$SNP %>% unique()
+
+  ## explode clumps
+  exploded.clumps.df <- tibble()
+  for (i in 1:nrow(res)) {
+    SNP <- res$SNP[i]
+    SP2 <- res$SP2[i] %>% str_split(",", simplify = TRUE) %>%
+      str_replace("\\(1\\)", "") %>%
+      str_split(";", simplify = TRUE)
+    SP2 <- c(SP2, SNP)
+    exploded.clumps.df <- exploded.clumps.df %>%
+      rbind(tibble(snps = SP2, clump.snps = SNP))
+  }
+
+#+end_src
+
+***** TODO Meta analyse
+:LOGBOOK:
+- State "TODO"       from              [2017-09-16 sam. 18:07]
+:END:
+****** DONE On utilise mahalanobis
+CLOSED: [2017-09-16 sam. 18:32]
+:LOGBOOK:
+- State "DONE"       from              [2017-09-16 sam. 18:32]
+:END:
+
+#+NAME: code:gwas_meta
+#+CAPTION: Dépend de [[code:gwas_expr]]
+#+begin_src R 
+  library(MaTheseR)
+
+  celiac.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
 
 
-  |method    |  index|    pvalue| calibrated.pvalue|outlier |     power|  top|
-  |:---------|------:|---------:|-----------------:|:-------|---------:|----:|
-  |lm        | 103211| 0.0000000|          0.000000|FALSE   | 0.1224490| 1000|
-  |PCAlm     | 103161| 0.0001711|          0.000303|FALSE   | 0.5714286| 1000|
-  |lassoLFMM | 102648| 0.0000000|          0.000000|FALSE   | 0.1836735| 1000|
-  |cate      | 103120| 0.0000000|          0.000000|FALSE   | 0.1428571| 1000|
-  |ridgeLFMM |  28634| 0.0001809|          0.000310|FALSE   | 0.6326531| 1000|
-  [[./OUTPUT/Rplots/gwas_top_power_all.png]]
-  Warning message:
-  Removed 310 rows containing non-finite values (stat_qq).
-  [[./OUTPUT/Rplots/gwas_qqplot_top.pdf.png]]
-  == List with fdr controle ==
-  # A tibble: 5 x 3
-       method     n     power
-       <fctr> <int>     <dbl>
-  1        lm  1319 0.4489796
-  2     PCAlm   777 0.3673469
-  3 lassoLFMM  1267 0.6122449
-  4      cate  1319 0.6734694
-  5 ridgeLFMM   754 0.3673469
-  [[./OUTPUT/Rplots/gwas_venn.png]]
-  [[./OUTPUT/Rplots/gwas_venn.pdf.png]]
-  == Prop of candidate in inter all ==
-  [1] 0.2857143
-  == Prop of candidate in inter cate lfmm pcalm ==
-  [1] 0.3673469
-#+end_example
+  ## arrange score into a matrix
+  Z.df <- celiac.df %>%
+      dplyr::filter(method %in% c("cate", "lassoLFMM", "ridgeLFMM", "PCAlm")) %>%
+      dplyr::select(method, calibrated.score, colname, index,outlier) %>%
+      group_by(method) %>%
+      tidyr::spread(method, calibrated.score)
 
+  Z.df
+  Z <- Z.df[,c(-1,-2,-3)] %>% as.matrix()
+  dim(Z)
+  colnames(Z)
+  anyNA(Z)
+
+
+  mahalanobis.res <- pcadapt::covRob_cpp(Z)
+  Z.df <- Z.df %>%
+    mutate(mahalanobis.dist = mahalanobis.res$dist%>%as.numeric())
+
+  ## plot dist
+  ggplot(Z.df, aes(mahalanobis.dist)) +
+    geom_histogram()
+  ggplot(Z.df, aes(y = mahalanobis.dist, x = seq_along(mahalanobis.dist), color = outlier)) +
+    geom_point()
+
+  ## compute pvalue
+  Z.df <- Z.df %>%
+    mutate(pvalue = pchisq(mahalanobis.dist, df = 5, lower.tail = FALSE))
+  ggplot(Z.df, aes(pvalue)) +
+    geom_histogram()
+
+  ## recalibration
+  gif <- median(Z.df$mahalanobis.dist) / qchisq(0.5, df = 1)
+  Z.df <- Z.df %>%
+    mutate(recalibrated.pvalue = pchisq(mahalanobis.dist / gif, df = 1, lower.tail = FALSE))
+  ggplot(Z.df, aes(recalibrated.pvalue)) +
+    geom_histogram()
+
+  ## top by dist
+  Z.df %>%
+    dplyr::arrange(desc(mahalanobis.dist)) %>%
+    dplyr::filter(row_number() < 100) %>%
+    print.data.frame()
+
+  save_expr(Z.df, "gwas_mahanalobis.rds")
+#+end_src
+****** TODO On clump
+:LOGBOOK:
+- State "TODO"       from              [2017-09-16 sam. 18:32]
+:END:
+
+#+NAME: code:gwas_meta_clump
+#+CAPTION: Dépend de [[code:gwas_meta]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## load res
+  Z.df <- readRDS("./OUTPUT/Expr/gwas_mahanalobis.rds")
+  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
+
+
+  ## clumping with plink
+  tmp.file <- tempfile(tmpdir = "~/Projects/Thesis/Data/Celiac/dubois_2010/")
+  Z.df %>% dplyr::transmute(P = recalibrated.pvalue, SNP = colname) %>%
+    readr::write_delim(path = tmp.file, delim = "\t")
+  plink.cmd <- paste("~/BiocompSoftware/plink/plink",
+                     "--bfile ~/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ",
+                     "--clump",
+                     tmp.file,
+                     "--clump-p1 0.01",
+                     "--clump-p2 0.1",
+                     "--clump-r2 0.20",
+                     "--clump-kb 250",
+                     "--out plink.clump",
+                     "--threads 8")
+  system(plink.cmd)
+  clumps.df <- data.table::fread(file = "~/Projects/Thesis/MaThese/plink.clump.clumped",
+                                    data.table = FALSE) %>% as_tibble()
+  file.remove(tmp.file)
+
+  ## explode clumps
+  exploded.clumps.df <- tibble()
+  for (i in 1:nrow(res)) {
+    SNP <- res$SNP[i]
+    SP2 <- res$SP2[i] %>% str_split(",", simplify = TRUE) %>%
+        str_replace("\\(1\\)", "") %>%
+      str_split(";", simplify = TRUE)
+    SP2 <- c(SP2, SNP)
+    exploded.clumps.df <- exploded.clumps.df %>%
+      rbind(tibble(snps = SP2, clump.snps = SNP))
+  }
+
+
+  ## candidates
+  candidates.rs %in% exploded.clumps.df$snps %>% mean()
+
+  ## clump with candidates
+  df <- clumps.df %>%
+    mutate(pvalue = P,
+              outlier.SNP = SNP %in% candidates.rs,
+              outlier.SP2.count = str_count(SP2, paste(candidates.rs, collapse = "|")),
+              outlier = outlier.SNP | (outlier.SP2.count >= 1)) %>%
+    arrange(pvalue)
+
+  df %>%
+    dplyr::select(TOTAL, P, outlier) %>%
+    print.data.frame()
+
+  ##  annotation
+#+end_src
 *** Étude d'association entre des données génétiques et un gradient environmental (GEAS)
 <<sec:GEAS>>
 
@@ -12714,7 +13103,7 @@ Results written to plink.clump.clumped .
 Expr save in ./OUTPUT/Expr/eas_all_clumps.rds
 #+end_example
 
-****** DONE Annotation of the union of the clumps
+****** DONE Annotation de l'union des clumps
 CLOSED: [2017-09-12 mar. 19:11]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-09-12 mar. 19:11]
