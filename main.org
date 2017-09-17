@@ -3670,17 +3670,18 @@ de l'analyse en composantes principales (ACP). Nous utilisons donc les méthodes
 d'estimation du nombre de composantes dans l'ACP pour $\matr{D}_{0} \Q^{T} \Y$.
 Il existe de nombreuses approches pour déterminer le nombre de composantes
 principales de l'ACP, très bien expliquées dans cite:jolliffe1986principal. On
-peut grouper les approches en trois catégories. Les approches subjectives comme
-l'utilisation du scree plot, il s'agit du graphe des valeurs singulières de la
-matrice des données. Les approches basées sur une modélisation de la
-distribution des données observées, comme par exemple la méthode présentée dans
-cite:choi2014selecting. Les approches basées sur la validation croisée, comme
-celle que nous détaillons plus loin. Aucune méthode ne s'est imposée comme la
-référence, et il est préférable d'en utiliser plusieurs. Pour les expériences
-que nous avons réalisées sur des vraies données, le choix du nombre de variables
-latentes $\K$ du modèle LFMM a été fait à partir du scree plot de $\matr{D}_{0}
-\Q^{T} \Y$. Nous avons aussi utilisé l'algorithme de validation croisée que nous
-présentons dans la section [[sec:CV]].
+peut grouper les approches en trois catégories. La première catégorie regroupe
+les approches subjectives comme l'utilisation du scree plot (le graphe des
+valeurs singulières de la matrice des données). La seconde catégorie comprend
+les approches basées sur une modélisation de la distribution des données
+observées, comme par exemple la méthode présentée dans cite:choi2014selecting.
+La dernière catégorie est formée des approches basées sur la validation croisée,
+comme celle que nous détaillons plus loin. Aucune méthode ne s'est imposée comme
+la référence, et il est préférable d'en utiliser plusieurs. Pour les expériences
+que nous avons réalisées sur des données réelles, le choix du nombre de
+variables latentes $\K$ du modèle LFMM a été fait à partir du scree plot de
+l'ACP de la matrice $\matr{D}_{0} \Q^{T} \Y$. Nous avons aussi utilisé
+l'algorithme de validation croisée que nous présentons dans la section [[sec:CV]].
 
 **** Paramètre de régularisation $L_{2}$
 <<sec:paramL2>>
@@ -3691,65 +3692,65 @@ présentons dans la section [[sec:CV]].
   une fois que la cross validation marchera ou pas...
 :END:
 
-Le paramètre de régularisation $L_{2}$ intervient dans le calcul de l'estimation
-de la matrice latente décrit dans la partie [[sec:estimator_L2]] par le biais de la
-matrice diagonale $\D$. Cette matrice permet de réduire la corrélation entre les
-variables expliquées $\Y$ et les variables explicative $\X$ afin de pouvoir
-estimer les variables latentes $\U$. Lorsque le paramètre de régularisation
-$L_{2}$ tend vers zéro, les variables $\Y$ et $\X$ sont linéairement
-décorrélées. Cependant on ne pourra plus inverser la matrice diagonale $\D$. De
-plus dans le cas ou les variables latentes sont trop corrélées avec $\X$ alors
-on risque de mal estimer celles-ci. Lorsque le paramètre tend vers l'infini
-alors la matrice $\D$ tend vers la matrice identité l'estimation des variables
-latentes sont données pas l'analyse en composantes principales de $\Y$, sans
-prendre en compte $\X$. Le risque est alors d'expliquer par les variables
-latentes une partie de la variance de $\Y$ qui devrait être expliquée par $\X$,
-et don de passer à coté de certaines associations. Ainsi le choix du paramètre de
-régularisation $L_{2}$ est une affaire de dosage, il doit être ni trop grand ni
-trop petit. Nous avons remarqué dans les expériences que $\lambdaRidge$ petit
-donne les meilleurs résultats dans de nombreux cas.
+Le paramètre de régularisation $L_{2}$ ($\lambRidge$) intervient dans le calcul
+de l'estimation de la matrice latente décrit dans la partie [[sec:estimator_L2]]. Ce
+paramètre de régularisation intervient dans la matrice diagonale $\D$. Lorsque
+le paramètre de régularisation $L_{2}$ tend vers zéro, les variables $\Y$ et
+$\X$ sont linéairement décorrélées. Ainsi la matrice $\D$ permet de réduire la
+corrélation entre les variables expliquées $\Y$ et les variables explicative
+$\X$ afin de pouvoir estimer les variables latentes $\U$. Lorsque le paramètre
+$\lambRidge$ tend vers l'infini, la matrice $\D$ tend vers la matrice identité.
+L'estimation des variables latentes est alors données par l'ACP de la matrice
+$\Y$, sans prendre en compte la variable $\X$. Ainsi lorsque $\lambRidge$ est
+trop grand, on risque d'expliquer par les variables latentes une partie de la
+variance de $\Y$ qui devrait être expliquée par $\X$ et manquer certaines
+associations. Ainsi le choix du paramètre de régularisation $\lambRidge$ est une
+affaire de dosage, il doit être ni trop grand ni trop petit. Nous avons remarqué
+dans les expériences que de petites valeurs donnes de meilleurs résultats dans
+de nombreux cas.
 
 **** Paramètre de régularisation $L_{1}$
-Le paramètre de régularisation $L_{1}$ à un impact sur le nombre de lignes non
-nulles dans la matrice des effets $\B$. Seulement une partie des colonnes de
-$\Y$ est corrélée avec les variables explicatives $\X$. Ainsi, il est possible
-d'interpréter la proportion de lignes non nulles dans $\B$ comme la proportion
-des variables qui sont corrélées avec $\X$. Plutôt que de choisir le paramètre
-de régularisation, il est plus simple de choisir la proportion de variable
-expliquées par $\X$ quand on prend en compte les variables latentes. Pour
-trouver un paramètre de régularisation qui correspond à cette proportion nous
-proposons une heuristique basée sur un chemin de régularisation inspirée par
+Le paramètre de régularisation $L_{1}$ ($\lambLasso$) à un impact sur la le
+nombre de lignes nulles dans la matrice des effets $\B$. La proportion de lignes
+non nulles dans la matrice $\B$ correspond à la proportion de colonnes de $\Y$
+corrélées avec les variables explicatives $\X$. Quand on prend en compte les
+variables latentes plutôt que de choisir le paramètre de régularisation
+$\lambLasso$, il est équivalent de choisir la proportion de colonnes de $\Y$
+corrélées aux variables $\X$. Pour trouver un paramètre de régularisation qui
+correspond à la proportion de lignes non nulles, nous proposons une heuristique
+basée sur un chemin de régularisation inspirée par
 cite:friedman10_regul_paths_gener_linear_model. Nous commençons par la plus
 petite valeur du paramètre de régularisation $\lambLasso$ tel que le vecteur
 \begin{equation}
 \hat{\B}_{t = 1} = \sign(\bar{\B}_{t = 1}) (\bar{\B}_{t = 1} - \lambLasso)_{+}
 \end{equation}
-vaut zéro. Ceci est le résultat de la première étape de l'algorithme
-d'estimation des moindres carrés régularisée en norme $L_{1}$ présenté dans la
-partie [[sec:estimator_L1]]. Nous notons cette valeur $\lambLasso^{\mathrm{max}}$.
-Ensuite, nous construisons une séquence de $m$ valeurs de $\lambLasso$ décroissant
-selon une échelle logarithmique depuis $\lambLasso^{\mathrm{max}}$ jusqu'à
+vaut zéro. La matrice $\hat{\B}_{t = 1}$ est le résultat de la première étape de
+l'algorithme d'estimation des moindres carrés régularisée en norme $L_{1}$
+présenté dans la partie [[sec:estimator_L1]]. La valeur de $\lambLasso$
+correspondante est notée $\lambLasso^{\mathrm{max}}$. Ensuite, nous construisons
+une suite de $m$ valeurs de $\lambLasso$ décroissant selon une échelle
+logarithmique depuis $\lambLasso^{\mathrm{max}}$ jusqu'à
 \begin{equation}
 \lambLasso^{\mathrm{min}} = \epsilon \lambLasso^{\mathrm{max}}.
 \end{equation}
-Enfin, pour chaque valeur du paramètre de régularisation $\lambLasso$ nous
-calculons le nombre de valeurs non nulle dans $\hat{\B}$, l'estimation de la
-matrice des effets calculé par l'algorithme d'estimation $L_{1}$, et stoppons si
-la proportion de valeurs non nulle souhaitée est dépassée.
+Enfin, pour chaque valeur de la suite ainsi croissante, nous calculons le nombre
+de lignes non nulles dans $\hat{\B}$ et l'estimation de la matrice des effets.
+Nous stoppons l'algorithme si la proportion de lignes non nulles souhaitée est
+dépassée.
 
 **** Paramètre de régularisation de la norme nucléaire
-Le paramètre de régularisation de la norme nucléaire dans l'algorithme
-d'estimation $L_{1}$ à une influence sur le rang de la matrice latente $\W$. Il
-est plus simple de choisir le rang de cette matrice, correspondant au nombre de
-variables latentes $K$, que de choisir le paramètre de régularisation $\gamma$.
-Nous proposons l'heuristique suivante pour calculer $\gamma$ à partir de $K$.
-Nous commençons par calculer les valeurs singulières de la matrice des variable
-explicative $\Y$, que l'on note $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, nous
-calculons
+Le paramètre de régularisation de la norme nucléaire ($\gamma$) dans
+l'algorithme d'estimation $L_{1}$ a une influence sur le rang de la matrice
+latente $\W$. Il est préférable de choisir le rang de cette matrice,
+correspondant au nombre de variables latentes $K$, que de choisir le paramètre
+de régularisation $\gamma$. Nous proposons l'heuristique suivante pour calculer
+le paramètre $\gamma$ à partir du nombre de facteurs $K$. Nous commençons par
+calculer les valeurs singulières de la matrice des variables explicatives $\Y$,
+notées $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, nous calculons
 \begin{equation}
 \gamma = \frac{(\sigma_{\K} + \sigma_{\K + 1})}{2}.
 \end{equation}
-Nous avons remarqué dans les expériences que ce choix de paramètre de
+Nous avons remarqué dans les expériences que ce choix du paramètre de
 régularisation $\gamma$ a toujours fait converger l'algorithme d'estimation
 $L_{1}$ vers une estimation de la matrice latente $\hat{\W}$ qui est de rang $\K$.
 
@@ -3762,7 +3763,7 @@ $L_{1}$ vers une estimation de la matrice latente $\hat{\W}$ qui est de rang $\K
 <<sec:CV>>
 
 La validation croisée est une méthode d'évaluation d'un modèle très utilisée en
-apprentissage statistique. Le principe est de séparer les individus en une
+apprentissage statistique. Le principe est de séparer les données en une
 partie d'apprentissage et une partie de test. Les individus d'apprentissage sont
 utilisées pour estimer les paramètres du modèle. On mesure ensuite l'erreur de
 prédiction à l'aide des individus de tests. Pour que la validation croisée
@@ -13719,4 +13720,4 @@ C'est purement numérique... j'ai pas d'intuition.
 **** Est ce que tess3 est sensible à la taille des pops ?
 Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
 *** lfmm
-#  LocalWords:  GWAS EWAS GEAS hyperparamètres
+#  LocalWords:  GWAS EWAS GEAS hyperparamètres décorrélé décorrélées
