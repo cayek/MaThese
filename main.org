@@ -276,7 +276,6 @@ partie [[tess3_intro]].
   jardin commum, vidéo les stat expliqué a mon chat :D)
 :END:
 
-
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
 - Note taken on [2017-07-18 Tue 08:55] \\
@@ -1039,8 +1038,22 @@ matrices $\Q_0$ et $\G_0$. Les résultats ont également permis de vérifier que
 l'algorithmes APLS converge vers les mêmes estimations que celles obtenues par
 l'algorithme AQP, qui est garanti pour converger mathématiquement.
 
+#+NAME: code:tess3:comp
+#+CAPTION: Dépend de [[code:tess3:comparison:plot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_comp_plot.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl = pl, 
+                        basename.output = "tess3_APLS_AQP_rmse_comp", 
+                        env = MaTheseR.params,
+                        height = 0.5 * MaTheseR.params$textheightinch,
+                        width = 1.1 * MaTheseR.params$textwidthinch)
+#+end_src
 #+BEGIN_EXPORT latex
-\begin{sidewaysfigure}[!t]
+\begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_APLS_AQP_rmse_comp.pdf}
 \caption{{\bf Racine carré de l'erreur quadratique moyenne (RMSE) pour les
@@ -1049,7 +1062,7 @@ l'algorithme AQP, qui est garanti pour converger mathématiquement.
   fonction du nombre d'individu $n$ ($p \sim 10^4$). C-D) Erreur statistique des
   estimations de APLS et AQP en fonction du nombre de locus $p$ ($n = 200$)}
 \label{fig:tess3:comp}
-\end{sidewaysfigure}
+\end{figure}
 #+END_EXPORT
 
 Nous avons sous-échantillonné un grand jeux de données de SNPs d'écotypes de
@@ -1070,8 +1083,22 @@ valeurs du nombre d'individus et locus considéré ici, l'implémentation de
 l'algorithme APLS a été d'environs 2 à 100 fois plus rapide que celle de
 l'algorithme AQP.
 
+#+NAME: code:tess3:vitesse
+#+CAPTION: Dépend de [[code:tess3:vitesse:plot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_vitesse_plot.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "tess3_vitesse",
+                                        env = MaTheseR.params,
+                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+#+end_src
 #+BEGIN_EXPORT latex
-\begin{sidewaysfigure}[!t]
+\begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_vitesse.pdf}
 \caption{{\bf Nombre d'itérations et temps de calcul pour les algorithmes AQP et
@@ -1080,7 +1107,7 @@ l'algorithme AQP.
   nombre de SNPs a été fixé à $p = 50$k pour A et C. Le nombre d'individus a été
   fixé à $n = 150$ pour B et D.}
 \label{fig:tess3:vitesse}
-\end{sidewaysfigure}
+\end{figure}
 #+END_EXPORT
 **** Scripts                                                    :noexport:
 ***** DONE Expérience comparaison
@@ -1231,11 +1258,7 @@ CLOSED: [2017-09-15 ven. 11:09]
   pl <- cowplot::plot_grid(pl.n.A, pl.n.B, pl.L.C, pl.L.D, ncol = 2, labels = c("A", "B", "C", "D"))
 
   save_plot_png(pl, "tess3_APLS_AQP_rmse_comp.png")
-  ThesisRpackage::Plots_export_tikz_pdf(pl = pl, 
-                        basename.output = "tess3_APLS_AQP_rmse_comp", 
-                        env = MaTheseR.params,
-                        width =  MaTheseR.params$textheightinch,
-                        height =  MaTheseR.params$textwidthinch)
+  save_expr(pl, "tess3_comp_plot.rds")
 
 #+end_src
 
@@ -1383,11 +1406,7 @@ CLOSED: [2017-09-11 lun. 12:21]
 
   pl <- cowplot::plot_grid(pl.it.n, pl.it.L, pl.time.n, pl.time.L, ncol = 2, labels = c("A", "B", "C", "D"))
   save_plot_png(pl, "tess3_vitesse.png")
-  ThesisRpackage::Plots_export_tikz_pdf(pl,
-                                        basename.output = "tess3_vitesse",
-                                        env = MaTheseR.params,
-                                        height = 5,51181,
-                                        width = 7,87402)
+  save_expr(pl, "tess3_vitesse_plot.rds")
 #+end_src
 
 #+RESULTS: code:tess3:vitesse:plot
@@ -1411,10 +1430,10 @@ statistiques sont du même ordre pour =TESS= 2.3 et APLS.
 \begin{figure}[!t]
 \centering
 \begin{minipage}{0.49\textwidth}
-  \includegraphics[height=0.4\textheight]{./OUTPUT/Rplots/tess3_tess2_3_rmseG.pdf}
+  \includegraphics[width=\textwidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseG.pdf}
 \end{minipage}
 \begin {minipage}{0.49\textwidth}
-  \includegraphics[height=0.4\textheight]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
+  \includegraphics[width=\textwidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
 \end{minipage}
 \caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation de
     $\Q$ (figure A) et $\G$ (figure B).} Simulations de génotype métissé
@@ -1434,7 +1453,31 @@ Code trop vieux...
 ***** Plots
 J'ai mis un petit coup ink scape à des plot qui trainaient :D
 *** Comparaison avec une méthode non spatial : sNMF
+En utilisant des simulations coalescentes de polymorphismes neutres avec un
+modèle spatial de mélange, nous avons comparé les estimations statistiques
+obtenues à partir d'un algorithme spatial (APLS) et d'un algorithme non spatial
+(sNMF, cite:Frichot_2014). Pour différents niveaux de différenciation de la
+population ancestrale, les estimations obtenues à partir de l'algorithme spatial
+sont plus précises que celles obtenues en utilisant des approches non spatiales
+(Figure ref:fig:tess3:comp:rmse:snmf). Pour les données simulées plus grandes,
+la méthode spatiale arrive a détecter une structure de population plus fine que
+l'algorithme non spatial (Figure ref:fig:tess3:comp:rmse:snmf).
 
+#+NAME: code:tess3:comp:rmse:snmf
+#+CAPTION: Dépend de [[code:tess3:rmse:plot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_comp_rmse_snmf_plot.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "tess3_comp_rmse_snmf",
+                                        env = MaTheseR.params,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+
+#+end_src
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
@@ -1451,12 +1494,47 @@ J'ai mis un petit coup ink scape à des plot qui trainaient :D
 \end{figure}
 #+END_EXPORT
 
+Sur les simulations avec des locus sous adaptation local, nous avons utilisé
+l'aire sous la courbe de précision-rappel (AUC) pour quantifier les performances
+des tests de détection des locus sélectionnés reposant sur les estimations des
+matrices d'ascendance génétiques, $\Q$ et $\G$. De plus, nous avons calculé les
+AUC pour des tests de neutralité basés sur le calcul de la $\Fst$ à partir des
+génotypes des populations source simulées par =ms=. Comme ils représentent les
+valeurs maximales atteignables, les AUC basés sur les génotypes des populations
+sources sont toujours plus élevés que ceux obtenus pour des tests basés sur des
+estimations des matrices d'ascendance. Pour toutes les valeurs de l'intensité de
+sélection, les AUC étaient plus élevés pour les méthodes spatiales que pour les
+méthodes non spatiales (Figure ref:fig:tess3:auc, l'intensité de sélection est
+le rapport des taux de migration aux locus neutres et adaptatifs). Pour les
+intensités de sélection élevées, les performances des tests basés sur les
+estimations des matrices d'ascendance étaient proches des valeurs optimales
+atteintes par des tests basés sur les vrais fréquences des populations sources.
+Ces résultats ont fourni des preuves que l'inclusion de l'information spatiale
+dans les algorithmes d'estimation de l'ascendance améliore la détection des
+signatures de balayages sélectifs survenant dans des clusters génétiques
+inconnus.
+
+#+NAME: code:tess3:auc
+#+CAPTION: Dépend de [[code:tess3:auc:snmf:plots]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_comp_auc_snmf_plot.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        "tess3_comp_auc_snmf",
+                                        env = MaTheseR.params,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+
+#+end_src
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_comp_auc_snmf.pdf}
 \caption{}
-\label{fig:ewas_venn}
+\label{fig:tess3:auc}
 \end{figure}
 #+END_EXPORT
 **** Scripts                                                    :noexport:
@@ -1812,11 +1890,8 @@ CLOSED: [2017-09-11 lun. 18:30]
     Article2.env$scale.linetype
   save_plot_png(pl, "tess3_comp_rmse_snmf.png")
 
-  ThesisRpackage::Plots_export_tikz_pdf(pl,
-                                        basename.output = "tess3_comp_rmse_snmf",
-                                        env = MaTheseR.params,
-                                        height = 0.4 * MaTheseR.params$textheightinch,
-                                        width = MaTheseR.params$textwidthinch)
+  save_expr(pl, "tess3_comp_rmse_snmf_plot.rds")
+
 #+end_src
 
 #+RESULTS: code:tess3:rmse:snmf:plot
@@ -1899,9 +1974,9 @@ CLOSED: [2017-09-11 lun. 18:57]
     Article2.env$scale.color
 
   save_plot_png(pl, "tess3_comp_auc_snmf.png")
-  save_plot_MaTheseR(pl, "tess3_comp_auc_snmf.pdf.png",
-                     height = 0.4 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+
+  save_expr(pl, "tess3_comp_auc_snmf_plot.rds")
+
 
 #+end_src
 
@@ -2202,29 +2277,71 @@ CLOSED: [2017-09-06 mer. 09:24]
 #+end_example
 *** Application à des données Arabidopsis Thaliana
 
+#+NAME: code:tess3:at:params
+#+CAPTION: Dépend de [[code:tess3_AT_params]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_AT_params_plot.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "tess3_AT_params",
+                                        env = MaTheseR.params,
+                                        height = 0.4 *  MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+#+end_src
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/tess3_AT_params.pdf.png}
+\includegraphics{./OUTPUT/Rplots/tess3_AT_params.pdf}
 \caption{}
 \label{fig:tess3:at:param}
 \end{figure}
 #+END_EXPORT
 
+#+NAME: code:tess3:at:map
+#+CAPTION: Dépend de [[code:tess3_AT_map]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
 
+  pl <- readRDS("./OUTPUT/Expr/tess3_AT_map_plor.rds")
+
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "tess3_AT_map",
+                                   env = MaTheseR.params,
+                                   width = MaTheseR.params$textheightinch,
+                                   height = MaTheseR.params$textwidthinch)
+#+end_src
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/tess3_AT_map.pdf.png}
+\includegraphics{./OUTPUT/Rplots/tess3_AT_map.pdf}
 \caption{}
 \label{fig:tess3:at:map}
 \end{sidewaysfigure}
 #+END_EXPORT
 
+#+NAME: code:tess3:at:manhattanplot
+#+CAPTION: Dépend de [[code:tess3_AT_manhattan]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_AT_manhattan_plot.rds")
+
+  ThesisRpackage::Plots_export_png(pl,
+                                   basename.output = "tess3_AT_manhattanplot",
+                                   env = MaTheseR.params,
+                                   width = MaTheseR.params$textheightinch,
+                                   height = MaTheseR.params$textwidthinch,
+                                   res = 600)
+#+end_src
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/tess3_AT_manhattanplot.pdf.png}
+\includegraphics{./OUTPUT/Rplots/tess3_AT_manhattanplot.png}
 \caption{}
 \label{fig:tess3:at:manhattanplot}
 \end{sidewaysfigure}
@@ -2529,9 +2646,8 @@ CLOSED: [2017-09-11 lun. 19:09]
   pl <- cowplot::plot_grid(variogram.pl, selection.pl, nrow = 1, labels = c("A", "B"))
 
   save_plot_png(pl, "tess3_AT_params.png")
-  save_plot_MaTheseR(pl, "tess3_AT_params.pdf.png",
-                     height = 0.4 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+
+  save_expr(pl, "tess3_AT_params_plot.rds")
 
 #+end_src
 
@@ -2616,7 +2732,7 @@ CLOSED: [2017-09-11 lun. 19:35]
 :END:
 #+NAME: code:tess3_AT_map
 #+CAPTION: Dépend de [[code:tess3_AT_run]]
-#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese
   library(MaTheseR)
   library(cowplot)
   library(scales)
@@ -2628,16 +2744,16 @@ CLOSED: [2017-09-11 lun. 19:35]
   tess3Main.obj <- readRDS("./OUTPUT/Expr/tess3_AT_tess3r.rds")
 
   ################################################################################
-                                          # load data
+  ## load data
   data.file <- "./Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData"
   load(data.file)
   coord <- call_method_75_TAIR9.europe$coord
   rm(call_method_75_TAIR9.europe)
 
   ################################################################################
-                                          # Q
+  ## Q
   Q <- tess3Main.obj$Q
-                                          # northen cluster
+  ## northen cluster
   id.northers <- which(apply(Q, 1, which.max) == 2)
   Q.notnorthers <- Q[!(1:nrow(Q) %in% id.northers),]
   coord.notnorthers <- coord[!(1:nrow(Q) %in% id.northers),]
@@ -2645,7 +2761,7 @@ CLOSED: [2017-09-11 lun. 19:35]
   Q.ordered <- rbind(Q[id.northers,], Q.notnorthers[id$ix,])
 
   ################################################################################
-                                          # Color palette
+  ## Color palette
   gg_color_hue <- function(n) {
     hues = seq(15, 375, length = n + 1)
     hcl(h = hues, l = 65, c = 100)[1:n]
@@ -2661,10 +2777,10 @@ CLOSED: [2017-09-11 lun. 19:35]
     colorRampPalette(c("white",cols[5]))(9)[5:9],
     colorRampPalette(c("white",cols[6]))(9)[5:9]
   )
-                                          # plot(rep(1,5),col = col.palette[[2]],pch=19,cex=3)
+  ## plot(rep(1,5),col = col.palette[[2]],pch=19,cex=3)
 
   ################################################################################
-                                          # Interpolation
+  ## Interpolation
   require(sp)
   require(raster)
   require(rworldmap)
@@ -2681,13 +2797,13 @@ CLOSED: [2017-09-11 lun. 19:35]
   newmap <- getMap(resolution = "low")
   CP <- as(extent(window), "SpatialPolygons")
   europe <- gIntersection(newmap, CP)
-                                          # Or
-                                          # europe <- crop(newmap, extent(window))
+  ## Or
+  ## europe <- crop(newmap, extent(window))
   plot(europe)
 
   ## make grid
   raster.grid <- raster(extent(window), ncol = resolution[1], nrow = resolution[2], vals = 1)
-                                          # plot(grid)
+  ## plot(grid)
 
   ## interpolation with krig
   interpol <- stack()
@@ -2696,16 +2812,16 @@ CLOSED: [2017-09-11 lun. 19:35]
     interpol <- stack(interpolate(raster.grid, model), interpol)
   }
   interpol <- mask(interpol, europe)
-                                          # plot(interpol)
-                                          # levelplot(interpol)
+  ## plot(interpol)
+  ## levelplot(interpol)
   ## plot with tess3r package
 
-                                          # plot(Q = Q,
-                                          #      coord = coord, plot.type = "max",
-                                          #      resolution = c(300, 300), window = c(-16,42,33,67), background = TRUE,
-                                          #      raster.filename = NULL, interpolation.function = kriging(), col = NULL,
-                                          #      col.palette = col.palette, map = TRUE, palette.step = 9,
-                                          #      axes = FALSE, xlab = '', ylab = '', cex = 0.25)
+  ## plot(Q = Q,
+  ##      coord = coord, plot.type = "max",
+  ##      resolution = c(300, 300), window = c(-16,42,33,67), background = TRUE,
+  ##      raster.filename = NULL, interpolation.function = kriging(), col = NULL,
+  ##      col.palette = col.palette, map = TRUE, palette.step = 9,
+  ##      axes = FALSE, xlab = '', ylab = '', cex = 0.25)
 
 
   ################################################################################
@@ -2717,17 +2833,17 @@ CLOSED: [2017-09-11 lun. 19:35]
                       function(c) seq(min(c),
                                       max(c),
                                       length.out = length(col.palette[[1]]) + 1))
-                                          # ## compute color for each tile
-                                          # color <- function(coef, col.palette, col.breaks) {
-                                          #   max.i <- which.max(coef)
-                                          #   c <- max(which(col.breaks[,max.i] - as.numeric(coef[max.i]) >= 0)[1] - 1,1)
-                                          #   return(col.palette[[max.i]][c])
-                                          #   # return(c)
-                                          # }
-                                          # toplot$color <- apply(toplot[3:8], 1,
-                                          #                       function(r) color(r, col.palette, col.breaks))
+  ## compute color for each tile
+  ##                                         color <- function(coef, col.palette, col.breaks) {
+  ##                                           max.i <- which.max(coef)
+  ##                                           c <- max(which(col.breaks[,max.i] - as.numeric(coef[max.i]) >= 0)[1] - 1,1)
+  ##                                           return(col.palette[[max.i]][c])
+  ##                                           # return(c)
+  ##                                         }
+  ##                                         toplot$color <- apply(toplot[3:8], 1,
+  ##                                                               function(r) color(r, col.palette, col.breaks))
 
-  ## with removed artefact
+  ## ## with removed artefact
   color.rm.art <- function(r, col.palette, col.breaks) {
     coef <- r[3:8]
     pos <- r[1:2]
@@ -2754,7 +2870,7 @@ CLOSED: [2017-09-11 lun. 19:35]
     ylab("Latitude (°N)")
 
   ################################################################################
-                                          # barplot
+  ## barplot
   toplot <- data.frame(Q.ordered, index = seq_along(Q.ordered[,1])) %>% reshape2::melt(id = "index")
   brplot <- ggplot(toplot, aes(x = index, y = value)) +
     geom_bar(stat = "identity", aes(color = variable)) +
@@ -2771,14 +2887,14 @@ CLOSED: [2017-09-11 lun. 19:35]
     scale_color_manual(values = cols)
 
   ################################################################################
-                                          # Plot
+  ## Plot
 
 
   pl <- cowplot::plot_grid(mappl, brplot, ncol = 1, labels = c("A", "B"), rel_heights = c(3,1), vjust = c(1.5, -0.5))
   save_plot_png(pl, "tess3_AT_map.png")
-  save_plot_MaTheseR(pl, "tess3_AT_map.pdf.png",
-                     height = 14,
-                     width = 20)
+
+  save_expr(pl, "tess3_AT_map_plor.rds")
+
 
 #+end_src
 
@@ -2812,22 +2928,22 @@ CLOSED: [2017-09-11 lun. 19:44]
   coord <- call_method_75_TAIR9.europe$coord
 
   ################################################################################
-                                          # flowering genes
-                                          # search on http://plants.ensembl.org/
-                                          # SHORT VEGETATIVE PHASE (SVP), a MADS box gene that negatively regulates the transition to flowering (Differentiating Fennoscandia and Eastern Europe/Russia)
+  ## flowering genes
+  ## search on http://plants.ensembl.org/
+  ## SHORT VEGETATIVE PHASE (SVP), a MADS box gene that negatively regulates the transition to flowering (Differentiating Fennoscandia and Eastern Europe/Russia)
   flowering.gene <- vep.res %>% dplyr::filter(Gene == "AT2G22540") %>% dplyr::mutate(label = "SVP")
-                                          # COP1-interacting protein 4.1 (CIP4.1)
+  ## COP1-interacting protein 4.1 (CIP4.1)
   flowering.gene <- rbind(flowering.gene, vep.res %>% dplyr::filter(Gene == "AT4G00930") %>% dplyr::mutate(label = "CIP4.1"))
-                                          # FRIGIDA (FRI)
+  ## FRIGIDA (FRI)
   flowering.gene <- rbind(flowering.gene, vep.res %>% dplyr::filter(Gene == "AT4G00650") %>% dplyr::mutate(label = "FRI"))
-                                          # FLOWERING LOCUS C (FLC),
+  ## FLOWERING LOCUS C (FLC),
   flowering.gene <- rbind(flowering.gene, vep.res %>% dplyr::filter(Gene == "AT5G10140") %>% dplyr::mutate(label = "FLC"))
-                                          # DELAY OF GERMINATION 1 (DOG1)
+  ## DELAY OF GERMINATION 1 (DOG1)
   flowering.gene <- rbind(flowering.gene, vep.res %>% dplyr::filter(Gene == "AT5G45830") %>% dplyr::mutate(label = "DOG1"))
 
 
   ################################################################################
-                                          # Plot TESS3 manhattanplot
+  ## Plot TESS3 manhattanplot
   toplot <- data.frame(fst = tess3Main.obj$Fst,
                        pvalue = tess3Main.obj$pvalue,
                        call_method_75_TAIR9.europe$locus.coord,
@@ -2869,15 +2985,65 @@ CLOSED: [2017-09-11 lun. 19:44]
   ## rm data
   rm(call_method_75_TAIR9.europe)
   save_plot_png(pl, "tess3_AT_manhattanplot.png")
-  save_plot_MaTheseR(pl, "tess3_AT_manhattanplot.pdf.png",
-                     height = 14,
-                     width = 20)
 
+  save_expr(pl, "tess3_AT_manhattan_plot.rds")
 #+end_src
 
-#+RESULTS:
+#+RESULTS: code:tess3_AT_manhattan
 [[./OUTPUT/Rplots/tess3_AT_manhattanplot.png]]
 ** Discussion
+L'inclusion de l'information géographique dans l'inférence des relations
+ancestrales entre les organismes est un objectif majeur des études en génétique
+des populations cite:Malecot1948,Epperson_1996,Cavalli-Sforza1994. En supposant
+que des individus géographiquement proches sont plus susceptibles de partager
+l'ascendance que des individus dans des sites éloignés, nous avons introduit
+deux nouveaux algorithmes pour estimer les proportions d'ascendance à l'aide
+d'informations géographiques et génétique. Sur la base des problèmes de moindres
+carrés, les nouveaux algorithmes combinent des approches de factorisation
+matricielle et de statistiques spatiales pour fournir des estimations précises
+des coefficients de métissage individuels et des fréquences d'allèle dans les
+cluster génétique ainsi estimés. Les deux méthodes partagent de nombreuses
+similitudes, mais elles diffèrent dans les approximations qu'elles font pour
+diminuer la complexité algorithmique. Plus précisément, l'algorithme AQP est
+repose sur un problème d'optimisation quadratique alors que l'algorithme APLS
+lève les contrainte des problème d'optimisation pour les transformer en problème
+des moindres carrés. La complexité algorithmique de l'algorithme APLS augmente
+linéairement avec le nombre d'individus dans l'échantillon en ayant la même
+précision statistique que l'algorithme AQP plus lent.
+
+Pour mesurer le bénéfice de l'utilisation d'algorithmes spatiaux, nous avons
+comparé les erreurs statistiques observées pour les algorithmes spatiaux avec
+celles observées pour les algorithmes non spatiaux. Dans nos expériences
+numériques les erreurs des méthodes spatiales sont inférieures à celles
+observées avec des méthodes non spatiales, et les algorithmes spatiaux ont
+permis de détecter une structure de population plus subtile. En outre, nous
+avons mis en place un test de detection de la selection basés sur les
+estimations spatiales des matrices $\Q$ et $\G$ cite:Martins_2016, et nous avons
+observé que ces tests avaient rejette la neutralité des locus avec plus de
+précision que ceux basés sur des approches non spatiales. Ainsi, l'information
+spatiale a contribué à améliorer la détection des signatures de balayages
+sélectifs survenant dans des populations sources avant les événements de
+mélange. Nous avons appliqué les tests de neutralité pour effectuer un balayage
+du génome pour la sélection dans les écotypes européens de l'espèce végétale
+/A.thaliana/. Le scan du génome a confirmé la preuve de la sélection des gènes
+liés à la floraison /CIP4.1/, /FRI/ et /DOG1/ différenciant la Fenno-Scandinavie du
+nord-ouest de l'Europe cite:Horton_2012.
+
+L'estimation des coefficients de métissage en utilisant des algorithmes rapides
+qui étendent des approches non spatiales telles que, =structure=, a été
+intensément discutée au cours des dernières années cite:Wollstein2015. Dans ces
+améliorations, les approches spatiales ont reçu moins d'attention que les
+approches non spatiales. Dans cette étude, nous avons présenté un cadre
+conceptuelle permettant de développer des méthodes rapide d'estimation
+d'estimation de l'ascendance spatiale. Ces méthodes rapide sont implémenté en de
+la package {\ tt tess3r} qui propose pipeline intégré pour l'estimation et la
+visualisation de la structure génétique de la population et pour la recherche de
+locus responsable de l'adaptation locale. La complexité algorithmique de nos
+algorithmes permet à leurs utilisateurs d'analyser des échantillons comprenant
+des centaines à des milliers d'individus. Par exemple, l'analyse de plus d'un
+millier de génotypes /A.thaliana/, chacun incluant plus de 210k SNP, n'a pris
+que quelques minutes à l'aide d'un seul CPU.
+
 * Algorithmes d'estimation pour les modèles de régression à facteurs latents
 ** Introduction
 Au cours de la dernière décennie, des études d'association à grande échelle ont
