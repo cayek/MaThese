@@ -4073,32 +4073,34 @@ régularisation $L_{2}$. L'algorithme lassoLFMM prend la proportion de lignes no
 nulles dans la matrice des effets $\B$. Enfin les deux algorithmes retournent
 les estimations pour les paramètres de LFMM ainsi qu'une \pvalue pour le test
 d'association de chaque colonne de $\Y$ avec $\X$.
-** Autres méthodes existantes comparées
+** Autres méthodes existantes
 <<sec:similar_method>>
 
-Dans cette section nous présentons des méthodes pour l'étude d'association avec
-et sans correction pour les facteurs de confusions. Les méthodes que nous
-présentons ici sont comparées aux méthodes lassoLFMM et ridgeLFMM dans la
-section Résultats.
+Dans cette section nous présentons d'autres méthodes pour les études
+d'association avec et sans correction pour les facteurs de confusion. Les
+méthodes que nous présentons dans cette section sont comparées aux méthodes
+lassoLFMM et ridgeLFMM dans la section suivante.
 
 *** Régression linéaire simple et avec les scores de l'ACP
 Dans lassoLFMM et ridgeLFMM, les tests d'hypothèses utilisés pour détecter les
-associations reposent sur une régression linéaire de $\Y$ par $\X$ et
-l'estimation des facteurs latents $\bar{\U)}$. Il est donc naturel de se
-comparer à la méthode de test d'hypothèse nullité de l'effet dans la régression
-linaire de $\Y$ par $\X$. Dans ce cas aucun facteur latent n'est pris en compte
-dans l'étude d'association. De plus, nous nous comparons à une méthode qui
-repose sur une estimation des variables latentes par l'ACP. Dans ce cas, il
-s'agit alors de faire une régression de $\Y$ par $\X$ et $\bar{\U)}$ la matrice
-des scores sur les $\K$ premières composantes principales. Ces deux méthodes ont
-été implémentées en R et nous les appellerons respectivement lm et PCAlm.
+associations reposent sur un modèle de régression linéaire de $\Y$ par $\X$ et
+sur l'estimation des facteurs latents $\bar{\U}$. Il est donc naturel de
+comparer nos algorithme à la méthode reposant sur la régression linaire de $\Y$
+par $\X$. Dans ce cas, aucun facteur latent n'est pris en compte dans l'étude
+d'association. D'autre part, nous comparons nos tests à une méthode qui repose
+sur une estimation des variables latentes par l'ACP. Dans ce cas, il s'agit de
+faire une régression de $\Y$ par $\X$ et $\bar{\U)}$ définie comme la matrice
+des scores sur les $\K$ premières composantes principales. Un principe similaire
+est utilisé dans la méthode EIGENSTRAT cite:Price_2006. Les deux méthodes,
+reposant sur la régression linéaire avec et sans les score de l'ACP, ont été
+implémentées en langage R et nous les appelons respectivement lm et PCAlm.
 
 *** COMMENT emma cite:Kang_2008
 :LOGBOOK:
 - Note taken on [2017-08-07 lun. 10:23] \\
   Non on va pas ajouter emma aux méthodes ca serais trop compliqué.
 :END:
-*** sva cite:article_Leek_Storey_2007
+*** Méthode "Surrogate Variable Analysis" (SVA) cite:article_Leek_Storey_2007
 :LOGBOOK:
 - Note taken on [2017-08-05 Sat 13:57] \\
   sva utilisé:[[file:Rpackage/R/ExpRmethod-sva.R::ExpRmouline.method_sva%20<-%20function(m,%20dat)%20{][sva function]]
@@ -4106,74 +4108,79 @@ des scores sur les $\K$ premières composantes principales. Ces deux méthodes o
 
 Il existe deux versions de SVA : sva-two-step cite:article_Leek_Storey_2007 et
 sva-irw cite:article_Leek_Storey_2008. La méthode sva-two-step se découpe en
-deux étapes : une étape d'estimation de la matrice des axes factorielles $\V$ et
+deux étapes : une étape d'estimation de la matrice des axes factoriel $\V$ et
 une étape d'estimation de la matrice des variables latentes $\U$. Lors de la
-premières étape la méthode sva-two-step estime les axes factorielles en faisant
-une ACP de la matrice résiduelles de la régression linaire de $\Y$ par $\X$.
-Cela correspond à aire l'ACP de $\matr{D}_{(\lambRidge = 0)} \Q^{T} \Y$, en
-utilisant les notations de la section [[sec:estimator_L2]]. Ensuite la méthode
-sva-two-step calcule un sous-ensemble de colonnes de $\Y$ qui sont le moins
-corrélées avec $\X$. Ce sous ensemble de colonnes est utilisées pour estimer la
-matrice des variables latentes $\U$. Cette procédure peut facilement échouer car
-une faible corrélation avec $\X$ n'implique pas qu'il n'y a pas d'association
-avec $\X$. En effet une faible corrélation sans prendre en compte les facteurs
-latents peut devenir une forte corrélation quand on les prend en compte.
+premières étape la méthode sva-two-step estime les axes factoriel en faisant une
+ACP de la matrice résiduel de la régression linaire de $\Y$ par $\X$. En
+utilisant les notations de la section [[sec:estimator_L2]], cela correspond à faire
+l'ACP de $\matr{D}_{(\lambRidge = 0)} \Q^{T} \Y$. Ensuite la méthode
+sva-two-step détermine un sous-ensemble de colonnes de la matrice $\Y$ qui sont
+le moins corrélées avec la variable $\X$. Le sous-ensemble de colonnes est
+utilisé pour estimer la matrice des variables latentes $\U$. Cette procédure
+peut facilement échouer car une faible corrélation avec la variable $\X$
+n'implique pas qu'il n'y a pas d'association celle-ci. En effet une faible
+corrélation sans prendre en compte les facteurs latents peut devenir une forte
+corrélation quand on les prend en compte.
 
 La deuxième version de SVA est itérative. Plutôt que d'estimer les variables
-latentes sur un sous ensemble de colonnes de $\Y$ la méthode sva-irw attribue un
-poids à chacune d'entre elles. Pour chaque colonnes de $\Y$, on calcule la
-probabilité que l'effet de $\X$ sur la colonne sachant les variables les
-variables latentes calculées à l'itération précédente soir nul. Ensuite les
-probabilités sont utilisées pour attribuer un poids à chaque colonne de $\Y$ et
-une nouvelle estimation des variables latentes est calculée à l'aide d'une ACP
-qui prend en compte ces poids. La méthode itère ces deux étapes un nombre de
-fois choisi par l'utilisateur. Le désavantage de cette procédure est qu'on ne
-sais pas vers quoi elle converge ni si elle converge. Nous avons utilisé le
-package R sva fourni par ses auteurs.
+latentes sur un sous- ensemble de colonnes de la matrice $\Y$, la méthode
+sva-irw attribue un poids à chacune d'entre elles. On calcule la probabilité que
+l'effet de la variable $\X$ sur chaque colonne de $\Y$ soit nul sachant les
+variables latentes calculées à l'itération précédente. Ensuite les probabilités
+sont utilisées pour attribuer un poids à chaque colonne de $\Y$ et une nouvelle
+estimation des variables latentes est calculée à l'aide d'une ACP qui prend en
+compte ces poids. La méthode itère ces deux étapes un nombre de fois choisi par
+l'utilisateur. Le désavantage de cette procédure est qu'on ne sais pas vers quoi
+elle converge ni si elle converge. Nous avons utilisé le package R sva fourni
+par ses auteurs.
 
-*** cate cite:wang2015confounder
+*** "High dimensional factor analysis and confounder adjusted testing and estimation" (CATE) cite:wang2015confounder
 
-Nous présentons dans cette partie la méthode cate, nous considérons le cas où il
-n'y à qu'une variable explicative $\X$ pour faciliter les explications. Dans la
-méthode cate on commence par transformer la matrice des variables expliquées
-$\Y$ afin d'isoler les variations expliquées par les facteurs latents. Pour cela
-on applique une matrice de changement de base aux lignes de $\Y$ de sorte que le
-premier axe de la nouvelle base soit colinéaire à $\X$. Cette transformation
-permet d'avoir sur le premier axe les coefficients de la régression linéaire de
-$\Y$ par $\X$ et sur tout les autres axes le projeté orthogonale de $\Y$ par
-rapport à $\X$ correspondant aux résidus de cette régression. La méthode cate
-utilise alors les $\Yrow - 1$ autres lignes pour calculer les axes factorielles
-notés $\V$ dans nos notations. Cette première étape est comparable à l'étape de
-calcul de $\V$ dans notre méthode ridgeLFMM (voir partie [[sec:estimator_L2]]). Dans
+Nous présentons dans cette partie la méthode cate cite:wang2015confounder. Pour
+faciliter les explications, nous considérons le cas où il n'y a qu'une variable
+explicative $\X$. Dans la méthode cate, on commence par transformer la matrice
+des variables expliquées $\Y$ afin d'isoler les variations expliquées par les
+facteurs latents. Pour effectuer la transformation, on applique une matrice de
+changement de base aux lignes de $\Y$ de sorte que le premier axe de la nouvelle
+base soit colinéaire à $\X$. Cette transformation permet d'avoir sur la première
+ligne de la matrice transformée les coefficients de la régression linéaire de
+$\Y$ par $\X$ et sur tout les autres lignes le projeté orthogonale de $\Y$ par
+rapport à $\X$ correspondant aux résidus de la régression. La méthode cate
+utilise le projeté orthogonal de $\Y$ par rapport à $\X$ pour calculer les axes
+factoriels. Cette première étape est comparable à l'étape de calcul de la
+matrice $\V$ dans notre méthode ridgeLFMM (voir partie [[sec:estimator_L2]]). Dans
 ridgeLFMM, plutôt que d'enlever complétement les variations de $\Y$ expliquées
 par $\X$ nous la réduisons en fonction du paramètre de régularisation
 $\lambRidge$. Comme cela a été montré dans cite:wang2015confounder sva et cate
-estime la même matrice des axes factorielles qui correspond en faite à celle
-estimée par ridgeLFMM dans le cas ou $\lambRidge$ vaux zéro. La méthode cate
-diffère de sva dans sa façon de calculer les variables latents et les effets de
-$\X$ sur $\Y$. Pour cela les auteurs de cate ont modélisé explicitement la
-corrélation entre les variables explicatives $\X$ et les variables latentes $\U$
-tel que
+calcule la même matrice des axes factorielles. Cette matrice correspond à celle
+estimée par ridgeLFMM dans le cas où $\lambRidge$ vaut zéro. La méthode cate
+diffère de sva dans sa façon de calculer les variables latentes et les effets de
+$\X$ sur $\Y$. Les auteurs de cate ont modélisé explicitement la corrélation
+entre les variables explicatives $\X$ et les variables latentes $\U$
 \begin{equation}
 \label{eq:cateU}
-\U = \X \bm{\alpha}^{T} + \matr{Z}.
+\U = \X \bm{\alpha}^{T} + \matr{Z}
 \end{equation}
-Comme la matrice $\Z$ est orthogonale à $\X$ elle est estimée en même temps que
-la matrice des axes factorielles $\V$. Pour estimer la matrice $\bm{\alpha}$ la
-méthode cate utilise la première ligne de la matrice $\Y$ transformées dans la
-base où le premier axe est colinéaire à $\X$. En effet en injectant
-eqref:eq:cateU dans l'équation de LFMM eqref:eq:model on peut écrire la matrice
-des coefficients de régression de $\Y$ par $\X$, notée $\bm{\tau}$, comme ceci
+où $\bm{\alpha}$ est la matrice des effets de la variable $\X$ sur les variables
+latentes $\U$ et $\matr{Z}$ est une matrice de bruit indépendant de $\X$. La
+matrice $\matr{Z}$ est estimée en même temps la matrice des axe factoriel grâce
+à l'ACP de la projection de $\Y$ sur l'orthogonale de $\X$. Pour estimer la
+matrice $\bm{\alpha}$, la méthode cate fait une régression linaire robuste de la
+première ligne de la matrice $\Y$ transformée dans la base où le premier axe est
+colinéaire à $\X$ par la matrice des axes factoriels $\V$ déjà estimée. Pour le
+comprendre, en injectant eqref:eq:cateU dans l'équation de LFMM eqref:eq:model.
+On peut écrire alors la matrice des coefficients de la régression linéaire de
+$\Y$ par $\X$, notée $\bm{\tau}$, comme ceci
 \begin{equation}
 \bm{\tau} = \B + \V \bm{\alpha}^{T},
 \end{equation}
 où $\B$ est la matrice des effets dans l'équation eqref:eq:model. La méthode
-cate estime ensuite $\bm{\alpha}$ en faisant une régression linéaire robuste de
-$\bm{\tau}$ par son estimation de la matrice des axe factorielles $\V$ et $\B$
-est calculé comme le résidu de cette régression. La régression robuste permet
-d'enlever de l'estimation de $\bm{\alpha}$ les effets atypiques qui
-correspondent aux colonnes de $\Y$ associés à $\X$ que l'on cherche. Nous avons
-utilisé le package R cate fourni par ses auteurs.
+cate estime $\bm{\alpha}$ en faisant une régression linéaire robuste de
+$\bm{\tau}$ par l'estimation de la matrice des axe factoriels $\V$. Enfin, la
+matrice des effets $\B$ est calculée comme le résidu de cette régression. La
+régression robuste permet d'enlever de l'estimation de $\bm{\alpha}$ les effets
+atypiques qui correspondent aux colonnes de $\Y$ associés à $\X$ que l'on
+cherche. Nous avons utilisé le package R cate fourni par ses auteurs.
 
 ** Résultats
 :PROPERTIES:
