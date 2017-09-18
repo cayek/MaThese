@@ -3929,40 +3929,42 @@ $L_{1}$ vers une estimation de la matrice latente $\hat{\W}$ qui est de rang $\K
 <<sec:CV>>
 
 La validation croisée est une méthode d'évaluation d'un modèle très utilisée en
-apprentissage statistique. Le principe est de séparer les données en une
-partie d'apprentissage et une partie de test. Les individus d'apprentissage sont
+apprentissage statistique. Le principe est de séparer les données en une partie
+d'apprentissage et une partie de test. Les données d'apprentissage sont
 utilisées pour estimer les paramètres du modèle. On mesure ensuite l'erreur de
-prédiction à l'aide des individus de tests. Pour que la validation croisée
-fonctionne il est très important que les individus de test ne soit pas utilisées
-pour estimer les paramètres du modèle. Dans le cas des modèles à facteurs
-latents en général, les individus d'apprentissage ne permettent pas de calculer
-les variables latentes pour les individus de tests (la matrice $\U$ dans pour
-LFMM). Le plus simple est de séparer les variables des individus de test et d'en
-utiliser une partie pour estimer les variables latentes et l'autre partie pour
-calculer l'erreur de prédiction cite:Bro_2008. Nous présentons maintenant plus
-formellement notre procédure de validation croisée.
+prédiction à l'aide des données de tests. Pour que la validation croisée
+fonctionne, il est très important que les données de test ne soient pas
+utilisées pour estimer les paramètres du modèle. Dans le cas des modèles à
+facteurs latents en général, les données d'apprentissage ne permettent toutefois
+pas de calculer les variables latentes pour les données de test (la matrice $\U$
+pour LFMM). Le plus simple est de séparer les variables des données de test.
+Nous utilisons ensuite une partie des variables des données de test pour estimer
+les variables latentes et l'autre partie pour calculer l'erreur de prédiction
+cite:Bro_2008. Nous présentons maintenant plus formellement notre procédure de
+validation croisée.
 
-Nous commençons par séparer les individus en une partie d'entraînement et une
-partie de test, c'est a dire que nous séparons les matrices $\Y$ et $\X$ en deux
-parties selon leurs lignes. Nous notons $I$ l'ensemble des indices des individus
-choisies pour estimer l'erreur de prédiction. On estime à partir des individus
-d'apprentissage la matrice des axes factoriels que l'on note $\hat{\V}_{-I}$ et
-la matrice des effets que l'on note $\hat{\B}_{-I}$. Ensuite, nous la matrice de
-test $\Y[I,]$ en deux partie selon ses colonnes afin d'estimer les variables
-latentes sur les variables restantes. On notera $J$ l'ensemble des colonnes de
-$\Y$ sélectionnées pour estimer de la matrice des variables latentes de la façon
-suivante
+Nous commençons par séparer les données une partie d'entraînement et une partie
+de test, c'est a dire que nous séparons les matrices des variables expliquées
+$\Y$ et explicatives $\X$ en deux parties selon leurs lignes. Nous notons $I$
+l'ensemble des indices des lignes choisies pour estimer l'erreur de prédiction.
+On estime à partir des données d'entraînement la matrice des axes factoriels que
+l'on note $\hat{\V}_{-I}$ et la matrice des effets que l'on note
+$\hat{\B}_{-I}$. Ensuite, nous séparons les observations des variables
+expliquées de test en deux partis afin d'estimer les variables latentes sur les
+variables restantes. On notera $J$ l'ensemble des colonnes de la matrice des
+variable expliquées $\Y$ sélectionnées pour estimer la matrice des variables
+latentes. La matrice des variables latentes est estimée de la manière suivante
 \begin{equation}
-\hat{\U}_{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}_{-I}[J,])^{T}) \hat{\V}_{-I}[-J,]^{T}.
+\hat{\U}_{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}_{-I}[J,])^{T}) \hat{\V}_{-I}[-J,]^{T},
 \end{equation}
-Enfin, on peut calculer l'erreur de prédiction comme ceci
+où l'opérateur crochet représente l'opérateur de sélection de lignes et colonnes
+d'une matrice. Enfin, on peut calculer l'erreur de prédiction comme ceci
 \begin{equation}
 \label{eq:2}
 \mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\U}^{-J} \hat{\V}_{-I}[J,]^{T} - \X[I, ] \hat{\B}_{-I}[J,]^{T} }_{F}.
 \end{equation}
-Cette procédure permet bien de mesurer une erreur sur des observations des
-variables expliquées qui n'ont pas été utilisées pour estimer les paramètres du
-modèle.
+Cette procédure permet de mesurer une erreur sur des observations des variables
+expliquées qui n'ont pas été utilisées pour estimer les paramètres du modèle.
 
 *** Tests d'hypothèse corrigés pour les facteurs de confusions
 <<sec:hypothese>>
@@ -3980,68 +3982,70 @@ modèle.
 :END:
 
 Jusque ici, nous avons seulement abordé l'estimation des paramètres de LFMM.
-Cependant, l'objectif initial est de trouver la liste des colonnes de $\Y$
-associées aux variables $\X$ tout en prenant en compte les variables latentes.
-Nous présentons dans cette partie un test d'hypothèse de nullité de l'effet de
-$\X$ sur $\Y$ corrigé pour les variables latentes. Une approche simple consiste
-à considérer l'estimation des variables latentes $\hat{\U}$ comme les vraies
-valeurs de $\U$ et de les utiliser au coté des variables $\X$ du modèle mis en
-place pour réaliser le test d'hypothèse. C'est une méthode très courante dans
-les études d'associations qui a montré de très bons résultats quand il y suffisamment
+Cependant, l'objectif initial est de trouver la liste des colonnes de la matrice
+$\Y$ associées aux variables $\X$ tout en prenant en compte les variables
+latentes. Nous présentons dans cette partie un test d'hypothèse de nullité de
+l'effet de la matrice $\X$ sur la matrice $\Y$ corrigé pour les variables
+latentes. Une approche simple consiste à considérer l'estimation des variables
+latentes $\hat{\U}$ comme les vraies valeurs de $\U$ et de les utiliser comme
+variables explicatives dans le modèle. C'est une méthode très courante dans les
+études d'association qui a montré de très bons résultats quand il y suffisamment
 d'individus
 cite:gerard2017unifying,Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016.
-Nous avons choisi de réaliser un test d'hypothèse qui repose sur la
-régression linéaire car cela correspond au modèle LFMM quand on suppose que $\U$
-est connue. Les estimations des variables latentes peuvent être traitées
-comme variables explicatives dans n'importe quel modèle statistique. On pourrait
-par exemple envisager d'utiliser une régression linéaire
-généralisée. Afin de simplifier les notations et sans perte de généralité, nous
-supposons qu'il n'y a qu'une seule variable explicative, c'est à dire que
-$\Xcol$ vaut $1$. De plus, nous signalons qu'il est possible d'ajouter d'autres
-variables à la régression, cela à un intérêt si l'on connait des variables qui
-sont des facteurs de confusion pour notre étude d'association, comme par exemple
-le l'age et le sexe des individus. Nous rappelons que l'estimation de la matrice
-des $\K$ variables latentes $\hat{\U}$ est définie de façon unique grâce à l'ACP
-de la matrice $\hat{\W}$. La matrice $\hat{\W}$ est estimé grâces aux
-algorithmes d'estimation $L_{1}$ ou $L_{2}$ de la matrice latente du modèle
-LFMM.
+Nous avons choisi de réaliser un test d'hypothèse qui repose sur la régression
+linéaire car cela correspond au modèle LFMM quand on suppose que $\U$ est
+connue. Les estimations des variables latentes peuvent être traitées comme
+variables explicatives dans n'importe quel modèle statistique. On pourrait par
+exemple envisager d'utiliser un modèle de régression linéaire généralisée. Afin
+de simplifier les notations et sans perte de généralité, nous supposons qu'il
+n'y a qu'une seule variable explicative, c'est à dire que la dimension de la
+matrice $\B$, égale à $\Xcol$, vaut $1$. De plus, nous signalons qu'il est
+possible d'ajouter d'autres variables explicatives à la régression. Cela a un
+intérêt si l'on observe des variables qui sont des facteurs de confusion connus
+pour notre étude d'association, comme par exemple l'age et le genre des
+individus. Nous rappelons que l'estimation de la matrice des $\K$ variables
+latentes $\hat{\U}$ est définie de façon unique grâce à l'ACP de la matrice
+$\hat{\W}$. La matrice $\hat{\W}$ est estimée grâces aux algorithmes
+d'estimation $L_{1}$ ou $L_{2}$ de la matrice latente du modèle LFMM présenté
+dans la section [[sec:model]].
 
 **** Calcul de la statistique de test
-Pour chaque variable expliquée $\Y_{j}$ nous avons la régression linéaire
-suivante
+Pour chaque variable expliquée $\Y_{j}$, nous avons défini le modèle de
+régression linéaire suivant
 \begin{equation}
 \Y_{j} =  \hat{\U} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{E_{j}},
 \end{equation}
 où la matrice $\hat{\U}$ est l'estimation de la matrice des variables latentes
-du modèle LFMM. On suppose que l'erreur $E_{j}}$ est Gaussienne de moyenne
+du modèle LFMM. On suppose que l'erreur $\matr{E}_{j}$ est gaussienne de moyenne
 nulle. On veut tester l'hypothèse de nullité du coefficient de régression
 $\beta_{j}$. Sous ces hypothèses on peut calculer pour chaque variable expliquée
-$\Y_{j}$ une statistique de test $z_{j}$, assimilable à un z-score. La
-statistique de test suit sous l'hypothèse nulle le loi de Student à $\Yrow -
-\K - 1$ degrés de liberté. On peut donc calculer une \pvalue pour chaque
-variable expliquées $\Y_{j}$. Le détail du calcul de la statistique de test est
-donnée dans la section 3.2 de cite:Hastie_2009.
-
+$\Y_{j}$ une statistique de test $z_{j}$, assimilable à un \zscore. Sous
+l'hypothèse nulle, la statistique de test suit la loi de Student à $\Yrow - \K -
+1$ degrés de liberté. On peut donc calculer une \pvalue pour chaque variable
+expliquée $\Y_{j}$. Le détail du calcul de la statistique de test est très
+classique. Par exemple, il est donné dans la section 3.2 de cite:Hastie_2009.
 
 **** Calibration du test d'hypothèse
-<<sec:calibration>> Il arrive parfois que la statistique de suive pas la
-distribution théorique sous l'hypothèse nulle. On dit dans ce cas que le test
-est mal calibré. On peut trouver dans cite:Efron_2004 des exemples de situations
-qui peuvent aboutir à des tests mal calibrés. Dans les exemples que nous
-présentons ici ont s'attend à ce que la majorité des variables expliquées
-$\Y_{j}$ ne soit pas associé avec $\X$, ainsi une large majorité des
-statistiques de test sont distribuées selon l'hypothèse nulle. Nous utilisons
+<<sec:calibration>> 
+
+Il arrive parfois que la statistique de test ne suive pas la distribution
+théorique sous l'hypothèse nulle. On dit dans ce cas que le test est mal
+calibré. On peut trouver dans cite:Efron_2004 des exemples de situations qui
+peuvent aboutir à des tests mal calibrés. Dans les exemples que nous présentons
+ici ont s'attend à ce que la majorité des variables expliquées $\Y_{j}$ ne soit
+pas associées avec la variable $\X$. Ainsi une majorité des statistiques de test
+sont distribuées selon l'hypothèse nulle. Pour la calibration, nous utilisons
 l'approche choisie dans cite:Sun_2012, qui consiste à calculer la médiane et la
 déviation absolue à la médiane (MAD pour median absolute déviation) directement
 sur les $z$ statistiques. En effet, la médiane donne une estimation robuste de
-la moyenne et le MAD de l'écart type. On a alors une nouvelle statistique de
+la moyenne et le MAD de l'écart-type. On a alors une nouvelle statistique de
 test
 \begin{equation}
 \tilde{z_{j}} = \frac{z_{j} - \med(z_{1}, ..., z_{\Ycol})}{
 \mad(z_{1}, ..., z_{\Ycol})}.
 \end{equation}
 Pour calculer les nouvelles \pvalues, on suppose que $\tilde{z_{j}}$ suit une loi
-normal de moyenne nulle et d'écart type 1 sous l'hypothèse nulle.
+normale de moyenne nulle et d'écart type 1 sous l'hypothèse nulle.
 
 **** Contrôle du taux de fausse découverte                      :noexport:
 :LOGBOOK:
@@ -4059,16 +4063,16 @@ d'association multiple....................
 *** Implémentation en R
 Les deux nouvelles méthodes de test d'association avec correction pour les
 facteurs de confusion que nous avons développées dans cette thèse ont été
-implémentées en R. Nous les avons appelées respectivement lassoLFMM pour
-l'implémentation des estimateurs régularisées en norme $L_{1}$ et ridgeLFMM pour
-les estimateurs régularisées en norme $L_{2}$. Les algorithmes lassoLFMM et
-ridgeLFMM prennent en entrée la matrice $/X$ et la matrices $/Y$ à associer avec
-$/X$. Ils prennent également le nombre de variables latentes $\K$. L'algorithme
-ridgeLFMM prend une valeur pour $\lambLFMM$, le paramètre de régularisation
-$\L_{2}$. L'algorithme lassoLFMM prend la proportion de lignes non nulles dans
-la matrice $\B$, la matrice des effets de $\X$ sur $\Y$. Enfin les deux
-algorithmes retournent les estimations pour les paramètres de LFMM ainsi qu'une
-\pvaleur pour le test d'association de chaque colonne de $\Y$ avec $\X$.
+implémentées dans le langage de programmation R. Nous les avons appelées
+respectivement lassoLFMM pour l'implémentation des estimateurs régularisées en
+norme $L_{1}$ et ridgeLFMM pour les estimateurs régularisées en norme $L_{2}$.
+Les algorithmes lassoLFMM et ridgeLFMM prennent en entrée la matrice $\X$ et la
+matrices $\Y$. Ils prennent également en entrée le nombre de variables latentes
+$\K$. L'algorithme ridgeLFMM prend une valeur pour $\lambRidge$, le paramètre de
+régularisation $L_{2}$. L'algorithme lassoLFMM prend la proportion de lignes non
+nulles dans la matrice des effets $\B$. Enfin les deux algorithmes retournent
+les estimations pour les paramètres de LFMM ainsi qu'une \pvalue pour le test
+d'association de chaque colonne de $\Y$ avec $\X$.
 ** Autres méthodes existantes comparées
 <<sec:similar_method>>
 
@@ -13886,4 +13890,5 @@ C'est purement numérique... j'ai pas d'intuition.
 **** Est ce que tess3 est sensible à la taille des pops ?
 Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
 *** lfmm
-#  LocalWords:  GWAS EWAS GEAS hyperparamètres décorrélé décorrélées
+#  LocalWords:  GWAS EWAS GEAS hyperparamètres décorrélé décorrélées ridgeLFMM
+#  LocalWords:  lassoLFMM
