@@ -829,7 +829,7 @@ facons suivante
 où $N(h)$ est défini comme l'ensemble des individus à une distance géographique
 $h$. Visualisé le variogramme fourni des informations sur le niveau de
 l'autocorélation spatial dans les données génétique et donne une estimation
-empirique de l'echelle géographique $\sigma$. Une autre approche consiste à
+empirique de l'échelle géographique $\sigma$. Une autre approche consiste à
 prendre pour paramètre d'echelle géographique la distance géographique moyenne
 entre les individus.
 
@@ -983,7 +983,7 @@ l'intensité de la sélection environnementale, nous avons utilisé l'aire sous 
 courbe précision-rappel du test d'adaptation local (AUC) pour plusieurs valeurs
 de l'intensité de la sélection ($m/m_s$).
 
-*** Application à des données humaines
+*** Application à des données humaines                           :noexport:
 Pour évaluer la robustesse de notre approche à une situation où le mélange a été
 la conséquence d'un grand déplacement plutôt que d'un contact entre des
 populations proche géographiquement, nous avons étudié le cas des populations
@@ -1019,7 +1019,7 @@ impliqués dans l'adaptation locale de /A.thaliana/ en Europe.
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
 :END:
-*** Analyse de la convergence et temps de calcul 
+*** Analyse de la convergence et temps d'exécution
 
 Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
 un modèle spatial de mélange pour comparer les erreurs statistiques des
@@ -1101,7 +1101,7 @@ l'algorithme AQP.
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_vitesse.pdf}
-\caption{{\bf Nombre d'itérations et temps de calcul pour les algorithmes AQP et
+\caption{{\bf Nombre d'itérations et temps d'exécution pour les algorithmes AQP et
   APLS}. A-B) Nombre total d'itération avant que l'algorithmes ai atteint une
   solution stable. C-D) Temps de calcul d'une seul itération en secondes. Le
   nombre de SNPs a été fixé à $p = 50$k pour A et C. Le nombre d'individus a été
@@ -1436,13 +1436,13 @@ statistiques sont du même ordre pour =TESS= 2.3 et APLS.
   \includegraphics[width=\textwidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
 \end{minipage}
 \caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation de
-    $\Q$ (figure A) et $\G$ (figure B).} Simulations de génotype métissé
-  spatialement pour plusieurs niveaux de différenciation($F_{\rm ST}$) entre les
+    $\Q$ (figure A) et $\G$ (figure B).} Simulations de génotypes métissés
+  spatialement pour plusieurs niveaux de différenciation ($\Fst$) entre les
   populations sources. Les populations sources sont simulées par un modèle de
-  Wright'sà deux iles et le la statistique de différenciation est définie comme
-  $1 / (1 + 4 N_0 m)$ où $m$ est le taux de migration et $N_0$ la taille
-  effective de la population. Les erreurs statistique de TESS 2.3 et APLS sont
-  représentées comme des fonctions de $F_{\rm ST}$.}
+  Wright's à deux iles et la statistique de différenciation est définie comme
+  $1/(1+4N_0 m)$ où $m$ est le taux de migration et $N_0$ la taille
+  effective de la population. Les erreurs statistique de \textit{TESS} 2.3 et APLS sont
+  représentées comme des fonctions de $\Fst$.}
 \label{fig:tess3:tess23}
 \end{figure}    
 #+END_EXPORT
@@ -1482,11 +1482,11 @@ l'algorithme non spatial (Figure ref:fig:tess3:comp:rmse:snmf).
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_comp_rmse_snmf.pdf}
-\caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation
-    de $\Q$.} Simulations de génotype métissé spatialement pour plusieurs
-  niveaux de différenciation($F_{\rm ST}$) entre les populations sources. Les
-  populations sources sont simulées par un modèle de Wright'sà deux iles et le
-  la statistique de différenciation est définie comme $1 / (1 + 4 N_0 m)$ où $m$
+\caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation de
+    $\Q$.} Simulations de génotypes métissés spatialement pour plusieurs niveaux
+  de différenciation($F_{\rm ST}$) entre les populations sources. Les
+  populations sources sont simulées par un modèle de Wright's à deux iles et la
+  statistique de différenciation est définie comme $1 / (1 + 4 N_0 m)$ où $m$
   est le taux de migration et $N_0$ la taille effective de la population. Les
   erreurs statistique de sNMF et APLS sont représentées comme des fonctions de
   $F_{\rm ST}$.}
@@ -1516,7 +1516,7 @@ inconnus.
 
 #+NAME: code:tess3:auc
 #+CAPTION: Dépend de [[code:tess3:auc:snmf:plots]]
-#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
 
@@ -1533,7 +1533,15 @@ inconnus.
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_comp_auc_snmf.pdf}
-\caption{}
+\caption{{\bf Aire sous la courbe de précision-rappel (AUC).} Tests de
+  neutralité appliqués aux simulations de populations spatialement métissées.
+  Nous avons calculé l'AUC pour les tests basés sur la statistique $F_{\rm ST}$
+  calculée à partir des vrais populations sources avant le métissage, à partir
+  des estimations d'ascendance spatiale calculées avec l'algorithme APLS,
+  l'estimations d'ascendance non spatiales ({\tt structure}) calculées avec
+  l'algorithme {\ tt snmf}. L'intensité de la sélection dans les populations
+  sources, définies comme le rapport $ m / m_s $, varie dans la fourchette
+  de $1-160$.}
 \label{fig:tess3:auc}
 \end{figure}
 #+END_EXPORT
@@ -1957,7 +1965,7 @@ CLOSED: [2017-09-11 lun. 18:57]
     dplyr::mutate(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N)) %>%
     rename(Methods = method)
   levels(toplot$Methods)[1] <- "APLS"
-  levels(toplot$Methods)[3] <- "before-admixure"
+  levels(toplot$Methods)[3] <- "avant m\\'etissage"
 
   pl <- ggplot(toplot ,aes(x = m.ms, y = auc.mean, col = Methods, linetype = Methods, shape = Methods)) +
     geom_errorbar(aes(ymin = auc.mean - se,
@@ -1966,23 +1974,24 @@ CLOSED: [2017-09-11 lun. 18:57]
     geom_line() +
     geom_point(size = 2) +
     theme_bw() +
-    xlab("Intensity of selection ($m/m_s$)") +
+    xlab("Intensit\\'e de la s\\'election ($m/m_s$)") +
     ylab("AUC") +
     MaTheseR.params$gtheme +
     theme(legend.position = c(0.8,0.2)) +
-    Article2.env$scale.linetype +
-    Article2.env$scale.color
+    scale_linetype_manual(values = c("APLS" = Article2.env$linetype$APLS,
+                                     "sNMF" = Article2.env$linetype$snmf,
+                                     "avant m\\'etissage" = Article2.env$linetype$before.admixure)) + 
+    scale_color_manual(values = c("APLS" = Article2.env$color$APLS,
+                                  "sNMF" = Article2.env$color$snmf,
+                                  "avant m\\'etissage" = Article2.env$color$before.admixure))
 
   save_plot_png(pl, "tess3_comp_auc_snmf.png")
 
   save_expr(pl, "tess3_comp_auc_snmf_plot.rds")
-
-
 #+end_src
 
 #+RESULTS: code:tess3:auc:snmf:plots
 [[./OUTPUT/Rplots/tess3_comp_auc_snmf.png]]
-: [[./OUTPUT/Rplots/tess3_comp_auc_snmf.pdf.png]]
 
 *** Sensibilité des estimateurs aux erreurs dans les mesures spatiales
 **** Scripts                                                    :noexport:
@@ -2091,7 +2100,7 @@ CLOSED: [2017-09-11 lun. 18:57]
 : Error in FUN(X[[i]], ...) : object 'noise.signal' not found
 : Error in FUN(X[[i]], ...) : object 'noise.signal' not found
 
-*** Application à des données humaines
+*** Application à des données humaines                           :noexport:
 **** Scripts                                                    :noexport:
 ***** DONE map des individus et matrice W
 CLOSED: [2017-09-14 jeu. 17:24]
@@ -2277,9 +2286,27 @@ CLOSED: [2017-09-06 mer. 09:24]
 #+end_example
 *** Application à des données Arabidopsis Thaliana
 
+Nous avons utilisé l'algorithme APLS pour étudier la structure génétique de
+population spatiale et effectuer un balayage du génome pour les allèles
+adaptatifs dans des écotypes européens de l'espèce végétale /A. thaliana/. Le
+critère de validation croisée diminue rapidement pour $K = 1$ à $K = 3$ nombre
+de clusters, indiquant qu'il y a trois clusters génétiques principaux en Europe,
+correspondant aux régions géographiques d'Europe occidentale, d'Europe centrale
+et orientale et de Scandinavie septentrionale. Pour un nombre de cluster $K$
+supérieur à quatre, les valeurs du critère de validation croisée diminue de
+manière plus lente, ce qui indique qu'une sous-structure subtile résultant de
+processus historiques complexes d'isolement par distance pourrait également être
+détectée (Figure ref:fig:tess3:at:param). Le variogramme spatial donne une
+echelle spatial approximative de $\sigma = 150$ km (Figure
+ref:fig:tess3:at:param). La figure ref:fig:tess3:at:map affiche l'estimation de
+ma matrice $\Q$ interpolée sur une carte géographique d'Europe pour six cluster
+génétique. L'estimation des coefficients de métissage fournit une preuve
+claire du regroupement des écotypes dans des groupes génétiques spatialement
+homogènes.
+
 #+NAME: code:tess3:at:params
 #+CAPTION: Dépend de [[code:tess3_AT_params]]
-#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
 
@@ -2295,7 +2322,11 @@ CLOSED: [2017-09-06 mer. 09:24]
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_AT_params.pdf}
-\caption{}
+\caption{{\bf Choix de $\sigma$ et $K$ pour l'algorithme APLS}. A) Variogramme
+  empirique pour les données {\it A. thaliana}. La ligne verticale rouge montre
+  la valeur de l'échelle géographique choisie, $\sigma = 1.5$. B) Erreur de
+  validation croisée en fonction du nombre de clusters génétiques, $K$. La
+  ligne verticale rouge montre le nombre de clusters génétiques choisi, $K=6$.}
 \label{fig:tess3:at:param}
 \end{figure}
 #+END_EXPORT
@@ -2318,10 +2349,34 @@ CLOSED: [2017-09-06 mer. 09:24]
 \begin{sidewaysfigure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_AT_map.pdf}
-\caption{}
+\caption{{\bf {\it A. thaliana} coefficients de métissage}. Estimation des
+  coefficients de métissage calculée par l'algorithme APLS avec $K = 6$ clusters
+  génétiques et $\sigma = 1.5$ pour le paramètre d'échelle géographiques. A)
+  Carte géographique des coefficients de métissage. B) Barplot des coefficients
+  de métissage.}
 \label{fig:tess3:at:map}
 \end{sidewaysfigure}
 #+END_EXPORT
+
+Les tests basés sur la statistique $\Fst$ ont été appliqués à l'ensemble de 214k
+SNP pour détecter les locus sous sélection naturelle dans le génome de l'espèce
+/A.thaliana/. /A. thaliana/ se trouve dans une large variété d'habitats, et
+l'adaptation locale à l'environnement est reconnue comme étant pression
+importante qui façonner la diversité génétique dans l'espace
+cite:Hancock2011,Fournier-Level2011. L'algorithme APLS a été exécuté sur les
+1095 écotypes européennes de /A. thaliana/ avec 6 de clusters génétique et 1,5
+pour le paramètre d'échelle spatiale. En utilisant l'algorithme
+Benjamini-Hochberg pour contrôler le FDR à $1 \%$, le programme a produit une
+liste de 12 701 SNP candidats. Les 100 meilleurs candidats inclus des SNPs dans
+les gènes liés à la floraison SHORT VEGETATIVE PHASE (SVP), COP1-interacting
+protein 4.1 (CIP4.1) et FRIGIDA (FRI) ($p\text{-valeur} < 10^{-300}$). Ces gènes
+ont été détectés par des analyses antérieures de la sélection sur cet ensemble
+de données cite:Horton_2012. Nous avons réalisé une analyse d'enrichissement en
+ontologie des gènes en utilisant AmiGO afin d'évaluer quelles fonctions
+biologiques pourraient être impliquées dans l'adaptation locale en Europe. Nous
+avons trouvé une sur-représentation significative des gènes impliqués dans les
+processus cellulaires ($1.06$ fois plus que l'attendu, et une \pvalue égale à
+$0.0215$ après correction de Bonferonni).
 
 #+NAME: code:tess3:at:manhattanplot
 #+CAPTION: Dépend de [[code:tess3_AT_manhattan]]
@@ -2342,7 +2397,11 @@ CLOSED: [2017-09-06 mer. 09:24]
 \begin{sidewaysfigure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_AT_manhattanplot.png}
-\caption{}
+\caption{{\bf Détection de locus sous adaptation locale sur des écotypes
+    européennes de \bf {\it A. thaliana}}. Manhattan plot de
+  $-\log(p\text{-value})$. Les \pvalues int été calculées à partir de la
+  structure de la population estimée par l'algorithme APLS avec $K = 6$ clusters
+  génétiques et $ \sigma = 1,5 $ pour le paramètre d'échelle géographique.}
 \label{fig:tess3:at:manhattanplot}
 \end{sidewaysfigure}
 #+END_EXPORT
@@ -2613,8 +2672,8 @@ CLOSED: [2017-09-11 lun. 19:09]
   variogram.pl <- ggplot(vario.gen, aes(x = h, y = semi.variance, size = size)) +
     geom_point(shape = 1) +
     geom_vline(xintercept = 1.5, colour = "red") +
-    labs(y = "Semivariogram",
-         x = "$\\sigma$ ($100$ km)") +
+    labs(y = "Variogramme",
+         x = "\\'Echelle g\\'eographique $\\sigma$ ($100$ km)") +
     theme_gray(base_size = 12) +
     scale_size_continuous(range = c(1,3)) +
     guides(size = guide_legend(title = "Bin size", nrow = 3)) +
@@ -2635,7 +2694,7 @@ CLOSED: [2017-09-11 lun. 19:09]
     geom_line(aes(x = K, y = med)) +
                                           #geom_errorbar(aes(x = K, y = med,
                                           #                  ymin=min, ymax=max), width=.1) +
-    labs(y = "Cross validation error", x = "$K$") +
+    labs(y = "Erreur de validation crois\\'ee", x = "Nombre de clusters g\\'en\\'etiques $K$") +
     theme_gray() +
     theme(legend.position = "none") +
     MaTheseR.params$gtheme +
@@ -3002,7 +3061,7 @@ d'informations géographiques et génétique. Sur la base des problèmes de moin
 carrés, les nouveaux algorithmes combinent des approches de factorisation
 matricielle et de statistiques spatiales pour fournir des estimations précises
 des coefficients de métissage individuels et des fréquences d'allèle dans les
-cluster génétique ainsi estimés. Les deux méthodes partagent de nombreuses
+clusters génétique ainsi estimés. Les deux méthodes partagent de nombreuses
 similitudes, mais elles diffèrent dans les approximations qu'elles font pour
 diminuer la complexité algorithmique. Plus précisément, l'algorithme AQP est
 repose sur un problème d'optimisation quadratique alors que l'algorithme APLS
@@ -13898,4 +13957,4 @@ C'est purement numérique... j'ai pas d'intuition.
 Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
 *** lfmm
 #  LocalWords:  GWAS EWAS GEAS hyperparamètres décorrélé décorrélées ridgeLFMM
-#  LocalWords:  lassoLFMM
+#  LocalWords:  lassoLFMM Thaliana Arabidopsis thaliana variogramme
