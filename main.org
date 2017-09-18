@@ -120,8 +120,11 @@
 ** python
 * Introduction
 :LOGBOOK:
-- State "TODO"       from "TODO"       [2017-07-20 Thu 17:52]
-- State "TODO"       from              [2017-07-20 Thu 17:49]
+- Note taken on [2017-09-18 lun. 16:47] \\
+  L'objectif de l'intro : 
+  - expliquer le contexte et la problématique client
+  - on doit sortir de l'intro en ayant compris qu'on va présenter des méthodes
+    statistique pour estimer la structure de population et pour les étude d'association
 - Note taken on [2017-07-18 Tue 15:11] \\
   une remarque en passant: l'intro est pour moi la place pour définir le contexte
   général, les mots du titre, la pbq et le plan qui y répond ! 
@@ -135,8 +138,6 @@
 - Note taken on [2017-06-09 Ven 11:44] \\
   dans l'intro il faut que je motive la problématique !! et le plan répond a cette
   problématique.
-:END:
-:LOGBOOK:
 - Note taken on [2017-09-13 mer. 10:33] \\
   Biblio: 
   - cite:slides_sfds2015_saporta
@@ -158,7 +159,7 @@
 :END:
 Cette dernière décennie a été marquée par une accumulation des données dans tous
 les domaines de la sciences. Cette accumulation de données est une aubaine pour
-les scientifiques. En particulier en biologie l'abondance des données permet de
+les scientifiques. En particulier en génétique l'abondance des données permet de
 comprendre toujours mieux le vivant. Cependant, que faire d'autant de données et
 comment en tirer l'information qui permettrait de mieux comprendre le monde qui
 nous entoure ? Il s'agit là d'un défi majeur pour les statistiques. 
@@ -168,31 +169,36 @@ vitesse des algorithmes utilisés pour les traiter. Si nous avons beaucoup de
 données rapidement nous voulons aussi des algorithmes rapides pour les traiter
 et les visualiser. L'augmentation de la puissance des ordinateurs ne suffis pas
 toujours à adapter un modèle à un plus grand jeux de données. Il faut parfois
-trouver de nouvelles méthodes pour passer à une échelle de données plus grande.
+trouver de nouvelles méthodes pour passer à une échelle de données plus grandes.
 
-Par ailleurs, plus nous avons d'observation de deux variables plus il est
-possible de détecter une corrélation faible entre celles ci. Ce qui
-paradoxalement n'est pas forcément une bonne chose puisque toutes corrélations
-aussi faible soit elle est significative quand on à trop de données. De plus,
-une corrélation n'est pas un lien de cause à effet. Une corrélation entre deux
-variables peut ne plus être observé quand on considère dans l'étude une
-troisième variable qui serai corrélé au deux premières (paradoxe de Simpson). Il
-faut donc être très prudent dans la recherche de corrélation dans des données,
-surtout dans le contexte actuelle où l'accès au données est très facile.
+Par ailleurs, plus nous avons d'observation de variables plus il est possible de
+détecter des corrélations faibles entre celles-ci. Ce qui paradoxalement n'est
+pas forcément une bonne chose puisque toute corrélation aussi faible soit elle
+est significative quand on à trop de données. De plus, une corrélation n'est pas
+un lien de cause à effet. Une corrélation entre des variables peut ne plus être
+observé quand on considère dans l'étude d'autres variables explicatives
+(paradoxe de Simpson). Il faut donc être très prudent dans la recherche de
+corrélation dans des données, surtout dans le contexte actuelle où l'accès au
+données est très facile.
 
-Dans le cadre de cette thèse nous nous sommes intéressé a développer des
-méthodes statistiques adapté au traitement de données biologique afin de
+Dans le cadre de cette thèse nous nous sommes intéressé à développer des
+méthodes statistiques adaptées au traitement de données génétique afin de
 répondre à deux problématiques. Le premier est l'estimation de la structure de
-population à partir de données génomique et géographique. Le deuxième est
-l'estimation de facteurs de confusion pour corriger les tests d'association. Les
-méthodes statistiques développer lors de cette thèse repose sur la factorisation
-de matrice. Nous allons maintenant introduire plus en détails les contextes
-biologiques dans lesquels interviennent les méthodes développé durant cette
-thèse.
+population à partir de données génétiques et géographiques. Le deuxième est
+l'estimation des facteurs de confusion pour corriger les tests d'association.
+Les méthodes statistiques développer lors de cette thèse repose sur la
+factorisation de matrice. Nous allons maintenant introduire plus en détails les
+contextes biologiques dans lesquels interviennent les méthodes développées
+durant cette thèse.
 
 ** La génomique des populations
 <<intro_genet>>
 :LOGBOOK:
+- Note taken on [2017-09-18 lun. 15:28] \\
+  rmk : reproduction au hasard des individus : c'est à dire qu'on ne sait pas qui
+  se repruidit avec qui !! et ca ca fait que "par hasard" (comprendre sans qu'on
+  puisse l'expliquer car on ne peut pas observer tout le processus) certain allele
+  se fixe ou disparaisse.
 - Note taken on [2017-09-13 mer. 11:00] \\
   Biblio: 
   - [[https://fr.wikipedia.org/wiki/G%25C3%25A9n%25C3%25A9tique_des_populations#D.C3.A9finition_de_la_population][wiki : Génétique des populations]]
@@ -216,65 +222,93 @@ populations d'être vivant. La génomique des population est un néologisme qui
 souligne le fait que l'on n'étudie plus les différences génétiques dans et entre
 les populations à l'échelle d'un seul gêne mais à l'échelle du génome complet.
 La génomique des populations a des applications en épidémiologie où elle permet
-de comprendre la transmission des maladies génétiques. En agronomie, des
+de comprendre la transmission des maladies génétiques. En agronomie, où des
 programmes de sélection modifient le patrimoine génétique de certains organismes
 pour créer des races ou variétés plus performantes, ou plus résistantes à des
 maladies. Elle permet également de comprendre les mécanismes de conservation et
 de disparition des populations et des espèces.
 
-Les populations étudiée par la génétique des populations est un ensemble
-d'individus qui montrent une unité de reproduction : les individus d'une
-population peuvent se croiser entre eux, ils se reproduisent moins avec les
-individus des populations voisines, desquelles ils sont géographiquement isolés.
-On considère 4 pressions évolutives qui permettent d'expliquer des changements
-de fréquences d'allèle dans les populations : la mutation, la sélection, la
-dérive génétique, et la migration. La mutation créer de nouveau allèle, elle
-peut être neutre, c'est a dire sans effet sur l'organisme, ou non et avoir par
-exemple un effet sur la capacité de l'organisme à s'adapter à son environement.
-La selection est l'hypohtèse central de la théorie de Darwin, ainsi si un allèle
-permet à l'organisme d'être mieux adapté à son environement alors cette allèle
-aura plus de chance d'être transmis aux générations future car l'organisme
-porteur de l'allèle peut se reproduire plus facilement. La dérive génétique
-provient du fait qu'il n'existe pas de populations infinis. Ainsi au file des
-générations les distributions allélique change à cause de la reproduction au
-hasard des individus. Ce processus peut engendrer la disparition ou la fixation
-d'un allèle neutre juste par hasard. Enfin la migration est le passage de gène
-d'une population à une autre (par des individus qui passent d'une population à
-l'autre, par exemple sous forme de graines ou de pollen chez les plantes). Si
-cet échange se fait entre des population ayant des fréquences alléliques
-différentes, elle va tendre à modifier les fréquences alléliques.
+Les populations étudiées par la génétique des populations sont formées d'un
+ensemble d'individus qui montrent une unité de reproduction : les individus
+d'une population peuvent se croiser entre eux, ils se reproduisent moins avec
+les individus des populations voisines, desquelles ils sont géographiquement
+isolés. On considère 4 pressions évolutives qui permettent d'expliquer des
+changements de fréquences d'allèle dans les populations : la mutation, la
+sélection, la dérive génétique, et la migration. La mutation créer de nouveau
+allèle, elle peut être neutre, c'est à dire sans effet sur l'organisme, ou non
+et avoir par exemple un effet sur la capacité de l'organisme à s'adapter à son
+environement. La sélection est l'hypothèse centrale de la théorie de Darwin,
+ainsi si un allèle permet à l'organisme d'être mieux adapté à son environnement
+alors cette allèle aura plus de chance d'être transmis aux générations futures
+car l'organisme porteur de l'allèle peut se reproduire plus facilement. La
+dérive génétique provient du fait qu'il n'existe pas de populations infinies.
+Ainsi au file des générations les distributions allélique change à cause de la
+reproduction au hasard des individus. Ce processus peut engendrer la disparition
+ou la fixation d'un allèle neutre juste par hasard. Enfin la migration est le
+passage de gènes d'une population à une autre (par des individus qui passent
+d'une population à l'autre, par exemple sous forme de graines ou de pollen chez
+les plantes). Si cet échange se fait entre des populations ayant des fréquences
+alléliques différentes, il va tendre à modifier les fréquences alléliques.
 
 Bien que la génétique des populations trouve ses origines dans les travaux de
 Sewall Wright, J. B. S. Haldane et Ronald Fisher qui sont anterieurs à la
 découverte de la structure de l'ADN par Watson et Crick en 1953, la génomique
-des populations moderne utilise des données d'observation de génome de plusieurs
-individus provenant de plusieurs populations. De plus, les récentes
-améliorations en séquence de l'ADN on permit le séquence, qui était jusqu'alors
-réservé aux espèces modèles, à de nombreuses espèces. Dans le cadre de cette
-thèse nous nous somme intéresse seulement au données dite de SNPs
+des populations moderne utilise des données d'observation de génomes de
+plusieurs individus provenant de plusieurs populations. De plus, les récentes
+améliorations en séquence de l'ADN ont permis le séquence, qui était jusqu'alors
+réservé aux espèces modèles, de nombreuses espèces différentes. Dans le cadre de
+cette thèse nous nous sommes intéressé seulement au données dîtes de SNPs
 (single-nucleotide polymorphism) qui sont les polymorphismes génétiques simple
 d'un seul nucleotide. Un SNP est la variation (polymorphisme) d'une seule paire
-de bases du génome, entre individus d'une même espèce. Les SNP représentent 90 \%
-de l'ensemble des variations génétiques humaines, et des SNPs avec une fréquence
-allélique supérieure à 1 \% sont présents toutes les cent à trois cents paires
-de bases en moyenne dans le génome humain. Nous appelons locus une position sur
-l'ADN, nous parlons ainsi du locus d'un SNP. Nous représentons les données
-génétique comme une matrice avec une ligne par individu et une colonne par
-locus.
+de bases du génome, entre individus d'une même espèce. Les SNPs représentent 90
+\% de l'ensemble des variations génétiques humaines, et des SNPs avec une
+fréquence allélique supérieure à 1 \% sont présents toutes les cent à trois
+cents paires de bases en moyenne dans le génome humain. Nous appelons locus une
+position sur l'ADN, nous parlons ainsi du locus d'un SNP. Nous représentons les
+données génétique comme une matrice avec une ligne par individu et une colonne
+par locus.
 
 Une étape très imporante en génétique des populations et particulièrement quand
-on étudie des données de SNPs est d'inférer une représentation synthétique qui
-de la structure de population à partir des données de SNPs. Dans cette thèse
-nous proposons une méthode permettant l'inférence des coefficients de métissage
-individuel à partir de données de SNPs et géographique de chaque individu. Nous
+on étudie des données de SNPs est d'inférer une représentation synthétique de la
+structure de population à partir des données de SNPs. Dans cette thèse nous
+proposons une méthode permettant l'inférence des coefficients de métissage
+individuels à partir de données de SNPs et géographique de chaque individu. Nous
 expliquons plus en détail ce que sont les coefficients de métissage dans la
 partie [[tess3_intro]].
 ** Test d'association
 :LOGBOOK:
+- Note taken on [2017-09-18 lun. 16:54] \\
+  Biblio:
+  - [[http://www.pourlascience.fr/ewb_pages/a/article-des-correlations-a-la-causalite-32960.php][Des corrélations à la causalité]]
+  -
 - Note taken on [2017-08-22 mar. 09:56] \\
   parler des méthode classsique pour controlé l hétérogénéité en stat (experience
   jardin commum, vidéo les stat expliqué a mon chat :D)
 :END:
+
+Un problème fondamental en science du vivant est de détecter les relations de
+causalité qui existe entre des événements. En statistique, un événement est
+modélisé par une variable aléatoire et il est seulement possible détecter des
+liens statistique entre les variables aléatoires que l'on appel corrélation. La
+corrélation renseigne les probabilités jointes des variables aléatoires en
+question mais pas sur leur lien de causalité. Dans un cadre statistique on
+parlons de test d'association quand on test si deux variables aléatoires sont
+corrélées. 
+
+Les tests d'association sont très utilisée en génétique pour comprendre les
+fonctions des gènes. Par exemple on peut chercher quelle SNP est corrélé à une
+maladie pour comprendre les cause génétique de la maladie. Cependant, comme nous
+l'avons vu dans la partie précédente il existe de nombreux facteurs responsables
+de la diversité génétique. Quand les facteurs de variation du génome sont
+corrélé à la variable d'étude (la maladie par exemple) alors les études
+d'association sont faussé et on observe en général une augmentation du nombre de
+gène associé à la variable d'étude. On parle de facteurs de confusion pour le
+test d'association. 
+
+Dans dans cette thèse nous proposons une méthode statistique qui permet de
+corriger les tests d'association pour les facteurs de confusion. Nous expliquons
+plus en détail ce que sont les facteurs de confusions et comment nous les
+modélisons dans la partie [[sec:lfmm_intro]].
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
@@ -282,6 +316,28 @@ partie [[tess3_intro]].
   Kenneth lange, factorisation de matrice = avenir des stat ! a retrouver !
 :END:
 ** Problématique et objectifs de la thèse
+La génétique produit beaucoups de données et de en plus vite grace aux
+technologie de séquencage toujours plus efficace. Cette affluence de données
+pose de nouveau problème aux staticien. Dans cette thèse nous nous sommes
+intéressé à deux problématique en analyse de données génétiques. L'accent a été
+mis sur la rapidité des méthodes dévelopé afin qu'elle soit applicable aux
+données génétique moderne. En outre, afin que nos méthodes statistiques soit
+utilisable par la communauté scientifique en génétique il a été important de
+rendre accessible une implémentation informatique efficace des méthodes en
+question.
+
+La première méthode statistique développé dans cette thèse concerne la génétique
+des populations. A partir de données génétique et géographique nous souhaitons
+estimer une représentation synthétique permettant de visualiser l'organisation
+en populations structurées des individus observés. Nous avons dévelopé une
+seconde méthode statistique permettant de réaliser des test d'association. En
+particulier nous souhaitons résoudre le problème très présent dans les étude
+d'association en génétiques des facteurs de confusions.
+
+Nous présentons maintenant plus en détail chacune de nos nouvelles méthodes
+statistiques et en démontrons l'utilités sur des simulation et exemples concrets de
+la génétique.
+
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -546,36 +602,37 @@ cite:Durand_2009. Certaines méthodes bayésiennes sont basées sur des algorith
 de Monte Carlo de chaîne de Markov qui nécessite beaucoup de calcul
 cite:FRAN_OIS_2010. Ainsi les méthodes d'estimation de structure de population
 continue spatialement ne sont pas adapté au grand jeux de données. Nous
-proposons donc une méthode d'estimation de la structure dans des population
+proposons une méthode d'estimation de la structure dans des population
 continue spatialement reposant l'optimisation d'une fonction objective.
 
 *** Plan du chapitre
 
 Dans ce chapitre, nous présentons une nouvelle méthode pour l'estimation des
 coefficients de métissage individuels basées sur des données géographiques et
-génétiques. Cette méthode repose un problème de factorisation matrice régularisé
-avec des contraintes convexes. Nous proposons deux algorithmes qui résolvent le
-problème de factorisation. Le première algorithme repose sur une optimisation
-quadratique alterné (AQP pour alternated quadratic programing), l'autre sur un
-algorithme des moindres carrés alternés projetés (APLS pour alternated projected
-least square). Le terme alterné dans les deux algorithmes fait référence au fait
-que l'on alterne une étape d'optimisation selon la matrice de coefficient de
-métissage puis la matrice des fréquences de génotypes ancestraux. Alors que les
-algorithmes AQP ont un fondement théorique bien établi par cite:Bertsekas_1997,
-ce n'est pas le cas des algorithmes APLS. En utilisant des simulations
-coalescentes, nous montrons que les estimations calculées par l'algorithme APLS
-sont de bonnes approximations des solutions de l'algorithme AQP. En outre, nous
-montrons que les performances de l'algorithme APLS s'élève aux dimensions des
-ensembles de données modernes. Sur des simulations, nous montrons que l'erreur
-statistique des estimateurs des coefficients de métissage et des fréquences
-d'allèle dans les clusters génétique fournis par notre méthode est du même que
-l'erreur obtenu avec le logicielle =TESS= 2.3, une méthode bayésienne. Toujours
-sur des simulations nous montrons que notre méthode spatial estime mieux la
-structure de population que la méthode sNMF qui repose aussi sur un problème de
-factorisation de matrice mais n'utilise pas l'information spatiale. Enfin, nous
-discutons de l'application de nos algorithmes aux données des écotypes européens
-de {\ it Arabidopsis thaliana}, pour lesquelles des données géographiques
-individuelles et géométriques sont disponibles cite:Horton_2012.
+génétiques. Cette méthode repose sur un problème de factorisation de matrice
+régularisé avec des contraintes convexes. Nous proposons deux algorithmes qui
+résolvent le problème de factorisation. Le première algorithme repose sur une
+optimisation quadratique alterné (AQP pour alternated quadratic programing),
+l'autre sur un algorithme des moindres carrés alternés projetés (APLS pour
+alternated projected least square). Le terme alterné dans les deux algorithmes
+fait référence au fait que l'on alterne une étape d'optimisation selon la
+matrice de coefficient de métissage puis la matrice des fréquences de génotypes
+ancestraux. Alors que les algorithmes AQP ont un fondement théorique bien établi
+par cite:Bertsekas_1997, ce n'est pas le cas des algorithmes APLS. En utilisant
+des simulations coalescentes, nous montrons que les estimations calculées par
+l'algorithme APLS sont de bonnes approximations des solutions de l'algorithme
+AQP. En outre, nous montrons que les performances de l'algorithme APLS s'élève
+aux dimensions des ensembles de données modernes. Sur des simulations, nous
+montrons que l'erreur statistique des estimateurs des coefficients de métissage
+et des fréquences d'allèle dans les clusters génétique fournis par notre méthode
+est du même que l'erreur obtenu avec le logicielle =TESS= 2.3, une méthode
+bayésienne. Toujours sur des simulations nous montrons que notre méthode spatial
+estime mieux la structure de population que la méthode sNMF qui repose aussi sur
+un problème de factorisation de matrice mais n'utilise pas l'information
+spatiale. Enfin, nous discutons de l'application de nos algorithmes aux données
+des écotypes européens de {\ it Arabidopsis thaliana}, pour lesquelles des
+données géographiques individuelles et géométriques sont disponibles
+cite:Horton_2012.
 
 ** Nouvelles méthodes
 Dans cette section, nous présentons deux nouveaux algorithmes pour estimer les
@@ -3105,6 +3162,7 @@ que quelques minutes à l'aide d'un seul CPU.
 
 * Algorithmes d'estimation pour les modèles de régression à facteurs latents
 ** Introduction
+<<sec:lfmm_intro>>
 Au cours de la dernière décennie, des études d'association à grande échelle ont
 été utilisées pour identifier des gènes candidats associés à une maladie
 particulière ou un trait phénotypique d'intérêt. Selon le type des marqueurs
