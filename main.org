@@ -287,28 +287,33 @@ partie [[tess3_intro]].
 :END:
 
 Un problème fondamental en science du vivant est de détecter les relations de
-causalité qui existe entre des événements. En statistique, un événement est
-modélisé par une variable aléatoire et il est seulement possible détecter des
-liens statistique entre les variables aléatoires que l'on appel corrélation. La
-corrélation renseigne les probabilités jointes des variables aléatoires en
-question mais pas sur leur lien de causalité. Dans un cadre statistique on
-parlons de test d'association quand on test si deux variables aléatoires sont
-corrélées. 
+causalité qui existes entre des événements. En statistique, un événement est
+modélisé par une variable aléatoire. Il est seulement possible détecter des
+liens statistique entre les variables aléatoires, qu'on appel corrélation. La
+corrélation renseigne sur les probabilités jointes des variables aléatoires en
+question. Dans un cadre statistique nous parlons de test d'association quand on
+test si deux variables aléatoires sont corrélées.
 
 Les tests d'association sont très utilisée en génétique pour comprendre les
-fonctions des gènes. Par exemple on peut chercher quelle SNP est corrélé à une
-maladie pour comprendre les cause génétique de la maladie. Cependant, comme nous
+fonctions des gènes. Par exemple on peut chercher quel SNP est corrélé à une
+maladie pour comprendre les causes génétiques celle-ci. Cependant, comme nous
 l'avons vu dans la partie précédente il existe de nombreux facteurs responsables
 de la diversité génétique. Quand les facteurs de variation du génome sont
-corrélé à la variable d'étude (la maladie par exemple) alors les études
+corrélés à la variable d'étude (la maladie par exemple) alors les études
 d'association sont faussé et on observe en général une augmentation du nombre de
-gène associé à la variable d'étude. On parle de facteurs de confusion pour le
-test d'association. 
+gènes associés à la variable d'étude. Une telle situation n'est pas souhaitable
+car bien qu'il agissent de corrélation il ne s'agit pas de corrélation
+intéressante pour la problématique biologique. Dans les données données
+génétique qui nous intéresse dans cette thèse, il est possible d'inférer les
+facteurs responsable de la variation génétique. On appel de tel facteur des
+facteurs de confusion pour le test d'association. Les facteurs de confusion
+doivent être pris en compte dans les étude d'association pour éviter les fausses
+associations.
 
-Dans dans cette thèse nous proposons une méthode statistique qui permet de
-corriger les tests d'association pour les facteurs de confusion. Nous expliquons
-plus en détail ce que sont les facteurs de confusions et comment nous les
-modélisons dans la partie [[sec:lfmm_intro]].
+Dans cette thèse nous proposons une méthode statistique qui permet de corriger
+les tests d'association pour les facteurs de confusion. Nous expliquons plus en
+détail ce que sont les facteurs de confusions et comment nous les modélisons
+dans la partie [[sec:lfmm_intro]].
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
@@ -316,27 +321,32 @@ modélisons dans la partie [[sec:lfmm_intro]].
   Kenneth lange, factorisation de matrice = avenir des stat ! a retrouver !
 :END:
 ** Problématique et objectifs de la thèse
-La génétique produit beaucoups de données et de en plus vite grace aux
-technologie de séquencage toujours plus efficace. Cette affluence de données
-pose de nouveau problème aux staticien. Dans cette thèse nous nous sommes
+La génétique produit beaucoup de données et de en plus vite grâce aux
+technologies de séquençage toujours plus efficace. Cette affluence de données
+pose de nouveau problème aux statisticien. Dans cette thèse nous nous sommes
 intéressé à deux problématique en analyse de données génétiques. L'accent a été
-mis sur la rapidité des méthodes dévelopé afin qu'elle soit applicable aux
-données génétique moderne. En outre, afin que nos méthodes statistiques soit
-utilisable par la communauté scientifique en génétique il a été important de
-rendre accessible une implémentation informatique efficace des méthodes en
-question.
+mis sur la rapidité des méthodes développées afin qu'elles soient applicables
+aux données génétiques modernes. En outre, afin que nos méthodes statistiques
+soient utilisables par la communauté scientifique en génétique, il a été
+important de rendre accessible une implémentation informatique efficace des
+méthodes en question.
 
-La première méthode statistique développé dans cette thèse concerne la génétique
-des populations. A partir de données génétique et géographique nous souhaitons
-estimer une représentation synthétique permettant de visualiser l'organisation
-en populations structurées des individus observés. Nous avons dévelopé une
-seconde méthode statistique permettant de réaliser des test d'association. En
-particulier nous souhaitons résoudre le problème très présent dans les étude
-d'association en génétiques des facteurs de confusions.
+L'inférence à partir de données génétique d'une représentation synthétique
+permettant de visualiser l'organisation en populations est une des première
+étape de toutes les études de génétique des population. Nous avons développées
+une méthodologie statistique permettant l'inférence rapide de la structure de
+population à partir de données génétique et géographique.
 
-Nous présentons maintenant plus en détail chacune de nos nouvelles méthodes
-statistiques et en démontrons l'utilités sur des simulation et exemples concrets de
-la génétique.
+Les études d'association à partir de données génétiques sont très utiles pour
+identifier une liste restreinte de variable 
+
+Nous avons développé une seconde méthode statistique permettant de réaliser des
+test d'association. En particulier nous souhaitons résoudre le problème très
+présent dans les étude d'association en génétiques des facteurs de confusions.
+
+Nous présentons maintenant plus en détail chacun des cadres méthologiques
+statistiques et en démontrons leurs utilités sur des simulation et exemples
+concrets de la génétique.
 
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
@@ -979,7 +989,7 @@ Les deux algorithmes APLS et AQP que nous avons présenté dans cette partie ont
 nom du package fait référence au logiciel =TESS= 2.3 qui permet aussi d'estimer
 les coefficients de métissage à partir de données génétique et géographique.
 
-** Autres méthodes d'estimation des coefficients de métissage comparées
+** Autres méthodes d'estimation des coefficients de métissage comparées :noexport:
 *** TESS 
 *** sNMF
 ** Données simulées et réelles
@@ -4350,7 +4360,11 @@ variable explicative entre $1\%$ et $20\%$. Pour chaque paramètre de simulation
 nous avons simulé $5$ jeux de données ce qui donne un total de 125 jeux de
 données.
 
-Oracle
+Nous avons considéré une méthode oracle qui fait le test d'association entre
+$\Y$ et $\X$ en connaissant les variables latentes de la simulation. La méthode
+oracle utilise le test d'association présenté dans la partie [[sec:hypothese]] avec
+la matrice des variables latentes de la simulation. Ainsi la méthode oracle
+devrait donner les meilleurs résultats.
 
 *** Mesure de comparaison des performances
 Pour évaluer la capacité des méthodes à séparer les vrais associations des
@@ -4374,6 +4388,82 @@ un taux de fausses découvertes moyen contrôlé. Pour cela on peut par exemple
 utiliser l'algorithme de Benjamini-Hoshberg cite:benjamini1995controlling ou
 bien la \qvalue cite:Storey_2011.
 
+*** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+La polyarthrite rhumatoïde est une maladie auto-immune d'origine inconnue. Dans
+cette étude nous souhaitons étudier le rôle de la méthylation de l'ADN dans le
+développement de la polyarthrite rhumatoïde. La méthylation de l'ADN est un
+processus au cours duquel un groupe méthyle est ajouté aux molécules d'ADN. La
+méthylation peut changer l'activité de l'ADN et en particulier modifier sa
+transcription en protéine. Pour cette étude, nous nous intéressons au niveau de
+méthylation de $485 577$ sites de l'ADN chez 354 individus atteints de
+polyarthrite rhumatoïde et chez 335 individus sains cite:Liu_2013. Il est connu
+que la methylation de l'ADN dépend de l'âge, du genre et de la consommation de
+tabac de chaque individu. Nous savons aussi que le type de la cellule sur
+laquelle on prélève la mesure influence le niveau de méthylation. Tous ces
+facteurs peuvent être des facteurs de confusion pour l'étude d'association avec
+la maladie. Ils ont été pris en compte explicitement dans les études
+d'association qui ont été faites à partir des mêmes données que celles étudiées
+ici cite:Rahmani_2016,Zou_2014. Afin d'évaluer la capacité des méthodes
+à bien corriger les test d'association, nous ne prenons pas en compte
+les facteurs de confusion connus et nous comparons les résultats à ceux obtenus
+par les études cite:Rahmani_2016 et cite:Zou_2014 qui prennent en compte
+explicitement les facteurs de confusion connus (type cellulaire, genre,
+consommation de tabac et âge).
+
+De la même façon que dans cite:Zou_2014 nous avons filtré les sites avec un
+niveau de methylation moyen constitutif, c'est-à-dire inférieur à 0.2 ou
+supérieur à 0.8. De plus, nous avons centré et divisé par l'écart-type les
+données de méthylation. Nous avons ensuite appliqué les méthodes cate, lm, PCAlm,
+sva-irw, sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de
+méthylation de l'ADN associés à la polyarthrite. 
+
+*** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
+
+La maladie \celiac est une maladie auto-immune ayant une prévalence de près de
+$1 \%$ dans la population générale cite:Gujral_2012. Bien que les mécanismes
+d'apparition de cette maladie ne sont pas comprise, des études montrent de
+fortes associations avec certains gènes cite:dubois2010multiple; laissant
+envisager des causes génétiques à la maladie. Comme la maladie \celiac est très
+étudiée, faire une étude d'association de celle-ci avec des données génomiques
+constitue un bon test pour les méthodes de correction pour les variables
+latentes. Nous pourrons en effet comparer nos résultats à ceux des nombreuses
+autres GWAS de la maladie \celiac. Pour cela, nous avons utilisé la base de
+données GWAS catalog pour récupérer les SNPs ayant été identifiés dans d'autres
+études comme étant associés avec la maladie \celiac. Par ailleurs, nous savons
+que la stratification des individus en populations peut être un facteur de
+confusion dans les GWAS. Il est habituel de corriger les GWAS en utilisant les
+scores de l'ACP des données génétiques pour représenter la structure de
+population cite:Price_2006. Nous proposons ici de faire une étude d'association
+entre la maladie \celiac et des données génétique présentées dans
+cite:dubois2010multiple. Ces données comportent 281122 SNPs pour 15155
+individus, 10659 individus sains et 4496 atteints de la maladie \celiac. 
+
+Avant d'appliquer les méthodes d'étude d'association, nous avons filtré les
+données génétiques afin de garder seulement les SNPs ayant le variant le moins
+fréquent présent dans au moins $5\%$ des observations. Nous avons de plus filtré
+les individus trop apparentés. Pour cela, nous avons mesuré la probabilité
+qu'une séquence consécutive de SNPs prise chez deux individus différents soit
+identique. Si la probabilité est supérieure à $0.08$ nous avons gardé qu'un des
+deux individus. Par ailleurs, il est connu que les SNPs sont corrélés le long du
+génome par liaison génétique. Nous avons donc filtré les SNPs très corrélés
+entre eux. Cette étape est identifiée dans la littérature comme l'étape de "LD
+pruning". Pour chaque SNP nous n'avons gardé que le SNP de variance maximum sur
+une fenêtre de 100 SNPs et cela sur les SNPs ayant un coefficient de corrélation
+linéaire au carré qui est supérieur à $0.2$. Cette procédure de prunning nous a
+permis d'identifier un sous ensemble de 80275 SNPs. Les opérations de filtrage
+ont été effectuées à l'aide du logiciel plink cite:Purcell_2007. Enfin nous
+avons utilisé le logiciel beagle pour imputer les données manquantes de la
+matrice de SNPs cite:Browning_2016.
+
+Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM, ridgeLFMM afin de
+trouver les SNPs associés avec la maladie \celiac. Afin d'estimer les variables
+latentes pour corriger le test d'association entre les SNPs et la maladie
+\celiac, nous avons appliqué les méthodes sur le sous-ensemble de 80275 SNPs
+identifiés par l'étape de pruning. Par la suite, nous avons effectué le test
+d'hypothèse présenté dans la partie [[sec:hypothese]] sur les 281122 SNPs en
+utilisant l'estimation des variables latentes calculées sur le sous ensemble de
+80275 SNPs.
+
 ** Résultats
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -4391,51 +4481,53 @@ bien la \qvalue cite:Storey_2011.
 : [1] "/home/cayek/Projects/Thesis/MaThese"
 
 Dans cette partie, nous présentons les expériences numériques que nous avons
-réalisées pour évaluer la performance de nos algorithmes de correction pour les
-facteurs confusions dans les études d'associations qui repose sur une estimation
-$L_{1}$ et $L_{2}$ des paramètres de LFMM. Ces deux nouveaux algorithmes ont été
-implémentés dans le langage de programmation R et seront appelés respectivement
-ridgeLFMM pour l'estimation $L_{2}$ et lassoLFMM pour l'estimation $L_{1}$. Nous
-nous sommes comparé aux méthodes que nous avons présentées dans la partie
-[[sec:similar_method]]. Les méthodes de régression linéaires avec et sans les scores
-de l'ACP ont été implémenté dans le langage R et sont respectivement appelées lm
-et PCAlm. Pour les méthodes cate, sva-irw et sva-two-step nous avons
-respectivement utilisé leurs implémentations R mises à disposition par leurs
-auteurs respectifs.
+réalisées pour évaluer la performance de nos algorithmes de correction des
+facteurs de confusions dans les études d'association. Les deux nouveaux
+algorithmes ont été implémentés dans le langage de programmation R et sont
+appelés respectivement ridgeLFMM pour l'estimation $L_{2}$ et lassoLFMM pour
+l'estimation $L_{1}$. Nos méthodes sont comparées aux méthodes présentées dans
+la partie [[sec:similar_method]]. Les méthodes de régression linéaires avec et sans
+les scores de l'ACP ont été implémentées dans le langage R. Elles sont
+respectivement appelées lm et PCAlm. Pour les méthodes cate, sva-irw et
+sva-two-step, nous avons respectivement utilisé les implémentations R mises à
+disposition par leurs auteurs respectifs.
 *** Comparaison des méthodes sur des données simulées
-Sur les 125 jeux de données simulés nous avons lancé les méthodes lm, PCAlm,
-sva-irw, sva-two-step, cate et les deux méthodes présentées dans cette thèse
-lassoLFMM et ridgeLFMM. De plus, nous avons considéré une méthode oracle qui
-fait le test d'association entre $\Y$ et $\X$ en connaissant les variables
-latentes de la simulation. Les résultats sont résumés dans la Figure
-ref:fig:method_comp. Les méthodes cate, lassoLFMM et ridgeLFMM ont les mêmes
-performances que l'oracle sur toutes les simulations. Nous constatons toutefois
-une exception sur les simulations avec un paramètre $\rho$ de corrélation entre
-la variable explicative $\X$ et les variable latentes de $1$ pour cate et
-ridgeLFMM qui renvoie des \pvalues avec un taux d'inflation moyen de $3.3$ alors
-que celui de lassoLFMM vaux $1.3$ et celui de l'oracle $1.0$ (Figure
-ref:fig:method_comp D). Les méthodes cate et ridgeLFMM donnent des résultats
-très proches sur toutes les simulations. Les performances de la méthode lm sont
-sensible au paramètre de corrélation $\rho$, lorsque celui-ci vaux $0.1$ l'AUC
-et le facteur d'inflation de lm est presque égal à ceux de l'oracle mais le
-facteur d'inflation croit jusqu'à plus de 30 et l'AUC décroit jusqu'à la moitié
-de celui de l'oracle pour $\rho$ valant 1 (Figure ref:fig:method_comp B et D).
-Les \pvalues de la méthode PCAlm sont toujours correctement calibrées puisque le
-facteur d'inflation est toujours autour de 1 (Figure ref:fig:method_comp C et
-D). Cependant l'écart de l'AUC de PCAlm avec l'AUC obtenu par l'oracle croit
-avec la proportion de vrais associations et le paramètre de corrélation $\rho$
-(Figure ref:fig:method_comp A et B). Enfin sva-two-step et sva-irw renvoient des
-\pvalues correctement calibrées sauf quand le paramètre de corrélation $\rho$
-vaut 0.8 et 1.0 (Figure ref:fig:method_comp C et D). L'AUC de sva-irw est
-toujours en dessous de l'AUC de l'oracle pour toute les proportions de vrais
-associations dans les simulations (Figure ref:fig:method_comp A) et la
-différence de l'AUC de sva-irw avec de l'AUC de l'oracle croit avec le paramètre
-de corrélation $\rho$ (Figure ref:fig:method_comp B). Nous observons également
-que l'AUC de sva-two-step est très légèrement en dessous de l'AUC de l'oracle
-pour toute les proportions de vrais asociations dans les simulations (Figure
-ref:fig:method_comp A) et comme pour sva-irw la différence de l'AUC de
-sva-two-step avec de l'AUC de l'oracle croit avec le paramètre de corrélation
-$\rho$ mais plus faiblement que pour sva-irw (Figure ref:fig:method_comp B).
+Sur les 125 jeux de données simulés, nous avons utilisé les méthodes lm, PCAlm,
+sva-irw, sva-two-step, cate, les deux méthodes présentées dans ce chapitre
+lassoLFMM et ridgeLFMM, et la méthode oracle. Pour comparer les méthodes nous
+avons calculé les facteur d'inflation et aire sur la courbe précision-rappel.
+Les méthodes cate, lassoLFMM et ridgeLFMM ont des performances similaires à
+l'oracle sur toutes les simulations (Figure ref:fig:method_comp). Nous
+constatons toutefois une exception pour les simulations avec un paramètre de
+corrélation $\rho$ qui vaut 1. Sur les simulation avec une forte corrélation
+entre les variable latentes et la variable explicative cate et ridgeLFMM qui
+renvoie des \pvalues avec un taux d'inflation moyen de $3.3$ alors que celui de
+lassoLFMM vaux $1.3$ et celui de l'oracle $1.0$ (Figure ref:fig:method_comp D).
+Nous constatons par ailleurs que méthodes cate et ridgeLFMM donnent des
+résultats très similaires sur toutes les simulations. Les performances de la
+méthode lm sont sensible au paramètre de corrélation $\rho$. Lorsque le
+paramètre de corrélation est faible l'AUC de lm et le facteur d'inflation de lm
+est proche de ceux de l'oracle ($\rho = 0.1$, Figure ref:fig:method_comp B et
+D). Mais le facteur d'inflation de lm croit jusqu'à plus de 30 et l'AUC décroit
+jusqu'à la moitié de celui de l'oracle il y a une fort corrélation entre les
+variables latentes et explicative ($\rho = 1$, Figure ref:fig:method_comp B et
+D). Les \pvalues de la méthode PCAlm sont toujours correctement calibrées
+puisque le facteur d'inflation est toujours autour de 1 (Figure
+ref:fig:method_comp C et D). Cependant l'écart de l'AUC de PCAlm avec l'AUC
+obtenu par l'oracle croit avec la proportion de vrais associations et le
+paramètre de corrélation $\rho$ (Figure ref:fig:method_comp A et B). Les méthodes
+sva-two-step et sva-irw renvoient des \pvalues correctement calibrées sauf quand
+le paramètre de corrélation $\rho$ vaut 0.8 et 1.0 (Figure ref:fig:method_comp C
+et D). L'AUC de sva-irw est toujours en dessous de l'AUC de l'oracle pour toute
+les proportions de vrais associations dans les simulations (Figure
+ref:fig:method_comp A) et la différence de l'AUC de sva-irw avec de l'AUC de
+l'oracle croit avec le paramètre de corrélation $\rho$ (Figure
+ref:fig:method_comp B). Nous observons également que l'AUC de sva-two-step est
+très légèrement en dessous de l'AUC de l'oracle pour toute les proportions de
+vrais asociations dans les simulations (Figure ref:fig:method_comp A) et comme
+pour sva-irw la différence de l'AUC de sva-two-step avec l'AUC de l'oracle
+croit avec le paramètre de corrélation $\rho$ mais plus faiblement que pour
+sva-irw (Figure ref:fig:method_comp B).
 
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[ht]
@@ -4862,40 +4954,17 @@ CLOSED: [2017-08-10 jeu. 11:30]
 #+end_src
 
 *** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
-<<sec:ewas>>
+<<sec:ewas>> 
 
-La polyarthrite rhumatoïde est une maladie auto-immune d'origine inconnue. Dans
-cette étude nous souhaitons étudier le rôle de la méthylation de l'ADN dans le
-développement de la polyarthrite rhumatoïde. La méthylation de l'ADN est un
-processus au cours duquel un groupe méthyle est ajouté aux molécules d'ADN. La
-méthylation peut changer l'activité de l'ADN et en particulier modifier sa
-transcription en protéine. Pour cette étude nous nous intéressons au niveau de
-méthylation de $485 577$ sites de l'ADN pour 354 individus atteints de
-polyarthrite rhumatoïde et 335 individus sains. Il est connu que la methylation
-de l'ADN dépend de l'âge, du sexe et de la consommation de tabac. Nous savons
-aussi que le type de la cellule sur laquelle on pratique la mesure influence le
-niveau de méthylation. Tous ces facteurs peuvent être des facteurs de confusion
-pour l'étude d'association avec la maladie, ils ont d'ailleurs été pris en
-compte explicitement dans les études d'association qui ont été faites à partir
-des mêmes données que celles étudiées ici cite:Rahmani_2016,Zou_2014,Liu_2013.
-Afin d'évaluer la capacité des méthodes à bien corriger pour les facteurs de
-confusion, nous ne prenons pas en compte les facteurs de confusion connus et
-nous comparons les résultats à ceux obtenus par les études cite:Rahmani_2016 et
-cite:Zou_2014 qui prennent en compte explicitement les facteurs de confusion
-connus.
-
-De la même façon que dans cite:Zou_2014 nous avons filtré les sites avec un
-niveau de methylation moyen constitutif, c'est à dire inférieur à 0.2 ou
-supérieur à 0.8. De plus, nous avons centré et divisé par l'écart type les
-données de méthylation. Nous avons ensuite lancé les méthodes cate, lm, PCAlm,
-sva-irw, sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de
-méthylation de l'ADN associés à la polyarthrite. Nous avons choisi $\K = 10$
-pour le nombre de variables latentes (voir Figure ref:fig:ewas_params A et B).
-Pour $\K = 10$, les valeurs du paramètre de régularisation $L_{2}$ $\lambRidge$
-entre $10^{-10}$ et $1$ donnent les mêmes valeurs d'erreur de prédiction moyen
-(Figure ref:fig:ewas_params C), nous avons choisi de prendre $\lambRidge =
-10^{-5}$ pour ridgeLFMM. Nous avons choisi la proportion de lignes non nulles
-pour de la matrice des effets $\B$ valant $1 \%$ pour lassoLFMM.
+Nous avons appliqué les méthodes cate, lm, PCAlm, sva-irw, sva-two-step,
+lassoLFMM, ridgeLFMM afin de trouver les sites de méthylation de l'ADN associés
+à la polyarthrite. Nous avons choisi $\K = 10$ pour le nombre de variables
+latentes (voir Figure ref:fig:ewas_params A et B). Pour $\K = 10$, les valeurs
+du paramètre de régularisation $L_{2}$ ($\lambRidge$) entre $10^{-10}$ et $1.0$
+donnent les mêmes valeurs moyennes d'erreur de prédiction (Figure
+ref:fig:ewas_params C). Nous avons choisi de prendre $\lambRidge = 10^{-5}$ pour
+ridgeLFMM. Nous avons choisi la proportion de lignes non nulles valant $1\%$
+pour lassoLFMM.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -4918,19 +4987,19 @@ pour de la matrice des effets $\B$ valant $1 \%$ pour lassoLFMM.
 
 La figure ref:fig:ewas_qqplot_top A montre la distribution observée des \pvalues
 pour chaque site de méthylation renvoyées par chaque méthode contre la
-distribution théorique hypothèse nulle. On constate une inflation du nombre de
-petites \pvalues pour toutes les méthodes. Il y à une forte inflation pour lm et
-sva-irw. La figure ref:fig:ewas_qqplot_top B montre la proportion des candidats
-identifiés par cite:Zou_2014,Rahmani_2016 qui sont retrouvés dans les top listes
-de chaque méthode. Nous rappelons que les candidats identifiés par
-cite:Zou_2014,Rahmani_2016 ont été identifiés en prenant en compte les facteurs
-de confusion tel que l'age, le sexe et une estimation de la composition
-cellulaire. Toutes les méthodes considéré dans notre analyse retrouvent les
-candidats de la littérature dans leurs top 40 sauf lm et sva_irw. Pour la
-méthode lm il faut prendre le top 11881 pour trouver le premier candidat de
-cite:Zou_2014,Rahmani_2016 et le top 138038 pour tous les avoirs, pour la
-méthode sva-irw les candidats de cite:Zou_2014,Rahmani_2016 sont tous identifiés
-entre le top $5111$ et $87659$.
+distribution théorique sous l'hypothèse nulle. On constate une inflation du
+nombre de petites \pvalues pour toutes les méthodes. Il y a une forte inflation
+pour les méthodes lm et sva-irw. La figure ref:fig:ewas_qqplot_top B montre la
+proportion des candidats identifiés par cite:Zou_2014,Rahmani_2016 qui sont
+retrouvés dans les "top" listes de chaque méthode. Nous rappelons que les
+candidats identifiés par cite:Zou_2014 et cite:Rahmani_2016 sont au nombre de 5.
+Ils ont été identifiés en prenant en compte les facteurs de confusion tel que
+l'age, le sexe et une estimation de la composition cellulaire. Les méthodes
+considérées dans notre analyse retrouvent les candidats de la littérature dans
+leurs 40 premiers rangs, sauf lm et sva_irw. Pour la méthode lm, il faut prendre
+le rang 11881 pour trouver le premier candidat de cite:Zou_2014,Rahmani_2016 et
+le rang 138038 pour tous les avoir. Pour la méthode sva-irw, les candidats de
+cite:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et $87659$.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -4945,14 +5014,14 @@ entre le top $5111$ et $87659$.
 #+END_EXPORT
 
 Enfin pour chaque méthode nous avons calculé la liste obtenue quand on contrôle
-le taux de fausse découverte (FDR) à $1 \%$. Toutefois les algorithmes de
-contrôle du FDR nécessitent que les \pvalues soient correctement calibrées. Pour
-cela nous avons calibrées les \pvalues grâce à la méthode présentée dans la
-partie [[sec:calibration]]. Le contrôle du FDR a été fait à l'aide du package R
-qvalue cite:Storey_2011. La figure ref:fig:ewas_venn montre les intersections
-entre les méthodes. Nous avons écarté lm et sva-irw car ils renvoyaient des
-listes trop différentes des autres. Parmi les 19 sites de méthylation renvoyés
-par toutes les méthodes on retrouve les 5 candidats identifiés dans
+le taux de fausse découverte (FDR) à $1 \%$. Les algorithmes de contrôle du FDR
+nécessitent que les \pvalues soient correctement calibrées. Pour cela nous avons
+calibrées les \pvalues grâce à la méthode présentée dans la partie
+[[sec:calibration]]. Le contrôle du FDR a été réalisé à l'aide du package R qvalue
+cite:Storey_2011. La figure ref:fig:ewas_venn montre les intersections entre les
+méthodes. Nous avons écarté lm et sva-irw car ils renvoyaient des listes trop
+différentes des autres. Parmi les 19 sites de méthylation renvoyés par toutes
+les méthodes on retrouve les 5 candidats identifiés par
 cite:Zou_2014,Rahmani_2016.
 
 #+BEGIN_EXPORT latex
@@ -6761,66 +6830,19 @@ CLOSED: [2017-09-16 sam. 16:02]
 [[./OUTPUT/Rplots/ewas_venn.png]]
 
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
-<<sec:gwas>>
+<<sec:gwas>> 
 
-La maladie \celiac est une maladie auto-immune ayant une prévalence de près de
-$1 \%$ dans la population générale cite:Gujral_2012. Bien que les mécanismes
-d'apparition de cette maladie ne soit pas compris des études montres de fortes
-associations avec certains gènes cite:dubois2010multiple; lassant envisager des
-causes génétiques à la maladie. Comme la maladie \celiac est très étudiée faire
-une étude d'association de celle-ci avec des données génomiques constitue un bon
-test pour les méthodes de correction pour les variables latentes. Nous pourrons
-en effet comparer nos résultats à ceux des nombreuses autres GWAS de la maladie
-\celiac. Pour cela nous avons utilisé le GWAS catalog pour récupérer les SNPs
-ayant été identifié dans d'autres études comme étant associés avec la maladie
-\celiac. Par ailleurs, nous s'avons que la stratification des individus en sous
-populations peut être un facteur de confusion dans les GWAS. Il est habituel de
-corriger les GWAS en utilisant les scores de l'ACP des données génétiques pour
-représenter la structure de population cite:Price_2006. Nous proposons ici de
-faire une étude d'association entre la maladie \celiac et des données génétique
-présentées dans cite:dubois2010multiple. Ces données comportent 281122 SNPs
-(single nucléotyde polimorphism) pour 15155 individus, 10659 individus sains et
-4496 atteints de la maladie \celiac. Ce que nous appelons SNP est la mesure pour
-une position donnée du génome, que l'on appel locus, du nucleotide présent chez
-l'individu observé. On parle de "single nucléotyde polimorphism" car on s'intéresse
-seulement aux locus pour lesquels on a observé seulement deux variants dans la
-population étudiée. Il faut de plus que le variant le moins fréquent soit au
-moins observé chez $5\%$ des individus de la population. Ainsi pour cette GWAS
-la matrice des variables expliquées est composée de 0, 1 et 2.
-
-Avant de lancer les méthodes d'étude d'association nous avons filtré les données
-génétique afin de garder seulement les SNPs ayant le variant le moins fréquent
-présent dans au moins $5\%$ des observations. Nous avons de plus filtré les
-individus trop apparentés, pour cela on mesure la probabilité qu'une séquence
-consécutive de SNPs prise chez deux individus différents soit identique et si
-celle-ci est supérieure à $0.08$ nous ne gardons qu'un des deux individus. Par
-ailleurs, il est connu que les SNPs sont corrélés le long du génome, nous avons
-donc filtrer les SNPs trop corrélé entre eux. Cette étape est identifié dans la
-littérature comme le LD pruning. Pour cela, pour chaque SNP nous ne gardons que
-le SNP de variance maximum sur une fenêtre de 100 SNPs et cela sur les SNPs
-ayant un coefficient de corrélation linéaire au carré qui est supérieure à
-$0.2$, cela nous a permis d'identifier un sous ensemble de 80275 SNPs. Ces
-opérations de filtrage ont été effectuées à l'aide du logiciel plink
-cite:Purcell_2007. Enfin nous avons utilisé beagle pour imputer les données
-manquantes de la matrice de SNPs cite:Browning_2016. Nous obtenons finalement un
-jeux de données complet composée 281122 SNPs observés sur 15155 individus.
-
-Afin d'estimer les variables latentes pour corriger le test d'association entre
-les SNPs et la maladie \celiac nous avons lancé les méthodes lm, lmPCA, cate,
-ridgeLFMM et lassoLFMM sur le sous ensemble de 80275 SNPs identifié par l'étape
-de LD pruning. Par la suite, nous avons effectué le test d'hypothèse présenté
-dans la partie [[sec:hypothese]] sur les 281122 SNPs mais en utilisant l'estimation
-des variables latentes calculées sur le sous ensemble de 80275 SNPs. Nous avons
-choisi de lancer les méthodes lmPCA, cate, lassoLFMM et ridgeLFMM avec 9
-variables latentes (voir Figure ref:fig:gwas_params A et B). Nous avons choisi
-une proportion de lignes non nulles pour la matrice des effets $\B$ valant $1
-\%$ pour lassoLFMM. La validation croisée du paramètre $\lambRidge$ tend à faire
-choisir une forte valeur pour celui-ci (Figure ref:fig:gwas_params C), nous
-avons choisi $1e^{3}$. La validation croisée présentée sur la Figure
-ref:fig:gwas_params C tend à faire choisir une valeur plus grande que $1e^{3}$
-cependant comme nous l'avons discuté dans la partie [[sec:paramL2]] si
-$\lambdaRidge$ est trop grand alors ridgeLFMM renvoie les mêmes résultats que
-PCAlm.
+Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM, ridgeLFMM afin de
+trouver les SNPs associés avec la maladie \celiac. Nous avons utilisé les
+méthodes avec 9 variables latentes (voir Figure ref:fig:gwas_params A et B).
+Nous avons choisi une proportion de lignes non nulles pour la matrice des effets
+$\B$ valant $1 \%$ pour lassoLFMM. La validation croisée du paramètre
+$\lambRidge$ tend à faire choisir une forte valeur pour celui-ci (Figure
+ref:fig:gwas_params C), nous avons choisi $1e^{3}$. La validation croisée
+présentée sur la Figure ref:fig:gwas_params C tend à faire choisir une valeur
+plus grande que $1e^{3}$ cependant comme nous l'avons discuté dans la partie
+[[sec:paramL2]] si $\lambdaRidge$ est trop grand alors ridgeLFMM renvoie les mêmes
+résultats que PCAlm.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -6853,10 +6875,36 @@ mieux les SNPs du GWAS catalog du reste. La liste top 1000 de ridgeLFMM et PCAlm
 contiennent respectivement $63 \%$ et $57 \%$ des SNPs du GWAS catalog contre
 $18 \%$, $14 \%$ et $12 \%$ pour lassoLFMM, cate et lm.
 
+#+NAME: code:gwas_qqplot_top
+#+CAPTION: Dépend de [[code:gwas_qqplot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/gwas_qqplot_top_plot.rds")
+
+  pl$pl.func()
+  print(pl)
+
+  pl.leg <- drawable(function() {
+    gridExtra::grid.arrange(pl$pl,
+                 pl$legend, nrow=2, heights=c(10, 1))
+  })
+
+  print(pl.leg)
+
+  ThesisRpackage::Plots_export_png(pl.leg,
+                                   basename.output = "gwas_qqplot_top",
+                                   env = MaTheseR.params,
+                                   height = 0.9 * MaTheseR.params$textheightinch,
+                                   width = MaTheseR.params$textwidthinch,
+                                   res = 600)
+
+#+end_src
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/gwas_qqplot_top.pdf.png}
+\includegraphics{./OUTPUT/Rplots/gwas_qqplot_top.png}
 \caption{A) Diagrame quantile-quantile de l'inverse du logarithme en base
   \pvaleur renvoyé par chaques méthodes. Les quantiles théoriques suivent la loi
   exponetielle. B) Proportion des candidats du GWAS catalogue
@@ -8161,7 +8209,7 @@ CLOSED: [2017-09-01 ven. 10:20]
 
 #+RESULTS:
 [[./OUTPUT/Rplots/gwas_hist_pvalue.png]]
-****** DONE Clumping
+***** DONE Clumping
 CLOSED: [2017-09-12 mar. 13:59]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-09-12 mar. 13:59]
@@ -8383,7 +8431,7 @@ Warning messages:
 Expr save in ./OUTPUT/Expr/celiac_all_clumped.rds
 #+end_example
 
-****** DONE plot clumped top * power
+***** DONE plot clumped top * power
 CLOSED: [2017-09-12 mar. 14:55]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-09-12 mar. 14:55]
@@ -8429,6 +8477,331 @@ CLOSED: [2017-09-12 mar. 14:55]
 #+RESULTS:
 [[./OUTPUT/Rplots/gwas_clumped_top_power.png]]
 
+***** DONE Meta analyse
+CLOSED: [2017-09-19 mar. 21:19]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-19 mar. 21:19]
+- State "TODO"       from              [2017-09-16 sam. 18:07]
+:END:
+****** DONE On utilise mahalanobis
+CLOSED: [2017-09-16 sam. 18:32]
+:LOGBOOK:
+- State "DONE"       from              [2017-09-16 sam. 18:32]
+:END:
+
+#+NAME: code:gwas_meta
+#+CAPTION: Dépend de [[code:gwas_expr]]
+#+begin_src R 
+  library(MaTheseR)
+
+  celiac.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
+
+
+  ## arrange score into a matrix
+  Z.df <- celiac.df %>%
+      dplyr::filter(method %in% c("cate", "lassoLFMM", "ridgeLFMM", "PCAlm")) %>%
+      dplyr::select(method, calibrated.score, colname, index,outlier) %>%
+      group_by(method) %>%
+      tidyr::spread(method, calibrated.score)
+
+  Z.df
+  Z <- Z.df[,c(-1,-2,-3)] %>% as.matrix()
+  dim(Z)
+  colnames(Z)
+  anyNA(Z)
+
+
+  mahalanobis.res <- pcadapt::covRob_cpp(Z)
+  Z.df <- Z.df %>%
+    mutate(mahalanobis.dist = mahalanobis.res$dist%>%as.numeric())
+
+  ## plot dist
+  ggplot(Z.df, aes(mahalanobis.dist)) +
+    geom_histogram()
+  ggplot(Z.df, aes(y = mahalanobis.dist, x = seq_along(mahalanobis.dist), color = outlier)) +
+    geom_point()
+
+  ## compute pvalue
+  Z.df <- Z.df %>%
+    mutate(pvalue = pchisq(mahalanobis.dist, df = 5, lower.tail = FALSE))
+  ggplot(Z.df, aes(pvalue)) +
+    geom_histogram()
+  ggplot(Z.df, aes(y = -log10(pvalue), x = seq_along(pvalue), color = outlier)) +
+    geom_point() + ## nice :D
+    ylim(0,30)
+
+  ## recalibration
+  gif <- median(Z.df$mahalanobis.dist) / qchisq(0.5, df = 5)
+  gif ## ca va diminuer les pvalues
+  Z.df <- Z.df %>%
+    mutate(recalibrated.pvalue = pchisq(mahalanobis.dist / gif, df = 5, lower.tail = FALSE))
+  ggplot(Z.df, aes(recalibrated.pvalue)) +
+    geom_histogram()
+
+  ## top by dist
+  Z.df %>%
+    dplyr::arrange(desc(mahalanobis.dist)) %>%
+    dplyr::filter(row_number() < 100) %>%
+    print.data.frame()
+
+  save_expr(Z.df, "gwas_mahanalobis.rds")
+#+end_src
+****** DONE On clump
+CLOSED: [2017-09-19 mar. 19:45]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-19 mar. 19:45]
+- State "TODO"       from              [2017-09-16 sam. 18:32]
+:END:
+
+#+NAME: code:gwas_meta_clump
+#+CAPTION: Dépend de [[code:gwas_meta]]
+#+begin_src R 
+  library(MaTheseR)
+
+  ## load res
+  Z.df <- readRDS("./OUTPUT/Expr/gwas_mahanalobis.rds")
+  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
+
+
+  ## clumping with plink
+  tmp.file <- tempfile(tmpdir = "~/Projects/Thesis/Data/Celiac/dubois_2010/")
+  Z.df %>% dplyr::transmute(P = recalibrated.pvalue, SNP = colname) %>%
+    readr::write_delim(path = tmp.file, delim = "\t")
+  plink.cmd <- paste("~/BiocompSoftware/plink/plink",
+                     "--bfile ~/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ",
+                     "--clump",
+                     tmp.file,
+                     "--clump-p1 0.01",
+                     "--clump-p2 0.1",
+                     "--clump-r2 0.20",
+                     "--clump-kb 250",
+                     "--out plink.clump",
+                     "--threads 8")
+  system(plink.cmd)
+  clumps.df <- data.table::fread(file = "~/Projects/Thesis/MaThese/plink.clump.clumped",
+                                    data.table = FALSE) %>% as_tibble()
+
+
+  save_expr(clumps.df, "gwas_manhanobis_clumped.rds")
+
+#+end_src
+****** DONE plot du top
+CLOSED: [2017-09-19 mar. 20:55]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-19 mar. 20:55]
+- State "TODO"       from "APPT"       [2017-09-19 mar. 19:46]
+- State "APPT"       from "TODO"       [2017-09-19 mar. 19:46]
+- State "TODO"       from              [2017-09-19 mar. 19:45]
+:END:
+
+#+NAME: code:gwas_meta_top
+#+CAPTION: Dépend de [[code:gwas_meta_clump
+#+begin_src R 
+  library(MaTheseR)
+
+  ## load res
+  Z.df <- readRDS("./OUTPUT/Expr/gwas_mahanalobis.rds")
+  Z.clumps.df <- readRDS("./OUTPUT/Expr/gwas_manhanobis_clumped.rds")
+  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
+
+  df <- Z.clumps.df %>%
+    transmute(pvalue = P,
+              outlier.SNP = SNP %in% candidates.rs,
+              outlier.SP2.count = str_count(SP2, paste(candidates.rs, collapse = "|")),
+              outlier = outlier.SNP | (outlier.SP2.count >= 1)) %>%
+    arrange(pvalue) %>%
+    mutate(candidate = cumsum(outlier), clumped.top = seq_along(pvalue))
+  df <- df %>%
+    add_row(clumped.top = 0, candidate = 0)
+
+    pl <- ggplot(df, aes(x = clumped.top, y = candidate)) +
+      geom_line() +
+      coord_cartesian(xlim = c(0,1000))
+    pl
+
+  save_plot_png(pl, "ewas_top_manhanobis.png")
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/ewas_top_manhanobis.png]]
+
+On retrouve moins bien les candidats...
+
+****** TODO annotations
+:LOGBOOK:
+- State "TODO"       from              [2017-09-19 mar. 19:46]
+:END:
+#+NAME: code:
+#+CAPTION: Dépend de 
+#+begin_src R 
+file.remove(tmp.file)
+
+## explode clumps
+exploded.clumps.df <- tibble()
+for (i in 1:nrow(res)) {
+  SNP <- res$SNP[i]
+  SP2 <- res$SP2[i] %>% str_split(",", simplify = TRUE) %>%
+      str_replace("\\(1\\)", "") %>%
+    str_split(";", simplify = TRUE)
+  SP2 <- c(SP2, SNP)
+  exploded.clumps.df <- exploded.clumps.df %>%
+    rbind(tibble(snps = SP2, clump.snps = SNP))
+}
+
+
+## candidates
+candidates.rs %in% exploded.clumps.df$snps %>% mean()
+
+## clump with candidates
+df <- clumps.df %>%
+  mutate(pvalue = P,
+            outlier.SNP = SNP %in% candidates.rs,
+            outlier.SP2.count = str_count(SP2, paste(candidates.rs, collapse = "|")),
+            outlier = outlier.SNP | (outlier.SP2.count >= 1)) %>%
+  arrange(pvalue)
+
+df %>%
+  dplyr::select(TOTAL, P, outlier) %>%
+  print.data.frame()
+
+##  annotation
+
+#+end_src
+***** DONE On enlève HLA (chrm 6)
+CLOSED: [2017-09-19 mar. 21:19]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-19 mar. 21:19]
+- State "TODO"       from              [2017-09-19 mar. 20:18]
+:END:
+
+source sur le HLA : https://ghr.nlm.nih.gov/primer/genefamily/hla
+
+#+NAME: code:gwas_top_HLA
+#+CAPTION: Dépend de [[code:gwas_expr]] [[code:gwas_clumping]]
+#+begin_src R 
+  library(MaTheseR)
+  library(stringr)
+
+  ## data
+  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  clumped.res.df <- readRDS("./OUTPUT/Expr/celiac_all_clumped.rds")
+  Z.clumps.df <- readRDS("./OUTPUT/Expr/gwas_manhanobis_clumped.rds")  %>%
+    dplyr::mutate(method = "manhalanobis")
+  snps.info.df <- readRDS("~/Projects/Thesis/Data/Celiac/dubois_2010/celiacQC_flo/backingfiles/celiacQC_flo.rds")$map %>% as_tibble()
+  candidates.rs <- (res.df %>% dplyr::filter(index %in% candidates))$colname %>% unique()
+
+
+  snps.info.df %>% dplyr::filter(marker.ID %in% candidates.rs) %>%
+    print.data.frame()
+
+  res.df <- clumped.res.df %>%
+    rbind(Z.clumps.df) %>%
+    mutate(marker.ID = SNP) %>%
+    left_join(snps.info.df, by = "marker.ID") %>%
+    transmute(chromosome = chromosome,
+              method = method,
+              pvalue = P,
+              outlier.SNP = SNP %in% candidates.rs,
+              outlier.SP2.count = str_count(SP2, paste(candidates.rs, collapse = "|")),
+              outlier = outlier.SNP | (outlier.SP2.count >= 1))
+
+  ## we remove chrm 6
+  toplot <- res.df %>%
+    dplyr::mutate(chromosome6 = (chromosome == 6)) %>%
+    group_by(method, chromosome6) %>%
+    arrange(method, pvalue) %>%
+    mutate(candidate = cumsum(outlier), clumped.top = seq_along(pvalue)) %>%
+    ungroup() %>%
+    add_row(method = unique(toplot$method), chromosome6 = TRUE, clumped.top = 0, candidate = 0) %>%
+    add_row(method = unique(toplot$method), chromosome6 = FALSE, clumped.top = 0, candidate = 0)
+  save_expr(toplot, "gwas_top_clumped_chrm6_toplot.rds")
+
+  pl <- ggplot(toplot, aes(x = clumped.top, y = candidate, color = method)) +
+    geom_line() +
+    coord_cartesian(xlim = c(0,300)) +
+    facet_grid(chromosome6~., scales = "free")
+  pl
+  save_plot_png(pl, "gwas_top_clumped_chrm6.png")
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/gwas_top_clumped_chrm6.png]]
+
+Bon on va dire que ca suffit pour ne par avoir a discuter ce qu'on trouve !!
+
+***** CANCELLED Etude de l'intersection des clumps à 1%
+CLOSED: [2017-09-16 sam. 18:05]
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2017-09-16 sam. 18:05]
+- State "TODO"       from              [2017-09-16 sam. 17:28]
+:END:
+
+#+NAME: code:gwas_inter_clumps
+#+CAPTION: Dépend de [[code:gwas_expr]]
+#+begin_src R 
+  library(MaTheseR)
+  library(stringr)
+  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
+
+
+  clumps.df <- res.df %>%
+    dplyr::filter(method %in% c("cate", "PCAlm", "lassoLFMM", "ridgeLFMM")) %>%
+    group_by(method) %>%
+    dplyr::mutate(qvalue = qvalue::qvalue(calibrated.pvalue)$qvalues) %>%
+    ungroup()
+
+
+  res <- tibble()
+  for (m in methods) {
+    tmp.file <- tempfile(tmpdir = "~/Projects/Thesis/Data/Celiac/dubois_2010/")
+    clumps.df %>% dplyr::filter(method == m) %>%
+      dplyr::transmute(P = qvalue, SNP = colname) %>%
+        readr::write_delim(path = tmp.file, delim = "\t")
+    plink.cmd <- paste("~/BiocompSoftware/plink/plink",
+                       "--bfile ~/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ",
+                       "--clump",
+                       tmp.file,
+                       "--clump-p1 0.01",
+                       "--clump-p2 0.1",
+                       "--clump-r2 0.20",
+                       "--clump-kb 250",
+                       "--out plink.clump",
+                       "--threads 8")
+    system(plink.cmd)
+    clumping.res <- data.table::fread(file = "~/Projects/Thesis/MaThese/plink.clump.clumped",
+                                      data.table = FALSE) %>% as_tibble()
+
+    res <- clumping.res %>%
+      mutate(method = m) %>%
+      rbind(res)
+
+    file.remove(tmp.file)
+  }
+
+  res$SNP %>% unique()
+
+  ## explode clumps
+  exploded.clumps.df <- tibble()
+  for (i in 1:nrow(res)) {
+    SNP <- res$SNP[i]
+    SP2 <- res$SP2[i] %>% str_split(",", simplify = TRUE) %>%
+      str_replace("\\(1\\)", "") %>%
+      str_split(";", simplify = TRUE)
+    SP2 <- c(SP2, SNP)
+    exploded.clumps.df <- exploded.clumps.df %>%
+      rbind(tibble(snps = SP2, clump.snps = SNP))
+  }
+
+#+end_src
 ***** DONE Plots
 CLOSED: [2017-09-01 ven. 13:13]
 :LOGBOOK:
@@ -8526,7 +8899,7 @@ CLOSED: [2017-09-01 ven. 13:13]
 - State "TODO"       from              [2017-08-14 lun. 11:50]
 :END:
 #+NAME: code:gwas_qqplot
-#+CAPTION: Dépend de [[code:gwas_expr]]
+#+CAPTION: Dépend de [[code:gwas_expr]] [[code:gwas_top_HLA]]
 #+BEGIN_SRC R
   library(MaTheseR)
   library(cowplot)
@@ -8538,6 +8911,8 @@ CLOSED: [2017-09-01 ven. 13:13]
   gtheme <- MaTheseR.params$gtheme
 
 
+  ## res
+  top.toplot <- readRDS("./OUTPUT/Expr/gwas_top_clumped_chrm6_toplot.rds")
   celiac.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
   candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
   m1 <- length(candidates)
@@ -8551,6 +8926,12 @@ CLOSED: [2017-09-01 ven. 13:13]
               calibrated.pvalue = calibrated.pvalue,
               outlier = index %in% candidates)
   df.res$method %>% unique()
+  top.toplot <- top.toplot %>%
+    dplyr::filter(method != "manhalanobis") %>%
+    mutate(method = factor(article3_method_name(method), method.ordered),
+           chromosome6 = factor(chromosome6, levels = c(TRUE, FALSE), label = c("Chromosome 6", "Autres chromosomes")))
+  top.toplot$method %>% unique()
+  top.toplot$chromosome6 %>% unique()
 
   ## qqplot
   pl.qq <- ggplot(df.res, aes(sample = -log10(pvalue), color = method)) +
@@ -8569,31 +8950,23 @@ CLOSED: [2017-09-01 ven. 13:13]
   save_plot_png(pl.qq, filename = "gwas_qqplot_notcalibrated_all.png")
 
   ## top * power plot
-  toplot <-  df.res %>%
-    group_by(method) %>%
-    arrange(method, pvalue) %>%
-    mutate(power = cumsum(outlier) / m1, top = seq_along(pvalue)) %>%
-    ungroup() 
-  toplot <- toplot  %>%
-    add_row(method = unique(toplot$method), top = 0, power = 0)
-
-  pl.top <- ggplot(toplot, aes(x = top, y = power, color = method)) +
+  pl.top <- ggplot(top.toplot, aes(x = clumped.top, y = candidate, color = method)) +
     geom_line() +
-    coord_cartesian(xlim = c(0,1500)) +
+    coord_cartesian(xlim = c(0,300)) +
+    facet_grid(chromosome6~., scales = "free") +
     scale_color_manual(values = color.values) +
     gtheme +
     theme(legend.position="none") +
     xlab("Taille de la top liste") +
-    ylab("Candidats retrouvés") +
-    scale_y_continuous(labels=percent)
+    ylab("Candidats retrouvés")
 
   ## When to we have every candidates ?
   message("== Top all ==")
-  toplot %>% group_by(method) %>% summarise(top = min(which(power >= 1.0))) %>% knitr::kable()
+  top.toplot %>% group_by(method) %>% summarise(top = min(which.max(candidate))) %>% knitr::kable()
   message("== Top 3000 ==")
-  toplot %>% dplyr::filter(top == 3000) %>% knitr::kable()
+  top.toplot %>% dplyr::filter(clumped.top == 3000) %>% knitr::kable()
   message("== Top 1000 ==")
-  toplot %>% dplyr::filter(top == 1000) %>% knitr::kable()
+  top.toplot %>% dplyr::filter(clumped.top == 1000) %>% knitr::kable()
 
   ## pl.top
   save_plot_png(pl.top, filename = "gwas_top_power_all.png")
@@ -8602,14 +8975,69 @@ CLOSED: [2017-09-01 ven. 13:13]
   pl <- plot_grid(pl.qq, pl.top, ncol = 1, labels = c("A", "B"))
   ## add legend
   pl.leg <- drawable(function() {
-    grid.arrange(pl,
+    gridExtra::grid.arrange(pl,
                  legend, nrow=2, heights=c(10, 1))
   })
-  save_plot_MaTheseR(pl.leg, "gwas_qqplot_top.pdf.png",
-                     height = 0.9 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+  pl.leg$pl <- pl 
+  pl.leg$legend <- legend
 
+  save_expr(pl.leg, "gwas_qqplot_top_plot.rds")
 #+END_SRC
+
+#+RESULTS: code:gwas_qqplot
+#+begin_example
+
+Attaching package: ‘cowplot’
+
+The following object is masked from ‘package:ggplot2’:
+
+    ggsave
+
+Attaching package: ‘gridExtra’
+
+The following object is masked from ‘package:dplyr’:
+
+    combine
+
+Attaching package: ‘scales’
+
+The following object is masked from ‘package:purrr’:
+
+    discard
+
+The following object is masked from ‘package:readr’:
+
+    col_factor
+[1] lm        ridgeLFMM PCAlm     cate      lassoLFMM
+Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
+[1] cate      lassoLFMM lm        PCAlm     ridgeLFMM
+Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
+[1] Chromosome 6       Autres chromosomes
+Levels: Chromosome 6 Autres chromosomes
+Warning message:
+Removed 310 rows containing non-finite values (stat_qq).
+[[./OUTPUT/Rplots/gwas_qqplot_notcalibrated_all.png]]
+Warning message:
+Removed 310 rows containing non-finite values (stat_qq).
+== Top all ==
+
+
+|method    |   top|
+|:---------|-----:|
+|lm        | 10355|
+|PCAlm     |  2427|
+|lassoLFMM |  6039|
+|cate      |  3845|
+|ridgeLFMM |  1895|
+== Top 3000 ==
+Error in eval(lhs, parent, parent) : object 'toplot' not found
+== Top 1000 ==
+Error in eval(lhs, parent, parent) : object 'toplot' not found
+[[./OUTPUT/Rplots/gwas_top_power_all.png]]
+Warning message:
+Removed 310 rows containing non-finite values (stat_qq).
+Error in saveRDS(expr, output.file) : object 'pl.reg' not found
+#+end_example
 
 #+RESULTS: code:gwas_qqplot_venn
 #+begin_example
@@ -8796,205 +9224,6 @@ CLOSED: [2017-09-16 sam. 17:21]
   l <- inter.list(1,2,3, 4)
   mean(candidates %in% l)
 #+END_SRC
-
-***** CANCELLED Etude de l'intersection des clumps à 1%
-CLOSED: [2017-09-16 sam. 18:05]
-:LOGBOOK:
-- State "CANCELLED"  from "TODO"       [2017-09-16 sam. 18:05]
-- State "TODO"       from              [2017-09-16 sam. 17:28]
-:END:
-
-#+NAME: code:gwas_inter_clumps
-#+CAPTION: Dépend de [[code:gwas_expr]]
-#+begin_src R 
-  library(MaTheseR)
-  library(stringr)
-  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
-  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
-  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
-
-
-  clumps.df <- res.df %>%
-    dplyr::filter(method %in% c("cate", "PCAlm", "lassoLFMM", "ridgeLFMM")) %>%
-    group_by(method) %>%
-    dplyr::mutate(qvalue = qvalue::qvalue(calibrated.pvalue)$qvalues) %>%
-    ungroup()
-
-
-  res <- tibble()
-  for (m in methods) {
-    tmp.file <- tempfile(tmpdir = "~/Projects/Thesis/Data/Celiac/dubois_2010/")
-    clumps.df %>% dplyr::filter(method == m) %>%
-      dplyr::transmute(P = qvalue, SNP = colname) %>%
-        readr::write_delim(path = tmp.file, delim = "\t")
-    plink.cmd <- paste("~/BiocompSoftware/plink/plink",
-                       "--bfile ~/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ",
-                       "--clump",
-                       tmp.file,
-                       "--clump-p1 0.01",
-                       "--clump-p2 0.1",
-                       "--clump-r2 0.20",
-                       "--clump-kb 250",
-                       "--out plink.clump",
-                       "--threads 8")
-    system(plink.cmd)
-    clumping.res <- data.table::fread(file = "~/Projects/Thesis/MaThese/plink.clump.clumped",
-                                      data.table = FALSE) %>% as_tibble()
-
-    res <- clumping.res %>%
-      mutate(method = m) %>%
-      rbind(res)
-
-    file.remove(tmp.file)
-  }
-
-  res$SNP %>% unique()
-
-  ## explode clumps
-  exploded.clumps.df <- tibble()
-  for (i in 1:nrow(res)) {
-    SNP <- res$SNP[i]
-    SP2 <- res$SP2[i] %>% str_split(",", simplify = TRUE) %>%
-      str_replace("\\(1\\)", "") %>%
-      str_split(";", simplify = TRUE)
-    SP2 <- c(SP2, SNP)
-    exploded.clumps.df <- exploded.clumps.df %>%
-      rbind(tibble(snps = SP2, clump.snps = SNP))
-  }
-
-#+end_src
-
-***** TODO Meta analyse
-:LOGBOOK:
-- State "TODO"       from              [2017-09-16 sam. 18:07]
-:END:
-****** DONE On utilise mahalanobis
-CLOSED: [2017-09-16 sam. 18:32]
-:LOGBOOK:
-- State "DONE"       from              [2017-09-16 sam. 18:32]
-:END:
-
-#+NAME: code:gwas_meta
-#+CAPTION: Dépend de [[code:gwas_expr]]
-#+begin_src R 
-  library(MaTheseR)
-
-  celiac.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
-  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
-  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
-
-
-  ## arrange score into a matrix
-  Z.df <- celiac.df %>%
-      dplyr::filter(method %in% c("cate", "lassoLFMM", "ridgeLFMM", "PCAlm")) %>%
-      dplyr::select(method, calibrated.score, colname, index,outlier) %>%
-      group_by(method) %>%
-      tidyr::spread(method, calibrated.score)
-
-  Z.df
-  Z <- Z.df[,c(-1,-2,-3)] %>% as.matrix()
-  dim(Z)
-  colnames(Z)
-  anyNA(Z)
-
-
-  mahalanobis.res <- pcadapt::covRob_cpp(Z)
-  Z.df <- Z.df %>%
-    mutate(mahalanobis.dist = mahalanobis.res$dist%>%as.numeric())
-
-  ## plot dist
-  ggplot(Z.df, aes(mahalanobis.dist)) +
-    geom_histogram()
-  ggplot(Z.df, aes(y = mahalanobis.dist, x = seq_along(mahalanobis.dist), color = outlier)) +
-    geom_point()
-
-  ## compute pvalue
-  Z.df <- Z.df %>%
-    mutate(pvalue = pchisq(mahalanobis.dist, df = 5, lower.tail = FALSE))
-  ggplot(Z.df, aes(pvalue)) +
-    geom_histogram()
-
-  ## recalibration
-  gif <- median(Z.df$mahalanobis.dist) / qchisq(0.5, df = 1)
-  Z.df <- Z.df %>%
-    mutate(recalibrated.pvalue = pchisq(mahalanobis.dist / gif, df = 1, lower.tail = FALSE))
-  ggplot(Z.df, aes(recalibrated.pvalue)) +
-    geom_histogram()
-
-  ## top by dist
-  Z.df %>%
-    dplyr::arrange(desc(mahalanobis.dist)) %>%
-    dplyr::filter(row_number() < 100) %>%
-    print.data.frame()
-
-  save_expr(Z.df, "gwas_mahanalobis.rds")
-#+end_src
-****** TODO On clump
-:LOGBOOK:
-- State "TODO"       from              [2017-09-16 sam. 18:32]
-:END:
-
-#+NAME: code:gwas_meta_clump
-#+CAPTION: Dépend de [[code:gwas_meta]]
-#+begin_src R 
-  library(MaTheseR)
-
-  ## load res
-  Z.df <- readRDS("./OUTPUT/Expr/gwas_mahanalobis.rds")
-  res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds")
-  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
-  candidates.rs <- res.df$colname[res.df$index %in% candidates] %>% unique()
-
-
-  ## clumping with plink
-  tmp.file <- tempfile(tmpdir = "~/Projects/Thesis/Data/Celiac/dubois_2010/")
-  Z.df %>% dplyr::transmute(P = recalibrated.pvalue, SNP = colname) %>%
-    readr::write_delim(path = tmp.file, delim = "\t")
-  plink.cmd <- paste("~/BiocompSoftware/plink/plink",
-                     "--bfile ~/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ",
-                     "--clump",
-                     tmp.file,
-                     "--clump-p1 0.01",
-                     "--clump-p2 0.1",
-                     "--clump-r2 0.20",
-                     "--clump-kb 250",
-                     "--out plink.clump",
-                     "--threads 8")
-  system(plink.cmd)
-  clumps.df <- data.table::fread(file = "~/Projects/Thesis/MaThese/plink.clump.clumped",
-                                    data.table = FALSE) %>% as_tibble()
-  file.remove(tmp.file)
-
-  ## explode clumps
-  exploded.clumps.df <- tibble()
-  for (i in 1:nrow(res)) {
-    SNP <- res$SNP[i]
-    SP2 <- res$SP2[i] %>% str_split(",", simplify = TRUE) %>%
-        str_replace("\\(1\\)", "") %>%
-      str_split(";", simplify = TRUE)
-    SP2 <- c(SP2, SNP)
-    exploded.clumps.df <- exploded.clumps.df %>%
-      rbind(tibble(snps = SP2, clump.snps = SNP))
-  }
-
-
-  ## candidates
-  candidates.rs %in% exploded.clumps.df$snps %>% mean()
-
-  ## clump with candidates
-  df <- clumps.df %>%
-    mutate(pvalue = P,
-              outlier.SNP = SNP %in% candidates.rs,
-              outlier.SP2.count = str_count(SP2, paste(candidates.rs, collapse = "|")),
-              outlier = outlier.SNP | (outlier.SP2.count >= 1)) %>%
-    arrange(pvalue)
-
-  df %>%
-    dplyr::select(TOTAL, P, outlier) %>%
-    print.data.frame()
-
-  ##  annotation
-#+end_src
 *** Étude d'association entre des données génétiques et un gradient environmental (GEAS)
 <<sec:GEAS>>
 
@@ -9120,6 +9349,65 @@ supérieur à 1 à l'aide d'un test exacte de Fisher et les trois tests renvoie 
 \label{fig:geas_venn}
 \end{figure}
 #+END_EXPORT
+
+#+NAME: code:geas_table
+#+CAPTION: Dépend de [[code:eas_union_annotation]]
+#+begin_src R :results output latex :exports results
+  library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
+
+  union.candidates.df.biomart <- readRDS( "./OUTPUT/Expr/geas_union_biomart.rds")
+
+  ## union.candidates.df.biomart$phenotype_description %>% table()
+
+  union.candidates.df.biomart %>%
+    dplyr::filter(phenotype_description != "") %>%
+    group_by(phenotype_description) %>%
+    dplyr::summarise(methods = paste0(unique(method), collapse=", "),
+                     snps = paste0(unique(snps), collapse=", ")) %>%
+    dplyr::transmute(SNP = snps, `Méthodes` = methods, `Phénotype` = phenotype_description) %>%
+    xtable(digits = -2,
+           type = "latex",
+           caption = "") %>%
+    print(include.rownames=FALSE,
+          sanitize.text.function=identity,
+          floating.environment = "sidewaystable")
+#+end_src
+
+#+RESULTS: code:geas_table
+#+BEGIN_EXPORT latex
+% latex table generated in R 3.4.1 by xtable 1.8-2 package
+% Tue Sep 19 19:18:22 2017
+\begin{sidewaystable}[ht]
+\centering
+\begin{tabular}{lll}
+  \hline
+SNP & Méthodes & Phénotype \\ 
+  \hline
+rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\ 
+  rs10496731 & lassoLFMM & Body Height \\ 
+  rs2472297 & ridgeLFMM, cate, lassoLFMM & Caffeine metabolism (plasma 13-dimethylxanthine (theophylline) level) \\ 
+  rs2472297 & ridgeLFMM, cate, lassoLFMM & Caffeine metabolism (plasma 137-trimethylxanthine (caffeine) level) \\ 
+  rs2472297 & ridgeLFMM, cate, lassoLFMM & Caffeine metabolism (plasma 17-dimethylxanthine (paraxanthine) to 137-trimethylxanthine (caffeine) ratio) \\ 
+  rs2256175 & ridgeLFMM, cate, lassoLFMM & Cholesterol total \\ 
+  rs2472297 & ridgeLFMM, cate, lassoLFMM & Coffee consumption (cups per day) \\ 
+  rs2278544, rs2322659 & lassoLFMM & Congenital lactase deficiency \\ 
+  rs4954218 & ridgeLFMM, cate, lassoLFMM & Corneal structure \\ 
+  rs882300 & ridgeLFMM, cate, lassoLFMM & Electrocardiographic traits \\ 
+  rs882300 & ridgeLFMM, cate, lassoLFMM & Electrocardiography \\ 
+  rs2256175 & ridgeLFMM, cate, lassoLFMM & Giant cell arteritis \\ 
+  rs2256175, rs6085576, rs2104012, rs1983716, rs2853977 & ridgeLFMM, cate, lassoLFMM & Height \\ 
+  rs6430549 & ridgeLFMM, cate, lassoLFMM & Hematocrit \\ 
+  rs2278544, rs2322659 & lassoLFMM & Lactose intolerance \\ 
+  rs882300 & ridgeLFMM, cate, lassoLFMM & Multiple sclerosis \\ 
+  rs1123848 & ridgeLFMM, cate, lassoLFMM & Neuroblastoma \\ 
+  rs17158483 & lassoLFMM & Obesity-related traits \\ 
+   \hline
+\end{tabular}
+\caption{} 
+\end{sidewaystable}
+#+END_EXPORT
+
+
 **** Scripts                                                    :noexport:
 ***** DONE Téléchargement du jeux de données
 CLOSED: [2017-07-26 mer. 18:17]
@@ -13051,13 +13339,13 @@ CLOSED: [2017-08-31 jeu. 10:14]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_inter_manhattan.png]]
 
-****** DONE Annotation de l'union
+****** DONE Annotation de l'union contrôlé à un FDR de 1%
 CLOSED: [2017-09-01 ven. 13:11]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-09-01 ven. 13:11]
 - State "TODO"       from              [2017-08-31 jeu. 13:56]
 :END:
-#+NAME: code:eas_inter_annotation
+#+NAME: code:eas_union_annotation
 #+CAPTION: Dépend de [[code:eas_load_res]] [[code:1000g_vep_output]]
 #+begin_src R 
   require(MaTheseR)
@@ -13131,8 +13419,11 @@ CLOSED: [2017-09-01 ven. 13:11]
   union.candidates.df.biomart <- union.candidates.df %>%
     mutate_annotation(snp.db)
 
+  save_expr(union.candidates.df.biomart, "geas_union_biomart.rds")
+
   ## tab
   message("== phenotype description in union union ==")
+  union.candidates.df.biomart$phenotype_description %>% table()
   union.candidates.df.biomart %>%
     dplyr::filter(phenotype_description != "") %>%
     group_by(phenotype_description) %>%
@@ -13149,47 +13440,100 @@ CLOSED: [2017-09-01 ven. 13:11]
 
 #+RESULTS: code:eas_inter_annotation
 #+begin_example
-== number of SNPS detected ==
-[1] 836
-== over representation tests ==
+  == number of SNPS detected ==
+  [1] 836
+  == over representation tests ==
 
 
-| odds.ratio|    pvalue|lvl      |
-|----------:|---------:|:--------|
-|   7.922087| 0.0000000|MODERATE |
-|   1.706059| 0.0026103|LOW      |
-|  22.281430| 0.0000000|HIGH     |
-               biomart               version
-1 ENSEMBL_MART_ENSEMBL      Ensembl Genes 90
-2   ENSEMBL_MART_MOUSE      Mouse strains 90
-3     ENSEMBL_MART_SNP  Ensembl Variation 90
-4 ENSEMBL_MART_FUNCGEN Ensembl Regulation 90
-== phenotype description in union union ==
+  | odds.ratio|    pvalue|lvl      |
+  |----------:|---------:|:--------|
+  |   7.922087| 0.0000000|MODERATE |
+  |   1.706059| 0.0026103|LOW      |
+  |  22.281430| 0.0000000|HIGH     |
+                 biomart               version
+  1 ENSEMBL_MART_ENSEMBL      Ensembl Genes 90
+  2   ENSEMBL_MART_MOUSE      Mouse strains 90
+  3     ENSEMBL_MART_SNP  Ensembl Variation 90
+  4 ENSEMBL_MART_FUNCGEN Ensembl Regulation 90
+  == phenotype description in union union ==
 
 
-|phenotype_description                                                                                     |methods                    |spns                                                  |
-|:---------------------------------------------------------------------------------------------------------|:--------------------------|:-----------------------------------------------------|
-|Alcoholism (heaviness of drinking)                                                                        |ridgeLFMM, cate            |rs10908907                                            |
-|Body Height                                                                                               |lassoLFMM                  |rs10496731                                            |
-|Caffeine metabolism (plasma 13-dimethylxanthine (theophylline) level)                                     |ridgeLFMM, cate, lassoLFMM |rs2472297                                             |
-|Caffeine metabolism (plasma 137-trimethylxanthine (caffeine) level)                                       |ridgeLFMM, cate, lassoLFMM |rs2472297                                             |
-|Caffeine metabolism (plasma 17-dimethylxanthine (paraxanthine) to 137-trimethylxanthine (caffeine) ratio) |ridgeLFMM, cate, lassoLFMM |rs2472297                                             |
-|Cholesterol total                                                                                         |ridgeLFMM, cate, lassoLFMM |rs2256175                                             |
-|Coffee consumption (cups per day)                                                                         |ridgeLFMM, cate, lassoLFMM |rs2472297                                             |
-|Congenital lactase deficiency                                                                             |lassoLFMM                  |rs2278544, rs2322659                                  |
-|Corneal structure                                                                                         |ridgeLFMM, cate, lassoLFMM |rs4954218                                             |
-|Electrocardiographic traits                                                                               |ridgeLFMM, cate, lassoLFMM |rs882300                                              |
-|Electrocardiography                                                                                       |ridgeLFMM, cate, lassoLFMM |rs882300                                              |
-|Giant cell arteritis                                                                                      |ridgeLFMM, cate, lassoLFMM |rs2256175                                             |
-|Height                                                                                                    |ridgeLFMM, cate, lassoLFMM |rs2256175, rs6085576, rs2104012, rs1983716, rs2853977 |
-|Hematocrit                                                                                                |ridgeLFMM, cate, lassoLFMM |rs6430549                                             |
-|Lactose intolerance                                                                                       |lassoLFMM                  |rs2278544, rs2322659                                  |
-|Multiple sclerosis                                                                                        |ridgeLFMM, cate, lassoLFMM |rs882300                                              |
-|Neuroblastoma                                                                                             |ridgeLFMM, cate, lassoLFMM |rs1123848                                             |
-|Obesity-related traits                                                                                    |lassoLFMM                  |rs17158483                                            |
-== panther input ==
-[1] "ENSG00000171735 ENSG00000270171 ENSG00000270035 ENSG00000269978 NA ENSG00000138071 ENSG00000152127 ENSG00000152128 ENSG00000224043 ENSG00000153086 ENSG00000263783 ENSG00000082258 ENSG00000176601 ENSG00000115850 ENSG00000226806 ENSG00000076003 ENSG00000115866 ENSG00000231890 ENSG00000227347 ENSG00000216081 ENSG00000229568 ENSG00000221762 ENSG00000144229 ENSG00000228043 ENSG00000144227 ENSG00000231567 ENSG00000223921 ENSG00000168702 ENSG00000128645 ENSG00000224189 ENSG00000155657 ENSG00000144749 ENSG00000172340 ENSG00000075651 ENSG00000249782 ENSG00000230873 ENSG00000204536 ENSG00000238211 ENSG00000206337 ENSG00000204520 ENSG00000184465 ENSG00000048052 ENSG00000234336 ENSG00000127957 ENSG00000200874 ENSG00000008277 ENSG00000253350 ENSG00000148429 ENSG00000183621 ENSG00000183801 ENSG00000251364 ENSG00000255191 ENSG00000150676 ENSG00000149972 ENSG00000182667 ENSG00000181234 ENSG00000256630 ENSG00000151952 ENSG00000177596 ENSG00000226240 ENSG00000102466 ENSG00000232662 ENSG00000206190 ENSG00000261401 ENSG00000248334 ENSG00000156642 ENSG00000167508 ENSG00000260630 ENSG00000176890 ENSG00000176912 ENSG00000263727 ENSG00000142544 ENSG00000229876 ENSG00000157933 ENSG00000175130 ENSG00000116478 ENSG00000004455 ENSG00000236065 ENSG00000233047 ENSG00000121957 ENSG00000162641 ENSG00000143442 ENSG00000143627 ENSG00000117523 ENSG00000162779 ENSG00000143839 ENSG00000152104 ENSG00000134121 ENSG00000234661 ENSG00000144645 ENSG00000154175 ENSG00000181804 ENSG00000163347 ENSG00000197283 ENSG00000264085 ENSG00000146416 ENSG00000217648 ENSG00000131018 ENSG00000170632 ENSG00000233025 ENSG00000105939 ENSG00000173068 ENSG00000106804 ENSG00000130713 ENSG00000165695 ENSG00000065665 ENSG00000165609 ENSG00000122958 ENSG00000233163 ENSG00000205339 ENSG00000110318 ENSG00000187151 ENSG00000139151 ENSG00000255993 ENSG00000065150 ENSG00000150403 ENSG00000238737 ENSG00000242502 ENSG00000261739 ENSG00000103742 ENSG00000140443 ENSG00000048471 ENSG00000126856 ENSG00000072849 ENSG00000167842 ENSG00000263433 ENSG00000264734 ENSG00000136450 ENSG00000266086 ENSG00000186111 ENSG00000105072 ENSG00000269058 ENSG00000141979 ENSG00000131943 ENSG00000099904 ENSG00000188424 ENSG00000235578 ENSG00000198089 ENSG00000236052 ENSG00000116288 ENSG00000233008 ENSG00000135845 ENSG00000180999 ENSG00000228098 ENSG00000144224 ENSG00000131389 ENSG00000204681 ENSG00000223702 ENSG00000225851 ENSG00000230994 ENSG00000265294 ENSG00000185920 ENSG00000171811 ENSG00000134873 ENSG00000246877 ENSG00000260288 ENSG00000256530 ENSG00000152217 ENSG00000101384 ENSG00000117154 ENSG00000173406 ENSG00000237262 ENSG00000227149 ENSG00000135931 ENSG00000206527 ENSG00000239523 ENSG00000114544 ENSG00000251297 ENSG00000249462 ENSG00000271307 ENSG00000234745 ENSG00000271581 ENSG00000269964 ENSG00000106069 ENSG00000237065 ENSG00000235669 ENSG00000136193 ENSG00000253260 ENSG00000165185 ENSG00000252730 ENSG00000110057 ENSG00000110721 ENSG00000236267 ENSG00000258118 ENSG00000153575 ENSG00000104044 ENSG00000141429 ENSG00000266312 ENSG00000268184 ENSG00000241604"
+  |phenotype_description                                                                                     |methods                    |spns                                                  |
+  |:---------------------------------------------------------------------------------------------------------|:--------------------------|:-----------------------------------------------------|
+  |Alcoholism (heaviness of drinking)                                                                        |ridgeLFMM, cate            |rs10908907                                            |
+  |Body Height                                                                                               |lassoLFMM                  |rs10496731                                            |
+  |Caffeine metabolism (plasma 13-dimethylxanthine (theophylline) level)                                     |ridgeLFMM, cate, lassoLFMM |rs2472297                                             |
+  |Caffeine metabolism (plasma 137-trimethylxanthine (caffeine) level)                                       |ridgeLFMM, cate, lassoLFMM |rs2472297                                             |
+  |Caffeine metabolism (plasma 17-dimethylxanthine (paraxanthine) to 137-trimethylxanthine (caffeine) ratio) |ridgeLFMM, cate, lassoLFMM |rs2472297                                             |
+  |Cholesterol total                                                                                         |ridgeLFMM, cate, lassoLFMM |rs2256175                                             |
+  |Coffee consumption (cups per day)                                                                         |ridgeLFMM, cate, lassoLFMM |rs2472297                                             |
+  |Congenital lactase deficiency                                                                             |lassoLFMM                  |rs2278544, rs2322659                                  |
+  |Corneal structure                                                                                         |ridgeLFMM, cate, lassoLFMM |rs4954218                                             |
+  |Electrocardiographic traits                                                                               |ridgeLFMM, cate, lassoLFMM |rs882300                                              |
+  |Electrocardiography                                                                                       |ridgeLFMM, cate, lassoLFMM |rs882300                                              |
+  |Giant cell arteritis                                                                                      |ridgeLFMM, cate, lassoLFMM |rs2256175                                             |
+  |Height                                                                                                    |ridgeLFMM, cate, lassoLFMM |rs2256175, rs6085576, rs2104012, rs1983716, rs2853977 |
+  |Hematocrit                                                                                                |ridgeLFMM, cate, lassoLFMM |rs6430549                                             |
+  |Lactose intolerance                                                                                       |lassoLFMM                  |rs2278544, rs2322659                                  |
+  |Multiple sclerosis                                                                                        |ridgeLFMM, cate, lassoLFMM |rs882300                                              |
+  |Neuroblastoma                                                                                             |ridgeLFMM, cate, lassoLFMM |rs1123848                                             |
+  |Obesity-related traits                                                                                    |lassoLFMM                  |rs17158483                                            |
+  == panther input ==
+  [1] "ENSG00000171735 ENSG00000270171 ENSG00000270035 ENSG00000269978 NA ENSG00000138071 ENSG00000152127 ENSG00000152128 ENSG00000224043 ENSG00000153086 ENSG00000263783 ENSG00000082258 ENSG00000176601 ENSG00000115850 ENSG00000226806 ENSG00000076003 ENSG00000115866 ENSG00000231890 ENSG00000227347 ENSG00000216081 ENSG00000229568 ENSG00000221762 ENSG00000144229 ENSG00000228043 ENSG00000144227 ENSG00000231567 ENSG00000223921 ENSG00000168702 ENSG00000128645 ENSG00000224189 ENSG00000155657 ENSG00000144749 ENSG00000172340 ENSG00000075651 ENSG00000249782 ENSG00000230873 ENSG00000204536 ENSG00000238211 ENSG00000206337 ENSG00000204520 ENSG00000184465 ENSG00000048052 ENSG00000234336 ENSG00000127957 ENSG00000200874 ENSG00000008277 ENSG00000253350 ENSG00000148429 ENSG00000183621 ENSG00000183801 ENSG00000251364 ENSG00000255191 ENSG00000150676 ENSG00000149972 ENSG00000182667 ENSG00000181234 ENSG00000256630 ENSG00000151952 ENSG00000177596 ENSG00000226240 ENSG00000102466 ENSG00000232662 ENSG00000206190 ENSG00000261401 ENSG00000248334 ENSG00000156642 ENSG00000167508 ENSG00000260630 ENSG00000176890 ENSG00000176912 ENSG00000263727 ENSG00000142544 ENSG00000229876 ENSG00000157933 ENSG00000175130 ENSG00000116478 ENSG00000004455 ENSG00000236065 ENSG00000233047 ENSG00000121957 ENSG00000162641 ENSG00000143442 ENSG00000143627 ENSG00000117523 ENSG00000162779 ENSG00000143839 ENSG00000152104 ENSG00000134121 ENSG00000234661 ENSG00000144645 ENSG00000154175 ENSG00000181804 ENSG00000163347 ENSG00000197283 ENSG00000264085 ENSG00000146416 ENSG00000217648 ENSG00000131018 ENSG00000170632 ENSG00000233025 ENSG00000105939 ENSG00000173068 ENSG00000106804 ENSG00000130713 ENSG00000165695 ENSG00000065665 ENSG00000165609 ENSG00000122958 ENSG00000233163 ENSG00000205339 ENSG00000110318 ENSG00000187151 ENSG00000139151 ENSG00000255993 ENSG00000065150 ENSG00000150403 ENSG00000238737 ENSG00000242502 ENSG00000261739 ENSG00000103742 ENSG00000140443 ENSG00000048471 ENSG00000126856 ENSG00000072849 ENSG00000167842 ENSG00000263433 ENSG00000264734 ENSG00000136450 ENSG00000266086 ENSG00000186111 ENSG00000105072 ENSG00000269058 ENSG00000141979 ENSG00000131943 ENSG00000099904 ENSG00000188424 ENSG00000235578 ENSG00000198089 ENSG00000236052 ENSG00000116288 ENSG00000233008 ENSG00000135845 ENSG00000180999 ENSG00000228098 ENSG00000144224 ENSG00000131389 ENSG00000204681 ENSG00000223702 ENSG00000225851 ENSG00000230994 ENSG00000265294 ENSG00000185920 ENSG00000171811 ENSG00000134873 ENSG00000246877 ENSG00000260288 ENSG00000256530 ENSG00000152217 ENSG00000101384 ENSG00000117154 ENSG00000173406 ENSG00000237262 ENSG00000227149 ENSG00000135931 ENSG00000206527 ENSG00000239523 ENSG00000114544 ENSG00000251297 ENSG00000249462 ENSG00000271307 ENSG00000234745 ENSG00000271581 ENSG00000269964 ENSG00000106069 ENSG00000237065 ENSG00000235669 ENSG00000136193 ENSG00000253260 ENSG00000165185 ENSG00000252730 ENSG00000110057 ENSG00000110721 ENSG00000236267 ENSG00000258118 ENSG00000153575 ENSG00000104044 ENSG00000141429 ENSG00000266312 ENSG00000268184 ENSG00000241604"
 #+end_example
+
+****** DONE GO de l'union
+CLOSED: [2017-09-19 mar. 16:52]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-19 mar. 16:52]
+- State "TODO"       from              [2017-09-19 mar. 16:21]
+:END:
+#+NAME: code:eas_union_GO
+#+CAPTION: Dépend de [[code:eas_load_res]] [[code:1000g_vep_output]]
+#+begin_src R 
+  require(MaTheseR)
+  library(stringr)
+
+  vep.output <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
+
+  ## filter FDR 5%
+  aux <- qval.df %>%
+    dplyr::filter(qvalue <= 0.05) %>%
+    mutate(snps = colname)
+
+  ## union
+  union.list <- function(...) {
+    id <- list(...)
+      res <- sets[[id[[1]]]]
+    for (i in id) {
+      res <- base::union(res, sets[[i]])
+    }
+    res
+  }
+  sets <- list(cate = aux$index[aux$method == "cate"],
+               lassoLFMM = aux$index[aux$method == "lassoLFMM"],
+               ridgeLFMM = aux$index[aux$method == "ridgeLFMM"],
+               PCAlm = aux$index[aux$method == "PCAlm"]
+               )
+  union.candidates.df <- aux %>%
+    dplyr::filter(index %in% union.list(1,2,3,4))
+  message("== number of SNPS detected ==")
+  length(unique(union.candidates.df$colname))
+
+  ## vep annotation
+  union.candidates.df.vep <- union.candidates.df %>%
+    dplyr::left_join(vep.output, by = c('snps')) %>%
+    mutate(chrm = str_replace(Location, ":[:digit:]*",""),
+           pos = str_replace(Location, "[:digit:]*:",""))
+
+  ## amiGo2
+  message("== panther input ==")
+  (union.candidates.df.vep %>%
+    distinct(Gene))$Gene %>%
+    paste0(collapse=" ")
+#+end_src
+
+On a un enrichissement de GO neurogenesis ...
 
 ****** CANCELLED Meta analysis
 CLOSED: [2017-09-12 mar. 19:57]
@@ -13916,6 +14260,8 @@ Voir cahier le 7/08/2017
 
 * Perspectives et conclusion 
 :LOGBOOK:
+- Note taken on [2017-09-19 mar. 13:03] \\
+  on kernelise tout :D
 - Note taken on [2017-09-14 jeu. 13:25] \\
   L'ancestry local ? utiliser l'information spatial pour l'ancestry locale ???
 - Note taken on [2017-08-30 mer. 11:58] \\
