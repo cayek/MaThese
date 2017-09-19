@@ -987,7 +987,7 @@ les coefficients de métissage à partir de données génétique et géographiqu
 **** Simulations à partir de données réelle
 Des sous-échantillons provenant du jeux de données réelles 
 d'/Arabidopsis thaliana/ (données décrites dans la partie [[simu_At]]) ont été utilisés pour
-effectuer une analyse de la convergence et du temps de calcule des algorithmes
+effectuer une analyse de la convergence et du temps de calcul des algorithmes
 AQP et APLS . Les temps d'exécution ont été évalués en utilisant un seul
 processeur informatique Intel Xeon 2.0 GHz.
 **** Simulations coalescentes
@@ -1005,7 +1005,7 @@ deux populations ancestrales. Pour ces simulations, la matrice des coefficients
 de métissage, noté $\Q_0$, est entièrement décrite par la position des individus
 échantillonnés.
 
-DESSIN comme celui que je met dans mes slides
+*DESSIN comme celui que je met dans mes slides*
 
 Les segments de chromosome neutre des population source ont été générés en
 simulant des séquences d'ADN avec une taille de population efficace de $N_0 =
@@ -4190,7 +4190,7 @@ régularisation $L_{2}$. L'algorithme lassoLFMM prend la proportion de lignes no
 nulles dans la matrice des effets $\B$. Enfin les deux algorithmes retournent
 les estimations pour les paramètres de LFMM ainsi qu'une \pvalue pour le test
 d'association de chaque colonne de $\Y$ avec $\X$.
-** Autres méthodes existantes
+** Autres méthodes de corréction pour les facteurs de confusions
 <<sec:similar_method>>
 
 Dans cette section nous présentons d'autres méthodes pour les études
@@ -4298,6 +4298,81 @@ matrice des effets $\B$ est calculée comme le résidu de cette régression. La
 régression robuste permet d'enlever de l'estimation de $\bm{\alpha}$ les effets
 atypiques qui correspondent aux colonnes de $\Y$ associés à $\X$ que l'on
 cherche. Nous avons utilisé le package R cate fourni par ses auteurs.
+** Données simulées et réelles
+*** Données simulées à partir de données réelles
+:LOGBOOK:
+- Note taken on [2017-08-03 jeu. 16:10] \\
+  [[file:Rpackage/R/ExpRsampler-fromTrueData.R::ExpRmouline.ExpRsampler_fromTrueData%20<-%20function(s)%20{][La fonction sampler]]
+:END:
+
+Nous avons simulé des données pour lesquelles nous connaissons les variables
+expliquées associées avec la variable explicative. Pour cela, nous utilisons une
+matrice de variables expliquées $\Y$ d'un jeux de données réelles. Pour obtenir
+les données simulées nous réalisons une analyse en composante principale de
+la matrice $\Y$ et ne gardons que les $\K$ premières composantes en fonction
+du nombre de facteurs de confusion que nous souhaitons simuler. Nous avons alors
+\begin{equation}
+\Y = \U \V^{T} + \E
+\end{equation}
+où $\V$ est la matrice des $\K$ premiers axes principaux et $\U$ est la matrice
+scores calculés par l'ACP. La matrice $\E$ est une matrice d'erreur résiduelle.
+Nous simulons ensuite la variable d'intérêt pour l'association, $\X^{'}$, ainsi
+que $\K$ variables latentes, $\U^{'}$. Pour ce faire, les matrices $\U^{'}$ et
+$\X^{'}$ sont simulées à l'aide de la loi normale multidimensionnelle. La
+matrice de covariance de la loi normale est choisie de sorte que $\X^{'}$ et
+$\U^{'}$ soient corrélé à un certain niveau. La valeur de corrélation linéaire
+de la variable $\X^{'}$ avec chaque variable latente est tirée selon une lois
+uniforme entre $-1$ et $1$. Ensuite afin de régler l'intensité de la corrélation
+entre les variables latentes et la variable explicative nous multiplions chaque
+coefficient de corrélation par un coefficient que l'on note $\rho$. En outre,
+nous utilisons la matrice de covariance des score de l'ACP $\U$ comme matrice de
+covariance pour simuler la matrice $\U^{'}$. Enfin nous simulons une matrice des
+effets $\B^{'}$ de sorte qu'une proportion fixée des lignes de $\B^{'}$ est non
+nulle et tirée selon une loi normale. La nouvelle matrice des variables
+expliquées est simulée de la façon suivante
+\begin{equation}
+\Y^{'} = \U^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
+\end{equation}
+Nous avons ainsi généré des données pour lesquelles nous connaissons les colonnes
+de $\Y^{'}$ associées avec la variable $\X^{'}$. Elles correspondent aux lignes non
+nulles de la matrice $\B^{'}$. 
+
+Le jeu de données réelles que nous avons choisi pour réaliser les simulations
+est issu de la base données 1000Genome que nous présentons dans la partie
+[[sec:GEAS]]. Nous avons gardé seulement les chromosomes 1 et 2. Cela permet de
+simuler une matrice de 52211 variable expliquées pour 1758 individus. Nous avons
+choisi de simuler 5 variables latentes. Le coefficient d'intensité de la
+corrélation entre les variables latentes et la variable explicative prend une
+fourchette de valeurs entre $0.1$ et $1$. Cela a permis de simuler des jeux de
+données plus ou moins difficile pour l'inférence des facteurs de confusion. Nous
+avons de plus choisi une proportion des variables expliquées associées avec la
+variable explicative entre $1\%$ et $20\%$. Pour chaque paramètre de simulation
+nous avons simulé $5$ jeux de données ce qui donne un total de 125 jeux de
+données.
+
+Oracle
+
+*** Mesure de comparaison des performances
+Pour évaluer la capacité des méthodes à séparer les vrais associations des
+fausses association nous avons utiliser l'aire sous la courge précision-rappel
+noté AUC. Pour une liste de candidats pour l'association la précision est le
+nombre de vraies associations dans la liste divisé par la taille de la liste. La
+précision est le complément à 1 du taux de fausse découverte. Le rappel est le
+nombre de vraies associations retrouvées dans la liste divisé par le nombre
+total des vraies associations. Le rappel est parfois appelé puissance en
+statistique. Une méthode permettant de séparer parfaitement les vraies
+associations des fausse associations donne un AUC de 1.
+
+Afin d'évaluer la calibration des \pvalues renvoyées par les méthodes nous
+calculons le facteurs d'inflation des $\pvalues des fausses associations. Le
+facteur d'inflation est calculé comme la médiane des \zscores au carré divisée
+par le quantile à $50 \%$ de la lois du $\chi^{2}$ à un degré de liberté
+cite:Devlin_1999. Si les \pvalues des fausse associations sont réparties
+uniformément alors le facteur d'inflation vaut 1. Une méthode qui renvoie des
+\pvalues correctement calibrées permet de calculer une liste de candidats avec
+un taux de fausses découvertes moyen contrôlé. Pour cela on peut par exemple
+utiliser l'algorithme de Benjamini-Hoshberg cite:benjamini1995controlling ou
+bien la \qvalue cite:Storey_2011.
 
 ** Résultats
 :PROPERTIES:
@@ -4328,88 +4403,6 @@ et PCAlm. Pour les méthodes cate, sva-irw et sva-two-step nous avons
 respectivement utilisé leurs implémentations R mises à disposition par leurs
 auteurs respectifs.
 *** Comparaison des méthodes sur des données simulées
-**** Simulation à partir de données réelles
-:LOGBOOK:
-- Note taken on [2017-08-03 jeu. 16:10] \\
-  [[file:Rpackage/R/ExpRsampler-fromTrueData.R::ExpRmouline.ExpRsampler_fromTrueData%20<-%20function(s)%20{][La fonction sampler]]
-:END:
-Afin de comparer la performance des méthodes sur une étude d'association pour
-laquelle nous connaissons la vérité, c'est à dire les colonnes de $\Y$ qui sont
-associé à $\X$, nous avons réalisé des simulations à partir d'une matrice $\Y$
-issue d'un vrai jeu de données. Pour cela nous réalisons une analyse en
-composante principale de $\Y$ et ne gardons que les $\K$ premières composantes
-en fonction du nombre $\K$ de facteurs de confusion que l'on souhaite simuler.
-On a alors
-\begin{equation}
-\Y = \U \V^{T} + \E
-\end{equation}
-où $\V$ est la matrice des $\K$ axes principaux orthogonaux et $\U$ la matrice
-des variables latentes calculés par l'ACP. La matrice $\E$ est la matrice
-residuelle. Nous simulons ensuite la variable d'intérêt pour l'association
-$\X^{'}$ et $\K$ variables latentes $\U^{'}$ en choisissant la corrélation entre
-chaque variable latente et $\X^{'}$. De plus les variables latentes sont
-simulées de sorte quelles aient la même structure de covariance que les
-variables latentes calculées par l'ACP. Les matrices $\U^{'}$ et $\X^{'}$ sont
-simulées à l'aide de la loi normale multidimensionnelle. Enfin nous calculons
-une matrice des effets $\B^{'}$ de sorte qu'une certaines proportion des lignes
-de $\B^{'}$ soit non nul et tiré selon à une loi normale. Nous calculons alors
-la nouvelle matrice des variables explicatives tel que
-\begin{equation}
-\Y^{'} = \U^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
-\end{equation}
-Nous avons ainsi des données pour lesquelles nous savons quelles colonnes de
-$\Y^{'}$ est associées avec la variable $\X^{'}$, il s'agit des lignes non
-nulles de la matrice $\B^{'}$. Nous utilisons de plus la structure lattente
-d'une matrice de données déjà existante ce qui permet d'avoir des simulations
-plus réalistes.
-
-Le vrai jeu de données que nous avons choisi pour réaliser les simulations est
-issu du jeu de données 1000Genome que nous présentons dans la partie [[sec:GEAS]].
-Nous avons gardé seulement le chromosome 1 et 2, cela permet de simuler une
-matrice de variable expliquées $\Y^{'}$ composée de 52211 variables pour 1758
-individus. Nous avons choisi de simuler 5 variables latentes pour plusieurs
-valeurs de la corrélation entre $\X^{'}$ et ces 5 variables latentes. Pour
-chaque variable latente une valeur entre $-1$ et $1$ de la corrélation avec
-$\X^{'}$ est tirée selon une loi uniforme et multipliée par un coefficient que
-l'on nome $\rho$ prenant une des valeurs suivantes: $0.1$, $0.3$, $0.5$, $0.8$
-ou $1$. Le même coefficient $\rho$ est utilisé pour calculer toutes les
-corrélations. Plus le coefficient $\rho$ est proche de 1 plus les variables
-latentes seront corrélées à $\X^{'}$ et donc plus la confusion lors du test
-d'association de $\X^{'}$ avec $\Y^{'}$ sera importante. Nous avons de plus
-choisi une proportion des variables expliquées associées avec la variable
-explicative valant $1\%$, $5\%$, $10\%$, $15\%$ ou $20\%$. Pour chaque paramètre
-de simulation nous avons simulé $5$ jeux de données ce qui donne un total de 125
-jeux de données.
-
-**** Mesure de comparaison des performances
-Pour comparer les méthodes entre elles nous avons choisi deux critères. Chaque
-méthode renvoie une \pvalue pour chaque colonne de $\Y$. Afin d'évaluer la
-capacité des méthodes à détecter le plus possible d'association sans se tromper
-nous avons calculer l'aire sous la courbe de précision-rappel, noté AUC, pour
-chacune des méthodes. Nous rappelons que pour une liste de candidats données la
-précision est le nombre de vraies associations dans la liste divisé par la
-taille de la liste et le rappel est le nombre de vraies associations retrouvées
-dans la liste divisé par le nombre total des vraies associations. Le rappel est
-parfois appelé puissance en statistique. Une méthode qui donne les plus petites
-\pvalues permettant de séparer parfaitement les vraies associations du reste
-donne une aire sous la courbe de précision-rappel de 1. 
-
-Le deuxième critère de comparaison des méthodes permet d'évaluer la calibration
-des \pvalues renvoyées par les méthodes. Pour cela nous calculons le facteur
-d'inflation sur les \pvalues attribuées aux variables non associées avec $\X$.
-Si les \pvalues sont bien calibrées alors la distribution des \pvalues
-attribuées aux colonnes de $\Y$ non associées avec $\X$ suivent une loi uniforme
-et donc le facteur d'inflation vaux 1. Une méthode qui renvoie des \pvalues
-correctement calibrées permet de calculer une liste de candidats avec un taux de
-fausses découvertes moyen contrôlé à une valeur choisie. Pour cela on peut par
-exemple utiliser l'algorithme de Benjamini-Hoshberg
-cite:benjamini1995controlling ou bien le package qvalue cite:Storey_2011. Une
-bonne méthode doit donc à la fois être capable de détecter les vrais
-associations sans se tromper mais aussi de fournir des \pvalues correctement
-calibrées pour permettre une utilisation des algorithmes de contrôle du taux de
-fausse découverte.
-
-**** Résultats
 Sur les 125 jeux de données simulés nous avons lancé les méthodes lm, PCAlm,
 sva-irw, sva-two-step, cate et les deux méthodes présentées dans cette thèse
 lassoLFMM et ridgeLFMM. De plus, nous avons considéré une méthode oracle qui
