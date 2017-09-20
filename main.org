@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # -*- mode: org -*-
+# -*- (load "./these-publish.el") -*-
 
 #+TITLE: Méthodes de factorisation matricielle pour la génomique des populations et les tests d'association
 #+AUTHOR:      Kevin Caye
-
 #+LANGUAGE: fr
 #+STARTUP: overview indent inlineimages logdrawer
 #+OPTIONS: H:6 author:nil email:nil creator:nil timestamp:nil skip:nil toc:t ^:nil
@@ -12,21 +12,15 @@
 #+EXPORT_EXCLUDE_TAGS: noexport
 #+COLUMNS: %25ITEM %TODO %3PRIORITY %TAGS
 #+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(g!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
-
-
 #+LaTeX_CLASS: these
-# #+LaTeX_CLASS: article
 #+LATEX_HEADER: \input{notations.tex}
-
 #+HTML_MATHJAX: align: left indent: 5em tagside: left font: Neo-Euler
-
-#+PROPERTY: header-args    :exports none
-
 #+latex_header: \usepackage{amsthm, bm}
 #+latex_header: \newtheorem{theorem}{Théoreme}
 #+latex_header: \newtheorem{corollaire}{Corollaire}
 #+latex_header: \newtheorem{proposition}{Proposition}
 #+latex_header: \renewcommand{\proofname}{Preuve}
+#+PROPERTY: header-args    :exports none
 
 #  LocalWords:  methylation polymorphism nucleotide Frobenius invertible SNP
 #  LocalWords:  preprocessing dataset RidgeLFMM LassoLFMM hyperparamètre LFMM
@@ -42,6 +36,7 @@
 #+END_EXPORT
 
 * Workenv                                                          :noexport:
+** emacs
 ** R
 #+BEGIN_SRC R
   ## CRAN
@@ -260,9 +255,9 @@ réservé aux espèces modèles, de nombreuses espèces différentes. Dans le ca
 cette thèse nous nous sommes intéressé seulement au données dîtes de SNPs
 (single-nucleotide polymorphism) qui sont les polymorphismes génétiques simple
 d'un seul nucleotide. Un SNP est la variation (polymorphisme) d'une seule paire
-de bases du génome, entre individus d'une même espèce. Les SNPs représentent 90
-\% de l'ensemble des variations génétiques humaines, et des SNPs avec une
-fréquence allélique supérieure à 1 \% sont présents toutes les cent à trois
+de bases du génome, entre individus d'une même espèce. Les SNPs représentent $90
+\%$ de l'ensemble des variations génétiques humaines, et des SNPs avec une
+fréquence allélique supérieure à $1 \%$ sont présents toutes les cent à trois
 cents paires de bases en moyenne dans le génome humain. Nous appelons locus une
 position sur l'ADN, nous parlons ainsi du locus d'un SNP. Nous représentons les
 données génétique comme une matrice avec une ligne par individu et une colonne
@@ -337,10 +332,12 @@ méthodes.
 Dans un premier chapitre nous présentons un cadre méthodologique permettant
 l'inférence de l'ascendance à partir de données génétique et géographiques. Dans
 une deuxième partie nous présentons un cadre méthodologique permettant d'estimer
-les facteurs de confusion qui augment le nombre de fausses découvertes dans les
-test d'association. Dans chaque chapitre nos méthodes sont comparées aux
-méthodes existante et appliquées à des jeux de données réelles de la biologie pour
-illustrer leurs utilité.
+les facteurs de confusion qui augmente le nombre de fausses découvertes dans les
+test d'association. Chaque chapitre commence par une introduction du contexte et
+de la problématique biologique. Nous développons ensuite notre méthodologie
+statistique. Enfin, nos méthodes sont comparées aux méthodes existantes et
+appliquées à des jeux de données réelles de la biologie afin d'illustrer leurs
+utilités.
 
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
@@ -582,7 +579,7 @@ cite:Frichot_2014. En outre, cette catégorie de méthodes fournie des algorithm
 qui sont généralement plus rapides que ceux des méthodes reposant sur un modèle
 probabiliste.
 
-*** Méthodes d'inférence des coefficients de métissage à l'aide de données géographique
+*** Méthodes d'inférence des coefficients de métissage à l'aide de données géographiques
 
 Dans la natures les individus d'une espèce évolue dans un environnement
 géographique. Les clusters génétiques identifiés par les méthodes d'estimations
@@ -644,7 +641,8 @@ coefficients de métissage individuel et les fréquences de génotypes dans les
 clusters génétiques en supposant $\K$ cluster génétique. En plus des
 génotypes, les nouveaux algorithmes présenté ici nécessitent les coordonnées
 géographiques de chaque individu.
-*** Matrices $\Q$ et $\G$
+*** Matrices d'ascendance génétiques
+
 Nous considérons une matrice de génotype, $\Y$, enregistrant des données de $n$
 individus à $p$ locus polymorphes pour une espèce ayant une ploidy de $d$, c'est
 à dire qui possède un génome composé de $d$ exemplaires de chaque chromosome.
@@ -962,7 +960,7 @@ latente
 \begin{equation*}
 F^Q _{\rm ST}  =  \frac{\sigma^2_T - \sigma^2_S}{\sigma^2_T },
 \end{equation*}
-où $ \sigma^2_T $ est la variance totale et $\sigma^2_S$ est la variance de
+où $\sigma^2_T$ est la variance totale et $\sigma^2_S$ est la variance de
 l'erreur cite:Weir1996. En suivant la théorie ANOVA nous utilisons les
 statistiques $ F^Q_{\rm ST}$ pour effectuer des tests statistiques de neutralité
 à chaque locus, en comparant les valeurs observées à la valeur de
@@ -1047,22 +1045,6 @@ l'intensité de la sélection environnementale, nous avons utilisé l'aire sous 
 courbe précision-rappel du test d'adaptation local (AUC) pour plusieurs valeurs
 de l'intensité de la sélection ($m/m_s$).
 
-*** Application à des données humaines                           :noexport:
-Pour évaluer la robustesse de notre approche à une situation où le mélange a été
-la conséquence d'un grand déplacement plutôt que d'un contact entre des
-populations proche géographiquement, nous avons étudié le cas des populations
-afro-américaines. Il s'agit d'un cas intéressant pour lequel l'incorporation de
-données géographiques pourrait potentiellement nuire à l'estimation des
-coefficients de métissage. Les génotypes avec une fréquence d'allèle mineure
-supérieure à 5 $\%$ ont été obtenus à partir des données du projet 1000 Genomes
-phase 3 pour les Afro-Américains (ASW, 61 individus), des Africains (YRI du
-Nigeria et LWK du Kenya, 207 individus) et Européens (GBR du Royaume-Uni et TSI
-d'Italie, 198 personnes) cite:1000Genome_2015. Au total, 6 994 677 SNPs ont été
-analysés avec des données géographiques correspondant au pays d'origine des
-échantillons individuels. Nous avons comparé les estimations de l'algorithme
-APLS appliqué avec ces paramètres par défaut aux résultats du programme =snmf=
-qui n'utilise pas l'informations géographiques.
-
 *** Application à des écotypes européen d'Arabidopsis thaliana
 <<simu_At>>
 
@@ -1079,32 +1061,49 @@ utilisant le logiciel =AMIGO= cite:Carbon_2008 a été réalisée afin d'évalue
 quelles fonctions moléculaires et processus biologiques pourraient être
 impliqués dans l'adaptation locale de /A.thaliana/ en Europe.
 
+*** Application à des données humaines                           :noexport:
+Pour évaluer la robustesse de notre approche à une situation où le mélange a été
+la conséquence d'un grand déplacement plutôt que d'un contact entre des
+populations proche géographiquement, nous avons étudié le cas des populations
+afro-américaines. Il s'agit d'un cas intéressant pour lequel l'incorporation de
+données géographiques pourrait potentiellement nuire à l'estimation des
+coefficients de métissage. Les génotypes avec une fréquence d'allèle mineure
+supérieure à 5 $\%$ ont été obtenus à partir des données du projet 1000 Genomes
+phase 3 pour les Afro-Américains (ASW, 61 individus), des Africains (YRI du
+Nigeria et LWK du Kenya, 207 individus) et Européens (GBR du Royaume-Uni et TSI
+d'Italie, 198 personnes) cite:1000Genome_2015. Au total, 6 994 677 SNPs ont été
+analysés avec des données géographiques correspondant au pays d'origine des
+échantillons individuels. Nous avons comparé les estimations de l'algorithme
+APLS appliqué avec ces paramètres par défaut aux résultats du programme =snmf=
+qui n'utilise pas l'informations géographiques.
+
 ** Résultats
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
 :END:
-*** Analyse de la convergence et temps d'exécution
+*** Analyse de la convergence et des temps d'exécution
 
 Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
 un modèle spatial de mélange pour comparer les erreurs statistiques des
-estimations de $\Q$ et $\G$ obtenu avec AQP et APLS. La référence pour la
-matrice $\Q$, noté $\Q_0$, a été calculée à partir des proportions de mélange
-utilisées pour générer les génotype à partir des deux populations sources
-simulées par =ms=. Pour la matrice $\G$, la matrice de vérité noté ($\G_0$) a
-été calculée à partir des fréquences empiriques des génotypes des deux
-populations sources. Les erreurs quadratique moyenne (RMSE) pour les estimations
-les estimations des matrice $\Q$ et $\G$ diminuent à mesure que la taille de
-l'échantillon et le nombre de locus augmentaient (Figure ref:fig:tess3:comp).
+estimations des matrices $\Q$ et $\G$ obtenues avec AQP et APLS. La référence
+pour la matrice $\Q$, noté $\Q_0$, est calculée à partir des proportions de
+mélange utilisées pour générer les génotypes à partir des deux populations
+sources simulées par =ms=. Pour la matrice $\G$, la matrice de référence, notée
+($\G_0$), est calculée à partir des fréquences empiriques des génotypes des
+deux populations sources. Les erreurs quadratiques moyennes (RMSE) pour les
+estimations des matrices $\Q$ et $\G$ diminue à mesure que la taille de
+l'échantillon et le nombre de locus augmente (Figure ref:fig:tess3:comp).
 Pour tous les algorithmes, les erreurs statistiques sont généralement faibles
-lorsque le nombre de locus est supérieur à 10k. Ces résultats permette de
+lorsque le nombre de locus est supérieur à 10k. Ces résultats permettent de
 prouver que les deux algorithmes produises des estimations équivalentes des
-matrices $\Q_0$ et $\G_0$. Les résultats ont également permis de vérifier que
+matrices $\Q_0$ et $\G_0$. Les résultats permettent également de vérifier que
 l'algorithmes APLS converge vers les mêmes estimations que celles obtenues par
-l'algorithme AQP, qui est garanti pour converger mathématiquement.
+l'algorithme AQP, qui est garanti de converger vers un minimum de la fonction
+objectif $\LS$.
 
 #+NAME: code:tess3:comp
 #+CAPTION: Dépend de [[code:tess3:comparison:plot]]
-#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
 
@@ -1114,7 +1113,7 @@ l'algorithme AQP, qui est garanti pour converger mathématiquement.
                         basename.output = "tess3_APLS_AQP_rmse_comp", 
                         env = MaTheseR.params,
                         height = 0.5 * MaTheseR.params$textheightinch,
-                        width = 1.1 * MaTheseR.params$textwidthinch)
+                        width = 1 * MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -1131,25 +1130,25 @@ l'algorithme AQP, qui est garanti pour converger mathématiquement.
 
 Nous avons sous-échantillonné un grand jeux de données de SNPs d'écotypes de
 /A.thaliana/ pour comparer les propriétés de convergence et les temps
-d'exécution des algorithmes AQP et APLS. Dans ces expériences, nous avons
-utilisé les méthodes avec $6$ cluster génétiques et avons répliqué 5 fois chaque
+d'exécution des algorithmes AQP et APLS. Dans ces expériences, nous utilisons
+les méthodes avec $6$ cluster génétiques et avons répliqué 5 fois chaque
 simulation. Pour un nombre d'individus allant 500 à 600 et un nombre de 50k
 locus, l'algorithme APLS nécessite plus d'itérations (25 itérations) que
 l'algorithme AQP (20 itérations) pour converger vers sa solution (Figure
 ref:fig:tess3:vitesse). Pour un nombre de locus allant de 10k à 200k et 150
-individus, on observe des résultats similaires. Pour 50k SNPs, les temps
+individus, nous observons des résultats similaires. Pour 50k SNPs, les temps
 d'exécution sont significativement plus bas pour l'algorithme APLS que pour les
-algorithmes AQP. Pour 50k SNPs et 600 individus, cela a pris en moyenne 1,0 min
+algorithmes AQP. Pour 50k SNPs et 600 individus, cela prend en moyenne 1,0 min
 pour l'algorithme APLS et 100 min pour l'algorithme AQP pour calculer leurs
-résultats. Pour 100k SNPs et 150 individus, il a fallu en moyenne 0,6 min (9,0
-min) pour l'algorithme APLS (AQP) pour calculer leurs résultats. Pour les
-valeurs du nombre d'individus et locus considéré ici, l'implémentation de
-l'algorithme APLS a été d'environs 2 à 100 fois plus rapide que celle de
+résultats. Pour 100k SNPs et 150 individus, il faut en moyenne 0,6 min (9,0
+min) pour l'algorithme APLS (AQP) pour calculer leurs résultats. Pour le spectre
+de valeurs du nombre d'individus et de locus considéré, l'implémentation de
+l'algorithme APLS est environs 2 à 100 fois plus rapide que celle de
 l'algorithme AQP.
 
 #+NAME: code:tess3:vitesse
 #+CAPTION: Dépend de [[code:tess3:vitesse:plot]]
-#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
 
@@ -1158,7 +1157,7 @@ l'algorithme AQP.
   ThesisRpackage::Plots_export_tikz_pdf(pl,
                                         basename.output = "tess3_vitesse",
                                         env = MaTheseR.params,
-                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        height = 0.6 * MaTheseR.params$textheightinch,
                                         width = MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
@@ -1238,7 +1237,7 @@ CLOSED: [2017-09-15 ven. 11:09]
 :END:
 #+NAME: code:tess3:comparison:plot
 #+CAPTION: Dépend de [[code:tess3:comparison:run]]
-#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+#+begin_src R
   library(MaTheseR)
   library(cowplot)
   library(scales)
@@ -1265,7 +1264,7 @@ CLOSED: [2017-09-15 ven. 11:09]
                       ymax = rmse.mean + se,
                       width = (max(n) - min(n)) * 0.02 )) +
     geom_point(size = 2) +
-    xlab("Nombre d'individus ($n$)") +
+    xlab("Nombre d'individus") +
     ylab("RMSE") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none",
@@ -1280,7 +1279,7 @@ CLOSED: [2017-09-15 ven. 11:09]
                       width = (max(n) - min(n)) * 0.02 )) +
     geom_line() +
     geom_point(size = 2) +
-    xlab("Nombre d'individus ($n$)") +
+    xlab("Nombre d'individus") +
     ylab("") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none",
@@ -1299,7 +1298,7 @@ CLOSED: [2017-09-15 ven. 11:09]
                       width = (max(L) - min(L)) * 0.00002 )) +
     geom_line() +
     geom_point(size = 2) +
-    xlab("Nombre de locus $\\times 1000$ ($p$)") +
+    xlab("Nombre de locus $\\times 1000$") +
     ylab("RMSE") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none") +
@@ -1311,7 +1310,7 @@ CLOSED: [2017-09-15 ven. 11:09]
                       width = (max(L) - min(L)) * 0.00002 )) +
     geom_line() +
     geom_point(size = 2) +
-    xlab("Nombre de locus $\\times 1000$ ($p$)") +
+    xlab("Nombre de locus $\\times 1000$") +
     ylab("") +
     MaTheseR.params$gtheme +
     Article2.env$scale.linetype +
@@ -1327,7 +1326,7 @@ CLOSED: [2017-09-15 ven. 11:09]
 #+end_src
 
 #+RESULTS: code:tess3:comparison:plot
-: [[./OUTPUT/Rplots/tess3_APLS_AQP_rmse_comp.png]]
+[[./OUTPUT/Rplots/tess3_APLS_AQP_rmse_comp.png]]
 : Measuring dimensions of:  Nombre de locus $\times 1000$ ($p$)
 
 ***** DONE Expérience vitesse
@@ -1375,7 +1374,7 @@ CLOSED: [2017-09-11 lun. 12:21]
 :END:
 #+NAME: code:tess3:vitesse:plot
 #+CAPTION: Dépend de [[code:tess3:vitesse:run]]
-#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+#+begin_src R
   library(MaTheseR)
   library(cowplot)
   library(scales)
@@ -1425,7 +1424,7 @@ CLOSED: [2017-09-11 lun. 12:21]
                       width = (max(n) - min(n)) * 0.02)) +
     theme_bw() +
     scale_y_log10() +
-    xlab("Nombre d'individus ($n$)") +
+    xlab("Nombre d'individus") +
     ylab("Temps par itération \n(seconds)") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none") +
@@ -1445,7 +1444,7 @@ CLOSED: [2017-09-11 lun. 12:21]
     xlab("") +
     ylab("") +
     MaTheseR.params$gtheme +
-    theme(legend.position = "none") +
+    theme(legend.position = c(0.55,0.75)) +
     Article2.env$scale.linetype +
     Article2.env$scale.color
 
@@ -1460,10 +1459,10 @@ CLOSED: [2017-09-11 lun. 12:21]
                       width = (max(L) - min(L)) * 0.02 / 1000)) +
     theme_bw() +
     scale_y_log10() +
-    xlab("Nombre de locus $\\times 1000$ ($p$)") +
+    xlab("Nombre de locus $\\times 1000$") +
     ylab("") +
     MaTheseR.params$gtheme +
-    theme(legend.position = c(0.61,0.22)) +
+    theme(legend.position = "none") +
     Article2.env$scale.linetype +
     Article2.env$scale.color +
     guides(linetype = guide_legend(nrow = 2))
@@ -1474,21 +1473,41 @@ CLOSED: [2017-09-11 lun. 12:21]
 #+end_src
 
 #+RESULTS: code:tess3:vitesse:plot
-: [[./OUTPUT/Rplots/tess3_vitesse.png]]
+#+begin_example
+
+Attaching package: ‘cowplot’
+
+The following object is masked from ‘package:ggplot2’:
+
+    ggsave
+
+Attaching package: ‘scales’
+
+The following object is masked from ‘package:purrr’:
+
+    discard
+
+The following object is masked from ‘package:readr’:
+
+    col_factor
+[[./OUTPUT/Rplots/tess3_vitesse.png]]
+Expr save in ./OUTPUT/Expr/tess3_vitesse_plot.rds
+#+end_example
 *** Comparaison avec une méthode spatial bayésienne : TESS
 
 Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
 un modèle spatial de mélange pour évaluer les capacités de l'algorithme APLS à
-reproduire les estimations obtenues avec le logiciel =TESS= 2.3. Nous avons deux
-clusters génétiques de 2k de 100 échantillon de 2k locus pour différent de
-niveau de différentiation moyen $F_{\rm ST}$ pour créer des jeux de données pour
-lesquels il est plus ou moins dure d'estimer la structure de population. Les
-erreurs statistiques, mesurées par RMSE, pour l'estimation des matrices $\Q$ et
-$\G$ varie entre $0.02$ et $0.15$ (Figure ref:fig:tess3:tess23). Les erreurs
-statistiques augmentent à mesure que les niveaux de différenciation entre les
-deux populations sources diminue, mais elles reste dans une gamme acceptable
-pour les valeurs de $F_{\rm ST}> 0.016$. Dans l'ensemble, les performances
-statistiques sont du même ordre pour =TESS= 2.3 et APLS.
+reproduire les estimations obtenues avec le logiciel =TESS= 2.3. Nous avons
+simulé deux clusters génétiques de 100 échantillons de 2000 locus pour différent
+niveau de différentiation moyen $F_{\rm ST}$. Cela a permis de créer des jeux de
+données pour lesquels il est plus ou moins dure d'estimer la structure de
+population. Les erreurs statistiques, mesurées par RMSE, pour l'estimation des
+matrices $\Q$ et $\G$ varie entre $0.02$ et $0.15$ (Figure
+ref:fig:tess3:tess23). Les erreurs statistiques augmente à mesure que les
+niveaux de différenciation entre les deux populations sources diminue, mais
+elles reste dans une gamme acceptable pour les valeurs de $F_{\rm ST} > 0.016$.
+Dans l'ensemble, les performances statistiques sont du même ordre pour =TESS=
+2.3 et APLS.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -1563,17 +1582,17 @@ l'aire sous la courbe de précision-rappel (AUC) pour quantifier les performance
 des tests de détection des locus sélectionnés reposant sur les estimations des
 matrices d'ascendance génétiques, $\Q$ et $\G$. De plus, nous avons calculé les
 AUC pour des tests de neutralité basés sur le calcul de la $\Fst$ à partir des
-génotypes des populations source simulées par =ms=. Comme ils représentent les
+génotypes des populations sources avant le mélange. Comme ils représentent les
 valeurs maximales atteignables, les AUC basés sur les génotypes des populations
 sources sont toujours plus élevés que ceux obtenus pour des tests basés sur des
 estimations des matrices d'ascendance. Pour toutes les valeurs de l'intensité de
-sélection, les AUC étaient plus élevés pour les méthodes spatiales que pour les
+sélection, les AUC sont plus élevés pour les méthodes spatiales que pour les
 méthodes non spatiales (Figure ref:fig:tess3:auc, l'intensité de sélection est
 le rapport des taux de migration aux locus neutres et adaptatifs). Pour les
-intensités de sélection élevées, les performances des tests basés sur les
-estimations des matrices d'ascendance étaient proches des valeurs optimales
+intensités de sélection élevées, les performances des tests fondés sur les
+estimations des matrices d'ascendance sont proches des valeurs optimales
 atteintes par des tests basés sur les vrais fréquences des populations sources.
-Ces résultats ont fourni des preuves que l'inclusion de l'information spatiale
+Ces résultats fournissent des preuves que l'inclusion de l'information spatiale
 dans les algorithmes d'estimation de l'ascendance améliore la détection des
 signatures de balayages sélectifs survenant dans des clusters génétiques
 inconnus.
@@ -2058,9 +2077,70 @@ CLOSED: [2017-09-11 lun. 18:57]
 [[./OUTPUT/Rplots/tess3_comp_auc_snmf.png]]
 
 *** Sensibilité des estimateurs aux erreurs dans les mesures spatiales
-**** Scripts                                                    :noexport:
-***** RUNNING Experience
 :LOGBOOK:
+- Note taken on [2017-09-20 mer. 20:04] \\
+  que veux je dire par différence algorithmique subtile ? 
+  C'est a cause du lissage approté par tess3 que sNMF n'a pas et qui joue dans des
+  données très bruité vomme pour celle du cadrant sup gauche de la Fig !
+:END:
+Ensuite, nous avons utilisé les jeux de données simulées pour évaluer la
+robustesse des estimations APLS pour des mesures inexactes des coordonnées
+spatiales. À cette fin, un bruit gaussien a été ajouté aux coordonnées
+géographiques vraiment observées en considérant les valeurs du rapport signal
+sur bruit allant de 0 à 3. Nous avons calculé le variogramme spatial pour toutes
+les simulations et avons constaté que la corrélation entre les données génétique et
+spatiales disparaît complétement pour un niveau de signal sur bruit valant 2.
+Pour toutes les simulations, nous avons comparé l'erreur relative des
+estimations de la matrice $\Q$ fournis par APLS à celles obtenues à partir la
+méthode non spatiale sNMF. Pour de faibles niveaux d'incertitude dans les
+coordonnées spatiales, les erreurs statistiques des estimations APLS sont
+inférieures à celles de sNMF (Figure ref:fig:tess3:noise). Pour les simulations
+avec $n = 500$ individus et $p = 10^{5}$ locus, un rapport de signal sur bruit
+important augmente les erreurs statistiques dans les estimations de la matrice
+$\Q$ de l'algorithme APLS. Pour un rapport signal sur bruit plus petit, les RMSE
+sont généralement inférieurs pour l'algorithme APLS que pour la méthode sans
+coordonnées spatiales. Pour les simulations avec $n = 50$ individus et $p =
+10^4$ locus, les estimations APLS étaient plus précises que les estimations non
+spatiales. Ce résultat inattendu s'explique par des différences algorithmiques
+subtiles dans les programmes testés. Dans une large mesure, les estimations de
+l'algorithme APLS sont robustes à l'incertitude dans les mesures spatiales. Des
+tests graphiques standard tels qu'une analyse de variogramme peuvent aider à
+décider si notre algorithme spatialement explicite est utile ou non.
+
+#+NAME: code:tess3:noise
+#+CAPTION: Dépend de [[code:tess3:noise:plot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_noise_plot.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl = pl, 
+                                        basename.output = "tess3_noise", 
+                                        env = MaTheseR.params,
+                                        height = 0.52 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+
+#+end_src
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_noise.pdf}
+\caption{{\bf Impact de l'incertitude dans les coordonnées géographiques sur les
+    estimations des coefficients de métissage.} Erreur statistique relative des
+  estimations des coéficients de métissage obtenues à partir de l'algorithme
+  APLS pour plusieurs niveaux du rapport bruit-signal et des valeurs de l'indice
+  de fixation ($\Fst$). L'algorithme snmf a été considéré comme la référence pour
+  la méthode non spatiale (valeur 0)}
+\label{fig:tess3:noise}
+\end{figure}
+#+END_EXPORT
+
+**** Scripts                                                    :noexport:
+***** DONE Expérience
+CLOSED: [2017-09-20 mer. 18:48]
+:LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-09-20 mer. 18:48]
 - State "RUNNING"    from "DONE"       [2017-09-11 lun. 17:44]
 - State "DONE"       from "TODO"       [2017-09-11 lun. 17:28]
 - State "TODO"       from              [2017-09-11 lun. 15:07]
@@ -2082,7 +2162,7 @@ CLOSED: [2017-09-11 lun. 18:57]
                                               0.25 * 5 * 1e-6),
                                noise.signal = c(0.0, 0.2, 0.5,0.8, 1.0, 2.0, 3.0),
                                nb.rep = 10,
-                               compute.vario = TRUE,
+                               compute.vario = FALSE,
                                cluster.nb = 4,
                                save = FALSE, bypass = TRUE)
   save_expr(expr, "tess3_noise.rds")
@@ -2090,12 +2170,15 @@ CLOSED: [2017-09-11 lun. 18:57]
 
   pl.all <- plot_tess3_noisyCoord(expr)
   save_plot_png(pl.all, "tess3_noise_debug.png")
-  pl.var <- plot_tess3_noisyCoord_vario(expr)
-  save_plot_png(pl.var, "tess3_noise_var_debug.png")
-#+end_src
+  #+end_src
 
-***** TODO Plot
+#+RESULTS:
+[[./OUTPUT/Rplots/tess3_noise_debug.png]]
+
+***** DONE Plot
+CLOSED: [2017-09-20 mer. 18:48]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-20 mer. 18:48]
 - State "TODO"       from              [2017-09-11 lun. 15:08]
 :END:
 #+NAME: code:tess3:noise:plot
@@ -2122,9 +2205,9 @@ CLOSED: [2017-09-11 lun. 18:57]
 
   labbeler <- function(variable, value) {
     if (as.character(variable) == "n") {
-      paste0("n = ",value, "")
+      paste0("$n = ",value, "$")
     } else if (as.character(variable) == "L") {
-      paste0("p ~ 10^", ceiling(log(value,base = 10)), "")
+      paste0("$p \\sim 10^", ceiling(log(value,base = 10)), "$")
     }
   }
 
@@ -2137,7 +2220,6 @@ CLOSED: [2017-09-11 lun. 18:57]
                       width = (max(noise.signal) - min(noise.signal)) * 0.02)) +
     facet_grid(L ~ n, labeller = labbeler) +
     theme_bw() +
-                                          # xlab("$Fst = 1 / (1 + 4 N_0 m)$") +
     xlab("Rapport signal sur bruit") +
     ylab("Erreur relative") +
     MaTheseR.params$gtheme +
@@ -2147,22 +2229,46 @@ CLOSED: [2017-09-11 lun. 18:57]
            shape = guide_legend(title = "Fst", nrow = 3)) +
     scale_color_manual(values = Article2.env$cbPalette) + 
     geom_hline(yintercept = 0, alpha = 0.8, col = "grey")
-  pl
 
   save_plot_png(pl, "tess3_noise.png")
-  save_plot_MaTheseR(pl, "tess3_noise.pdf.png",
-                     height = 0.4 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+
+  save_expr(pl, "tess3_noise_plot.rds")
 #+end_src
 
 #+RESULTS: code:tess3:noise:plot
-: Error in plot_tess3_noisyCoord_toplot(expr) : 
-:   could not find function "plot_tess3_noisyCoord_toplot"
 : Warning message:
 : The labeller API has been updated. Labellers taking `variable`and `value` arguments are now deprecated. See labellers documentation.
-: Error in FUN(X[[i]], ...) : object 'noise.signal' not found
-: Error in FUN(X[[i]], ...) : object 'noise.signal' not found
-: Error in FUN(X[[i]], ...) : object 'noise.signal' not found
+[[./OUTPUT/Rplots/tess3_noise.png]]
+
+***** DONE Variogramme
+CLOSED: [2017-09-20 mer. 20:17]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-20 mer. 20:17]
+- State "TODO"       from              [2017-09-20 mer. 18:45]
+:END:
+#+NAME: code:tess3:noise:vario
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(ThesisRpackage)
+
+  expr <- long_tess3_noisyCoord(ns = 200,
+                               cluster.nb = NULL,
+                               nb.rep = 1,
+                               noise.signal = c(0.0, 1.0, 1.5, 2.0, 3.0),
+                               m.neutral = 0.25 * 0.05 * 1e-6,
+                               nsites.neutral = 1.2 * 1e5,
+                               compute.vario = TRUE,
+                               save = FALSE, bypass = TRUE)
+
+
+  save_expr(expr, "tess3_noise_vario_vraiment.rds")
+
+  pl <- plot_tess3_noisyCoord_vario(expr)
+  save_plot_png(pl, "tess3_noise_vario.png")
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/tess3_noise_vario.png]]
 
 *** Application à des données humaines                           :noexport:
 **** Scripts                                                    :noexport:
@@ -2397,7 +2503,7 @@ homogènes.
 
 #+NAME: code:tess3:at:map
 #+CAPTION: Dépend de [[code:tess3_AT_map]]
-#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
 
@@ -2737,12 +2843,12 @@ CLOSED: [2017-09-11 lun. 19:09]
     geom_point(shape = 1) +
     geom_vline(xintercept = 1.5, colour = "red") +
     labs(y = "Variogramme",
-         x = "\\'Echelle g\\'eographique $\\sigma$ ($100$ km)") +
+         x = "\\'Echelle g\\'eographique\n$\\sigma$ ($100$ km)") +
     theme_gray(base_size = 12) +
     scale_size_continuous(range = c(1,3)) +
-    guides(size = guide_legend(title = "Bin size", nrow = 3)) +
+    guides(size = guide_legend(title = "Bin size", nrow = 5)) +
     MaTheseR.params$gtheme +
-    theme(legend.position = c(0.6,0.25)) +
+    theme(legend.position = c(0.6,0.4)) +
     scale_shape_discrete(solid = FALSE)
 
 
@@ -2758,7 +2864,7 @@ CLOSED: [2017-09-11 lun. 19:09]
     geom_line(aes(x = K, y = med)) +
                                           #geom_errorbar(aes(x = K, y = med,
                                           #                  ymin=min, ymax=max), width=.1) +
-    labs(y = "Erreur de validation crois\\'ee", x = "Nombre de clusters g\\'en\\'etiques $K$") +
+    labs(y = "Erreur de validation crois\\'ee", x = "Nombre de clusters\ng\\'en\\'etiques $K$") +
     theme_gray() +
     theme(legend.position = "none") +
     MaTheseR.params$gtheme +
@@ -3118,14 +3224,14 @@ CLOSED: [2017-09-11 lun. 19:44]
 L'inclusion de l'information géographique dans l'inférence des relations
 ancestrales entre les organismes est un objectif majeur des études en génétique
 des populations cite:Malecot1948,Epperson_1996,Cavalli-Sforza1994. En supposant
-que des individus géographiquement proches sont plus susceptibles de partager
-l'ascendance que des individus dans des sites éloignés, nous avons introduit
+que des individus géographiquement proches sont plus susceptibles de partager la
+même ascendance que des individus dans des sites éloignés, nous avons introduit
 deux nouveaux algorithmes pour estimer les proportions d'ascendance à l'aide
-d'informations géographiques et génétique. Sur la base des problèmes de moindres
-carrés, les nouveaux algorithmes combinent des approches de factorisation
-matricielle et de statistiques spatiales pour fournir des estimations précises
-des coefficients de métissage individuels et des fréquences d'allèle dans les
-clusters génétique ainsi estimés. Les deux méthodes partagent de nombreuses
+d'informations géographiques et génétiques. Sur la base des problèmes de
+moindres carrés, les nouveaux algorithmes combinent des approches de
+factorisation matricielle et de statistiques spatiales pour fournir des
+estimations précises des coefficients de métissage individuels et des fréquences
+d'allèle dans les clusters génétiques. Les deux méthodes partagent de nombreuses
 similitudes, mais elles diffèrent dans les approximations qu'elles font pour
 diminuer la complexité algorithmique. Plus précisément, l'algorithme AQP est
 repose sur un problème d'optimisation quadratique alors que l'algorithme APLS
@@ -3140,28 +3246,28 @@ celles observées pour les algorithmes non spatiaux. Dans nos expériences
 numériques les erreurs des méthodes spatiales sont inférieures à celles
 observées avec des méthodes non spatiales, et les algorithmes spatiaux ont
 permis de détecter une structure de population plus subtile. En outre, nous
-avons mis en place un test de detection de la selection basés sur les
+avons mis en place un test de détection de la sélection reposant sur les
 estimations spatiales des matrices $\Q$ et $\G$ cite:Martins_2016, et nous avons
-observé que ces tests avaient rejette la neutralité des locus avec plus de
-précision que ceux basés sur des approches non spatiales. Ainsi, l'information
+observé que les tests rejettent la neutralité des locus avec plus de
+précision que ceux fondés sur des approches non spatiales. Ainsi, l'information
 spatiale a contribué à améliorer la détection des signatures de balayages
 sélectifs survenant dans des populations sources avant les événements de
 mélange. Nous avons appliqué les tests de neutralité pour effectuer un balayage
 du génome pour la sélection dans les écotypes européens de l'espèce végétale
 /A.thaliana/. Le scan du génome a confirmé la preuve de la sélection des gènes
-liés à la floraison /CIP4.1/, /FRI/ et /DOG1/ différenciant la Fenno-Scandinavie du
-nord-ouest de l'Europe cite:Horton_2012.
+liés à la floraison /CIP4.1/, /FRI/ et /DOG1/ différenciant la Fenno-Scandinavie
+du nord-ouest de l'Europe cite:Horton_2012.
 
 L'estimation des coefficients de métissage en utilisant des algorithmes rapides
 qui étendent des approches non spatiales telles que, =structure=, a été
 intensément discutée au cours des dernières années cite:Wollstein2015. Dans ces
 améliorations, les approches spatiales ont reçu moins d'attention que les
 approches non spatiales. Dans cette étude, nous avons présenté un cadre
-conceptuelle permettant de développer des méthodes rapide d'estimation
-d'estimation de l'ascendance spatiale. Ces méthodes rapide sont implémenté en de
-la package {\ tt tess3r} qui propose pipeline intégré pour l'estimation et la
-visualisation de la structure génétique de la population et pour la recherche de
-locus responsable de l'adaptation locale. La complexité algorithmique de nos
+conceptuelle permettant de développer des méthodes rapides d'estimation de
+l'ascendance spatiale. Ces méthodes rapides sont implémentées dans le package
+tess3r qui propose une pipeline intégrée pour l'estimation et la visualisation
+de la structure génétique de population et pour la recherche de locus
+responsables de l'adaptation locale. La complexité algorithmique de nos
 algorithmes permet à leurs utilisateurs d'analyser des échantillons comprenant
 des centaines à des milliers d'individus. Par exemple, l'analyse de plus d'un
 millier de génotypes /A.thaliana/, chacun incluant plus de 210k SNP, n'a pris
@@ -14352,3 +14458,8 @@ Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
 *** lfmm
 #  LocalWords:  GWAS EWAS GEAS hyperparamètres décorrélé décorrélées ridgeLFMM
 #  LocalWords:  lassoLFMM Thaliana Arabidopsis thaliana variogramme
+
+# Local Variables:
+# eval: (load-file "./these-publish.el")
+# End:
+#  LocalWords:  variogrammes
