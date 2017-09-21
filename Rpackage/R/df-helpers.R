@@ -39,3 +39,22 @@ mutate_annotation <- function(df,
 
   inner_join(df, nt.biomart, by = "snps")
 }
+
+##' @export
+explode_clumps <- function(clumps.res) {
+
+  exploded.clumps.df <- tibble()
+
+  for (i in 1:nrow(clumps.res)) {
+    SNP <- clumps.res$SNP[i]
+    SP2 <- clumps.res$SP2[i] %>% str_split(",", simplify = TRUE) %>%
+      str_replace("\\(1\\)", "") %>%
+      str_split(";", simplify = TRUE)
+    SP2 <- c(SP2, SNP)
+    exploded.clumps.df <- exploded.clumps.df %>%
+      rbind(tibble(snps = SP2, clump.snps = SNP))
+  }
+
+  exploded.clumps.df
+}
+

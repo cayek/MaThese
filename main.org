@@ -3275,13 +3275,15 @@ que quelques minutes à l'aide d'un seul CPU.
 
 * Algorithmes d'estimation pour les modèles de régression à facteurs latents
 ** Introduction
-<<sec:lfmm_intro>>
+<<sec:lfmm_intro>> 
+
+
 Au cours de la dernière décennie, des études d'association à grande échelle ont
 été utilisées pour identifier des gènes candidats associés à une maladie
 particulière ou un trait phénotypique d'intérêt. Selon le type des marqueurs
 moléculaires examinés dans les génomes ou dans les cellules, plusieurs
 catégories d'étude d'association ont été menées pour détecter des corrélations
-significatives de entre les marqueurs et le phénotype. Par exemple, les études
+significatives entre les marqueurs et le phénotype. Par exemple, les études
 d'association à l'échelle du génome (GWAS genome-wide association studies) se
 concentrent sur des polymorphismes à un seul nucléotide (SNP pour
 single-nucleotide polymorphism) en examinant des variants génétiques chez
@@ -3293,13 +3295,13 @@ phénotypes cite:Rakyan_2011. Des approches similaires ont été appliquées à 
 caractérisation de la variation observée dans l'ARN par rapport à différents
 environnements, traitements médicaux, phénotypes ou maladies cite:Slonim_2002.
 D'autres exemples d'études d'association incluent des études d'association
-génétique-environnement (GEAS) dans lesquelles les locus sont testés
-pour leur corrélation avec des gradients écologiques afin de détecter les
-signatures de sélection naturelle cite:rellstab15_pract_guide_to_envir_assoc.
-En un court laps de temps, les études d'association ont permis des progrès
-considérables dans l'identification des variants génétiques qui confèrent une
-susceptibilité aux maladies ainsi qu'une compréhension plus approfondie de
-l'évolution des génomes en réponse à la sélection naturelle.
+génétique-environnement (GEAS) dans lesquelles des locus sont testés pour leurs
+corrélations avec des gradients écologiques afin de détecter des signatures de
+sélection naturelle cite:rellstab15_pract_guide_to_envir_assoc. En un court laps
+de temps, les études d'association ont permis des progrès considérables dans
+l'identification des variants génétiques qui confèrent une susceptibilité aux
+maladies ainsi qu'une compréhension plus approfondie de l'évolution des génomes
+en réponse à la sélection naturelle.
 
 *** Les facteurs de confusions
 <<sec:fact_conf>>
@@ -3307,28 +3309,29 @@ l'évolution des génomes en réponse à la sélection naturelle.
 Basée sur l'analyse de la corrélation, les études d'association sont confrontées
 aux problèmes des facteurs de confusion et de la causalité. En effet lorsque
 l'on détecte de la corrélation entre deux variables, cela n'implique pas
-nécessairement qu'il y a lien de causalité entre celles-ci. Le lien de causalité
-entre les deux variables peut être bien plus complexe et notamment impliquer des
-liens avec d'autres variables non observées. En particulier, il est possible de
-conclure à une association entre deux variables alors qu'elles sont associé à
-une autre variable non considérée dans l'étude. On appelle alors la variable non
-observée un facteur de confusion. La figure [[graph:conf_factor]] illustre cette
-situation. Le problème des facteurs de confusion est connue depuis longtemps. En
-effet, on le retrouve déjà dans l'ouvrage /The Design of Experiment/ de Ronald
-Fisher qui introduisit entre autre le concept de d'hypothèse nulle en
-statistique cite:fisher1937design. Dans cette thèse nous nous intéressons aux
-études d'association à très grande échelle. Nous avons d'une part des
-observations de $\Ycol$ variables sur $\Yrow$ individus rassemblées dans une
-matrice $\Y$ de taille $\Yrow \times \Ycol$, et en général $\Ycol$ est très
-grand devant $\Yrow$. Nous avons d'autre part l'observation d'une variable sur
-les mêmes $\Xrow$ individus que l'on rassemble dans une matrice $\X$, de taille
-$\Xrow \times 1$. L'objectif est alors de trouver parmi les $\Ycol$ variables
-$\Y$ celles qui sont associées à $\X$. Nous supposons de plus qu'il existe un
-certain nombre de variables non observées qui permettent d'expliquer les
-variations de $\Y$. Ces variables non observées, que l'on appellera variables
-latentes, sont potentiellement des facteurs de confusion pour l'étude
-d'association entre $\Y$ et $\X$. Les variables latentes sont potentiellement
-corrélées à $\X$, il faut donc les prendre en compte dans l'étude d'association.
+nécessairement qu'il y a un lien de causalité entre celles-ci. Le lien de
+causalité entre les deux variables peut être bien plus complexe et notamment
+impliquer des liens avec d'autres variables non observées. En particulier, il
+est possible de conclure à une association entre deux variables alors qu'elles
+sont associées à une autre variable non considérée dans l'étude. On appelle
+alors la variable non observée un facteur de confusion. La figure
+[[graph:conf_factor]] illustre cette situation. Le problème des facteurs de
+confusion est connue depuis longtemps. En effet, on le retrouve déjà dans
+l'ouvrage /The Design of Experiment/ de Ronald Fisher qui introduisit entre
+autre le concept de d'hypothèse nulle en statistique cite:fisher1937design. Dans
+cette thèse nous nous intéressons aux études d'association à très grande
+échelle. Nous avons d'une part des observations de $\Ycol$ variables sur $\Yrow$
+individus rassemblées dans une matrice $\Y$ de taille $\Yrow \times \Ycol$, et
+en général $\Ycol$ est très grand devant $\Yrow$. Nous avons d'autre part
+l'observation d'une variable sur les mêmes $\Xrow$ individus que l'on rassemble
+dans une matrice $\X$, de taille $\Xrow \times 1$. L'objectif est alors de
+trouver parmi les $\Ycol$ variables $\Y$ celles qui sont associées à $\X$. Nous
+supposons de plus qu'il existe un certain nombre de variables non observées qui
+permettent d'expliquer les variations de $\Y$. Ces variables non observées, que
+l'on appellera variables latentes, sont potentiellement des facteurs de
+confusion pour l'étude d'association entre les matrices $\Y$ et $\X$. Les
+variables latentes sont potentiellement corrélées à $\X$, il faut donc les
+prendre en compte dans l'étude d'association.
 
 #+NAME: code:conf_factor
 #+BEGIN_SRC dot :file Figures/conf_factor.png :exports results :eval no-export
@@ -3352,7 +3355,7 @@ corrélées à $\X$, il faut donc les prendre en compte dans l'étude d'associat
 
 Dans cette partie nous proposons de montrer l'intérêt de prendre en
 considération les facteurs de confusion dans les études d'association par une
-simulations numérique. Pour cela nous simulons une variable $\X$ et une variable
+simulation numérique. Pour cela nous simulons une variable $\X$ et une variable
 latente de sorte que le coefficient de corrélation entre ces deux variables soit
 égale à $0.6$. Nous simulons ensuite une matrice de bruit gaussien de moyenne
 nulle et variance égale à 1, noté $\E$. La matrice des effets de la variable
@@ -3364,8 +3367,8 @@ matrice $\Y$ est calculée telle que
 \Y = \U \V^{T} + \X \B^{T} + \E. 
 \end{equation} 
 Cette simulation correspond à une situation où $1 \%$ des colonnes de $\Y$ sont
-associé avec $\X$ et la variable latente est bien facteur de confusion pour
-cette étude d'association car $\U$ est corrélée avec $\X$. 
+associées avec $\X$. La variable latente est un facteur de confusion pour cette
+étude d'association car $\U$ est corrélée avec $\X$.
 
 Afin de détecter les variables expliquées associés à la variable explicative,
 nous réalisons une régression linéaire de $\Y$ par $\X$. Nous effectuons une
@@ -3377,8 +3380,8 @@ compte la variable latente plus de $40 \%$ des \pvalues sont inférieures à
 $10^{-15}$, alors que quand on prend en compte les facteurs latents la
 distribution des \pvalues est bien uniforme comme on s'y attend (Figure
 ref:fig:simu_intro). En effet, on s'attend à une distribution uniforme des
-\pvaleur car la majorité des colonnes de $\Y$ ne sont pas associées avec la
-variable $\X$, seulement 1\% par simulation. Dans le cas de cette simulation il
+\pvalues car la majorité des colonnes de $\Y$ ne sont pas associées avec la
+variable $\X$, seulement $1\%$ par simulation. Dans le cas de cette simulation il
 est impossible de ne pas prendre en compte la variable latente, sans celle-ci on
 détecte presque la moitié des colonnes de $\Y$ comme étant associées à $\X$.
 
@@ -3430,9 +3433,8 @@ détecte presque la moitié des colonnes de $\Y$ comme étant associées à $\X$
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/simu_intro.pdf}
-\caption{Histogramme des \pvalues du test de nullité des coefficients
-  de régression de la régression sans et avec le facteur de
-  confusion.}
+\caption{Histogramme des \pvalues du test de nullité des coefficients de la
+  régression sans et avec le facteur de confusion.}
 \label{fig:simu_intro}
 \end{figure}
 #+END_EXPORT
@@ -3503,7 +3505,7 @@ Dans ce cas, la matrice de covariance est estimée a priori sur les données
 génétiques.
 **** Les modèles mixtes à facteurs latents (LFMM latent factor mixed model)
 Nous introduisons maintenant les modèles mixtes à facteurs latents. Pour de tels
-modèle, l'équation de régression peut s'écrire comme ceci :
+modèles, l'équation de régression peut s'écrire comme ceci :
 \begin{equation}
 \label{eq:glfmm}
 \Y = \X \B^{T} + \U \V^{T} + \E,
@@ -3515,13 +3517,13 @@ Dans les modèles dont nous avons parlés précédemment, on estime a priori les
 variables latentes ou leur matrice de covariance. Dans LFMM l'estimation des
 variables latentes $\U$ et des effets de la variable explicative $\B$ ce font en
 même temps. Les matrice $\U$ et $\V$ permettent d'apprendre les variations
-systématiques observée dans la matrice $\Y$ tandis que la matrice des effets
+systématiques observées dans la matrice $\Y$ tandis que la matrice des effets
 $\B$ permet d'apprendre l'effet de $\X$ sur certaines colonnes de $\Y$. Il
 existe différentes méthodes pour estimer les paramètres de LFMM. On distingue
 d'abord des approches qui reposent sur des algorithmes de Monte Carlo
 cite:frichot13_testin_assoc_between_loci_envir,carvalho08_high_dimen_spars_factor_model.
-Ces approches repose sur une modélisation bayésienne de LFMM qui permet
-d'échantillonner les lois à posteriori des paramètres. L'avantage des méthodes
+Ces approches reposent sur une modélisation bayésienne de LFMM qui permet
+d'échantillonner les lois a posteriori des paramètres. L'avantage des méthodes
 MCMC est qu'elles permettent d'estimer la variance du paramètre $\B$ grâce au
 bootstrap bayésien cite:rubin1981bayesian; et de faire un test de
 significativité statistique. Certaines approches reposent sur des algorithmes EM
@@ -3534,8 +3536,8 @@ cite:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007. Cette
 transformation a pour but de séparer la variation de $\Y$ expliquée par les
 variables latentes de celle expliquée par $\X$. Parmi les méthodes reposant sur
 une transformation des données, on distingue des autres les méthodes dites à
-contrôles négatifs qui suppose connu un sous ensemble de colonnes de $\Y$ qui ne
-sont pas associées avec $\X$. Les méthodes à contrôles négatifs utilisent ces
+contrôles négatifs qui supposent connu un sous ensemble de colonnes de $\Y$ qui ne
+sont pas associées avec $\X$. Les méthodes à contrôles négatifs utilisent les
 variables dîtes nulles pour estimer les variables latentes. L'estimation des
 variables latentes pour corriger les études d'association est un problème très
 vaste et aucune méthode ne s'est imposée comme étant le méthode référence.
@@ -3559,18 +3561,18 @@ latents peuvent être confondus avec les variables explicatives en raison de la
 nature observatoire de l'étude.
 
 *** Plan du chapitre
-Nous proposons dans ce chapitre, deux méthodes d'estimation rapide et efficace
-des paramètres du modèle LFMM. Nos deux méthodes d'estimation consistent à
-isoler la variation de $\Y$ expliquée par les variables latentes de celle
-expliquée par les variables explicatives $\X$. Les méthodes que nous présentons
-sont comparable aux méthodes sva cite:article_Leek_Storey_2007; et cate
-cite:wang2015confounder; qui procède d'une façon très similaire. Nous décrivons
-plus en détail les méthodes cate et sva dans la partie [[sec:similar_method]].
-Chacun des algorithmes que nous présentons découle de l'optimisation d'une
-fonction objectif. Nous montrons que nos algorithmes d'estimation convergent
-vers le point de minimum global de leur fonction objectif respective. Enfin,
-nous comparons nos méthodes à sva et cate sur des simulations numériques ainsi
-que pour des exemples de GWAS, EWAS et GEAS.
+Nous proposons dans ce chapitre, deux algorithmes d'estimation rapide et
+efficace des paramètres du modèle LFMM. Nos deux algorithmes d'estimation
+consistent à isoler la variation de $\Y$ expliquée par les variables latentes de
+celle expliquée par les variables explicatives $\X$. Les méthodes que nous
+présentons sont comparables aux méthodes sva cite:article_Leek_Storey_2007; et
+cate cite:wang2015confounder; qui procède d'une façon très similaire. Nous
+décrivons plus en détail les méthodes cate et sva dans la partie
+[[sec:similar_method]]. Chacun des algorithmes que nous présentons découle de
+l'optimisation d'une fonction objectif. Nous montrons que nos algorithmes
+d'estimation convergent vers le point de minimum global de leur fonction
+objectif respective. Enfin, nous comparons nos méthodes à sva et cate sur des
+simulations numériques ainsi que pour des exemples de GWAS, EWAS et GEAS.
 
 ** Nouvelles méthodes 
 *** Modèle mixte à facteurs latents
@@ -3592,8 +3594,8 @@ lesquelles on souhaite trouver les associations avec $\Y$. Les colonnes de $\X$
 peuvent être par exemple un phénotype, comme une maladie, ou un gradient
 environnemental, comme la température d'un habitat. La matrice des effets de
 $\X$ sur $\Y$ de taille $\Ycol \times \Xcol$ est notée $\B$. Si l'on suppose
-qu'il y a $K$ variable latentes, la matrice $\U$ est la matrice des $\K$
-variable latentes et la matrice $\V$ représente les effets des variables latents
+qu'il y a $K$ variables latentes, la matrice $\U$ est la matrice des $\K$
+variables latentes et la matrice $\V$ représente les effets des variables latents
 sur $\Y$. Les matrices $\V$ et $\U$ sont respectivement la matrice des effets
 latents appelée aussi matrice des axes factorielles, de taille $\Ycol\times\Ucol$,
 et la matrice des variables latentes, de taille $\Urow \times \K$. Enfin la
@@ -3630,7 +3632,7 @@ l'analyse en composantes principales de la matrice latente $\W$.
 :END:
 
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
-modèle défini par l'équation eqref:eq:model. L'algorithme d'estimation est basé
+modèle défini par l'équation eqref:eq:model. L'algorithme d'estimation est fondé
 sur un problème des moindres carrées régularisé en norme $L_{2}$. Nous montrons
 que cet algorithme calcule un minimum global du problème d'optimisation des
 moindres carrés régularisé en norme $L_{2}$.
@@ -3700,20 +3702,20 @@ vers zéro la composante qui appartient à l'espace engendré par $\X$. Si
 $\lambRidge$ tend vers zéro, multiplier $\Y$ par $\D \matr{Q}^{T}$ revient à
 prendre le résidu d'une régression linéaire de $\Y$ par $\X$, on enlève alors
 toute la part de variance expliquée par $\X$. À la limite, $\D$ n'est plus
-inversible. Si $\lambRidge$ est très grand, $\D$ tend vers la matrice
-identité. Dans ce cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire une
-analyse en composante principale de la matrice des variable expliquées $\Y$.
-Nous expliquons dans la partie [[sec:hyperparametre]] plus en détail comment choisir
+inversible. Si $\lambRidge$ est très grand, $\D$ tend vers la matrice identité.
+Dans ce cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en
+composante principale de la matrice des variables expliquées $\Y$. Nous
+expliquons dans la partie [[sec:hyperparametre]] plus en détail comment choisir
 l'hyperparamètre $\lambRidge$.
 
-L'estimation des paramètres régularisé en norme $L_{2}$ est justifié par le
+Les estimateurs des paramètres régularisés en norme $L_{2}$ sont justifiés par le
 théorème suivant.
 #+BEGIN_theorem
 <<ridge_theorem>> 
-Pour $\lambRidge$ strictement supérieur à zéro, l'estimation des
-paramètres de LFMM régularisé en norme $L_{2}$, définie par
-eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, définit un 
-minimum global de la fonction objectif $\Lridge$.
+Pour $\lambRidge$ strictement supérieur à zéro, les
+estimateurs des paramètres de LFMM régularisés en norme $L_{2}$, définis par
+eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, définit un minimum
+global de la fonction objectif $\Lridge$.
 #+END_theorem
 
 #+BEGIN_proof
@@ -3787,7 +3789,7 @@ est un point de minimum global de $\Lridge$.
   Faire le lien avec les methodes de low rank approximation
 :END:
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
-modèle défini par eqref:eq:model basé sur un problème des moindres carrés
+modèle défini par eqref:eq:model fondé sur un problème des moindres carrés
 régularisé en norme $L_{1}$ et en norme nucléaire. Nous montrons que cet
 algorithme calcule un minimum global du problème d'optimisation des moindres
 carrés régularisé.
@@ -3807,11 +3809,11 @@ des colonnes de $\Y$ soit associée à $\X$. Autrement dit seule certaines ligne
 de la matrice des effets $\B$ doivent être non nulles. La régularisation $L_{1}$
 est connue pour produire des estimateurs parcimonieux de $\B$
 cite:Tibshirani_1996. La fonction $\Llasso$ fait aussi intervenir une
-régularisation sur la matrice latente $\W$. Nous ajoutons la régularisation
-$L_{1}$ afin de lever la contrainte de rang sur $\W$ empechant de définir un
-problème d'optimisation convexe. Avec le terme de régularisation sur $\W$, la
-fonction $\Llasso$ devient convexe. En outre, les pénalisations sur la norme
-nucléaire sont utilisées pour pénaliser le rang
+régularisation sur la matrice latente $\W$. Nous ajoutons la régularisation en
+norme nucléaire afin de lever la contrainte de rang sur $\W$ empechant de
+définir un problème d'optimisation convexe. Avec le terme de régularisation sur
+$\W$, la fonction $\Llasso$ devient convexe. En outre, les pénalisations sur la
+norme nucléaire sont utilisées pour pénaliser le rang
 cite:article_Mishra_Meyer_Bach_Sepulchre_2011. Ainsi, la régularisation en norme
 nucléaire contraint le rang de $\W$ et donc le nombre de variables latentes.
 
@@ -3901,7 +3903,7 @@ L'algorithme de descente par blocs de coordonnées ne converge pas en général
 vers un point minimum quand la fonction objectif n'est pas continûment
 différentiable, comme c'est le cas pour la fonction $\Llasso$. On peut trouver
 dans la littérature des résultats généraux sur les algorithmes par blocs de
-coordonnées dans des cas ou la fonction objective n'est pas différentiable
+coordonnées dans des cas ou la fonction objectif n'est pas différentiable
 cite:Tseng_2001. Cependant, les théorèmes démontrés dans cite:Tseng_2001
 dépassent largement le cadre de la convergence de l'algorithme d'estimation
 $L_{1}$ présenté ici et compliquent l'extraction des résultats intéressants.
@@ -3980,19 +3982,18 @@ f(x) - f(\bar{x}) \geq 0, ~ \forall x \in A.
 Ce résultat démontre que l'algorithme d'estimation $L_{1}$ des paramètres du
 modèle LFMM converge vers un point de minimum global de $\Llasso$.
 *** Complexité des algorithmes
-Dans cette partie nous abordons la complexité des algorithmes d'estimation des
-paramètres présentés dans les sections précédentes. On peut distinguer deux
-grandes étapes dans ces algorithmes. La première est le calcul de la
-décomposition en valeurs singulières tronquée : calcul de la matrice latente
-défini par l'équation eqref:eq:RidgeLfmmEstomatorW pour l'estimation $L_{2}$ et
-la résolution du problème d'optimisation de la fonction
-$\mathcal{L}_{\mathrm{lasso}}^{'}$ définie par eqref:eq:lasso2 pour l'estimation
-$L_{1}$. La seconde est le calcul de la projection orthogonale sur l'espace
-engendré par les variables explicatives $\X$ : calcul de la matrice des effets
-définie par l'équation eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$ et
-la résolution du problème d'optimisation de la fonction
-$\mathcal{L}_{\mathrm{lasso}}^{''}$ définie par eqref:eq:lasso1 pour
-l'estimation $L_{1}$.
+Dans cette partie nous abordons la complexité des algorithmes présentés dans les
+sections précédentes. On peut distinguer deux grandes étapes dans ces
+algorithmes. La première est le calcul de la décomposition en valeurs
+singulières tronquée : calcul de la matrice latente défini par l'équation
+eqref:eq:RidgeLfmmEstomatorW pour l'estimation $L_{2}$ et la résolution du
+problème d'optimisation de la fonction $\mathcal{L}_{\mathrm{lasso}}^{'}$
+définie par eqref:eq:lasso2 pour l'estimation $L_{1}$. La seconde est le calcul
+de la projection orthogonale sur l'espace engendré par les variables
+explicatives $\X$ : calcul de la matrice des effets définie par l'équation
+eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$ et la résolution du
+problème d'optimisation de la fonction $\mathcal{L}_{\mathrm{lasso}}^{''}$
+définie par eqref:eq:lasso1 pour l'estimation $L_{1}$.
 
 D'après cite:Halko_2011, le calcul des $K$ composantes dominantes de la
 décomposition en valeurs singulières demande $O(\Yrow \Ycol \K)$ opérations.
@@ -4158,27 +4159,27 @@ $L_{1}$ vers une estimation de la matrice latente $\hat{\W}$ qui est de rang $\K
 :END:
 <<sec:CV>>
 
-La validation croisée est une méthode d'évaluation d'un modèle très utilisée en
-apprentissage statistique. Le principe est de séparer les données en une partie
-d'apprentissage et une partie de test. Les données d'apprentissage sont
-utilisées pour estimer les paramètres du modèle. On mesure ensuite l'erreur de
-prédiction à l'aide des données de tests. Pour que la validation croisée
-fonctionne, il est très important que les données de test ne soient pas
-utilisées pour estimer les paramètres du modèle. Dans le cas des modèles à
-facteurs latents en général, les données d'apprentissage ne permettent toutefois
-pas de calculer les variables latentes pour les données de test (la matrice $\U$
-pour LFMM). Le plus simple est de séparer les variables des données de test.
-Nous utilisons ensuite une partie des variables des données de test pour estimer
-les variables latentes et l'autre partie pour calculer l'erreur de prédiction
-cite:Bro_2008. Nous présentons maintenant plus formellement notre procédure de
-validation croisée.
+La validation croisée est une méthode d'évaluation des hyperparamètres d'un
+modèle très utilisée en apprentissage statistique. Le principe est de séparer
+les données en une partie d'apprentissage et une partie de test. Les données
+d'apprentissage sont utilisées pour estimer les paramètres du modèle. On mesure
+ensuite l'erreur de prédiction à l'aide des données de tests. Pour que la
+validation croisée fonctionne, il est très important que les données de test ne
+soient pas utilisées pour estimer les paramètres du modèle. Dans le cas des
+modèles à facteurs latents en général, les données d'apprentissage ne permettent
+toutefois pas de calculer les variables latentes pour les données de test (la
+matrice $\U$ dans LFMM). Le plus simple est de séparer les variables des données
+de test. Nous utilisons ensuite une partie des variables des données de test
+pour estimer les variables latentes et l'autre partie pour calculer l'erreur de
+prédiction cite:Bro_2008. Nous présentons maintenant plus formellement notre
+procédure de validation croisée.
 
-Nous commençons par séparer les données une partie d'entraînement et une partie
-de test, c'est a dire que nous séparons les matrices des variables expliquées
-$\Y$ et explicatives $\X$ en deux parties selon leurs lignes. Nous notons $I$
-l'ensemble des indices des lignes choisies pour estimer l'erreur de prédiction.
-On estime à partir des données d'entraînement la matrice des axes factoriels que
-l'on note $\hat{\V}_{-I}$ et la matrice des effets que l'on note
+Nous commençons par séparer les données en une partie d'entraînement et une
+partie de test, c'est a dire que nous séparons les matrices des variables
+expliquées $\Y$ et explicatives $\X$ en deux parties selon leurs lignes. Nous
+notons $I$ l'ensemble des indices des lignes choisies pour estimer l'erreur de
+prédiction. On estime à partir des données d'entraînement la matrice des axes
+factoriels que l'on note $\hat{\V}_{-I}$ et la matrice des effets que l'on note
 $\hat{\B}_{-I}$. Ensuite, nous séparons les observations des variables
 expliquées de test en deux partis afin d'estimer les variables latentes sur les
 variables restantes. On notera $J$ l'ensemble des colonnes de la matrice des
@@ -4191,10 +4192,11 @@ où l'opérateur crochet représente l'opérateur de sélection de lignes et col
 d'une matrice. Enfin, on peut calculer l'erreur de prédiction comme ceci
 \begin{equation}
 \label{eq:2}
-\mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\U}^{-J} \hat{\V}_{-I}[J,]^{T} - \X[I, ] \hat{\B}_{-I}[J,]^{T} }_{F}.
+\mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\U}^{-J} \hat{\V}_{-I}[J,]^{T} - \X[I, ] \hat{\B}_{-I}[J,]^{T} }_{F},
 \end{equation}
-Cette procédure permet de mesurer une erreur sur des observations des variables
-expliquées qui n'ont pas été utilisées pour estimer les paramètres du modèle.
+où $|I|$ est le nombre d'indices dans l'ensemble $I$. Cette procédure
+permet de mesurer une erreur sur des observations des variables expliquées qui
+n'ont pas été utilisées pour estimer les paramètres du modèle.
 
 *** Tests d'hypothèse corrigés pour les facteurs de confusions
 <<sec:hypothese>>
@@ -4236,8 +4238,8 @@ pour notre étude d'association, comme par exemple l'age et le genre des
 individus. Nous rappelons que l'estimation de la matrice des $\K$ variables
 latentes $\hat{\U}$ est définie de façon unique grâce à l'ACP de la matrice
 $\hat{\W}$. La matrice $\hat{\W}$ est estimée grâces aux algorithmes
-d'estimation $L_{1}$ ou $L_{2}$ de la matrice latente du modèle LFMM présenté
-dans la section [[sec:model]].
+d'estimation $L_{1}$ ou $L_{2}$ de la matrice latente de LFMM que nous avons
+présentés précédemment.
 
 **** Calcul de la statistique de test
 Pour chaque variable expliquée $\Y_{j}$, nous avons défini le modèle de
@@ -4303,7 +4305,7 @@ régularisation $L_{2}$. L'algorithme lassoLFMM prend la proportion de lignes no
 nulles dans la matrice des effets $\B$. Enfin les deux algorithmes retournent
 les estimations pour les paramètres de LFMM ainsi qu'une \pvalue pour le test
 d'association de chaque colonne de $\Y$ avec $\X$.
-** Autres méthodes de corréction pour les facteurs de confusions
+** Autres méthodes de correction pour les facteurs de confusions
 <<sec:similar_method>>
 
 Dans cette section nous présentons d'autres méthodes pour les études
@@ -7036,6 +7038,55 @@ ne contient que $28\%$ des candidats du GWAS catalog.
 \end{figure}
 #+END_EXPORT
 
+
+#+NAME: code:gwas_table_print
+#+CAPTION: Dépend de [[code:gwas_table]]
+#+begin_src R :results output latex :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(xtable)
+
+  table.df <- readRDS("./OUTPUT/Expr/gwas_table_toprint.rds")
+
+  ## table.df %>% names() %>% paste0(collapse = "|")
+
+  table.df %>%
+    head(10) %>%
+    xtable(align = "llllp{1.5cm}p{2cm}llp{2cm}",
+    type = "latex",
+    caption = "") %>%
+    print(include.rownames=FALSE,
+          sanitize.colnames.function=identity,
+          sanitize.text.function=identity,
+          floating.environment = "sidewaystable")
+#+end_src
+
+#+RESULTS: code:gwas_table_print
+#+BEGIN_EXPORT latex
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Thu Sep 21 18:24:06 2017
+\begin{sidewaystable}[ht]
+\centering
+\begin{tabular}{lllp{1.5cm}p{2cm}llp{2cm}}
+  \hline
+Chr & Position (pb) & Snp & LD block (Mb) & Odds ratio [$95\%$ IC] & \pvalue & \qvalue & Gènes dans la touffe \\ 
+  \hline
+\textbf{3} & \textbf{189595248} & \textbf{rs1464510} & \textbf{189.56-189.61} & \textbf{1.30 [1.24-1.36]} & \textbf{$3.79 \times 10^{-23}$} & \textbf{$1.46 \times 10^{-20}$} & \textbf{LPP} \\ 
+  \textbf{3} & \textbf{161147744} & \textbf{rs17810546} & \textbf{160.99-161.32} & \textbf{1.35 [1.26-1.45]} & \textbf{$1.84 \times 10^{-16}$} & \textbf{$6.08 \times 10^{-14}$} & \textbf{IQCJ-SCHIP1, IL12A-AS1, IL12A} \\ 
+  \textbf{4} & \textbf{123334952} & \textbf{rs13151961} & \textbf{123.19-123.56} & \textbf{0.73 [0.68-0.78]} & \textbf{$1.68 \times 10^{-14}$} & \textbf{$5.31 \times 10^{-12}$} & \textbf{KIAA1109, ADAD1} \\ 
+  \textbf{12} & \textbf{110492139} & \textbf{rs653178} & \textbf{110.25-110.49} & \textbf{1.22 [1.16-1.28]} & \textbf{$6.80 \times 10^{-13}$} & \textbf{$2.05 \times 10^{-10}$} & \textbf{CUX2, LINC02356, SH2B3, ATXN2} \\ 
+  \textbf{2} & \textbf{102437000} & \textbf{rs917997} & \textbf{102.26-102.61} & \textbf{1.27 [1.20-1.35]} & \textbf{$1.54 \times 10^{-12}$} & \textbf{$4.61 \times 10^{-10}$} & \textbf{IL1RL1, IL18R1, IL18RAP, MIR4772, SLC9A4, SLC9A2} \\ 
+  4 & 123774157 & rs6840978 & 123.73-123.77 & 0.77 [0.72-0.82] & $1.20 \times 10^{-11}$ & $3.52 \times 10^{-9}$ & IL21-AS1 \\ 
+  3 & 161179692 & rs9811792 & 161.12-161.18 & 1.18 [1.12-1.24] & $6.57 \times 10^{-11}$ & $1.88 \times 10^{-8}$ & IL12A-AS1 \\ 
+  \textbf{3} & \textbf{46210205} & \textbf{rs13098911} & \textbf{45.98-46.21} & \textbf{1.32 [1.22-1.43]} & \textbf{$2.07 \times 10^{-10}$} & \textbf{$5.81 \times 10^{-8}$} & \textbf{FYCO1, FLT1P1, CCR3} \\ 
+  \textbf{1} & \textbf{190803436} & \textbf{rs2816316} & \textbf{190.77-190.80} & \textbf{0.78 [0.72-0.83]} & \textbf{$2.21 \times 10^{-10}$} & \textbf{$6.20 \times 10^{-8}$} & \textbf{} \\ 
+  \textbf{3} & \textbf{46327388} & \textbf{rs6441961} & \textbf{46.26-46.33} & \textbf{1.21 [1.15-1.27]} & \textbf{$1.71 \times 10^{-8}$} & \textbf{$4.55 \times 10^{-6}$} & \textbf{CCR3, UQCRC2P1} \\ 
+   \hline
+\end{tabular}
+\caption{} 
+\end{sidewaystable}
+#+END_EXPORT
+
+
+
 **** Scripts                                                    :noexport:
 :LOGBOOK:
 - Note taken on [2017-08-06 Sun 14:53] \\
@@ -7048,7 +7099,7 @@ CLOSED: [2017-08-16 mer. 17:40]
 - State "DONE"       from "TODO"       [2017-08-16 mer. 17:40]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
 :END:
-Ou ont elle été ddl ??? FP a recu dirrect =./Data/Celiac/dubois_2010/=
+Ou ont elles ont été ddl ??? FP a recu dirrect =./Data/Celiac/dubois_2010/=
 
 #+NAME: code:gwas_ddl
 #+CAPTION: 
@@ -7436,6 +7487,59 @@ Among remaining phenotypes, 4496 are cases and 10659 are controls.
 --make-bed to FinnuncorrNLITUK1UK3hap300_CQ_norel.bed +
 FinnuncorrNLITUK1UK3hap300_CQ_norel.bim +
 #+end_example
+***** DONE Odd ratio avec Plink
+CLOSED: [2017-09-21 jeu. 15:48]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-21 jeu. 15:48]
+- State "TODO"       from              [2017-09-21 jeu. 15:39]
+:END:
+
+[[http://zzz.bwh.harvard.edu/plink/anal.shtml][plink doc]] : 
+
+#+NAME: code:gwas_assoc_odd_ratio
+#+CAPTION: Dépend de [[code:gwas_ibd_filter]]
+#+begin_src shell :session *ssh krakenator* :results output
+  cd ~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/
+
+  ## recode to vcf
+  plink --bfile FinnuncorrNLITUK1UK3hap300_CQ_norel --assoc --ci 0.95
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+    plink --bfile FinnuncorrNLITUK1UK3hap300_CQ_norel --assoc --ci 0.95
+  PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to plink.log.
+  Options in effect:
+    --assoc
+    --bfile FinnuncorrNLITUK1UK3hap300_CQ_norel
+    --ci 0.95
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  281122 variants loaded from .bim file.
+  15155 people (6646 males, 8509 females) loaded from .fam.
+  15155 phenotype values loaded from .fam.
+  Using 1 thread (no multithreaded calculations invoked).
+  Before main variant filters, 15155 founders and 0 nonfounders present.
+  Calculating allele frequencies... done.
+  Total genotyping rate is 0.999597.
+  281122 variants and 15155 people pass filters and QC.
+  Among remaining phenotypes, 4496 are cases and 10659 are controls.
+  Writing C/C --assoc report to plink.assoc ... done.
+#+end_example
+
+#+NAME: code:gwas_assoc_odd_ratio_R
+#+CAPTION: Dépend de [[code:gwas_assoc_odd_ratio]]
+#+begin_src R 
+  plink.assoc.df <- data.table::fread(input = "~/Projects/Thesis/MaThese/Data/Celiac/dubois_2010/plink.assoc", data.table = FALSE) %>% tibble::as.tibble()
+
+  MaTheseR::save_expr(plink.assoc.df, "gwas_plink_assoc.rds")
+#+end_src
+
+#+RESULTS: code:gwas_assoc_odd_ratio_R
+: Expr save in ./OUTPUT/Expr/gwas_plink_assoc.rds
 
 ***** STARTED Imputation des données manquantes
 :LOGBOOK:
@@ -8334,7 +8438,7 @@ CLOSED: [2017-09-12 mar. 13:59]
   th <- 0.05
   message("Pvalue less than ", th)
   res.df %>% group_by(method) %>%
-    summarise(count = sum(pvalue < th))
+    summarise(count = sum(calibrated.pvalue < th))
 
   methods <- res.df$method %>% unique()
   methods
@@ -8343,7 +8447,7 @@ CLOSED: [2017-09-12 mar. 13:59]
   for (m in methods) {
     tmp.file <- tempfile(tmpdir = "~/Projects/Thesis/Data/Celiac/dubois_2010/")
     res.df %>% dplyr::filter(method == m) %>%
-      dplyr::transmute(P = pvalue, SNP = colname) %>%
+      dplyr::transmute(P = calibrated.pvalue, SNP = colname) %>%
       readr::write_delim(path = tmp.file, delim = "\t")
     plink.cmd <- paste("~/BiocompSoftware/plink/plink",
                        "--bfile ~/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ",
@@ -8393,18 +8497,18 @@ Pvalue less than 0.05
 # A tibble: 5 x 2
      method count
       <chr> <int>
-1      cate 19662
-2 lassoLFMM 19261
-3        lm 30645
-4     PCAlm 18086
-5 ridgeLFMM 18345
+1      cate 16218
+2 lassoLFMM 16239
+3        lm 16003
+4     PCAlm 15632
+5 ridgeLFMM 15647
 [1] "lm"        "ridgeLFMM" "PCAlm"     "cate"      "lassoLFMM"
 PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
 (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
 Logging to plink.clump.log.
 Options in effect:
   --bfile /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ
-  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file69ea243372aa
+  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file3ae523d1efd1
   --clump-kb 250
   --clump-p1 0.05
   --clump-p2 0.1
@@ -8418,18 +8522,17 @@ Options in effect:
 15283 phenotype values loaded from .fam.
 Using 1 thread (no multithreaded calculations invoked).
 Before main variant filters, 15283 founders and 0 nonfounders present.
-Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
 Total genotyping rate is 0.999596.
 281122 variants and 15283 people pass filters and QC.
 Among remaining phenotypes, 4533 are cases and 10750 are controls.
---clump: 15788 clumps formed from 30645 top variants.
+--clump: 8421 clumps formed from 16003 top variants.
 Results written to plink.clump.clumped .
 PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
 (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
 Logging to plink.clump.log.
 Options in effect:
   --bfile /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ
-  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file69ea6381dade
+  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file3ae5789b5a09
   --clump-kb 250
   --clump-p1 0.05
   --clump-p2 0.1
@@ -8443,18 +8546,17 @@ Options in effect:
 15283 phenotype values loaded from .fam.
 Using 1 thread (no multithreaded calculations invoked).
 Before main variant filters, 15283 founders and 0 nonfounders present.
-Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
 Total genotyping rate is 0.999596.
 281122 variants and 15283 people pass filters and QC.
 Among remaining phenotypes, 4533 are cases and 10750 are controls.
---clump: 10033 clumps formed from 18345 top variants.
+--clump: 8623 clumps formed from 15647 top variants.
 Results written to plink.clump.clumped .
 PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
 (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
 Logging to plink.clump.log.
 Options in effect:
   --bfile /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ
-  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file69ea1f19c5ca
+  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file3ae57acada92
   --clump-kb 250
   --clump-p1 0.05
   --clump-p2 0.1
@@ -8468,18 +8570,17 @@ Options in effect:
 15283 phenotype values loaded from .fam.
 Using 1 thread (no multithreaded calculations invoked).
 Before main variant filters, 15283 founders and 0 nonfounders present.
-Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
 Total genotyping rate is 0.999596.
 281122 variants and 15283 people pass filters and QC.
 Among remaining phenotypes, 4533 are cases and 10750 are controls.
---clump: 9905 clumps formed from 18086 top variants.
+--clump: 8631 clumps formed from 15632 top variants.
 Results written to plink.clump.clumped .
 PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
 (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
 Logging to plink.clump.log.
 Options in effect:
   --bfile /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ
-  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file69ea7bc86cf
+  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file3ae5b8d572c
   --clump-kb 250
   --clump-p1 0.05
   --clump-p2 0.1
@@ -8493,18 +8594,17 @@ Options in effect:
 15283 phenotype values loaded from .fam.
 Using 1 thread (no multithreaded calculations invoked).
 Before main variant filters, 15283 founders and 0 nonfounders present.
-Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
 Total genotyping rate is 0.999596.
 281122 variants and 15283 people pass filters and QC.
 Among remaining phenotypes, 4533 are cases and 10750 are controls.
---clump: 10535 clumps formed from 19662 top variants.
+--clump: 8709 clumps formed from 16218 top variants.
 Results written to plink.clump.clumped .
 PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
 (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
 Logging to plink.clump.log.
 Options in effect:
   --bfile /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010/FinnuncorrNLITUK1UK3hap300_CQ
-  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file69ea38ddb236
+  --clump /home/cayek/Projects/Thesis/Data/Celiac/dubois_2010//file3ae551011ed4
   --clump-kb 250
   --clump-p1 0.05
   --clump-p2 0.1
@@ -8518,19 +8618,11 @@ Options in effect:
 15283 phenotype values loaded from .fam.
 Using 1 thread (no multithreaded calculations invoked).
 Before main variant filters, 15283 founders and 0 nonfounders present.
-Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
 Total genotyping rate is 0.999596.
 281122 variants and 15283 people pass filters and QC.
 Among remaining phenotypes, 4533 are cases and 10750 are controls.
---clump: 10381 clumps formed from 19261 top variants.
+--clump: 8793 clumps formed from 16239 top variants.
 Results written to plink.clump.clumped .
-Warning messages:
-1: In data.table::fread(file = "~/Projects/Thesis/MaThese/plink.clump.clumped",  :
-  C function strtod() returned ERANGE for one or more fields. The first was string input '1.25e-320'. It was read using (double)strtold() as numeric value 1.2499860839783538E-320 (displayed here using %.16E); loss of accuracy likely occurred. This message is designed to tell you exactly what has been done by fread's C code, so you can search yourself online for many references about double precision accuracy and these specific C functions. You may wish to use colClasses to read the column as character instead and then coerce that column using the Rmpfr package for greater accuracy.
-2: In data.table::fread(file = "~/Projects/Thesis/MaThese/plink.clump.clumped",  :
-  C function strtod() returned ERANGE for one or more fields. The first was string input '1.38e-322'. It was read using (double)strtold() as numeric value 1.3833838083554903E-322 (displayed here using %.16E); loss of accuracy likely occurred. This message is designed to tell you exactly what has been done by fread's C code, so you can search yourself online for many references about double precision accuracy and these specific C functions. You may wish to use colClasses to read the column as character instead and then coerce that column using the Rmpfr package for greater accuracy.
-3: In data.table::fread(file = "~/Projects/Thesis/MaThese/plink.clump.clumped",  :
-  C function strtod() returned ERANGE for one or more fields. The first was string input '4.96e-313'. It was read using (double)strtold() as numeric value 4.9599999999789495E-313 (displayed here using %.16E); loss of accuracy likely occurred. This message is designed to tell you exactly what has been done by fread's C code, so you can search yourself online for many references about double precision accuracy and these specific C functions. You may wish to use colClasses to read the column as character instead and then coerce that column using the Rmpfr package for greater accuracy.
 Expr save in ./OUTPUT/Expr/celiac_all_clumped.rds
 #+end_example
 
@@ -8577,12 +8669,17 @@ CLOSED: [2017-09-12 mar. 14:55]
 
 #+end_src
 
-#+RESULTS:
+#+RESULTS: code:gwas_top_power_clumped
+: [1] 39.4
 [[./OUTPUT/Rplots/gwas_clumped_top_power.png]]
 
-***** DONE Meta analyse
+***** CANCELLED Meta analyse
 CLOSED: [2017-09-19 mar. 21:19]
 :LOGBOOK:
+- Note taken on [2017-09-21 jeu. 15:24] \\
+  j'ai relancé le clump du coup il faudrait relancer cette parti, mais je ne fait
+  plus de mahalanobis !!!
+- State "CANCELLED"  from "DONE"       [2017-09-21 jeu. 15:24]
 - State "DONE"       from "TODO"       [2017-09-19 mar. 21:19]
 - State "TODO"       from              [2017-09-16 sam. 18:07]
 :END:
@@ -8821,23 +8918,268 @@ source sur le HLA : https://ghr.nlm.nih.gov/primer/genefamily/hla
     group_by(method, chromosome6) %>%
     arrange(method, pvalue) %>%
     mutate(candidate = cumsum(outlier), clumped.top = seq_along(pvalue)) %>%
-    ungroup() %>%
+    ungroup() 
+  toplot <- toplot %>%
     add_row(method = unique(toplot$method), chromosome6 = TRUE, clumped.top = 0, candidate = 0) %>%
     add_row(method = unique(toplot$method), chromosome6 = FALSE, clumped.top = 0, candidate = 0)
+
   save_expr(toplot, "gwas_top_clumped_chrm6_toplot.rds")
 
   pl <- ggplot(toplot, aes(x = clumped.top, y = candidate, color = method)) +
     geom_line() +
     coord_cartesian(xlim = c(0,300)) +
     facet_grid(chromosome6~., scales = "free")
-  pl
+
   save_plot_png(pl, "gwas_top_clumped_chrm6.png")
 #+end_src
 
-#+RESULTS:
+#+RESULTS: code:gwas_top_HLA
+#+begin_example
+   chromosome  marker.ID genetic.dist physical.pos allele1 allele2
+1           1  rs3748816            0      2516606       C       T
+2           1 rs12727642            0      7969259       T       G
+3           1 rs10903122            0     25176163       A       G
+4           1  rs6691768            0     61564451       G       A
+5           1   rs864537            0    165678008       C       T
+6           1   rs859637            0    170977623       A       G
+7           1  rs2157453            0    171130571       A       G
+8           1  rs2816316            0    190803436       C       A
+9           1   rs296547            0    199158760       A       G
+10          2 rs13003464            0     61040333       C       T
+11          2 rs10188217            0     61071046       T       C
+12          2 rs13015714            0    102338297       G       T
+13          2   rs917997            0    102437000       A       G
+14          2 rs13010713            0    181704290       C       T
+15          2  rs7574865            0    191672878       T       G
+16          2  rs4675374            0    204510823       A       G
+17          3 rs13098911            0     46210205       T       C
+18          3  rs6441961            0     46327388       T       C
+19          3 rs17810546            0    161147744       G       A
+20          3 rs10936599            0    170974795       A       G
+21          3  rs1464510            0    189595248       T       G
+22          4 rs13151961            0    123334952       C       T
+23          5  rs1020388            0     55595784       G       T
+24          6  rs1033180            0       328546       A       G
+25          6  rs2187668            0     32713862       T       C
+26          6  rs2474619            0     90936756       C       A
+27          6 rs10806425            0     90983333       A       C
+28          6   rs531930            0    124785206       T       C
+29          6   rs802734            0    128320491       G       A
+30          6  rs2327832            0    138014761       C       T
+31          6  rs1738074            0    159385965       T       C
+32          6   rs212402            0    159392283       G       A
+33          6   rs212388            0    159410424       G       A
+34          7  rs6974491            0     37341035       A       G
+35          8  rs9792269            0    129333771       G       A
+36          8   rs975730            0    129385196       T       C
+37          9  rs1953126            0    122680321       T       C
+38         10  rs1250552            0     80728033       C       T
+39         12 rs10876993            0     56348934       C       T
+40         12   rs653178            0    110492139       C       T
+41         13  rs2762051            0     49733716       A       G
+42         14  rs1958589            0     33914127       G       A
+43         14  rs4899260            0     68347957       T       C
+44         16 rs12928822            0     11311394       A       G
+45         17  rs2074404            0     42220599       G       T
+46         18  rs1893217            0     12799340       C       T
+47         20   rs157640            0     52847946       T       G
+48         21  rs4819388            0     44471849       T       C
+49         22  rs2298428            0     20312892       T       C
+Expr save in ./OUTPUT/Expr/gwas_top_clumped_chrm6_toplot.rds
 [[./OUTPUT/Rplots/gwas_top_clumped_chrm6.png]]
+#+end_example
 
 Bon on va dire que ca suffit pour ne par avoir a discuter ce qu'on trouve !!
+Et non ... on va étudier les résultats de lassoLFMM
+***** DONE Annotation de la top liste de lasso LFMM
+CLOSED: [2017-09-21 jeu. 15:36]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-21 jeu. 15:36]
+- State "TODO"       from              [2017-09-21 jeu. 11:35]
+:END:
+
+#+NAME: code:gwas_lasso_annot
+#+CAPTION: Dépend de [[code:gwas_expr]] [[code:gwas_clumping]]
+#+begin_src R 
+  library(MaTheseR)
+  library(stringr)
+
+  ## get lasso results
+  lasso.res.df <- readRDS("./OUTPUT/Expr/celiac_all_df.rds") %>%
+    dplyr::filter(method == "lassoLFMM") %>%
+    dplyr::mutate(qvalue = qvalue::qvalue(calibrated.pvalue)$qvalues,
+                  SNP = colname)
+
+  ## get candidates names
+  candidates <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
+  candidates.rs <- (lasso.res.df %>% dplyr::filter(index %in% candidates))$colname %>% unique()
+
+  ## get lasso clumps top
+  clumps.lasso.top <- readRDS("./OUTPUT/Expr/celiac_all_clumped.rds") %>%
+    dplyr::filter(method == "lassoLFMM", CHR != 6) %>% ## to remove HLA
+    dplyr::arrange(P) %>%
+    head(200)
+
+  ## add qvalue and calibrated pvalue to clumps
+  clumps.lasso.top <- clumps.lasso.top %>%
+    left_join(lasso.res.df, by = c("method", "SNP"))
+
+  compute_gwas_table <- function(clumps.lasso.top) {
+
+    ## explode clumps
+    exploded.clumps.lasso.df <- explode_clumps(clumps.lasso.top)
+
+    ## annotation of snps
+    message("== snps annotation ==")
+    require(biomaRt)
+    snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+    attributes = c("refsnp_id",
+                   "ensembl_gene_stable_id")
+    the.snps <- unique(exploded.clumps.lasso.df$snps)
+    snps.gene.df <- biomaRt::getBM(attributes = attributes,
+                                   filters = "snp_filter",
+                                   values = the.snps,
+                                   mart = snp.db)
+
+    ## annotation of genes
+    message("== gene annotation ==")
+    ## see : https://stackoverflow.com/questions/28543517/how-can-i-convert-ensembl-id-to-gene-symbol-in-r
+    ensembl = useMart("ensembl")
+    gene.db = useDataset("hsapiens_gene_ensembl", ensembl)
+    ## listFilters(gene.db)
+    ## listAttributes(gene.db)
+    the.genes <- nt.biomart$ensembl_gene_stable_id %>% unique()
+    G_list <- getBM(filters= "ensembl_gene_id",
+                    attributes= c("ensembl_gene_id","hgnc_symbol"),
+                    values=the.genes,
+                    mart= gene.db)
+
+    snps.gene.df <- snps.gene.df %>%
+      mutate(ensembl_gene_id = ensembl_gene_stable_id) %>%
+      left_join(G_list, by = "ensembl_gene_id")
+    snps.gene.df <- snps.gene.df %>%
+      dplyr::transmute(snps = refsnp_id, ensembl.gene.symbol = ensembl_gene_id,
+                       hgnc.gene.symbol = hgnc_symbol)
+
+    ## join clumps to gene
+    message("== join clumps to gene ==")
+    exploded.clumps.lasso.df <- exploded.clumps.lasso.df %>%
+      left_join(snps.gene.df, by = "snps")
+
+    ## reduce clumps
+    cleaning <- function(a) {
+      a <- na.omit(a)
+      a <- a[a != ""]
+      a <- a[a != "NONE"]
+      a <- unique(a)
+      a
+    }
+    reduced.exploded.clumps.lasso.df <- exploded.clumps.lasso.df %>%
+      group_by(clump.snps) %>%
+      dplyr::summarise(snps.in.clump = paste0(cleaning(snps), collapse = ", "),
+                       ensembl.genes.in.clump = paste0(cleaning(ensembl.gene.symbol), collapse = ", "),
+                       hgnc.genes.in.clump = paste0(cleaning(hgnc.gene.symbol), collapse = ", ")) %>%
+      mutate(SNP = clump.snps)
+
+    ## a lil test
+    reduced.exploded.clumps.lasso.df$SNP %in% clumps.lasso.top$SNP
+
+    ## join with clumps.lasso.top
+    message("== join with clumps.lasso.top==")
+    gwas.table <- clumps.lasso.top %>%
+      left_join(reduced.exploded.clumps.lasso.df, by = "SNP") %>%
+      dplyr::transmute(snp = SNP,
+                       chromosome = CHR,
+                       position = BP,
+                       pvalue = calibrated.pvalue,
+                       qvalue = qvalue,
+                       total = TOTAL,
+                       S05 = S05,
+                       S01 = S01,
+                       S001 = S001,
+                       S0001 = S0001,
+                       `Gwas catalog` = SNP %in% candidates.rs,
+                       `snps in clump` = snps.in.clump,
+                       `ensembl genes in clump` = ensembl.genes.in.clump,
+                       `hgnc symbol genes in clump` = hgnc.genes.in.clump)
+
+    gwas.table
+  }
+
+  ## run function
+  gwas.table <- compute_gwas_table(clumps.lasso.top)
+
+  gwas.table %>%
+    dplyr::select(snp, chromosome, total, S0001, S001, S01, S05,
+                  `hgnc symbol genes in clump`, `Gwas catalog`) %>%
+    head(50) %>%
+    knitr::kable()
+
+  save_expr(gwas.table, "celiac_gwas_table.rds")
+#+end_src
+
+#+RESULTS: code:gwas_lasso_annot
+#+begin_example
+== snps annotation ==
+== gene annotation ==
+== join clumps to gene ==
+== join with clumps.lasso.top==
+
+
+|snp        | chromosome| total| S0001| S001| S01| S05|hgnc symbol genes in clump                                          |Gwas catalog |
+|:----------|----------:|-----:|-----:|----:|---:|---:|:-------------------------------------------------------------------|:------------|
+|rs1464510  |          3|     5|     5|    0|   0|   0|LPP                                                                 |TRUE         |
+|rs17810546 |          3|     7|     3|    0|   1|   2|IQCJ-SCHIP1, IL12A-AS1, IL12A                                       |TRUE         |
+|rs13151961 |          4|     6|     5|    0|   1|   0|KIAA1109, ADAD1                                                     |TRUE         |
+|rs653178   |         12|     8|     2|    0|   2|   4|CUX2, LINC02356, SH2B3, ATXN2                                       |TRUE         |
+|rs917997   |          2|    17|     8|    4|   5|   0|IL1RL1, IL18R1, IL18RAP, MIR4772, SLC9A4, SLC9A2                    |TRUE         |
+|rs6840978  |          4|     2|     1|    0|   0|   1|IL21-AS1                                                            |FALSE        |
+|rs9811792  |          3|     4|     4|    0|   0|   0|IL12A-AS1                                                           |FALSE        |
+|rs13098911 |          3|     3|     2|    1|   0|   0|FYCO1, FLT1P1, CCR3                                                 |TRUE         |
+|rs2816316  |          1|     2|     2|    0|   0|   0|                                                                    |TRUE         |
+|rs6441961  |          3|     4|     0|    0|   0|   2|CCR3, UQCRC2P1                                                      |TRUE         |
+|rs4675374  |          2|     7|     2|    2|   3|   0|CD28, ICOS                                                          |TRUE         |
+|rs1018326  |          2|     9|     5|    1|   0|   0|UBE2E3, LINC01934                                                   |FALSE        |
+|rs7648827  |          3|     0|     0|    0|   0|   0|LRRC2                                                               |FALSE        |
+|rs13003464 |          2|    16|    10|    3|   1|   0|LINC01185, REL, PUS10, RNA5SP95, KIAA1841, C2orf74                  |TRUE         |
+|rs1250552  |         10|     3|     1|    0|   2|   0|ZMIZ1                                                               |TRUE         |
+|rs7629708  |          3|     2|     0|    1|   0|   0|LPP                                                                 |FALSE        |
+|rs2298428  |         22|     3|     1|    1|   1|   0|HIC2, UBE2L3, YDJC, CCDC116                                         |TRUE         |
+|rs1394466  |         18|    17|     6|    4|   4|   3|DCC                                                                 |FALSE        |
+|rs1893217  |         18|     2|     0|    1|   0|   0|PTPN2                                                               |TRUE         |
+|rs864537   |          1|     3|     1|    2|   0|   0|POU2F1, CD247                                                       |TRUE         |
+|rs11066320 |         12|     4|     0|    0|   0|   1|HECTD4, PTPN11                                                      |FALSE        |
+|rs9679654  |          2|    11|     4|    4|   2|   1|USP34, RNU6-1145P                                                   |FALSE        |
+|rs1353248  |          3|     0|     0|    0|   0|   0|                                                                    |FALSE        |
+|rs7970490  |         12|    12|     0|    3|   1|   3|CUX2, MIR6760, RNA5SP373, FAM109A                                   |FALSE        |
+|rs4245079  |         11|     4|     2|    1|   0|   1|ETS1                                                                |FALSE        |
+|rs1354329  |         11|     4|     2|    1|   0|   0|SOX6, C11orf58                                                      |FALSE        |
+|rs7115037  |         11|     0|     0|    0|   0|   0|                                                                    |FALSE        |
+|rs7678445  |          4|     3|     3|    0|   0|   0|KIAA1109                                                            |FALSE        |
+|rs4682103  |          3|     4|     0|    1|   1|   1|CD200                                                               |FALSE        |
+|rs10489912 |          1|     6|     1|    0|   2|   2|NFIA                                                                |FALSE        |
+|rs944141   |          9|     3|     0|    0|   0|   1|                                                                    |FALSE        |
+|rs3748816  |          1|     6|     2|    0|   3|   1|MMEL1, TTC34, FAM213B                                               |TRUE         |
+|rs2762051  |         13|     7|     0|    3|   2|   2|DLEU1                                                               |TRUE         |
+|rs9950125  |         18|    14|     2|    4|   1|   5|DCC                                                                 |FALSE        |
+|rs4411464  |         15|     9|     1|    2|   5|   1|USP3, USP3-AS1, HERC1                                               |FALSE        |
+|rs1599796  |          3|     9|     1|    1|   0|   2|ARHGAP31, POGLUT1, TIMMDC1, CD80                                    |FALSE        |
+|rs8025412  |         15|    13|     1|    3|   1|   4|COX5A, SCAMP5, PPCDC                                                |FALSE        |
+|rs501344   |          8|    11|     1|    1|   4|   1|NCALD, MIR5680                                                      |FALSE        |
+|rs10936599 |          3|    11|     0|    7|   3|   1|LRRC34, MYNN, LRRIQ4, LRRC31, ACTRT3                                |TRUE         |
+|rs1667515  |         14|     4|     0|    1|   2|   0|                                                                    |FALSE        |
+|rs224619   |         11|     2|     0|    0|   0|   2|RCN1                                                                |FALSE        |
+|rs6726160  |          2|     7|     0|    3|   0|   2|RN7SL632P, LINC01185, REL, RNU4-51P, PUS10, PEX13, KIAA1841, NONOP2 |FALSE        |
+|rs893225   |          8|     5|     0|    4|   0|   1|                                                                    |FALSE        |
+|rs2301918  |         14|     3|     0|    0|   3|   0|SIPA1L1                                                             |FALSE        |
+|rs10903122 |          1|     3|     0|    0|   1|   1|RUNX3                                                               |TRUE         |
+|rs1355208  |          2|     3|     0|    1|   1|   1|LBH                                                                 |FALSE        |
+|rs2305100  |         13|     1|     0|    0|   1|   0|LACC1, CCDC122                                                      |FALSE        |
+|rs2822590  |         21|     4|     0|    0|   1|   3|ABCC13                                                              |FALSE        |
+|rs562221   |          7|     1|     0|    0|   0|   0|ATXN7L1                                                             |FALSE        |
+|rs1265566  |         12|     0|     0|    0|   0|   0|CUX2                                                                |FALSE        |
+Expr save in ./OUTPUT/Expr/celiac_gwas_table.rds
+#+end_example
 
 ***** CANCELLED Etude de l'intersection des clumps à 1%
 CLOSED: [2017-09-16 sam. 18:05]
@@ -9327,6 +9669,72 @@ CLOSED: [2017-09-16 sam. 17:21]
   l <- inter.list(1,2,3, 4)
   mean(candidates %in% l)
 #+END_SRC
+***** TODO Table
+:LOGBOOK:
+- State "TODO"       from              [2017-09-21 jeu. 15:53]
+:END:
+
+On veut le même genre de table que [[https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2847618/table/T2/][dubois2010]]
+
+#+NAME: code:gwas_table
+#+CAPTION: Dépend de [[code:gwas_lasso_annot]] [[code:gwas_assoc_odd_ratio]]
+#+begin_src R 
+  library(MaTheseR)
+  library(stringr)
+  library(xtable)
+
+  plink.assoc.df <- readRDS("./OUTPUT/Expr/gwas_plink_assoc.rds")
+  gwas.table <- readRDS("./OUTPUT/Expr/celiac_gwas_table.rds")
+
+  aux.df <- plink.assoc.df %>%
+    mutate(snp = SNP) %>%
+    right_join(gwas.table, by = "snp")
+
+
+  ## compute LD block
+  aux.ld.block <- function(snps.in.clump) {
+    f <- function(e) {
+      b <- plink.assoc.df$BP[plink.assoc.df$SNP %in% e]
+      paste0(format(min(b) / 1e6, digits = 2, nsmall = 2), "-",
+             format(max(b) / 1e6, digits = 2, nsmall = 2))
+    }
+    bp <- str_split(snps.in.clump, ", ")
+    res <- sapply(bp,f)
+    res
+  }
+
+  aux.OR <- function(OR,L95,U95) {
+    paste0(format(OR, digits = 2),
+           " [",
+           format(L95, digits = 2), "-",
+           format(U95, digits = 2), "]")
+  }
+
+  bold <- function(c, outlier) {
+    c[outlier] <- paste0("\\textbf{",c[outlier],"}")
+    c
+  }
+
+  table.df <- aux.df %>%
+    transmute(Chr = chromosome %>% bold(`Gwas catalog`),
+              `Position (pb)` = BP %>% bold(`Gwas catalog`),
+              `Snp` = snp %>% bold(`Gwas catalog`),
+              `LD block (Mb)` = aux.ld.block(`snps in clump`) %>% bold(`Gwas catalog`),
+              ## `Allèle mineur` = A1 %>% bold(`Gwas catalog`),
+              `Odds ratio [$95\\%$ IC]` =  aux.OR(OR,L95,U95) %>% bold(`Gwas catalog`),
+              `\\pvalue` = sanitize.numbers(format(pvalue, scientific = TRUE, digits = 3),
+                                            type = "latex", math.style.exponents = TRUE) %>% bold(`Gwas catalog`),
+              `\\qvalue` = sanitize.numbers(format(qvalue, scientific = TRUE, digits = 3),
+                                            type = "latex", math.style.exponents = TRUE) %>% bold(`Gwas catalog`),
+              `Gènes dans la touffe` = `hgnc symbol genes in clump` %>% bold(`Gwas catalog`)
+              )
+
+
+  save_expr(table.df, "gwas_table_toprint.rds")
+
+#+end_src
+
+
 *** Étude d'association entre des données génétiques et un gradient environmental (GEAS)
 <<sec:GEAS>>
 
@@ -9458,7 +9866,7 @@ supérieur à 1 à l'aide d'un test exacte de Fisher et les trois tests renvoie 
 #+begin_src R :results output latex :exports results
   library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
 
-  union.candidates.df.biomart <- readRDS( "./OUTPUT/Expr/geas_union_biomart.rds")
+  union.candidates.df.biomart <- readRDS("./OUTPUT/Expr/geas_union_biomart.rds")
 
   ## union.candidates.df.biomart$phenotype_description %>% table()
 
@@ -12310,7 +12718,7 @@ vep input format : [[http://www.ensembl.org/info/docs/tools/vep/vep_formats.html
 run vep option : [[http://www.ensembl.org/info/docs/tools/vep/script/vep_options.html][here]]
 
 #+NAME: code:1000g_vep_run
-#+CAPTION: Dépend de [[code:1000g_vep_input]]
+#+CAPTION: On lance vep. Dépend de [[code:1000g_vep_input]]
 #+begin_src shell
   cd ~/Projects/Thesis/MaThese/Data/ThesisDataset/3Article/1000GenomesPhase3/
   vep --cache --species homo_sapiens --assembly GRCh37 --offline -i vep.input.txt -o vep.output.txt --force --variant_class --sift b
