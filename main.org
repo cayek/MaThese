@@ -7211,9 +7211,9 @@ Ou ont elles ont été ddl ??? FP a recu dirrect =./Data/Celiac/dubois_2010/=
 : 
 : FinnuncorrNLITUK1UK3hap300.bed	FinnuncorrNLITUK1UK3hap300.bim	FinnuncorrNLITUK1UK3hap300.fam
 
-***** DONE Contrôle qualité
-CLOSED: [2017-08-16 mer. 17:40]
+***** TODO Contrôle qualité
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - State "DONE"       from "TODO"       [2017-08-16 mer. 17:40]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
 :END:
@@ -7261,9 +7261,9 @@ Among remaining phenotypes, 4533 are cases and 10750 are controls.
 --make-bed to FinnuncorrNLITUK1UK3hap300_CQ.bed +
 #+end_example
 
-***** DONE Élagage (LD pruning)
-CLOSED: [2017-08-16 mer. 17:49]
+***** TODO Élagage (LD pruning)
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - State "DONE"       from "TODO"       [2017-08-16 mer. 17:49]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
 :END:
@@ -7429,9 +7429,9 @@ CLOSED: [2017-08-17 jeu. 11:00]
   FinnuncorrNLITUK1UK3hap300_CQ_prunned.bim +
   FinnuncorrNLITUK1UK3hap300_CQ_prunned.fam ... done.
 #+end_example
-***** DONE Filtrage des individus trop apparenté
-CLOSED: [2017-08-16 mer. 18:18]
+***** TODO Filtrage des individus trop apparenté
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - State "DONE"       from "TODO"       [2017-08-16 mer. 18:18]
 - State "TODO"       from              [2017-08-06 Sun 14:52]
 :END:
@@ -7586,9 +7586,9 @@ Among remaining phenotypes, 4496 are cases and 10659 are controls.
 --make-bed to FinnuncorrNLITUK1UK3hap300_CQ_norel.bed +
 FinnuncorrNLITUK1UK3hap300_CQ_norel.bim +
 #+end_example
-***** DONE Odd ratio avec Plink
-CLOSED: [2017-09-21 jeu. 15:48]
+***** TODO Odd ratio avec Plink
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - State "DONE"       from "TODO"       [2017-09-21 jeu. 15:48]
 - State "TODO"       from              [2017-09-21 jeu. 15:39]
 :END:
@@ -7740,9 +7740,9 @@ CLOSED: [2017-09-21 jeu. 15:48]
 #+begin_example
   [1] 2.356696e-17
 #+end_example
-***** DONE Conversion au format =matter=
-CLOSED: [2017-07-12 mer. 17:00]
+***** TODO Conversion au format =matter=
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - Note taken on [2017-07-12 mer. 17:00] \\
   Ok c'est fait mais attention !!! ce qu'il y a avant risque de changer !!!
 - State "DONE"       from "STARTED"    [2017-07-12 mer. 17:00]
@@ -7863,9 +7863,46 @@ GRCh38.
 
 *Ccl*: on va prendre ces outliers car les rs reste les mêmes d'après Thomas K.
 
-***** DONE Scree plot
-CLOSED: [2017-08-30 mer. 09:31]
+***** DONE Bricolage pour enlever le chrm 6
+CLOSED: [2017-09-25 lun. 16:33]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-25 lun. 16:33]
+- State "TODO"       from              [2017-09-25 lun. 16:24]
+:END:
+
+#+NAME: code:gwas_rm_chrm6
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(MaTheseR)
+  library(stringr)
+
+  ## data
+  snps.info.df <- readRDS("~/Projects/Thesis/Data/Celiac/dubois_2010/celiacQC_flo/backingfiles/celiacQC_flo.rds")$map %>% as_tibble()
+
+  Y <- readRDS("./Data/ThesisDataset/3Article/Celiac/G.matter.rds")
+  dim(Y)
+
+  col.mask <- readRDS("./Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
+  col.mask %>% length()
+  str(col.mask)
+
+  ## adding chrm 6 indices
+  chrm6.snps.rs <- (snps.info.df %>% dplyr::filter(chromosome == 6))$marker.ID
+  chrm6.snps.rs %>% length()
+  col.mask.chrm6 <- union(which(colnames(Y) %in% chrm6.snps.rs), col.mask)
+
+  ## test
+  col.mask.chrm6 %>% length()
+  col.mask.chrm6 %>% unique() %>% length()
+  col.mask %in% col.mask.chrm6 %>% mean()
+  str(col.mask.chrm6)
+  ## save
+  saveRDS(col.mask.chrm6, "./Data/ThesisDataset/3Article/Celiac/ind.clumpling.notChrm6.rds")
+#+end_src
+
+***** TODO Scree plot
+:LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - State "DONE"       from "RUNNING"    [2017-08-30 mer. 09:31]
 - State "RUNNING"    from "DONE"       [2017-08-29 mar. 12:01]
 - State "DONE"       from "RUNNING"    [2017-08-29 mar. 11:56]
@@ -7930,9 +7967,9 @@ CLOSED: [2017-08-30 mer. 09:31]
 
 On prend K = 9 variables latentes.
 
-***** DONE Validation croisée avec lfmmRidge
-CLOSED: [2017-08-31 jeu. 10:03]
+***** TODO Validation croisée avec lfmmRidge
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - State "DONE"       from "RUNNING"    [2017-08-31 jeu. 10:03]
 - State "RUNNING"    from "DONE"       [2017-08-30 mer. 09:37]
 - State "DONE"       from "RUNNING"    [2017-08-30 mer. 08:42]
@@ -8233,9 +8270,9 @@ CLOSED: [2017-08-31 jeu. 10:03]
 #+RESULTS:
 [[./OUTPUT/Rplots/gwas_CV_lambda_lfmm_lambda_round2_encore.png]]
 
-***** DONE Étude du jeu de données 
-CLOSED: [2017-09-01 ven. 09:31]
+***** TODO Étude du jeu de données 
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - State "DONE"       from "TODO"       [2017-09-01 ven. 09:31]
 - State "TODO"       from "DONE"       [2017-09-01 ven. 09:27]
 - State "DONE"       from "RUNNING"    [2017-09-01 ven. 09:27]
@@ -8262,9 +8299,12 @@ CLOSED: [2017-09-01 ven. 09:31]
 - State "STARTED"    from "TODO"       [2017-07-12 mer. 08:40]
 - State "TODO"       from              [2017-07-11 mar. 11:37]
 :END:
-****** DONE Run des méthodes
-CLOSED: [2017-09-01 ven. 09:27]
+****** RUNNING Run des méthodes
 :LOGBOOK:
+- Note taken on [2017-09-25 lun. 16:42] \\
+  j'ai lancé que PCA
+- State "RUNNING"    from "TODO"       [2017-09-25 lun. 16:42]
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:23]
 - State "DONE"       from              [2017-09-01 ven. 09:27]
 :END:
 #+NAME: code:gwas_expr
@@ -8277,7 +8317,7 @@ CLOSED: [2017-09-01 ven. 09:27]
   library(doParallel)
 
 
-  rerun <- FALSE
+  rerun <- TRUE
   nb.cluster <- 2
   ## param
   param <- list(K.method = 9, lambda = 1e3,
@@ -8303,22 +8343,23 @@ CLOSED: [2017-09-01 ven. 09:27]
     X <- "./Data/ThesisDataset/3Article/Celiac/X.rds"
     outlier <- readRDS("./Data/ThesisDataset/3Article/Celiac/gwas_catalog_candidates.rds")
     dat <- MaTheseR::LfmmMatterDat(Y, X, outlier)
-    col.mask <- readRDS("./Data/ThesisDataset/3Article/Celiac/ind.clumpling.rds")
+    col.mask <- readRDS("./Data/ThesisDataset/3Article/Celiac/ind.clumpling.notChrm6.rds")
     out.file.res.df <- paste0("./OUTPUT/Expr/Celiac_df","_", m$name)
     out.file.U <- paste0("./OUTPUT/Expr/Celiac_U","_", m$name)
 
-    if (!exist_res(m, out.file.res.df) && !rerun) {
+    if (!exist_res(m, out.file.res.df) || rerun) {
       ## mask data
       message("mask data")
       dat.masked <- lfmm::LfmmDat(Y = NULL, X = dat$X, missing = FALSE)
       dat.masked$Y <- dat$Y[,col.mask]
 
       ## compute lattente variable
-      message("computing U")
-      if (!exist_res(m, out.file.U)) {
+      if (!exist_res(m, out.file.U) || rerun) {
+        message("computing U")
         m.U <- ExpRmouline(m, dat.masked)
         save_res(m, m.U, out.file.U)
       } else {
+        message("retrieving U")
         m.U <- retrieve_res(m, out.file.U)
       }
 
@@ -8368,9 +8409,9 @@ CLOSED: [2017-09-01 ven. 09:27]
   save_expr(res.df, "celiac_all_df.rds")
 #+end_src
 
-****** DONE Que donne la calibration
-CLOSED: [2017-09-01 ven. 09:28]
+****** TODO Que donne la calibration
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:23]
 - State "DONE"       from "TODO"       [2017-09-01 ven. 09:28]
 - State "TODO"       from              [2017-08-31 jeu. 09:10]
 :END:
@@ -8396,9 +8437,9 @@ CLOSED: [2017-09-01 ven. 09:28]
 : 4     PCAlm 1.037876  0.009601749
 : 5 ridgeLFMM 1.041061  0.009624663
 
-****** DONE Gwas catalogue et controle du fdr
-CLOSED: [2017-09-01 ven. 09:29]
+****** TODO Gwas catalogue et controle du fdr
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:23]
 - State "DONE"       from "TODO"       [2017-09-01 ven. 09:29]
 - State "TODO"       from              [2017-08-31 jeu. 09:10]
 :END:
@@ -8435,9 +8476,9 @@ CLOSED: [2017-09-01 ven. 09:29]
 : 3        lm 0.5714286
 : 4     PCAlm 0.5102041
 : 5 ridgeLFMM 0.5306122
-****** DONE plot top * power
-CLOSED: [2017-09-01 ven. 09:31]
+****** TODO plot top * power
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:23]
 - State "DONE"       from "TODO"       [2017-09-01 ven. 09:31]
 - State "TODO"       from "DONE"       [2017-08-31 jeu. 09:10]
 - State "DONE"       from              [2017-08-07 lun. 18:12]
@@ -8493,9 +8534,9 @@ CLOSED: [2017-09-01 ven. 09:31]
 #   method.K <dbl>, method.lambda <dbl>, median <dbl>, mad <dbl>,
 #   calibrated.score <dbl>, calibrated.pvalue <dbl>
 #+end_example
-****** DONE histogrammes
-CLOSED: [2017-09-01 ven. 10:20]
+****** TODO histogrammes
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:23]
 - State "DONE"       from "TODO"       [2017-09-01 ven. 10:20]
 - State "TODO"       from              [2017-09-01 ven. 10:13]
 :END:
@@ -8515,9 +8556,9 @@ CLOSED: [2017-09-01 ven. 10:20]
 
 #+RESULTS:
 [[./OUTPUT/Rplots/gwas_hist_pvalue.png]]
-***** DONE Clumping
-CLOSED: [2017-09-12 mar. 13:59]
+***** TODO Clumping
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - State "DONE"       from "TODO"       [2017-09-12 mar. 13:59]
 - State "TODO"       from "DONE"       [2017-09-12 mar. 13:38]
 - State "DONE"       from "TODO"       [2017-09-12 mar. 13:12]
@@ -8725,9 +8766,9 @@ Results written to plink.clump.clumped .
 Expr save in ./OUTPUT/Expr/celiac_all_clumped.rds
 #+end_example
 
-***** DONE plot clumped top * power
-CLOSED: [2017-09-12 mar. 14:55]
+***** TODO plot clumped top * power
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:21]
 - State "DONE"       from "TODO"       [2017-09-12 mar. 14:55]
 - State "TODO"       from              [2017-09-12 mar. 13:13]
 :END:
@@ -9090,9 +9131,9 @@ Expr save in ./OUTPUT/Expr/gwas_top_clumped_chrm6_toplot.rds
 
 Bon on va dire que ca suffit pour ne par avoir a discuter ce qu'on trouve !!
 Et non ... on va étudier les résultats de lassoLFMM
-***** DONE Annotation de la top liste de lasso LFMM
-CLOSED: [2017-09-21 jeu. 15:36]
+***** TODO Annotation de la top liste de lasso LFMM
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:22]
 - State "DONE"       from "TODO"       [2017-09-21 jeu. 15:36]
 - State "TODO"       from              [2017-09-21 jeu. 11:35]
 :END:
@@ -9346,9 +9387,9 @@ CLOSED: [2017-09-16 sam. 18:05]
   }
 
 #+end_src
-***** DONE Plots
-CLOSED: [2017-09-01 ven. 13:13]
+***** TODO Plots
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:22]
 - State "DONE"       from "TODO"       [2017-09-01 ven. 13:13]
 - State "TODO"       from              [2017-08-06 Sun 15:11]
 :END:
@@ -9768,9 +9809,9 @@ CLOSED: [2017-09-16 sam. 17:21]
   l <- inter.list(1,2,3, 4)
   mean(candidates %in% l)
 #+END_SRC
-***** DONE Table
-CLOSED: [2017-09-22 ven. 12:50]
+***** TODO Table
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-25 lun. 16:22]
 - State "DONE"       from "TODO"       [2017-09-22 ven. 12:50]
 - State "TODO"       from              [2017-09-21 jeu. 15:53]
 :END:
@@ -14984,6 +15025,7 @@ C'est purement numérique... j'ai pas d'intuition.
 **** Est ce que tess3 est sensible à la taille des pops ?
 Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
 *** lfmm
+
 #  LocalWords:  GWAS EWAS GEAS hyperparamètres décorrélé décorrélées ridgeLFMM
 #  LocalWords:  lassoLFMM Thaliana Arabidopsis thaliana variogramme
 
