@@ -20,7 +20,7 @@
 #+latex_header: \newtheorem{corollaire}{Corollaire}
 #+latex_header: \newtheorem{proposition}{Proposition}
 #+latex_header: \renewcommand{\proofname}{Preuve}
-#+PROPERTY: header-args    :exports none
+#+PROPERTY: header-args :exports none :eval no-export
 
 #  LocalWords:  methylation polymorphism nucleotide Frobenius invertible SNP
 #  LocalWords:  preprocessing dataset RidgeLFMM LassoLFMM hyperparamètre LFMM
@@ -32,7 +32,7 @@
 
 #+BEGIN_EXPORT latex
 %% to review
-\baselineskip 0.8cm
+% \baselineskip 0.8cm
 #+END_EXPORT
 
 * Workenv                                                          :noexport:
@@ -67,6 +67,8 @@
   install.packages("ascii")
   install.packages("xtable")
   install.packages("latex2exp")
+  install.packages("kableExtra")
+  install.packages("knitr")
 
   ## bioconductor
   source("https://bioconductor.org/biocLite.R")
@@ -81,7 +83,6 @@
   install.packages("cate")
   install.packages("FAMT")
   install.packages("xgboost")
-  install.packages("knitr")
 
 
   ## github
@@ -635,7 +636,7 @@ l'application de nos algorithmes aux données des écotypes européens de
 /Arabidopsis thaliana/, pour lesquelles des données géographiques individuelles
 et géographiques sont disponibles cite:Horton_2012.
 
-** Nouvelles méthodes
+** Nouvelles méthodes d'estimation des coefficients de métissage
 Dans cette section, nous présentons deux nouveaux algorithmes pour estimer les
 coefficients de métissage individuel et les fréquences de génotypes dans les
 clusters génétiques en supposant $\K$ cluster génétique. En plus des
@@ -3221,6 +3222,18 @@ CLOSED: [2017-09-11 lun. 19:44]
 #+RESULTS: code:tess3_AT_manhattan
 [[./OUTPUT/Rplots/tess3_AT_manhattanplot.png]]
 ** Discussion
+:LOGBOOK:
+- Note taken on [2017-09-25 lun. 13:14] \\
+  Les conclusions de ce papier : 
+  - on a un cadre mathématique pour faire de l'ancestry avec coordonnées
+    géographiques
+  - un algo garantit de converger vers un minimum local
+  - les deux algos font pareil et il y en un qui est plus rapide
+  - on a un package rapide qui est facile d'utilisation pour calculer l'ancestry
+    local et aire des scan à la selection
+  - les deux algo font comme la référence bayesienne du domaine 
+  - on a montré l'interet d'ajouter le spatial pour l'ancestry et les scan à la selection
+:END:
 L'inclusion de l'information géographique dans l'inférence des relations
 ancestrales entre les organismes est un objectif majeur des études en génétique
 des populations cite:Malecot1948,Epperson_1996,Cavalli-Sforza1994. En supposant
@@ -3574,7 +3587,7 @@ d'estimation convergent vers le point de minimum global de leur fonction
 objectif respective. Enfin, nous comparons nos méthodes à sva et cate sur des
 simulations numériques ainsi que pour des exemples de GWAS, EWAS et GEAS.
 
-** Nouvelles méthodes 
+** Nouvelles méthodes de correction pour les facteurs de confusions
 *** Modèle mixte à facteurs latents
 <<sec:model>>
 Dans cette partie nous introduisons les notations du modèle mixtes à facteurs
@@ -4522,7 +4535,16 @@ données de méthylation. Nous avons ensuite appliqué les méthodes cate, lm, P
 sva-irw, sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de
 méthylation de l'ADN associés à la polyarthrite. 
 
+Enfin pour chaque méthode nous avons calculé la liste obtenue quand on contrôle
+le taux de fausse découverte (FDR) à $1 \%$. Les algorithmes de contrôle du FDR
+nécessitent que les \pvalues soient correctement calibrées. Pour cela nous avons
+calibrées les \pvalues grâce à la méthode présentée dans la partie
+[[sec:calibration]]. Le contrôle du FDR a été réalisé à l'aide du package R qvalue
+cite:Storey_2011.
+
+
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
+<<sec:gwas>> 
 
 La maladie \celiac est une maladie auto-immune ayant une prévalence de près de
 $1 \%$ dans la population générale cite:Gujral_2012. Bien que les mécanismes
@@ -4550,7 +4572,7 @@ les individus trop apparentés. Pour cela, nous avons mesuré la probabilité
 qu'une séquence consécutive de SNPs prise chez deux individus différents soit
 identique. Si la probabilité est supérieure à $0.08$ nous avons gardé qu'un des
 deux individus. Par ailleurs, il est connu que les SNPs sont corrélés le long du
-génome par liaison génétique. Nous avons donc filtré les SNPs très corrélés
+génome par liaison génétique (LD, linkage disequilibrium). Nous avons donc filtré les SNPs très corrélés
 entre eux. Cette étape est identifiée dans la littérature comme l'étape de "LD
 pruning". Pour chaque SNP nous n'avons gardé que le SNP de variance maximum sur
 une fenêtre de 100 SNPs et cela sur les SNPs ayant un coefficient de corrélation
@@ -4560,14 +4582,88 @@ ont été effectuées à l'aide du logiciel plink cite:Purcell_2007. Enfin nous
 avons utilisé le logiciel beagle pour imputer les données manquantes de la
 matrice de SNPs cite:Browning_2016.
 
-Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM, ridgeLFMM afin de
-trouver les SNPs associés avec la maladie \celiac. Afin d'estimer les variables
-latentes pour corriger le test d'association entre les SNPs et la maladie
-\celiac, nous avons appliqué les méthodes sur le sous-ensemble de 80275 SNPs
-identifiés par l'étape de pruning. Par la suite, nous avons effectué le test
-d'hypothèse présenté dans la partie [[sec:hypothese]] sur les 281122 SNPs en
+Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM, ridgeLFMM dans le
+but de trouver les SNPs associés avec la maladie \celiac. Afin d'estimer les
+variables latentes pour corriger le test d'association entre les SNPs et la
+maladie \celiac, nous avons appliqué les méthodes sur le sous-ensemble de 80275
+SNPs identifiés par l'étape de pruning. Par la suite, nous avons effectué le
+test d'hypothèse présenté dans la partie [[sec:hypothese]] sur les 281122 SNPs en
 utilisant l'estimation des variables latentes calculées sur le sous ensemble de
-80275 SNPs.
+80275 SNPs. Les 281122 SNPs ont finalement été groupés par région de où les SNPs
+sont corrélé avec leur voisin. Cette étape a été réalisé à l'aide de
+l'algorithme de clumping du logiciel plink. L'algorithme de clumping groupe les
+SNPs en paquet par région où les SNPs sont corrélés entre eux. La \pvalue
+attribué au groupe la plus faible \pvalue des SNPs du groupe. Le contrôle du FDR
+a été réalisé de la même façon que dans l'étude EWAS.
+
+*** Étude d'association entre des données génétiques et un gradient environnemental (GEAS)
+
+Depuis Darwin nous savons que les organismes vivants s'adaptent à leur
+environnement cite:Darwin. Ainsi les organismes les mieux adaptés à leur habitat
+ont plus de chance de survivre et de se reproduire. Si l'avantage adaptatif a
+des causes génétiques, c'est à dire qu'il existe une combinaison de gènes qui
+confère à l'organisme une fonction lui permettant d'être mieux adapté à son
+habitat, alors le patrimoine génétique qui confère l'avantage adaptatif est
+transmis aux futures générations. Nous pouvons chercher à détecter les
+signatures génétiques laissées par l'adaptation à l'environnement comme nous
+l'avons fait dans le chapitre précédent. 
+
+Nous proposons maintenant de détecter les signatures de l'adaptation à
+l'environnement en faisant une étude d'association d'un gradient environnemental
+avec des données génétiques. Pour cela nous avons récupéré les données
+génétiques du projet 1000Genome phase 3 cite:1000Genome_2015. Ces données
+regroupent $84.4$ millions de variants génétiques pour 2506 individus venant de
+26 populations différentes. Par ailleurs nous avons récupéré des données
+climatiques à partir de la base de données WorldClim 2.0 cite:fick17_world. Nous
+avons filtré les individus trop apparentés et les variants génétiques de faible
+fréquences de la même façon que l'étude GWAS (voir section [[sec:gwas]]). Nous avons
+enlevé les populations afro-américaine et africaine des caraïbes pour ne garder
+que les individus vivant dans leurs environnements depuis plusieurs générations.
+Après cette étape de filtrage il reste 1409 individus et 5397214 locus. Enfin,
+de la même façon que pour l'étude GWAS nous avons identifié un sous ensemble de
+296948 SNPs grâce au LD pruning. Nous avons utilisé ce sous ensemble de locus
+pour calculer les variables latentes avec les méthodes PCAlm, cate, lassoLFMM et
+ridgeLFMM. Nous avons calculé ensuite des \pvalues pour chacun des 5397214 locus
+et pour chacune des méthodes. La liste des candidats retournées par les méthodes
+a été étudiée grâce au logiciel VEP (Variant Effect Predictor). Le logiciel VEP
+permet d'annoter l'effet d'un polymorphisme sur l'expression des gènes
+cite:McLaren_2016. Les annotations retournés par VEP sont classées en catégorie
+d'importance: LOW, MODERATE et HIGH. Nous avons réalisé un test exact de Fisher
+afin d'étudier la sur-représentation de chacune des catégories d'annotations.
+Nous avons enfin utiliser le package BiomaRt afin d'annoter les SNPs qui ont été
+associés avec un phénotype dans d'autre étude.
+
+
+Afin de calculer le gradient climatique utilisé pour l'étude d'association nous
+avons attribué une position géographique à chaque individu en prenant la capital
+de son pays d'origine. Cela nous a permis de récupérer les données climatiques
+pour les positions géographique à partir de la base de données WorlClim. Pour
+définir une variable explicative, nous ne gardons que la première composante
+principale des variables de la base Wordclim. La Figure ref:fig:eas_gradient
+représente la valeur du gradient climatique pour chaque population.
+
+#+NAME: code:geas:map
+#+CAPTION: Dépend de [[code:tess3:comparison:plot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/geas_climatic_gradient_plot.rds")
+
+  ThesisRpackage::Plots_export_pdf(pl = pl,
+                                        basename.output = "eas_climatic_gradient",
+                                        env = MaTheseR.params,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
+                                        width = 1 * MaTheseR.params$textwidthinch)
+#+end_src
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics{./OUTPUT/Rplots/eas_climatic_gradient.pdf}
+\caption{Gradient climatique $\X$ utilisé pour l'association génotype-environement.}
+\label{fig:eas_gradient}
+\end{figure}
+#+END_EXPORT
 
 ** Résultats
 :PROPERTIES:
@@ -5068,8 +5164,7 @@ latentes (voir Figure ref:fig:ewas_params A et B). Pour $\K = 10$, les valeurs
 du paramètre de régularisation $L_{2}$ ($\lambRidge$) entre $10^{-10}$ et $1.0$
 donnent les mêmes valeurs moyennes d'erreur de prédiction (Figure
 ref:fig:ewas_params C). Nous avons choisi de prendre $\lambRidge = 10^{-5}$ pour
-ridgeLFMM. Nous avons choisi la proportion de lignes non nulles valant $1\%$
-pour lassoLFMM.
+ridgeLFMM.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -5118,16 +5213,12 @@ cite:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et $8765
 \end{figure}
 #+END_EXPORT
 
-Enfin pour chaque méthode nous avons calculé la liste obtenue quand on contrôle
-le taux de fausse découverte (FDR) à $1 \%$. Les algorithmes de contrôle du FDR
-nécessitent que les \pvalues soient correctement calibrées. Pour cela nous avons
-calibrées les \pvalues grâce à la méthode présentée dans la partie
-[[sec:calibration]]. Le contrôle du FDR a été réalisé à l'aide du package R qvalue
-cite:Storey_2011. La figure ref:fig:ewas_venn montre les intersections entre les
-méthodes. Nous avons écarté lm et sva-irw car ils renvoyaient des listes trop
-différentes des autres. Parmi les 19 sites de méthylation renvoyés par toutes
-les méthodes on retrouve les 5 candidats identifiés par
-cite:Zou_2014,Rahmani_2016.
+Nous avons écarté lm et sva-irw car ils renvoyaient des listes trop différentes
+des autres. Parmi les 19 candidats trouvés par toutes les méthodes quand on
+contrôle de FDR à $1 \%$ on retrouve les 5 candidats identifiés par
+cite:Zou_2014 et cite:Rahmani_2016 (Figure ref:fig:ewas_venn). Nous remarquons
+de plus que d'autres sites de méthylation situés dans des gènes sont détectés
+avant les 5 candidats de la littérature (Table ref:table:ewas).
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -5141,7 +5232,7 @@ cite:Zou_2014,Rahmani_2016.
 
 #+NAME: code:ewas_table
 #+CAPTION: Dépend de [[ewas_venn]]
-#+begin_src R :results output latex :exports results
+#+begin_src R :results output latex :exports results :session *R*
   library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
 
   inter.cpg.df <- readRDS( "./OUTPUT/Expr/ewas_table.rds")
@@ -5173,9 +5264,10 @@ cite:Zou_2014,Rahmani_2016.
   ## print
   inter.cpg.df %>%
     dplyr::select(-Outlier) %>%
-    xtable(digits = -2,
-           type = "latex",
-           caption = "Sites de méthylation trouvées par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\cite{Zou_2014, Rahmani_2016}") %>%
+    xtable(align = "lllllcccc",
+           digits = -2, type = "latex",
+           caption = "{\\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde}. \\pvalues des candidates détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\cite{Zou_2014, Rahmani_2016}",
+           label = "table:ewas") %>%
     print(include.rownames=FALSE,
           sanitize.text.function=identity,
           floating.environment = "sidewaystable")
@@ -5183,11 +5275,11 @@ cite:Zou_2014,Rahmani_2016.
 
 #+RESULTS: code:ewas_table
 #+BEGIN_EXPORT latex
-% latex table generated in R 3.4.1 by xtable 1.8-2 package
-% Sat Sep 16 16:57:05 2017
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Fri Sep 22 13:37:46 2017
 \begin{sidewaystable}[ht]
 \centering
-\begin{tabular}{llllllll}
+\begin{tabular}{llllcccc}
   \hline
 ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\ 
   \hline
@@ -5212,7 +5304,8 @@ ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\
   cg05874806 & 2 & 102350276 & MAP4K4 & 1.1e-06 & 1.1e-06 & 4.7e-07 & 5.6e-07 \\ 
    \hline
 \end{tabular}
-\caption{Sites de méthylation trouvées par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \cite{Zou_2014, Rahmani_2016}} 
+\caption{{\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde}. \pvalues des candidates détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \cite{Zou_2014, Rahmani_2016}} 
+\label{table:ewas}
 \end{sidewaystable}
 #+END_EXPORT
 
@@ -6935,19 +7028,16 @@ CLOSED: [2017-09-16 sam. 16:02]
 [[./OUTPUT/Rplots/ewas_venn.png]]
 
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
-<<sec:gwas>> 
 
 Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM, ridgeLFMM afin de
 trouver les SNPs associés avec la maladie \celiac. Nous avons utilisé les
-méthodes avec 9 variables latentes (voir Figure ref:fig:gwas_params A et B).
-Nous avons choisi une proportion de lignes non nulles pour la matrice des effets
-$\B$ valant $1 \%$ pour lassoLFMM. La validation croisée du paramètre
-$\lambRidge$ tend à faire choisir une forte valeur pour celui-ci (Figure
-ref:fig:gwas_params C), nous avons choisi $1e^{3}$. La validation croisée
-présentée sur la Figure ref:fig:gwas_params C tend à faire choisir une valeur
-plus grande que $1e^{3}$ cependant comme nous l'avons discuté dans la partie
-[[sec:paramL2]] si $\lambdaRidge$ est trop grand alors ridgeLFMM renvoie les mêmes
-résultats que PCAlm.
+méthodes avec 9 variables latentes (Figure ref:fig:gwas_params A et B). La
+validation croisée du paramètre $\lambRidge$ tend à sélectionner une forte
+valeur pour celui-ci (Figure ref:fig:gwas_params C), nous avons choisi $10^3$.
+La validation croisée présentée sur la Figure ref:fig:gwas_params C sélectionne
+une valeur plus grande que $10^3$. Nous avons choisi $10^3$ car, comme nous
+l'avons discuté dans la partie [[sec:paramL2]], $\lambRidge$ trop grand conduit la
+méthode ridgeLFMM à renvoyer les mêmes résultats que PCAlm.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -6967,18 +7057,13 @@ résultats que PCAlm.
 \end{figure}
 #+END_EXPORT
 
-La Figure ref:fig:gwas_qqplot_top A montre la distribution observée des \pvalues
-renvoyées par chaque méthode contre la distribution théorique sous l'hypothèse
-nulle. On constate que les méthodes sont toutes bien calibrées et que la méthode
-la plus libérale est lm alors que PCAlm est la méthode la plus conservative. La
-Figure ref:fig:gwas_qqplot_top B montre le nombre de SNPs référencés dans le
-GWAS catalog comme étant associés avec la maladie \celiac qui sont retrouvés
-dans les top listes des différentes méthodes. On observe ainsi sur la Figure
-ref:fig:gwas_qqplot_top B que lm sépare le moins facilement les SNPs du GWAS
-catalog des autres SNPs, alors que ce sont ridgeLFMM et PCAlm qui séparent le
-mieux les SNPs du GWAS catalog du reste. La liste top 1000 de ridgeLFMM et PCAlm
-contiennent respectivement $63 \%$ et $57 \%$ des SNPs du GWAS catalog contre
-$18 \%$, $14 \%$ et $12 \%$ pour lassoLFMM, cate et lm.
+Les méthodes fournissent des \pvalues bien calibrées avec une forte inflation du
+nombre de petites \pvalues (Figure ref:fig:gwas_qqplot_top A). La méthode la
+plus libérale est lm alors que PCAlm est la méthode la plus conservative. Les 6
+candidats du GWAS catalog sur le chromosome 6 sont ont un rang plus faible avec
+les \pvalues renvoyé par PCAlm et ridgeLFMM (Figure ref:fig:gwas_qqplot_top B).
+Sur les autre chromosome ce sont les méthodes lassoLFMM et cate qui retrouve le
+plus vite les candidats du GWAS catalog (Figure ref:fig:gwas_qqplot_top B).
 
 #+NAME: code:gwas_qqplot_top
 #+CAPTION: Dépend de [[code:gwas_qqplot]]
@@ -7018,15 +7103,13 @@ $18 \%$, $14 \%$ et $12 \%$ pour lassoLFMM, cate et lm.
 \end{figure}
 #+END_EXPORT
 
-Enfin pour chaque méthode nous avons calculé la liste obtenus en contrôlant le
-FDR à $1 \%$. Nous avons procédé de la même façon que pour l'EWAS pour calculer
-cette liste (voir la section [[sec:ewas]]). La Figure ref:fig:gwas_venn montre
-l'intersection des listes contrôlés à un FDR de $1\%$ entre les méthodes. Ce
-sont ridgeLFMM et PCAlm qui donnent les plus petites listes contrôlées avec 754
-candidats pour ridgeLFMM et 777 candidats pour PCAlm. Les méthodes cate et lm
-donne la plus grande liste avec le même nombre de 1319 candidats. Nous
-constatons que l'intersection des listes à FDR contrôlé de toutes les méthodes
-ne contient que $28\%$ des candidats du GWAS catalog.
+La Figure ref:fig:gwas_venn montre l'intersection des listes contrôlés à un FDR
+de $1\%$ entre les méthodes. Ce sont ridgeLFMM et PCAlm qui donnent les plus
+petites listes contrôlées avec 754 candidats pour ridgeLFMM et 777 candidats
+pour PCAlm. Les méthodes cate et lm donne la plus grande liste avec le même
+nombre de 1319 candidats. Nous constatons que l'intersection des listes à FDR
+contrôlé de toutes les méthodes ne contient que $28\%$ des candidats du GWAS
+catalog.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -7038,54 +7121,70 @@ ne contient que $28\%$ des candidats du GWAS catalog.
 \end{figure}
 #+END_EXPORT
 
-
 #+NAME: code:gwas_table_print
 #+CAPTION: Dépend de [[code:gwas_table]]
 #+begin_src R :results output latex :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
   library(xtable)
+  library(knitr)
+  library(kableExtra)
 
   table.df <- readRDS("./OUTPUT/Expr/gwas_table_toprint.rds")
 
   ## table.df %>% names() %>% paste0(collapse = "|")
 
   table.df %>%
-    head(10) %>%
-    xtable(align = "llllp{1.5cm}p{2cm}llp{2cm}",
+    head(20) %>%
+    dplyr::select(- `Position (pb)`) %>%
+    xtable(align = "lllp{2.5cm}p{2.8cm}ccp{4cm}",
     type = "latex",
-    caption = "") %>%
+    caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM}. Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.") %>%
     print(include.rownames=FALSE,
           sanitize.colnames.function=identity,
           sanitize.text.function=identity,
-          floating.environment = "sidewaystable")
+          floating = TRUE,
+          floating.environment = "sidewaystable",
+          size = "\\fontsize{8pt}{8pt}"
+          )
+
 #+end_src
 
 #+RESULTS: code:gwas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Thu Sep 21 18:24:06 2017
+% Fri Sep 22 12:58:00 2017
 \begin{sidewaystable}[ht]
 \centering
-\begin{tabular}{lllp{1.5cm}p{2cm}llp{2cm}}
+\begingroup\fontsize{8pt}{8pt}
+\begin{tabular}{llp{2.5cm}p{2.8cm}ccp{4cm}}
   \hline
-Chr & Position (pb) & Snp & LD block (Mb) & Odds ratio [$95\%$ IC] & \pvalue & \qvalue & Gènes dans la touffe \\ 
+Chr & Snp & LD block (Mb) & Odds ratio [$95\%$ IC] & \pvalue & \qvalue & Gènes dans la zone \\ 
   \hline
-\textbf{3} & \textbf{189595248} & \textbf{rs1464510} & \textbf{189.56-189.61} & \textbf{1.30 [1.24-1.36]} & \textbf{$3.79 \times 10^{-23}$} & \textbf{$1.46 \times 10^{-20}$} & \textbf{LPP} \\ 
-  \textbf{3} & \textbf{161147744} & \textbf{rs17810546} & \textbf{160.99-161.32} & \textbf{1.35 [1.26-1.45]} & \textbf{$1.84 \times 10^{-16}$} & \textbf{$6.08 \times 10^{-14}$} & \textbf{IQCJ-SCHIP1, IL12A-AS1, IL12A} \\ 
-  \textbf{4} & \textbf{123334952} & \textbf{rs13151961} & \textbf{123.19-123.56} & \textbf{0.73 [0.68-0.78]} & \textbf{$1.68 \times 10^{-14}$} & \textbf{$5.31 \times 10^{-12}$} & \textbf{KIAA1109, ADAD1} \\ 
-  \textbf{12} & \textbf{110492139} & \textbf{rs653178} & \textbf{110.25-110.49} & \textbf{1.22 [1.16-1.28]} & \textbf{$6.80 \times 10^{-13}$} & \textbf{$2.05 \times 10^{-10}$} & \textbf{CUX2, LINC02356, SH2B3, ATXN2} \\ 
-  \textbf{2} & \textbf{102437000} & \textbf{rs917997} & \textbf{102.26-102.61} & \textbf{1.27 [1.20-1.35]} & \textbf{$1.54 \times 10^{-12}$} & \textbf{$4.61 \times 10^{-10}$} & \textbf{IL1RL1, IL18R1, IL18RAP, MIR4772, SLC9A4, SLC9A2} \\ 
-  4 & 123774157 & rs6840978 & 123.73-123.77 & 0.77 [0.72-0.82] & $1.20 \times 10^{-11}$ & $3.52 \times 10^{-9}$ & IL21-AS1 \\ 
-  3 & 161179692 & rs9811792 & 161.12-161.18 & 1.18 [1.12-1.24] & $6.57 \times 10^{-11}$ & $1.88 \times 10^{-8}$ & IL12A-AS1 \\ 
-  \textbf{3} & \textbf{46210205} & \textbf{rs13098911} & \textbf{45.98-46.21} & \textbf{1.32 [1.22-1.43]} & \textbf{$2.07 \times 10^{-10}$} & \textbf{$5.81 \times 10^{-8}$} & \textbf{FYCO1, FLT1P1, CCR3} \\ 
-  \textbf{1} & \textbf{190803436} & \textbf{rs2816316} & \textbf{190.77-190.80} & \textbf{0.78 [0.72-0.83]} & \textbf{$2.21 \times 10^{-10}$} & \textbf{$6.20 \times 10^{-8}$} & \textbf{} \\ 
-  \textbf{3} & \textbf{46327388} & \textbf{rs6441961} & \textbf{46.26-46.33} & \textbf{1.21 [1.15-1.27]} & \textbf{$1.71 \times 10^{-8}$} & \textbf{$4.55 \times 10^{-6}$} & \textbf{CCR3, UQCRC2P1} \\ 
+\textbf{3} & \textbf{rs1464510} & \textbf{189.56-189.61} & \textbf{1.30 [1.24-1.36]} & \textbf{3.8e-23} & \textbf{1.5e-20} & \textbf{LPP} \\ 
+  \textbf{3} & \textbf{rs17810546} & \textbf{160.99-161.32} & \textbf{1.35 [1.26-1.45]} & \textbf{1.8e-16} & \textbf{6.1e-14} & \textbf{IQCJ-SCHIP1, IL12A-AS1, IL12A} \\ 
+  \textbf{4} & \textbf{rs13151961} & \textbf{123.19-123.56} & \textbf{0.73 [0.68-0.78]} & \textbf{1.7e-14} & \textbf{5.3e-12} & \textbf{KIAA1109, ADAD1} \\ 
+  \textbf{12} & \textbf{rs653178} & \textbf{110.25-110.49} & \textbf{1.22 [1.16-1.28]} & \textbf{6.8e-13} & \textbf{2.1e-10} & \textbf{CUX2, LINC02356, SH2B3, ATXN2} \\ 
+  \textbf{2} & \textbf{rs917997} & \textbf{102.26-102.61} & \textbf{1.27 [1.20-1.35]} & \textbf{1.5e-12} & \textbf{4.6e-10} & \textbf{IL1RL1, IL18R1, IL18RAP, MIR4772, SLC9A4, SLC9A2} \\ 
+  4 & rs6840978 & 123.73-123.77 & 0.77 [0.72-0.82] & 1.2e-11 & 3.5e-09 & IL21-AS1 \\ 
+  3 & rs9811792 & 161.12-161.18 & 1.18 [1.12-1.24] & 6.6e-11 & 1.9e-08 & IL12A-AS1 \\ 
+  \textbf{3} & \textbf{rs13098911} & \textbf{45.98-46.21} & \textbf{1.32 [1.22-1.43]} & \textbf{2.1e-10} & \textbf{5.8e-08} & \textbf{FYCO1, FLT1P1, CCR3} \\ 
+  \textbf{1} & \textbf{rs2816316} & \textbf{190.77-190.80} & \textbf{0.78 [0.72-0.83]} & \textbf{2.2e-10} & \textbf{6.2e-08} & \textbf{} \\ 
+  \textbf{3} & \textbf{rs6441961} & \textbf{46.26-46.33} & \textbf{1.21 [1.15-1.27]} & \textbf{1.7e-08} & \textbf{4.6e-06} & \textbf{CCR3, UQCRC2P1} \\ 
+  \textbf{2} & \textbf{rs4675374} & \textbf{204.29-204.52} & \textbf{1.23 [1.16-1.31]} & \textbf{2.1e-07} & \textbf{5.4e-05} & \textbf{CD28, ICOS} \\ 
+  2 & rs1018326 & 181.54-181.78 & 1.15 [1.10-1.21] & 4.4e-07 & 1.1e-04 & UBE2E3, LINC01934 \\ 
+  3 & rs7648827 & 46.56-46.56 & 1.22 [1.12-1.33] & 4.6e-07 & 1.2e-04 & LRRC2 \\ 
+  \textbf{2} & \textbf{rs13003464} & \textbf{60.95-61.24} & \textbf{1.19 [1.13-1.25]} & \textbf{5.0e-07} & \textbf{1.3e-04} & \textbf{LINC01185, REL, PUS10, RNA5SP95, KIAA1841, C2orf74} \\ 
+  \textbf{10} & \textbf{rs1250552} & \textbf{80.71-80.74} & \textbf{0.84 [0.80-0.88]} & \textbf{5.2e-07} & \textbf{1.3e-04} & \textbf{ZMIZ1} \\ 
+  3 & rs7629708 & 189.56-189.62 & 1.17 [1.11-1.24] & 1.0e-06 & 2.5e-04 & LPP \\ 
+  \textbf{22} & \textbf{rs2298428} & \textbf{20.13-20.31} & \textbf{1.17 [1.10-1.24]} & \textbf{1.3e-06} & \textbf{3.3e-04} & \textbf{HIC2, UBE2L3, YDJC, CCDC116} \\ 
+  18 & rs1394466 & 48.93-49.30 & 1.14 [1.08-1.20] & 1.5e-06 & 3.6e-04 & DCC \\ 
+  \textbf{18} & \textbf{rs1893217} & \textbf{12.80-12.84} & \textbf{1.16 [1.08-1.23]} & \textbf{1.6e-06} & \textbf{4.0e-04} & \textbf{PTPN2} \\ 
+  \textbf{1} & \textbf{rs864537} & \textbf{165.66-165.70} & \textbf{0.87 [0.83-0.92]} & \textbf{1.7e-06} & \textbf{4.2e-04} & \textbf{POU2F1, CD247} \\ 
    \hline
 \end{tabular}
-\caption{} 
+\endgroup
+\caption{{\bf 20 premiers groupes de SNPs associés avec la maladie \coeliac retrounés par l'algorithme lassoLFMM}. Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.} 
 \end{sidewaystable}
 #+END_EXPORT
-
-
 
 **** Scripts                                                    :noexport:
 :LOGBOOK:
@@ -9669,12 +9768,16 @@ CLOSED: [2017-09-16 sam. 17:21]
   l <- inter.list(1,2,3, 4)
   mean(candidates %in% l)
 #+END_SRC
-***** TODO Table
+***** DONE Table
+CLOSED: [2017-09-22 ven. 12:50]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-22 ven. 12:50]
 - State "TODO"       from              [2017-09-21 jeu. 15:53]
 :END:
 
 On veut le même genre de table que [[https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2847618/table/T2/][dubois2010]]
+
+Pour boldyfier : [[https://stackoverflow.com/questions/13762431/adding-rows-or-boldify-single-row-names-with-print-xtables-add-something-in-be][stack]]
 
 #+NAME: code:gwas_table
 #+CAPTION: Dépend de [[code:gwas_lasso_annot]] [[code:gwas_assoc_odd_ratio]]
@@ -9722,77 +9825,27 @@ On veut le même genre de table que [[https://www.ncbi.nlm.nih.gov/pmc/articles/
               `LD block (Mb)` = aux.ld.block(`snps in clump`) %>% bold(`Gwas catalog`),
               ## `Allèle mineur` = A1 %>% bold(`Gwas catalog`),
               `Odds ratio [$95\\%$ IC]` =  aux.OR(OR,L95,U95) %>% bold(`Gwas catalog`),
-              `\\pvalue` = sanitize.numbers(format(pvalue, scientific = TRUE, digits = 3),
-                                            type = "latex", math.style.exponents = TRUE) %>% bold(`Gwas catalog`),
-              `\\qvalue` = sanitize.numbers(format(qvalue, scientific = TRUE, digits = 3),
-                                            type = "latex", math.style.exponents = TRUE) %>% bold(`Gwas catalog`),
-              `Gènes dans la touffe` = `hgnc symbol genes in clump` %>% bold(`Gwas catalog`)
+              `\\pvalue` = format(pvalue, scientific = TRUE, digits = 2) %>% bold(`Gwas catalog`),
+              `\\qvalue` = format(qvalue, scientific = TRUE, digits = 2) %>% bold(`Gwas catalog`),
+              `Gènes dans la zone` = `hgnc symbol genes in clump` %>% bold(`Gwas catalog`)
               )
 
 
   save_expr(table.df, "gwas_table_toprint.rds")
-
 #+end_src
 
-
-*** Étude d'association entre des données génétiques et un gradient environmental (GEAS)
+*** Étude d'association entre des données génétiques et un gradient environnemental (GEAS)
 <<sec:GEAS>>
 
-Depuis Darwin nous s'avons que les organismes vivants s'adaptent à leur
-environnement cite:Darwin. Ainsi les organismes les mieux adaptées à leur
-habitat ont plus de chance de survivre et de se reproduire. Si l'avantage
-adaptatif à des causes génétiques, c'est à dire qu'il existe une combinaison de
-gènes qui confère à l'organisme une fonction lui permettant d'être mieux adapté
-à son habitat, alors le patrimoine génétique qui confère l'avantage adaptatif
-est transmis aux futures générations. On peut donc alors chercher à détecter les
-signatures génétiques laissées par l'adaptation à un environnement. C'est
-l'objectif des associations génotype-environement. Pour cela nous avons récupéré
-les données génétiques du projet 1000Genome phase 3 cite:1000Genome_2015. Ces
-données regroupes $84.4$ millions de variants génétiques pour 2506 individus
-venant de 26 populations différentes. Par ailleurs nous avons récupéré des
-données climatiques à partir de la base de données WorldClim 2.0 cite:Fick_2017.
-Nous avons comparé les résultats des méthodes lm, PCAlm, cate, ridgeLFMM et
-lassoLFMM lancé sur d'association entre les données du 1000Genome et un gradient
-environnemental.
-
-De la même façon que pour la GWAS nous avons filtré les individus trop
-apparentés et les variants génétiques pas assez fréquents (voir Partie
-[[sec:gwas]]). De plus pour faire une étude d'association entre un génotype et un
-environnemental, il faut garder les individus qui vivent dans leurs habitats
-depuis plusieurs générations, nous avons donc enlevé les populations
-afro-américaine et africaine des caraïbes. Il reste alors 1409 individus et
-5397214 locus. Enfin, de la même façon que pour la GWAS nous avons identifié un
-sous ensemble de 296948 SNPs grâce au LD pruning des 5397214 locus. Nous avons
-utilisé ce sous ensemble de locus pour calculer les variables latentes avec les
-méthodes PCAlm, cate, lassoLFMM et ridgeLFMM. Nous avons calculé ensuite des
-\pvalues pour chacun des 5397214 locus grâce au test d'hypothèse présenté dans
-la partie [[sec:hypothese]].
-
-Afin de calculer le gradient environnemental utilisé pour l'étude d'association
-nous avons attribué une position géographique à chaque individu en prenant la
-capital de son pays d'origine. Cela nous a parmi de récupérer les données de la
-base WorlClim pour les positions géographiques ainsi calculées. Nous ne gardons
-que la première composante principale des variables de la base Wordclim. La
-Figure ref:fig:eas_gradient représente la valeur du gradient climatique pour
-chaque population. On remarque que celui-ci est très corrélé avec la latitude.
-En effet, comme les populations sont à différentes latitudes il y a de la
-corrélation entre la structure de population et le gradient environnemental.
-
-#+BEGIN_EXPORT latex
-\begin{figure}[!t]
-\centering
-\includegraphics{./OUTPUT/Rplots/eas_climatic_gradient.pdf.png}
-\caption{Gradient climatique $\X$ utilisé pour l'association génotype-environement.}
-\label{fig:eas_gradient}
-\end{figure}
-#+END_EXPORT
-
-Nous avons lancer les méthodes cate, ridgeLFMM, lassoLFMM et PCAlm avec 9
-variables latentes. Les figures ref:fig:eas_params A et B semble plutôt indiquer
-5 variables latentes mais nous avons préféré prendre un nombre légèrement plus
-élevé car les individus proviennent de 16 populations différentes. Nous avons
-choisi $\lambdaRidge = 10^{-5}$ pour ridgeLFMM et une proportion de lignes non
-nulles de $\B$ valant $1 \%$ pour lassoLFMM.
+Nous avons appliqué les méthodes cate, ridgeLFMM, lassoLFMM et PCAlm avec 9
+variables latentes afin de trouver les SNPs associés avec un gradient
+climatique. Nous avons utilisé les méthodes avec 9 variables latentes (Figure
+ref:fig:eas_params A et B). Le screeplot et l'erreur de validation croisée
+conduisent à choisir 5 variables latentes mais nous avons choisi un nombre
+légèrement plus élevé car les individus proviennent de 16 populations
+différentes. Pour $\K = 9$ , la validation croisée du paramètre de
+régularisation $L_{2}$ est plus faible pour $\lambRidge = 10^{-5}$. Nous avons
+choisi une proportion de lignes non nulles de $\B$ valant $1 \%$ pour lassoLFMM.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -9815,30 +9868,25 @@ nulles de $\B$ valant $1 \%$ pour lassoLFMM.
 
 La figure ref:fig:geas_qqplot montre la distribution observée des \pvalues
 renvoyées par chaque méthode contre la distribution théorique sous l'hypothèse
-nulle. On constate une forte inflation de la méthode lm, le MAD des \pvalues
-renvoyées par lm est de $8.7$. De plus on remarque que le diagramme
-quantile-quantile de lm forme une droite. Cela signifie qu'il n'y a de pas de
-surplus de \pvalues atypiques alors que c'est dans ce surplus de \pvalues
-atypiques que l'on trouve les variables candidates pour l'association avec $\X$.
-En d'autre terme lm ne renvoie pas plus de \pvalues outlier que le hasard en
-donnerait. Par contre, on observe un surplus \pvalues atypiques dans les
+nulle. Nous constatons une forte inflation pour les petites \pvalues de la
+méthode lm. Le MAD des \pvalues renvoyées par lm est de $8.7$. De plus nous
+remarquons que le diagramme quantile-quantile de lm forme une droite. Cela
+signifie que la calibration des \pvalues retourner par la méthode lm ne permet
+pas d'identifier des \pvalues atypiques et donc des candidats pour
+l'association. Par contre, on observe un excès \pvalues atypiques dans les
 \pvalues renvoyées par les autre méthodes. Pour les méthodes PCAlm, ridgeLFMM,
-lassoLFMM et cate nous avons calculé la liste candidats quand on contrôle le FDR
-à $1 \%$, nous avons procédé de la même façon que pour l'EWAS et la GWAS pour
-calculer cette liste (voir la section [[sec:ewas]]). La méthode lm a été écartée
-pour les raisons que nous venons d'évoquer. La Figure ref:fig:gwas_venn montre
-l'intersection des listes de candidats contrôlés à un FDR de $1\%$ entre les
-méthodes. L'union des candidats retournés par ces quatre méthodes donne 836
-SNPs. Le logiciel VEP permet d'annoter l'effet d'une mutation sur l'expression
-des gènes cite:McLaren_2016. Les annotations retournés par VEP sont classées en
-degré d'importance: LOW, MODERATE et HIGH. Nous avons étudié la
+lassoLFMM et cate nous avons calculé la liste des candidats quand on contrôle le
+FDR à $1 \%$. La méthode lm a été écartée pour les raisons que nous venons
+d'évoquer. La Figure ref:fig:gwas_venn montre l'intersection des listes de
+candidats contrôlés à un FDR de $1\%$ entre les méthodes. L'union des candidats
+retournés par ces quatre méthodes donne 836 SNPs. Nous avons étudié la
 sur-représentation de chacun de des degré d'annotation de vep dans la sous
 listes des 836 SNPs par rapport à la liste complète de SNPs. Nous constatons
 qu'il y a en proportion 22 fois plus d'annotation HIGH, 8 fois plus de MODERATE
 et $1.7$ fois plus de LOW dans la les 836 SNPs que dans les 5397214 SNPs. Nous
 avons de plus testé si chaque rapport de proportion est significativement
 supérieur à 1 à l'aide d'un test exacte de Fisher et les trois tests renvoie une
-\pvalue inférieure à $0.005$.
+\pvalue inférieure à $0.005$. 
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -9861,44 +9909,41 @@ supérieur à 1 à l'aide d'un test exacte de Fisher et les trois tests renvoie 
 \end{figure}
 #+END_EXPORT
 
-#+NAME: code:geas_table
-#+CAPTION: Dépend de [[code:eas_union_annotation]]
-#+begin_src R :results output latex :exports results
-  library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
+#+NAME: code:geas_table_print
+#+CAPTION: Dépend de [[code:geas_table]]
+#+begin_src R :results output latex :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(xtable)
+  library(knitr)
+  library(kableExtra)
 
-  union.candidates.df.biomart <- readRDS("./OUTPUT/Expr/geas_union_biomart.rds")
+  table.df <- readRDS("./OUTPUT/Expr/geas_table_toprint.rds")
 
-  ## union.candidates.df.biomart$phenotype_description %>% table()
+  ## table.df %>% names() %>% paste0(collapse = "|")
 
-  union.candidates.df.biomart %>%
-    dplyr::filter(phenotype_description != "") %>%
-    group_by(phenotype_description) %>%
-    dplyr::summarise(methods = paste0(unique(method), collapse=", "),
-                     snps = paste0(unique(snps), collapse=", ")) %>%
-    dplyr::transmute(SNP = snps, `Méthodes` = methods, `Phénotype` = phenotype_description) %>%
-    xtable(digits = -2,
-           type = "latex",
-           caption = "") %>%
+  table.df %>%
+    xtable(align = "lp{4cm}ll", type = "latex",
+           caption = "{\\bf SNPs associés avec un gradiant climatique qui ont été associés avec des phénotypes dans d'autres études}. SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\\%$.") %>%
     print(include.rownames=FALSE,
+          sanitize.colnames.function=identity,
           sanitize.text.function=identity,
-          floating.environment = "sidewaystable")
+          floating = TRUE,
+          floating.environment = "sidewaystable",
+          )
 #+end_src
 
-#+RESULTS: code:geas_table
+#+RESULTS: code:geas_table_print
 #+BEGIN_EXPORT latex
-% latex table generated in R 3.4.1 by xtable 1.8-2 package
-% Tue Sep 19 19:18:22 2017
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Fri Sep 22 11:44:04 2017
 \begin{sidewaystable}[ht]
 \centering
-\begin{tabular}{lll}
+\begin{tabular}{p{4cm}ll}
   \hline
-SNP & Méthodes & Phénotype \\ 
+SNPs & Détecté par les méthodes & Description du phénotype \\ 
   \hline
 rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\ 
   rs10496731 & lassoLFMM & Body Height \\ 
-  rs2472297 & ridgeLFMM, cate, lassoLFMM & Caffeine metabolism (plasma 13-dimethylxanthine (theophylline) level) \\ 
-  rs2472297 & ridgeLFMM, cate, lassoLFMM & Caffeine metabolism (plasma 137-trimethylxanthine (caffeine) level) \\ 
-  rs2472297 & ridgeLFMM, cate, lassoLFMM & Caffeine metabolism (plasma 17-dimethylxanthine (paraxanthine) to 137-trimethylxanthine (caffeine) ratio) \\ 
+  rs2472297 & ridgeLFMM, cate, lassoLFMM & Caffeine metabolism \\ 
   rs2256175 & ridgeLFMM, cate, lassoLFMM & Cholesterol total \\ 
   rs2472297 & ridgeLFMM, cate, lassoLFMM & Coffee consumption (cups per day) \\ 
   rs2278544, rs2322659 & lassoLFMM & Congenital lactase deficiency \\ 
@@ -9914,11 +9959,9 @@ rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\
   rs17158483 & lassoLFMM & Obesity-related traits \\ 
    \hline
 \end{tabular}
-\caption{} 
+\caption{{\bf SNPs associés avec un grariant climatique répertoriés dans la littératures pour être associés avec des phénotypes}. SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\%$.} 
 \end{sidewaystable}
 #+END_EXPORT
-
-
 **** Scripts                                                    :noexport:
 ***** DONE Téléchargement du jeux de données
 CLOSED: [2017-07-26 mer. 18:17]
@@ -14451,10 +14494,7 @@ CLOSED: [2017-08-29 mar. 11:46]
     xlab("Longitude") +
     ylab("Latitude")
   pl
-  save_plot_MaTheseR(pl, "eas_climatic_gradient.pdf.png",
-                     height = 0.4 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
-
+  save_expr(pl, "geas_climatic_gradient_plot.rds")
 
 
 #+end_src
@@ -14674,80 +14714,113 @@ CLOSED: [2017-08-31 jeu. 12:12]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_venn.png]]
 [[./OUTPUT/Rplots/eas_qqplot_notcalibrated_all.png]]
+***** DONE table
+CLOSED: [2017-09-22 ven. 11:28]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-09-22 ven. 11:28]
+- State "TODO"       from "TODO"       [2017-09-22 ven. 11:28]
+- State "TODO"       from              [2017-09-22 ven. 11:14]
+:END:
+
+#+NAME: code:geas_table
+#+CAPTION: Dépend de [[code:eas_union_annotation]]
+#+begin_src R 
+  library(MaTheseR)
+  library(stringr)
+
+  union.candidates.df.biomart <- readRDS("./OUTPUT/Expr/geas_union_biomart.rds")
+
+  ## format
+  table.df <- union.candidates.df.biomart %>%
+    dplyr::filter(phenotype_description != "") %>%
+    dplyr::mutate(phenotype_description = str_replace(phenotype_description,
+                                                      "Caffeine metabolism.*", "Caffeine metabolism")) %>%
+    group_by(phenotype_description) %>%
+    dplyr::summarise(methods = paste0(unique(method), collapse=", "),
+                     snps = paste0(unique(snps), collapse=", ")) %>%
+    dplyr::transmute(SNPs = snps, `Détecté par les méthodes` = methods,
+                     `Description du phénotype` = phenotype_description)
+
+
+  save_expr(table.df, "geas_table_toprint.rds")
+#+end_src
 
 ** Discussion
-Les études d'association sont largement utilisées en biologie pour trouver des
-liens de corrélation entre des variables. Cependant une corrélation n'est pas
-une lien de causalité. Nous nous sommes intéressé dans ce chapitre à la
-situation où des variables non observées explique une partie de variations de
-$\Y$ et sont corrélé à la variable explicative $\X$. Dans nos résultats la
-méthodes lm ne prend pas en compte les facteurs latents. Nous avons observé une
-forte inflation des \pvalues retrouné par lm sur les données simulées (Figure
-ref:fig:method_comp C et D) ainsi que dans l'EWAS (Figure
-ref:fig:ewas_qqplot_top A) et la GEAS (Figure ref:fig:geas_qqplot A) que nous
-avons présentés dans ce chapitre. En plus de la forte inflation des \pvalues on
-observe également que lm ne permet pas de trouver les bonnes associations, on
-observe ainsi dans les données simulées que l'AUC obtenu par lm est largement
-inférieur à celui de la méthode oracle qui connait les vrais facteur latents
-(Figure ref:fig:method_comp A et B). Enfin pour les études d'associations à
-partir de données réelle lm donne les moins bon résultat quand il s'agit de
-retrouver les candidats pour l'association trouvés par ailleurs dans la
-littérature (Figure ref:fig:ewas_qqplot_top B et Figure ref:fig:gwas_qqplot_top
-B).
+:LOGBOOK:
+- Note taken on [2017-09-25 lun. 15:47] \\
+  Les conclusions :
+  - On a un cadre mathématique pour trouver les variables latentes pour corriger
+    les tests d'assocaitions
+  - les algos converge les solutions optimals de leur problème d'otim
+  - quand on prend pas en compte les variables de confusions on est mal calibré et
+    on trouve pas les assocaiton
+  - quand on les prend comme avec l'ACP on passe a coté de certaine associations
+  - mes méthodes font comme l'oracle sur les simulations et trouve plus de
+    candidats sur les vrais jeux de données.
+  - on fait comme cate mais pas tout a fait. Avoir plusieurs méthodes pour
+    l'association c'est mieux qu'une.
+:END:
 
-Une méthode de correction pour les facteurs de confusion consiste à utiliser les
-scores de l'ACP pour apprendre les facteurs de confusions; nous l'avons nommée
-dans ce chapitre PCAlm. Sur les simulations numériques PCAlm renvoie des
-\pvalues bien calibrées (Figure ref:fig:method_comp C et D) mais l'AUC de PCAlm
-décroit avec le nombre de variables associées et la corrélation entre les
-variables latentes et la variable explicative (Figure ref:fig:method_comp A et
-B). On retrouve le fait que les \pvalues sont bien calibrées dans les études
-d'association sur des vrais données (Figure ref:fig:ewas_qqplot_top A, Figure
-ref:fig:gwas_qqplot_top A et ref:fig:geas_qqplot). Les candidats trouvé par
-d'autre méthodes sont bien retrouvés par PCAlm (Figure ref:fig:ewas_qqplot_top B
-et Figure ref:fig:gwas_qqplot_top B). On peut supposer que PCAlm donne de bonne
-performance sur la GWAS et l'EWAS car il y à peu de variables à détecter. De
-plus certain candidats trouvés dans d'autre étude ont trouvé avec des méthodes
-similaires à PCAlm comme Refactor de cite:Rahmani_2016 ou EIGENSTRAT de
-cite:Price_2006.
+Les études d'association sont largement utilisées en biologie pour trouver des
+liens de corrélation entre des variables biologiques. Nous nous sommes intéressé
+à la situation où des variables non observées expliquent une partie des
+variations des variables expliqué et sont corrélé aux variables explicatives.
+Nous avons proposé dans ce chapitre deux algorithmes, ridgeLFMM et lassoLFMM,
+pour corriger les études d'association à l'aide de facteurs latents. Nos
+méthodes reposent sur les solutions optimales de problèmes de moindres carré
+régularisés. La méthode ridgeLFMM utilise une régularisation $L_{2}$ de la
+matrice des effets des variables expliquées sur la variable explicative. La
+régularisation $L_{2}$ permet de définir de façons unique la matrice des
+variables latentes. La méthode lassoLFMM utilise une régularisation $L_{1}$ sur
+la matrice des effets. La régularisation $L_{1}$ permet de choisir a priori la
+proportion de variables expliquées associées avec la variable explicative.
+
+Afin dévaluer l'intérêt d'estimer les facteurs latents dans les études
+d'association nous avons considéré la méthode lm qui repose sur un modèle de
+régression de chaque variable expliquée par la variable explicative. Nous avons
+observé que les \pvalues retournées par lm sont mal calibrées. En outre, la
+méthode lm a montré moins de puissance pour retrouver les candidats sur les
+données simulées et réelles. Cela montre que la présence de facteurs de
+confusion influence la calibration des \pvalues ainsi que leur rang.
+
+Nous avons considéré une méthode de correction pour les facteurs de confusion
+qui utilise les scores de l'ACP (PCAlm). Nous avons montré que la méthode PCAlm
+permet d'obtenir des \pvalues correctement calibrée sur les simulations et les
+données réelles. Cependant nous avons observé sur les simulations que PCAlm
+retrouve moins bien les variables associées que les autres méthodes prenant en
+compte les variables latentes. De même, sur les données réelles la méthodes
+PCAlm propose moins de candidats passant aussi à coté de certaines associations
+potentielles.
 
 Les deux méthodes SVA comparées dans ce chapitre donnent des résultats
-similaires à PCAlm sur les simualtions numériques (Figure ref:fig:method_comp).
-La méthode sva-two-step donne des résultats très similaires à PCAlm sur l'EWAS
-alors que sva-two-step donne des résultats très atypique comparées aux autres
-méthodes considérées pour l'EWAS. Avec les bons hyper paramètres, il est
-possible que sva-irw donne des résultats comparables aux autres méthodes.
-Cependant il n'y a aucun garantit sur la convergence de sva-irw ce qui rend
-compliqué l'exploration pour trouver les bons hyper paramètres.
+similaires à PCAlm sur les simualtions numériques. La méthode sva-two-step donne
+des résultats très similaires à PCAlm sur l'EWAS alors que sva-two-step donne
+des résultats très atypique comparées aux autres méthodes considérées pour
+l'EWAS. Avec les bons hyper paramètres, il est possible que sva-irw donne des
+résultats comparables aux autres méthodes. Cependant il n'y a aucun garantit sur
+la convergence de sva-irw ce qui rend compliqué l'exploration pour trouver les
+bons paramètres de l'algorithme.
 
-Nous avons proposé dans ce chapitre deux méthodes, ridgeLFMM et lassoLFMM, de
-correction des études d'association pour les facteurs latents qui reposent sur
-les solutions optimales de problèmes de moindres carré régularisés. Sur les jeux
-de données simulées ces méthodes ont les mêmes performances que la méthode
-oracle qui connait les facteurs de confusions (Figure ref:fig:method_comp),
-elles sont bien calibré sur les vrais jeux de données (Figure
-ref:fig:ewas_qqplot_top A, Figure ref:fig:gwas_qqplot_top A et
-ref:fig:geas_qqplot) et on retrouve les candidats validés par la littératures
-(Figure ref:fig:ewas_qqplot_top B et ref:fig:gwas_qqplot_top B). Les
+Sur les jeux de données simulées nos algorithmes ont les mêmes performances que
+la méthode oracle qui connait les facteurs de confusions. Les \pvalues renvoyé
+par nos algorithmes sont bien calibrées sur les vrais jeux de données et
+permanentent de retrouver les candidats trouvées par d'autres étude. Les
 performances globales de ces méthodes sont très comparable à la méthode cate.
 Bien que cate, ridgeLFMM et lassoLFMM ont des performances très similaires pour
 nos critères d'évaluation il existe tout de même des différences entre les
-listes de candidats renvoyés pas ces trois méthodes (Figure ref:fig:ewas_venn,
-Figure ref:fig:gwas_venn et Figure ref:fig:geas_venn). Il serait intéressant de
+listes de candidats renvoyés pas ces trois méthodes. Il serait intéressant de
 mettre en évidence des situations mettant en défaut une méthode par rapport à
 une autre. Par ailleurs, il existe des techniques permettant de combiner les
 résultats venant de plusieurs méthodes pour tester l'association, cela permet de
 d'augmenter la confiance que l'on a en les résultats d'une étude d'association.
-Nous avons utilisé l'union dans l'étude entre génome et environnement pour
-combiner les résultats mais il existe des techniques plus sophistiquées pour
-combiner des \pvalues venant de plusieurs test d'hypothèse comme par exemple
-celle utilisée dans cette étude cite:sniekers2017genome.
 
 Dans les études d'association considérées ici il n'y pas de vérité terrain et
 une méthode peut toujours donner de meilleurs résultats qu'une autre sur des
-simulations bien choisis cite:Wolpert_1997. Ces deux nouvelles méthodes
-s'ajoutent à l'arsenal des méthodes permettant de corriger pour les facteurs de
-confusion les test d'association statistique pour les facteurs de confusion.
+simulations bien choisis cite:Wolpert_1997. Nous avons implémenter nos
+algorithmes dans un package R. Cela permet aux utilisateurs de les utiliser avec
+d'autres algorithmes d'association. Ces deux nouvelles méthodes s'ajoutent ainsi
+à l'arsenal des méthodes permettant de corriger les tests d'association
+statistique pour les facteurs de confusion.
 
 ** SANDBOX                                                        :noexport:
 :PROPERTIES:
@@ -14768,9 +14841,52 @@ Que se passe-t-il quand B et V sont corrélé :D
 #+end_src
 
 Voir cahier le 7/08/2017
-
-* Perspectives et conclusion 
+*** [[http://1001genomes.org/][1001Genomes]]
+**** TODO Download the data
 :LOGBOOK:
+- State "TODO"       from              [2017-09-22 ven. 17:32]
+:END:
+#+NAME: code:1001Genomes_ddl
+#+CAPTION: Donwload the full genotype
+#+begin_src shell
+  curl -O http://1001genomes.org/data/GMI-MPI/releases/v3.1/1001genomes_snp-short-indel_with_tair10_only_ACGTN.vcf.gz
+  curl -O http://1001genomes.org/data/GMI-MPI/releases/v3.1/1001genomes_snp-short-indel_with_tair10_only_ACGTN.vcf.gz.md5
+  md5sum 1001genomes_snp-short-indel_with_tair10_only_ACGTN.vcf.gz
+  cat 1001genomes_snp-short-indel_with_tair10_only_ACGTN.vcf.gz.md5
+#+end_src
+**** TODO Stat with plink
+:LOGBOOK:
+- State "TODO"       from              [2017-09-22 ven. 17:32]
+:END:
+[[https://www.cog-genomics.org/plink/1.9/basic_stats][plink doc]]
+
+* Conclusions et perspectives
+:LOGBOOK:
+- Note taken on [2017-09-25 lun. 15:42] \\
+  Le grand oublié de mes méthodes c'est le LD local :D qu'est ce que le LD
+  d'ailleurs ? de facon rigourex !! Vu la densité de SNPs c'est domage de pas
+  utiliser l'info de corrélation entre SNPs
+- Note taken on [2017-09-22 ven. 16:28] \\
+  Ancestry local :D ?
+- Note taken on [2017-09-22 ven. 16:27] \\
+  Histoire d'épistasie qui sont des facteurs de confusiosn cf le papier de Norgberg
+- Note taken on [2017-09-22 ven. 16:26] \\
+  Comment on pourrait utiliser nos méthode pour corriger les approche X ~ Y et
+  d'ailleurs quelle serait le bénéfice. Est ce qu'on prédit mieux le phénotype ?
+- Note taken on [2017-09-22 ven. 16:25] \\
+  Comparaisons intensse avec les approches classiques en GWAS
+- Note taken on [2017-09-22 ven. 16:23] \\
+  Preprocessing des données évaluer les différents filtres sur nos méthodes (LD
+  prunning, imputation des missing values)
+- Note taken on [2017-09-22 ven. 16:23] \\
+  Maintenir les softs
+- Note taken on [2017-09-22 ven. 14:47] \\
+  Check list : 
+  - [ ] rappel de la pbq de la thèse
+  - [ ] en qui jai rempli l'objectif
+  - [ ] rappel de l'utilité de mes méthodes 
+  - [ ] ce qui n'est pas fait
+  - [ ] vers ou on pourrait aller pour faire ca
 - Note taken on [2017-09-19 mar. 13:03] \\
   on kernelise tout :D
 - Note taken on [2017-09-14 jeu. 13:25] \\
@@ -14838,6 +14954,10 @@ Voir cahier le 7/08/2017
   être que c'est pas la peine de se prendre la tête... Surtout que la cross
   validation j'en aurai deja parlé !
 :END:
+
+Je vais d'abord draw les conclusions (cf papier sur les règles pour ecrire un
+papier)
+et après je me décale vers ce qui n'a pas été fait et (propose des solutions)
 
 bibliographystyle:apalike
 bibliography:../biblio.bib
