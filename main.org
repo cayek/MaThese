@@ -178,7 +178,7 @@ corrélation dans des données, surtout dans le contexte actuelle où l'accès a
 données est très facile.
 
 Dans le cadre de cette thèse nous nous sommes intéressé à développer des
-méthodes statistiques adaptées au traitement de données génétique afin de
+méthodes statistiques adaptées au traitement de données génétiques afin de
 répondre à deux problématiques. Le premier est l'estimation de la structure de
 population à partir de données génétiques et géographiques. Le deuxième est
 l'estimation des facteurs de confusion pour corriger les tests d'association.
@@ -7060,10 +7060,10 @@ méthode ridgeLFMM à renvoyer les mêmes résultats que PCAlm.
 Les méthodes fournissent des \pvalues bien calibrées avec une forte inflation du
 nombre de petites \pvalues (Figure ref:fig:gwas_qqplot_top A). La méthode la
 plus libérale est lm alors que PCAlm est la méthode la plus conservative. Les 6
-candidats du GWAS catalog sur le chromosome 6 sont ont un rang plus faible avec
-les \pvalues renvoyé par PCAlm et ridgeLFMM (Figure ref:fig:gwas_qqplot_top B).
-Sur les autre chromosome ce sont les méthodes lassoLFMM et cate qui retrouve le
-plus vite les candidats du GWAS catalog (Figure ref:fig:gwas_qqplot_top B).
+candidats du GWAS catalog sur le chromosome 6 ont un rang plus faible avec les
+\pvalues renvoyées par PCAlm et ridgeLFMM (Figure ref:fig:gwas_qqplot_top B).
+Sur les autres chromosomes ce sont les méthodes lassoLFMM et cate qui retrouve
+le plus vite les candidats du GWAS catalog (Figure ref:fig:gwas_qqplot_top B).
 
 #+NAME: code:gwas_qqplot_top
 #+CAPTION: Dépend de [[code:gwas_qqplot]]
@@ -14789,7 +14789,7 @@ permet d'obtenir des \pvalues correctement calibrée sur les simulations et les
 données réelles. Cependant nous avons observé sur les simulations que PCAlm
 retrouve moins bien les variables associées que les autres méthodes prenant en
 compte les variables latentes. De même, sur les données réelles la méthodes
-PCAlm propose moins de candidats passant aussi à coté de certaines associations
+PCAlm propose moins de candidats passant ainsi à coté de certaines associations
 potentielles.
 
 Les deux méthodes SVA comparées dans ce chapitre donnent des résultats
@@ -14862,6 +14862,10 @@ Voir cahier le 7/08/2017
 
 * Conclusions et perspectives
 :LOGBOOK:
+- Note taken on [2017-09-25 lun. 18:24] \\
+  Je vais d'abord draw les conclusions (cf papier sur les règles pour ecrire un
+  papier) et après je me décale vers ce qui n'a pas été fait et (propose des
+  solutions)
 - Note taken on [2017-09-25 lun. 15:42] \\
   Le grand oublié de mes méthodes c'est le LD local :D qu'est ce que le LD
   d'ailleurs ? de facon rigourex !! Vu la densité de SNPs c'est domage de pas
@@ -14955,9 +14959,6 @@ Voir cahier le 7/08/2017
   validation j'en aurai deja parlé !
 :END:
 
-Je vais d'abord draw les conclusions (cf papier sur les règles pour ecrire un
-papier)
-et après je me décale vers ce qui n'a pas été fait et (propose des solutions)
 
 bibliographystyle:apalike
 bibliography:../biblio.bib
@@ -14984,6 +14985,34 @@ C'est purement numérique... j'ai pas d'intuition.
 **** Est ce que tess3 est sensible à la taille des pops ?
 Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
 *** lfmm
+**** Pourquoi ne pas en dire plus sur les candidats trouvé pour la GWAS, EWAS et GEAS ?
+C'est la que s'arrète mon travail ! Je suis pas biologiste ! C'est au biologiste
+de decider si ce que j'ai trouvé est intéressants !! 
+
+C'est frustrant ? oui
+ 
+**** Pourquoi PCAlm retrouve mieux les candidats sur l'EWAS et GWAS chrm 6 et pas sur GWAS autre chrm
+Je ne sais pas comment les candidats on été trouvé dans les autres études. Je ne
+peux pas me comparer a elle dirrectement !! Dans dubois et al je ne sais pas
+comment ils ont composé leur liste.
+
+Tout ce que je peut dire c'est que PCAlm sur les simulations passe a coté de
+certain candidats !!
+
+*Donc* 
+
+Sur les données réelles
+- quand PCAlm trouve plus vite les candidats que les autre c'est que peu être il
+  est passé a coté d'outlier
+- quand PCAlm est derriere c'est qu'il passe a coté de ces outlier 
+
+:D
+
+Tout ce que je peux dire c'est que ce que je trouve en plus sont pas abérant: 
+- dans l'ewas il sont dans des gènes interessant ?
+- dans la gwas ils sont dans des gènes interesant ?
+- pour la GEAS on trouve des zones annotés ?
+
 #  LocalWords:  GWAS EWAS GEAS hyperparamètres décorrélé décorrélées ridgeLFMM
 #  LocalWords:  lassoLFMM Thaliana Arabidopsis thaliana variogramme
 
