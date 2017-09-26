@@ -1078,6 +1078,66 @@ analysés avec des données géographiques correspondant au pays d'origine des
 APLS appliqué avec ces paramètres par défaut aux résultats du programme =snmf=
 qui n'utilise pas l'informations géographiques.
 
+*** Application au Simons Genome Diversity Project               :noexport:
+
+**** Scripts
+***** TODO Download
+:LOGBOOK:
+- State "TODO"       from "DONE"       [2017-09-26 mar. 14:42]
+- State "DONE"       from "TODO"       [2017-09-26 mar. 14:35]
+- State "TODO"       from "TODO"       [2017-09-26 mar. 14:35]
+- State "TODO"       from              [2017-09-26 mar. 14:31]
+:END:
+[[http://reichdata.hms.harvard.edu/pub/datasets/sgdp/][Ddl]]
+#+NAME: code:Simons_ddl
+#+CAPTION: 
+#+begin_src shell
+  cd /home/cayek/Projects/Thesis/MaThese/Data/Simons
+  curl -O https://sharehost.hms.harvard.edu/genetics/reich_lab/sgdp/vcf_variants/vcfs.variants.public_samples.279samples.tar
+  tar -xvf vcfs.variants.public_samples.279samples.tar
+
+  ## SGDP-lite version
+  wget http://sharehost.hms.harvard.edu/genetics/reich_lab/cteam_lite_public3.tar
+  curl -O https://sharehost.hms.harvard.edu/genetics/reich_lab/sgdp/SGDP_metadata.279public.21signedLetter.samples.txt
+#+end_src
+
+#+NAME: code:Simons_visu
+#+CAPTION: Dépend de [[Simons_ddl]]
+#+begin_src R 
+  library(MaTheseR)
+
+  indiv.df <- data.table::fread("./Data/Simons/SGDP_metadata.279public.21signedLetter.samples.txt",
+                                data.table=FALSE) %>% as_tibble()
+
+  saveRDS(indiv.df, "./Data/Simons/indiv_df.rds")
+
+
+  ## plot
+  library(ggmap)
+
+  mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
+  pl <- ggplot(indiv.df, aes(x = Longitude, y = Latitude, text = Country, color = Region)) +
+    mapWorld + 
+    geom_point()
+
+  pl
+  save_plot_png(pl, "Simons_indiv.png")
+  library(plotly)
+  ggplotly(pl)
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/Simons_indiv.png]]
+***** TODO Contrôle qualité
+:LOGBOOK:
+- State "TODO"       from              [2017-09-26 mar. 14:32]
+:END:
+#+NAME: code:Simons_CQ
+#+CAPTION: Dépend de [[code:Simons_ddl]]
+#+begin_src shell
+  cd /home/cayek/Projects/Thesis/MaThese/Data/Simons
+  plink --vcf vcfs.variants.public_samples.279samples.tar
+#+end_src
 ** Résultats
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -5230,40 +5290,14 @@ avant les 5 candidats de la littérature (Table ref:table:ewas).
 \end{figure}
 #+END_EXPORT
 
-#+NAME: code:ewas_table
-#+CAPTION: Dépend de [[ewas_venn]]
-#+begin_src R :results output latex :exports results :session *R*
+#+NAME: code:ewas_table_print
+#+CAPTION: Dépend de [[code:ewas_table]]
+#+begin_src R :results output latex :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
   library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
 
-  inter.cpg.df <- readRDS( "./OUTPUT/Expr/ewas_table.rds")
+  ewas.table <- readRDS("./OUTPUT/Expr/ewas_table_toprint.rds")
 
-  ## scientific notation
-  inter.cpg.df <- inter.cpg.df %>%
-    mutate(cate = format(cate, digits = 2, scientific = TRUE),
-           PCAlm = format(PCAlm, digits = 2, scientific = TRUE),
-           lassoLFMM = format(lassoLFMM, digits = 2, scientific = TRUE),
-           ridgeLFMM = format(ridgeLFMM, digits = 2, scientific = TRUE))
-
-  ## bold candidates
-  bold <- function(id) {
-    paste0("\\textbf{",id,"}")
-  }
-  eval(quote(inter.cpg.df$ID[Outlier] <<- sapply(ID, bold)[Outlier]), inter.cpg.df)
-  eval(quote(inter.cpg.df$cate[Outlier] <<- sapply(cate, bold)[Outlier]), inter.cpg.df)
-  eval(quote(inter.cpg.df$PCAlm[Outlier] <<- sapply(PCAlm, bold)[Outlier]), inter.cpg.df)
-  eval(quote(inter.cpg.df$ridgeLFMM[Outlier] <<- sapply(ridgeLFMM, bold)[Outlier]), inter.cpg.df)
-  eval(quote(inter.cpg.df$lassoLFMM[Outlier] <<- sapply(lassoLFMM, bold)[Outlier]), inter.cpg.df)
-  eval(quote(inter.cpg.df$Position[Outlier] <<- sapply(Position, bold)[Outlier]), inter.cpg.df)
-  eval(quote(inter.cpg.df$Chr[Outlier] <<- sapply(Chr, bold)[Outlier]), inter.cpg.df)
-  eval(quote(inter.cpg.df$Gene[Outlier] <<- sapply(Gene, bold)[Outlier]), inter.cpg.df)
-
-  ## remove repetition
-  inter.cpg.df <- inter.cpg.df %>%
-    mutate(Gene = sub(";.*", "", Gene))
-
-  ## print
-  inter.cpg.df %>%
-    dplyr::select(-Outlier) %>%
+  ewas.table %>%
     xtable(align = "lllllcccc",
            digits = -2, type = "latex",
            caption = "{\\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde}. \\pvalues des candidates détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\cite{Zou_2014, Rahmani_2016}",
@@ -5271,12 +5305,13 @@ avant les 5 candidats de la littérature (Table ref:table:ewas).
     print(include.rownames=FALSE,
           sanitize.text.function=identity,
           floating.environment = "sidewaystable")
+
 #+end_src
 
-#+RESULTS: code:ewas_table
+#+RESULTS: code:ewas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Fri Sep 22 13:37:46 2017
+% Tue Sep 26 16:00:27 2017
 \begin{sidewaystable}[ht]
 \centering
 \begin{tabular}{llllcccc}
@@ -5308,6 +5343,7 @@ ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\
 \label{table:ewas}
 \end{sidewaystable}
 #+END_EXPORT
+
 
 **** Scripts                                                    :noexport:
 ***** DONE Télécharger les données
@@ -7026,6 +7062,85 @@ CLOSED: [2017-09-16 sam. 16:02]
 
 #+RESULTS:
 [[./OUTPUT/Rplots/ewas_venn.png]]
+
+***** TODO Table 
+:LOGBOOK:
+- State "TODO"       from              [2017-09-26 mar. 14:46]
+:END:
+
+#+NAME: code:ewas_table
+#+CAPTION: Dépend de [[ewas_venn]]
+#+begin_src R
+  library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
+
+  inter.cpg.df <- readRDS( "./OUTPUT/Expr/ewas_table.rds")
+
+  ## scientific notation
+  inter.cpg.df <- inter.cpg.df %>%
+    mutate(cate = format(cate, digits = 2, scientific = TRUE),
+           PCAlm = format(PCAlm, digits = 2, scientific = TRUE),
+           lassoLFMM = format(lassoLFMM, digits = 2, scientific = TRUE),
+           ridgeLFMM = format(ridgeLFMM, digits = 2, scientific = TRUE))
+
+  ## bold candidates
+  bold <- function(id) {
+    paste0("\\textbf{",id,"}")
+  }
+  eval(quote(inter.cpg.df$ID[Outlier] <<- sapply(ID, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$cate[Outlier] <<- sapply(cate, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$PCAlm[Outlier] <<- sapply(PCAlm, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$ridgeLFMM[Outlier] <<- sapply(ridgeLFMM, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$lassoLFMM[Outlier] <<- sapply(lassoLFMM, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$Position[Outlier] <<- sapply(Position, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$Chr[Outlier] <<- sapply(Chr, bold)[Outlier]), inter.cpg.df)
+  eval(quote(inter.cpg.df$Gene[Outlier] <<- sapply(Gene, bold)[Outlier]), inter.cpg.df)
+
+  ## remove repetition
+  inter.cpg.df <- inter.cpg.df %>%
+    mutate(Gene = sub(";.*", "", Gene))
+
+  ## print
+  ewas.table <- inter.cpg.df %>%
+    dplyr::select(-Outlier)
+
+  ewas.table %>%knitr::kable()
+
+  ## save
+  save_expr(ewas.table, "ewas_table_toprint.rds")
+#+end_src
+
+#+RESULTS: code:ewas_table
+#+begin_example
+|ID                  |Chr         |Position          |Gene              |PCAlm            |lassoLFMM        |cate             |ridgeLFMM        |
+|:-------------------|:-----------|:-----------------|:-----------------|:----------------|:----------------|:----------------|:----------------|
+|\textbf{cg16411857} |\textbf{16} |\textbf{57023191} |\textbf{NLRC5}    |\textbf{9.2e-13} |\textbf{2.4e-12} |\textbf{6.6e-12} |\textbf{5.3e-12} |
+|\textbf{cg07839457} |\textbf{16} |\textbf{57023022} |\textbf{NLRC5}    |\textbf{1.9e-11} |\textbf{4.5e-11} |\textbf{1.1e-10} |\textbf{9.7e-11} |
+|\textbf{cg05428452} |\textbf{6}  |\textbf{32712979} |\textbf{HLA-DQA2} |\textbf{5.4e-11} |\textbf{4.6e-11} |\textbf{8.5e-11} |\textbf{8.8e-11} |
+|cg02508743          |8           |56903623          |LYN               |2.9e-08          |2.7e-08          |2.7e-08          |2.8e-08          |
+|\textbf{cg20821042} |\textbf{6}  |\textbf{32709158} |\textbf{HLA-DQA2} |\textbf{6.5e-08} |\textbf{6.1e-08} |\textbf{9.6e-08} |\textbf{1.0e-07} |
+|cg13081526          |6           |32449961          |                  |1.5e-07          |1.2e-07          |2.0e-07          |2.2e-07          |
+|cg18052547          |6           |32552547          |HLA-DRB1          |1.8e-07          |1.8e-07          |3.0e-07          |3.1e-07          |
+|\textbf{cg25372449} |\textbf{6}  |\textbf{32490350} |\textbf{HLA-DRB5} |\textbf{2.5e-07} |\textbf{2.6e-07} |\textbf{4.5e-07} |\textbf{4.6e-07} |
+|cg02030958          |13          |110386267         |                  |4.0e-07          |7.8e-08          |6.0e-08          |1.1e-07          |
+|cg16171858          |3           |58472734          |                  |4.6e-07          |1.6e-07          |2.7e-08          |3.8e-08          |
+|cg03280622          |8           |145023013         |PLEC1             |4.7e-07          |5.0e-09          |5.8e-09          |3.8e-08          |
+|cg24150157          |19          |51891210          |LIM2              |6.2e-07          |3.1e-07          |1.6e-07          |2.1e-07          |
+|cg26244575          |12          |76354015          |                  |6.9e-07          |2.7e-09          |5.0e-10          |4.2e-09          |
+|cg05370853          |6           |32606634          |HLA-DQA1          |7.1e-07          |3.0e-07          |3.3e-07          |4.4e-07          |
+|cg14989316          |10          |80757927          |LOC283050         |7.3e-07          |6.1e-08          |7.8e-08          |2.1e-07          |
+|cg17360552          |6           |32725332          |HLA-DQB2          |8.1e-07          |6.1e-07          |1.1e-06          |1.2e-06          |
+|cg01373248          |3           |18480297          |SATB1             |8.1e-07          |1.4e-07          |1.1e-07          |2.5e-07          |
+|cg26164488          |2           |64440295          |                  |9.3e-07          |3.5e-09          |1.6e-09          |1.4e-08          |
+|cg05874806          |2           |102350276         |MAP4K4            |1.1e-06          |1.1e-06          |4.7e-07          |5.6e-07          |
+Expr save in ./OUTPUT/Expr/ewas_table_toprint.rds
+#+end_example
+
+Voyons voir ce que dise les gène trouvé en plus : 
+- LYN : [[https://fr.wikipedia.org/wiki/LYN_(prot%25C3%25A9ine)][wikipedia de la protéine]], [[http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000254087;r=8:55879813-56014168][ENSG00000254087]], 
+- PLEC1 : [[https://en.wikipedia.org/wiki/Plectin][wikipedia de la protéine]], 
+
+Le problème c'est que sur cette étude on se compare à d'autres étude faite avec
+plus d'info... Les autres éudes 
 
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
 
@@ -9782,58 +9897,94 @@ Pour boldyfier : [[https://stackoverflow.com/questions/13762431/adding-rows-or-b
 #+NAME: code:gwas_table
 #+CAPTION: Dépend de [[code:gwas_lasso_annot]] [[code:gwas_assoc_odd_ratio]]
 #+begin_src R 
-  library(MaTheseR)
-  library(stringr)
-  library(xtable)
+    library(MaTheseR)
+    library(stringr)
+    library(xtable)
 
-  plink.assoc.df <- readRDS("./OUTPUT/Expr/gwas_plink_assoc.rds")
-  gwas.table <- readRDS("./OUTPUT/Expr/celiac_gwas_table.rds")
+    plink.assoc.df <- readRDS("./OUTPUT/Expr/gwas_plink_assoc.rds")
+    gwas.table <- readRDS("./OUTPUT/Expr/celiac_gwas_table.rds")
 
-  aux.df <- plink.assoc.df %>%
-    mutate(snp = SNP) %>%
-    right_join(gwas.table, by = "snp")
+    aux.df <- plink.assoc.df %>%
+      mutate(snp = SNP) %>%
+      right_join(gwas.table, by = "snp")
 
 
-  ## compute LD block
-  aux.ld.block <- function(snps.in.clump) {
-    f <- function(e) {
-      b <- plink.assoc.df$BP[plink.assoc.df$SNP %in% e]
-      paste0(format(min(b) / 1e6, digits = 2, nsmall = 2), "-",
-             format(max(b) / 1e6, digits = 2, nsmall = 2))
+    ## compute LD block
+    aux.ld.block <- function(snps.in.clump) {
+      f <- function(e) {
+        b <- plink.assoc.df$BP[plink.assoc.df$SNP %in% e]
+        paste0(format(min(b) / 1e6, digits = 2, nsmall = 2), "-",
+               format(max(b) / 1e6, digits = 2, nsmall = 2))
+      }
+      bp <- str_split(snps.in.clump, ", ")
+      res <- sapply(bp,f)
+      res
     }
-    bp <- str_split(snps.in.clump, ", ")
-    res <- sapply(bp,f)
-    res
-  }
 
-  aux.OR <- function(OR,L95,U95) {
-    paste0(format(OR, digits = 2),
-           " [",
-           format(L95, digits = 2), "-",
-           format(U95, digits = 2), "]")
-  }
+    aux.OR <- function(OR,L95,U95) {
+      paste0(format(OR, digits = 2),
+             " [",
+             format(L95, digits = 2), "-",
+             format(U95, digits = 2), "]")
+    }
 
-  bold <- function(c, outlier) {
-    c[outlier] <- paste0("\\textbf{",c[outlier],"}")
-    c
-  }
+    bold <- function(c, outlier) {
+      c[outlier] <- paste0("\\textbf{",c[outlier],"}")
+      c
+    }
 
-  table.df <- aux.df %>%
-    transmute(Chr = chromosome %>% bold(`Gwas catalog`),
-              `Position (pb)` = BP %>% bold(`Gwas catalog`),
-              `Snp` = snp %>% bold(`Gwas catalog`),
-              `LD block (Mb)` = aux.ld.block(`snps in clump`) %>% bold(`Gwas catalog`),
-              ## `Allèle mineur` = A1 %>% bold(`Gwas catalog`),
-              `Odds ratio [$95\\%$ IC]` =  aux.OR(OR,L95,U95) %>% bold(`Gwas catalog`),
-              `\\pvalue` = format(pvalue, scientific = TRUE, digits = 2) %>% bold(`Gwas catalog`),
-              `\\qvalue` = format(qvalue, scientific = TRUE, digits = 2) %>% bold(`Gwas catalog`),
-              `Gènes dans la zone` = `hgnc symbol genes in clump` %>% bold(`Gwas catalog`)
-              )
+    table.df <- aux.df %>%
+      transmute(Chr = chromosome %>% bold(`Gwas catalog`),
+                `Position (pb)` = BP %>% bold(`Gwas catalog`),
+                `Snp` = snp %>% bold(`Gwas catalog`),
+                `LD block (Mb)` = aux.ld.block(`snps in clump`) %>% bold(`Gwas catalog`),
+                ## `Allèle mineur` = A1 %>% bold(`Gwas catalog`),
+                `Odds ratio [$95\\%$ IC]` =  aux.OR(OR,L95,U95) %>% bold(`Gwas catalog`),
+                `\\pvalue` = format(pvalue, scientific = TRUE, digits = 2) %>% bold(`Gwas catalog`),
+                `\\qvalue` = format(qvalue, scientific = TRUE, digits = 2) %>% bold(`Gwas catalog`),
+                `Gènes dans la zone` = `hgnc symbol genes in clump` %>% bold(`Gwas catalog`)
+                )
 
+  table.df %>% head(20) %>% dplyr:::select(Snp, `Gènes dans la zone`) %>% knitr::kable()
 
   save_expr(table.df, "gwas_table_toprint.rds")
 #+end_src
 
+#+RESULTS: code:gwas_table
+#+begin_example
+
+
+|Snp                 |Gènes dans la zone                                          |
+|:-------------------|:-----------------------------------------------------------|
+|\textbf{rs1464510}  |\textbf{LPP}                                                |
+|\textbf{rs17810546} |\textbf{IQCJ-SCHIP1, IL12A-AS1, IL12A}                      |
+|\textbf{rs13151961} |\textbf{KIAA1109, ADAD1}                                    |
+|\textbf{rs653178}   |\textbf{CUX2, LINC02356, SH2B3, ATXN2}                      |
+|\textbf{rs917997}   |\textbf{IL1RL1, IL18R1, IL18RAP, MIR4772, SLC9A4, SLC9A2}   |
+|rs6840978           |IL21-AS1                                                    |
+|rs9811792           |IL12A-AS1                                                   |
+|\textbf{rs13098911} |\textbf{FYCO1, FLT1P1, CCR3}                                |
+|\textbf{rs2816316}  |\textbf{}                                                   |
+|\textbf{rs6441961}  |\textbf{CCR3, UQCRC2P1}                                     |
+|\textbf{rs4675374}  |\textbf{CD28, ICOS}                                         |
+|rs1018326           |UBE2E3, LINC01934                                           |
+|rs7648827           |LRRC2                                                       |
+|\textbf{rs13003464} |\textbf{LINC01185, REL, PUS10, RNA5SP95, KIAA1841, C2orf74} |
+|\textbf{rs1250552}  |\textbf{ZMIZ1}                                              |
+|rs7629708           |LPP                                                         |
+|\textbf{rs2298428}  |\textbf{HIC2, UBE2L3, YDJC, CCDC116}                        |
+|rs1394466           |DCC                                                         |
+|\textbf{rs1893217}  |\textbf{PTPN2}                                              |
+|\textbf{rs864537}   |\textbf{POU2F1, CD247}                                      |
+Expr save in ./OUTPUT/Expr/gwas_table_toprint.rds
+#+end_example
+
+Gènes nouveaux : 
+- IL21-AS1 : [[http://www.genecards.org/cgi-bin/carddisp.pl?gene=IL21-AS1][GeneCards]] 
+  Gène non codant
+- IL12A-AS1 : [[http://www.genecards.org/cgi-bin/carddisp.pl?gene=IL12A-AS1][GeneCards]]
+  Gène non codant
+- 
 *** Étude d'association entre des données génétiques et un gradient environnemental (GEAS)
 <<sec:GEAS>>
 
