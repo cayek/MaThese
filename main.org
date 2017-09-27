@@ -320,15 +320,15 @@ dans la partie [[sec:lfmm_intro]].
 La génétique produit beaucoup de données et de en plus vite grâce aux
 technologies de séquençage toujours plus efficace. Cette affluence de données
 pose de nouveau problème aux statisticien. L'objectif de cette thèse de doctorat
-est d'améliorer les outils statistique qui permettent aux biologistes de répondre
-à des question concrète sur le vivant. Dans cette thèse nous nous sommes
-intéressé à deux problématique en analyse de données génétiques : l'estimation
-de la structure de population et les test d'associations. L'accent a été mis sur
-la rapidité des méthodes développées afin qu'elles soient applicables aux
-données génétiques modernes. En outre, afin que nos méthodes statistiques soient
-utilisables par la communauté scientifique en génétique, il a été important de
-rendre accessible une implémentation informatique efficace des nouvelles
-méthodes.
+est d'améliorer les outils statistique qui permettent aux biologistes de
+répondre à des question concrète sur le vivant. Dans cette thèse nous nous
+sommes intéressé à deux problématique en analyse de données génétiques :
+l'estimation de la structure de population et les test d'associations. L'accent
+a été mis sur la rapidité des méthodes développées afin qu'elles soient
+applicables aux données génétiques modernes. En outre, afin que nos méthodes
+statistiques soient utilisables par la communauté scientifique en génétique, il
+a été important de rendre accessible une implémentation informatique efficace
+des nouvelles méthodes.
 
 Dans un premier chapitre nous présentons un cadre méthodologique permettant
 l'inférence de l'ascendance à partir de données génétique et géographiques. Dans
@@ -1149,8 +1149,9 @@ Je test le hash des fichiers
 
 #+RESULTS:
 [[./OUTPUT/Rplots/Simons_indiv.png]]
-***** TODO fusion des indiv dans un bed
+***** RUNNING fusion des indiv dans un bed
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-09-27 mer. 20:57]
 - State "TODO"       from              [2017-09-27 mer. 09:29]
 :END:
 #+NAME: code:Simons_fusion
@@ -1176,8 +1177,8 @@ Je test le hash des fichiers
 
   ## try to merge
   ls *.bed > all.beds.txt
-  sed -i 's/\.bed//g' all.beds.txt 
-  plink --merge-list all.beds.txt --make-bed --biallelic-only --out Simons
+  sed -i 's/\.bed//g' all.beds.txt
+  plink --merge-list all.beds.txt --make-bed --out Simons
 
 
   ## exclude strand inconsistency
@@ -1185,12 +1186,17 @@ Je test le hash des fichiers
   do
       echo "===== $file ====="
       basefile=`basename $file .bed`
-      plink --bfile $basefile --exclude Simons- --make-bed --out $basefile
+      plink --bfile $basefile --exclude Simons-merge.missnp --make-bed --out "$basefile"_aux
   done
+
+
+  ## try to merge again
+  ls *_aux.bed > all.beds.txt
+  sed -i 's/\.bed//g' all.beds.txt
+  plink --merge-list all.beds.txt --make-bed --out Simons
 #+end_src
 
-
-
+****** Rmks
 Il n'y a que 278 individu car il semblerait qu'il y a une erreur dans
 =LP6005443-DNA_G07.annotated.nh2.variants.vcf.gz= plink dit :  
 
@@ -1223,6 +1229,35 @@ Il n'y a que 278 individu car il semblerait qu'il y a une erreur dans
   filenames.
   Error: No variants in .bim file.
 #+end_example
+
+Quand j'ai essayé de merge voila ce que plink m'a dit : 
+#+begin_example
+  PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to Simons.log.
+  Options in effect:
+    --biallelic-only
+    --make-bed
+    --merge-list all.beds.txt
+    --out Simons
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  Error: 279218 variants with 3+ alleles present.
+  ,* If you believe this is due to strand inconsistency, try --flip with
+    Simons-merge.missnp.
+    (Warning: if this seems to work, strand errors involving SNPs with A/T or C/G
+    alleles probably remain in your data.  If LD between nearby SNPs is high,
+    --flip-scan should detect them.)
+  ,* If you are dealing with genuine multiallelic variants, we recommend exporting
+    that subset of the data to VCF (via e.g. '--recode vcf'), merging with
+    another tool/script, and then importing the result; PLINK is not yet suited
+    to handling them.
+
+#+end_example
+
+Je pense que c'est par ce que les individus sont dans différent vcf... du coup
+j'ai exclude les snps de Simons-merge.missnp.
+
 ***** TODO Contrôle qualité
 :LOGBOOK:
 - State "TODO"       from              [2017-09-26 mar. 14:32]
@@ -11215,7 +11250,9 @@ petites listes contrôlées avec 754 candidats pour ridgeLFMM et 777 candidats
 pour PCAlm. Les méthodes cate et lm donne la plus grande liste avec le même
 nombre de 1319 candidats. Nous constatons que l'intersection des listes à FDR
 contrôlé de toutes les méthodes ne contient que $28\%$ des candidats du GWAS
-catalog. Parmis les 20 premiers goupe de SNPs détecté par la méthode lassLFMM
+catalog. Dans les 20 premières zone détecté par lassoLFMM, en dehors du
+chromosome 6, 6 zones ne contiennent pas de SNPs référencé dans le GWAS catalog
+(Table ref:table:gwas_table).
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -11243,6 +11280,7 @@ catalog. Parmis les 20 premiers goupe de SNPs détecté par la méthode lassLFMM
     dplyr::select(- `Position (pb)`) %>%
     xtable(align = "lllp{2.5cm}p{2.8cm}ccp{4cm}",
     type = "latex",
+    label = "table:gwas_table",
     caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM}. Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.") %>%
     print(include.rownames=FALSE,
           sanitize.colnames.function=identity,
@@ -11257,7 +11295,7 @@ catalog. Parmis les 20 premiers goupe de SNPs détecté par la méthode lassLFMM
 #+RESULTS: code:gwas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Fri Sep 22 12:58:00 2017
+% Wed Sep 27 19:20:06 2017
 \begin{sidewaystable}[ht]
 \centering
 \begingroup\fontsize{8pt}{8pt}
@@ -11289,6 +11327,7 @@ Chr & Snp & LD block (Mb) & Odds ratio [$95\%$ IC] & \pvalue & \qvalue & Gènes 
 \end{tabular}
 \endgroup
 \caption{{\bf 20 premiers groupes de SNPs associés avec la maladie \coeliac retrounés par l'algorithme lassoLFMM}. Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.} 
+\label{table:gwas_table}
 \end{sidewaystable}
 #+END_EXPORT
 
@@ -12715,14 +12754,6 @@ CLOSED: [2017-09-21 jeu. 15:36]
 Expr save in ./OUTPUT/Expr/celiac_gwas_table.rds
 #+end_example
 
-J'annote le chromosome 6
-
-#+NAME: code:gwas_lasso_annot_6
-#+CAPTION: Dépend de [[code:gwas_expr]] [[code:gwas_clumping]]
-#+begin_src R 
-
-#+end_src
-
 ***** CANCELLED Etude de l'intersection des clumps à 1%
 CLOSED: [2017-09-16 sam. 18:05]
 :LOGBOOK:
@@ -13273,38 +13304,58 @@ Pour boldyfier : [[https://stackoverflow.com/questions/13762431/adding-rows-or-b
               `Gènes dans la zone` = `hgnc symbol genes in clump` %>% bold(`Gwas catalog`)
               )
 
-  table.df %>% head(20) %>% dplyr:::select(Snp, `Gènes dans la zone`) %>% knitr::kable()
+  aux.df %>% head(40) %>% dplyr:::select(`Gwas catalog`,
+                                         SNP, total, S0001,
+                                         S001, `hgnc symbol genes in clump`)%>% knitr::kable()
 
   save_expr(table.df, "gwas_table_toprint.rds")
 #+end_src
 
 #+RESULTS: code:gwas_table
 #+begin_example
+  |Gwas catalog |SNP        | total| S0001| S001|hgnc symbol genes in clump                         |
+  |:------------|:----------|-----:|-----:|----:|:--------------------------------------------------|
+  |TRUE         |rs1464510  |     5|     5|    0|LPP                                                |
+  |TRUE         |rs17810546 |     7|     3|    0|IQCJ-SCHIP1, IL12A-AS1, IL12A                      |
+  |TRUE         |rs13151961 |     6|     5|    0|KIAA1109, ADAD1                                    |
+  |TRUE         |rs653178   |     8|     2|    0|CUX2, LINC02356, SH2B3, ATXN2                      |
+  |TRUE         |rs917997   |    17|     8|    4|IL1RL1, IL18R1, IL18RAP, MIR4772, SLC9A4, SLC9A2   |
+  |FALSE        |rs6840978  |     2|     1|    0|IL21-AS1                                           |
+  |FALSE        |rs9811792  |     4|     4|    0|IL12A-AS1                                          |
+  |TRUE         |rs13098911 |     3|     2|    1|FYCO1, FLT1P1, CCR3                                |
+  |TRUE         |rs2816316  |     2|     2|    0|                                                   |
+  |TRUE         |rs6441961  |     4|     0|    0|CCR3, UQCRC2P1                                     |
+  |TRUE         |rs4675374  |     7|     2|    2|CD28, ICOS                                         |
+  |FALSE        |rs1018326  |     9|     5|    1|UBE2E3, LINC01934                                  |
+  |FALSE        |rs7648827  |     0|     0|    0|LRRC2                                              |
+  |TRUE         |rs13003464 |    16|    10|    3|LINC01185, REL, PUS10, RNA5SP95, KIAA1841, C2orf74 |
+  |TRUE         |rs1250552  |     3|     1|    0|ZMIZ1                                              |
+  |FALSE        |rs7629708  |     2|     0|    1|LPP                                                |
+  |TRUE         |rs2298428  |     3|     1|    1|HIC2, UBE2L3, YDJC, CCDC116                        |
+  |FALSE        |rs1394466  |    17|     6|    4|DCC                                                |
+  |TRUE         |rs1893217  |     2|     0|    1|PTPN2                                              |
+  |TRUE         |rs864537   |     3|     1|    2|POU2F1, CD247                                      |
+  |FALSE        |rs11066320 |     4|     0|    0|HECTD4, PTPN11                                     |
+  |FALSE        |rs9679654  |    11|     4|    4|USP34, RNU6-1145P                                  |
+  |FALSE        |rs1353248  |     0|     0|    0|                                                   |
+  |FALSE        |rs7970490  |    12|     0|    3|CUX2, MIR6760, RNA5SP373, FAM109A                  |
+  |FALSE        |rs4245079  |     4|     2|    1|ETS1                                               |
+  |FALSE        |rs1354329  |     4|     2|    1|SOX6, C11orf58                                     |
+  |FALSE        |rs7115037  |     0|     0|    0|                                                   |
+  |FALSE        |rs7678445  |     3|     3|    0|KIAA1109                                           |
+  |FALSE        |rs4682103  |     4|     0|    1|CD200                                              |
+  |FALSE        |rs10489912 |     6|     1|    0|NFIA                                               |
+  |FALSE        |rs944141   |     3|     0|    0|                                                   |
+  |TRUE         |rs3748816  |     6|     2|    0|MMEL1, TTC34, FAM213B                              |
+  |TRUE         |rs2762051  |     7|     0|    3|DLEU1                                              |
+  |FALSE        |rs9950125  |    14|     2|    4|DCC                                                |
+  |FALSE        |rs4411464  |     9|     1|    2|USP3, USP3-AS1, HERC1                              |
+  |FALSE        |rs1599796  |     9|     1|    1|ARHGAP31, POGLUT1, TIMMDC1, CD80                   |
+  |FALSE        |rs8025412  |    13|     1|    3|COX5A, SCAMP5, PPCDC                               |
+  |FALSE        |rs501344   |    11|     1|    1|NCALD, MIR5680                                     |
+  |TRUE         |rs10936599 |    11|     0|    7|LRRC34, MYNN, LRRIQ4, LRRC31, ACTRT3               |
+  |FALSE        |rs1667515  |     4|     0|    1|                                                   |
 
-
-|Snp                 |Gènes dans la zone                                          |
-|:-------------------|:-----------------------------------------------------------|
-|\textbf{rs1464510}  |\textbf{LPP}                                                |
-|\textbf{rs17810546} |\textbf{IQCJ-SCHIP1, IL12A-AS1, IL12A}                      |
-|\textbf{rs13151961} |\textbf{KIAA1109, ADAD1}                                    |
-|\textbf{rs653178}   |\textbf{CUX2, LINC02356, SH2B3, ATXN2}                      |
-|\textbf{rs917997}   |\textbf{IL1RL1, IL18R1, IL18RAP, MIR4772, SLC9A4, SLC9A2}   |
-|rs6840978           |IL21-AS1                                                    |
-|rs9811792           |IL12A-AS1                                                   |
-|\textbf{rs13098911} |\textbf{FYCO1, FLT1P1, CCR3}                                |
-|\textbf{rs2816316}  |\textbf{}                                                   |
-|\textbf{rs6441961}  |\textbf{CCR3, UQCRC2P1}                                     |
-|\textbf{rs4675374}  |\textbf{CD28, ICOS}                                         |
-|rs1018326           |UBE2E3, LINC01934                                           |
-|rs7648827           |LRRC2                                                       |
-|\textbf{rs13003464} |\textbf{LINC01185, REL, PUS10, RNA5SP95, KIAA1841, C2orf74} |
-|\textbf{rs1250552}  |\textbf{ZMIZ1}                                              |
-|rs7629708           |LPP                                                         |
-|\textbf{rs2298428}  |\textbf{HIC2, UBE2L3, YDJC, CCDC116}                        |
-|rs1394466           |DCC                                                         |
-|\textbf{rs1893217}  |\textbf{PTPN2}                                              |
-|\textbf{rs864537}   |\textbf{POU2F1, CD247}                                      |
-Expr save in ./OUTPUT/Expr/gwas_table_toprint.rds
 #+end_example
 
 Gènes nouveaux : 
@@ -13312,7 +13363,16 @@ Gènes nouveaux :
   Gène non codant
 - IL12A-AS1 : [[http://www.genecards.org/cgi-bin/carddisp.pl?gene=IL12A-AS1][GeneCards]]
   Gène non codant
-- 
+- UBE2E3 :[[http://www.genecards.org/cgi-bin/carddisp.pl?gene=UBE2E3][GeneCards]] 
+  Ce gène est associé à la maladie celiac. Ce qui est bizarre c'est que je pense
+  que j'ai fait mon annotation avec l'ancienne release du génome humain. Dans la
+  nouvelle il n'est pas dans la zone mais il y reste.
+  De toute facon le SNPs [[http://www.ensembl.org/Homo_sapiens/Variation/Phenotype?db=core;g=ENSG00000170035;r=2:180967248-181076585;v=rs13010713;vdb=variation;vf=8013670][rs13010713]] est dans le dataset. Il est juste détecté
+  plus loin. 
+- DCC : [[http://www.genecards.org/cgi-bin/carddisp.pl?gene=DCC][GeneCards]]
+  C'est associé a d'autre maladie : Cancer colorectal and Minor Mouvements 1
+- LPP : [[http://www.genecards.org/cgi-bin/carddisp.pl?gene=LPP][GeneCards]]
+  Associé a des maladies : Lipoma and Leukemia, Acute Myeloid.
 *** Étude d'association entre des données génétiques et un gradient environnemental (GEAS)
 <<sec:GEAS>>
 
@@ -13365,7 +13425,10 @@ qu'il y a en proportion 22 fois plus d'annotation HIGH, 8 fois plus de MODERATE
 et $1.7$ fois plus de LOW dans la les 836 SNPs que dans les 5397214 SNPs. Nous
 avons de plus testé si chaque rapport de proportion est significativement
 supérieur à 1 à l'aide d'un test exacte de Fisher et les trois tests renvoie une
-\pvalue inférieure à $0.005$. 
+\pvalue inférieure à $0.005$. Nous observons que dans l'union des candidats 21
+SNPs sont référencé dans le GWAS catalog pour être associés avec différent
+phénotype lié à l'environnement (Table ref:table:geas). Aucun SNP référencé
+dans le GWAS catalog n'est détecté par les méthodes lm et PCAlm.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -13401,6 +13464,7 @@ supérieur à 1 à l'aide d'un test exacte de Fisher et les trois tests renvoie 
 
   table.df %>%
     xtable(align = "lp{4cm}ll", type = "latex",
+           label = "table:geas",
            caption = "{\\bf SNPs associés avec un gradiant climatique qui ont été associés avec des phénotypes dans d'autres études}. SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\\%$.") %>%
     print(include.rownames=FALSE,
           sanitize.colnames.function=identity,
@@ -13413,7 +13477,7 @@ supérieur à 1 à l'aide d'un test exacte de Fisher et les trois tests renvoie 
 #+RESULTS: code:geas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Fri Sep 22 11:44:04 2017
+% Wed Sep 27 19:34:24 2017
 \begin{sidewaystable}[ht]
 \centering
 \begin{tabular}{p{4cm}ll}
@@ -13438,7 +13502,8 @@ rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\
   rs17158483 & lassoLFMM & Obesity-related traits \\ 
    \hline
 \end{tabular}
-\caption{{\bf SNPs associés avec un grariant climatique répertoriés dans la littératures pour être associés avec des phénotypes}. SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\%$.} 
+\caption{{\bf SNPs associés avec un gradiant climatique qui ont été associés avec des phénotypes dans d'autres études}. SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\%$.} 
+\label{table:geas}
 \end{sidewaystable}
 #+END_EXPORT
 **** Scripts                                                    :noexport:
@@ -15051,15 +15116,22 @@ matrice des effets des variables expliquées sur la variable explicative. La
 régularisation $L_{2}$ permet de définir de façons unique la matrice des
 variables latentes. La méthode lassoLFMM utilise une régularisation $L_{1}$ sur
 la matrice des effets. La régularisation $L_{1}$ permet de choisir a priori la
-proportion de variables expliquées associées avec la variable explicative.
+proportion de variables expliquées associées avec la variable explicative. Les
+deux algorithmes d'estimation des facteurs de confusion que nous avons présentés
+reposent sur les deux mêmes étapes : on transformer la matrice des variables
+expliqué afin d'estimer les variables latentes puis on estimer les effets des
+variables explicatives sur les variables expliquées. L'algorithme ridgeLFMM fait
+une seul fois chaque étape tandis que l'algorithme lassoLFMM les itère plusieurs
+fois.
 
 Afin dévaluer l'intérêt d'estimer les facteurs latents dans les études
 d'association nous avons considéré la méthode lm qui repose sur un modèle de
 régression de chaque variable expliquée par la variable explicative. Nous avons
-observé que les \pvalues retournées par lm sont mal calibrées. En outre, la
-méthode lm a montré moins de puissance pour retrouver les candidats sur les
-données simulées et réelles. Cela montre que la présence de facteurs de
-confusion influence la calibration des \pvalues ainsi que leur rang.
+observé que les \pvalues retournées par lm sont mal calibrées en présence de
+facteurs de confusions. En outre, la méthode lm a montré moins de puissance pour
+retrouver les candidats sur les données simulées et réelles. Cela montre que la
+présence de facteurs de confusion influence la calibration des \pvalues ainsi
+que leurs rangs.
 
 Nous avons considéré une méthode de correction pour les facteurs de confusion
 qui utilise les scores de l'ACP (PCAlm). Nous avons montré que la méthode PCAlm
@@ -15082,23 +15154,25 @@ bons paramètres de l'algorithme.
 Sur les jeux de données simulées nos algorithmes ont les mêmes performances que
 la méthode oracle qui connait les facteurs de confusions. Les \pvalues renvoyé
 par nos algorithmes sont bien calibrées sur les vrais jeux de données et
-permanentent de retrouver les candidats trouvées par d'autres étude. Les
+permettent de retrouver les candidats trouvées par d'autres étude. Les
 performances globales de ces méthodes sont très comparable à la méthode cate.
 Bien que cate, ridgeLFMM et lassoLFMM ont des performances très similaires pour
 nos critères d'évaluation il existe tout de même des différences entre les
-listes de candidats renvoyés pas ces trois méthodes. Il serait intéressant de
-mettre en évidence des situations mettant en défaut une méthode par rapport à
-une autre. Par ailleurs, il existe des techniques permettant de combiner les
-résultats venant de plusieurs méthodes pour tester l'association, cela permet de
-d'augmenter la confiance que l'on a en les résultats d'une étude d'association.
+listes de candidats renvoyés pas ces trois méthodes. Par ailleurs, il existe des
+techniques permettant de combiner les résultats venant de plusieurs méthodes
+pour tester l'association, cela permet de d'augmenter la confiance que l'on a en
+les résultats d'une étude d'association.
 
-Dans les études d'association considérées ici il n'y pas de vérité terrain et
-une méthode peut toujours donner de meilleurs résultats qu'une autre sur des
-simulations bien choisis cite:Wolpert_1997. Nous avons implémenter nos
-algorithmes dans un package R. Cela permet aux utilisateurs de les utiliser avec
-d'autres algorithmes d'association. Ces deux nouvelles méthodes s'ajoutent ainsi
-à l'arsenal des méthodes permettant de corriger les tests d'association
-statistique pour les facteurs de confusion.
+Dans les études d'association sur des données réelles considérées ici il n'y pas
+de vérité terrain. De plus, une méthode peut toujours donner de meilleurs
+résultats qu'une autre sur des simulations bien choisis cite:Wolpert_1997. Sur
+les données réelles nous avons constaté que les méthodes cate, lassoLFMM et
+ridgeLFMM retournent des \pvalues correctement calibré qui permette de calculer
+des listes de candidats pour l'association plus grandes que les autres méthodes.
+Nous avons implémenté nos algorithmes dans un package R. Cela permet aux
+utilisateurs de les utiliser avec d'autres algorithmes d'association. Ces deux
+nouvelles méthodes s'ajoutent ainsi à l'arsenal des méthodes permettant de
+corriger les tests d'association statistique pour les facteurs de confusion.
 
 ** SANDBOX                                                        :noexport:
 :PROPERTIES:
@@ -15236,6 +15310,36 @@ Voir cahier le 7/08/2017
   être que c'est pas la peine de se prendre la tête... Surtout que la cross
   validation j'en aurai deja parlé !
 :END:
+
+Un grande partie de la biologie repose sur l'analyse des données provenant du
+monde qui nous entoure. Les techniques qui permettent d'acquérir les données
+évoluent, il est donc nécessaire que les méthodes d'analyse évoluent également.
+Dans le cadre de cette thèse nous avons proposé plusieurs algorithmes basés sur
+des problèmes de factorisation de matrice. Pour certain algorithme nous avons
+prouvé leur convergence vers un point critique de leur fonction objectif. Nous
+avons démontré l'utilité de chacun de nos algorithmes sur des données réelle
+afin de répondre à des question de la génétique moderne. Des implémentation
+efficace de nos algorithmes sont disponible dans deux package R : tess3r et lfmm.
+
+Le package tess3r proposent des algorithmes qui permette de calculé une
+représentation synthétique des données génétique appelé structure de population.
+En plus des données génétique nous utilisons des données géographique. Nous
+avons montré les algorithmes implémenté dans tess3r reproduise les erreurs
+statistiques des méthodes de référence utillsant aussi des donénes génétiques et
+géographiques. Par ailleurs, nous avons exposé des exemples où l'utilisation de
+l'information géographique en plus des donénes génétique permet de mieux estimer
+la structure de population. En outre, nous avons observé que l'information des
+test d'adaptation local qui repose sur celle-ci on plus de puissance quand on
+ajoute l'inforamtion géographique. Nous avons enfin l'utilité de notre package
+pour étudier la structure de population et de faire un scan à la selection de AT.
+
+
+
+
+** Développement et maintenance des packages tess3r et lfmm
+
+
+** Les études d'associations statistiques
 
 
 bibliographystyle:apalike
