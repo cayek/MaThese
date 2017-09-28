@@ -20,6 +20,9 @@
 #+latex_header: \newtheorem{corollaire}{Corollaire}
 #+latex_header: \newtheorem{proposition}{Proposition}
 #+latex_header: \renewcommand{\proofname}{Preuve}
+#+LATEX_HEADER: \usepackage[natbib=true, style=authoryear, backend=bibtex, sorting=none]{biblatex}
+#+LATEX_HEADER: \addbibresource{biblio.bib}
+
 #+PROPERTY: header-args :exports none :eval no-export
 
 #  LocalWords:  methylation polymorphism nucleotide Frobenius invertible SNP
@@ -360,6 +363,8 @@ utilités.
   analyse mais très proprement :D, y compris pour l'étude stat à la fin
   (recalibration propre !)
 :END:
+<<chap:tess3>>
+
 ** Introduction
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -15425,7 +15430,7 @@ outils. Certain format de fichier se sont imposer dans la communauté de la
 génétique comme le format du logiciel plink .bed et les .vcf. Ajouter une option
 permettant au utilisateur de fournir dirrectement un fichier dans un de ces
 format standard serait un réelle avantage. En outre, certain format de fichier
-ont été penssé pour permette une acces rapide aux données génétique à la manière
+ont été pensé pour permette une acces rapide aux données génétique à la manière
 des algorithmes onlines[fn:online], c'est le cas par exemple du format de bed.
 Ne pas charger toutes les données dans la mémoire vive de l'ordinateur
 permettrait au utilisateur ayant des capacité en mémoire vive modeste d'utiliser
@@ -15439,18 +15444,88 @@ avec les utilisateurs a la fois sur les aspect pratique d'utilisation des
 pacakge mais aussi sur les aspect plus généraliste d'analyse de données avec nos
 outils.
 
-** Les données manquantes 
+[fn:online] Un algorithme online, ou algorithme en ligne, est un algorithme qui
+reçoit son entrée non pas d'un seul coup, mais comme un flux de données, et qui
+doit prendre des décisions au fur et à mesure.
+
+
+** Valeurs aberrantes et données manquantes
+:LOGBOOK:
+- Note taken on [2017-09-28 jeu. 14:47] \\
+  Source: 
+  - [[https://bioconductor.org/packages/release/bioc/vignettes/pcaMethods/inst/doc/outliers.pdf][PcaMethod]] 
+  - [[https://en.wikipedia.org/wiki/Ancient_DNA][Ancient DNA]]
+:END:
+
+Les données réelles analysée lors de cette thèse peuvent être qualifier de
+"propre". Il y a peut d'erreur dans les données de SNPs et peut de données
+manquante. Cependant, il est fréquent sur les grands jeux de données biologique avec
+beaucoup variables qu'un certain nombre de variables ne soit pas observé pour
+tous les échantillons. Ou bien qu'il y ai des erreurs dans les variables
+observé. Il est fréquent par exemple que les données génétique comporte des
+erreurs de séquençage. Des données génétique de très mauvaise qualité sont par
+exemple les données génétique prélevé sur des espèce qui se sont éteintes.
+
+
+Les algorithmes que nous avons développé ont été penssé pour fonctionné sur des
+matrice de données complètes. Dans le cas des données génétique l'imputation
+pour les données manquantes est très étudiés cite:Browning_2016. L'approche la
+plus simple est d'imputer les valeurs manquantes avant de considéré les étude
+d'assocaition ou d'inférence de la structure de population. Cette approche
+fonctionne très bien pour les espèce des étudié comme l'humain car on a accès à
+beaucoup de génomes complet pouvant servir de référence pour l'imputation
+cite:Howie_2012. Pour des espèce ancienne ou simplement moins étudier
+l'imputation est moins évidentes. 
+
+Les algorithme que nous avons dévelopé peuvent être découpé en une suite
+d'opération matricielle. Les opération matricielle n'étant pas défini avec des
+matrice incomplète il est nécéssaire d'adapter les algorithmes. Nos algorithmes
+repose sur des fonctions objectifs. Il est possible d'écrire les fonction
+objectifs avec des matrices imcomplète. Nous perdons cependant les structure
+matricielle des variable à a optimisé. Il faut alors envisager d'autre
+algorithme d'optimisation que les algorithmes de descente par bloque de
+coordonnées utilisé dans nos algorithmes. Une autre approche simple a implémenté
+consiste à imputer les données manquante par leur moyenne ou une autre
+statistique. Quand il y a peut de données manquante, on s'attend a ce que cette
+méthode ne biaise pas trop les facteurs dans les méthodes à facteurs comme l'ACP
+cite:josse2009gestion. 
+
+Une autre approche consiste pour prendre en compte les données manquante consite
+à imputer au hasard une première fois. Puis dans le cadre d'un algorithme
+d'estimation itératif à chaque étape on utilise la valeur prédite par le modèle.
+Il s'agit de l'approche utilisé par l'algorithme SOFT-IMPUTE prévu pour
+fonctionner sur des matrice de données très incomplète
+cite:mazumder10_spect_regul_algor_learn_large_incom_matric. Cetet approche
+pourrait être directement adaptable au algorithme APLS, AQP et lassoLFMM qui
+sont des algorithme itératif. Nous perdons cependant les propriété de
+convergence démontré sur le algorithme AQP et lassoLFMM.
+
+
+Nous pouvons nous interroger sur l'effets des valeurs aberrantes sur nos
+méthodes. On attribu parfois un score sur la confiance que l'on a sur la mesure
+d'un génome. Une méthode simple consiste à filtrer les observation ayant un
+score trop faible pour les traiter comme des données manquante. De la même
+manière les valaur extrème d'un variable peuvent être considéré comme abbérante
+et considéré comme manquante. Le problème est autrement plus complexe quand on
+on nous ne somme pas capable de detecter les erreurs de mesure présentes dans
+les données. 
+
+
+Ainsi
+que comment adapter nos méthodes pour prendre en compte les valeurs manquantes.
+
+
+
+
+
+Nous avons évalué dans le chapitre [[chap:tess3]]. 
+
 
 ** Les études d'associations statistiques
 
 ** Source de confusion dans les études d'association avec données de SNPs
 
-bibliographystyle:apalike
-bibliography:../biblio.bib
-
-[fn:online] Un algorithme online, ou algorithme en ligne, est un algorithme qui
-reçoit son entrée non pas d'un seul coup, mais comme un flux de données, et qui
-doit prendre des décisions au fur et à mesure.
+** lien entre les SNPs
 
 * Soutenance                                                       :noexport:
 :LOGBOOK:
