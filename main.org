@@ -182,13 +182,13 @@ données est très facile.
 
 Dans le cadre de cette thèse nous nous sommes intéressé à développer des
 méthodes statistiques adaptées au traitement de données génétiques afin de
-répondre à deux problématiques. Le premier est l'estimation de la structure de
-population à partir de données génétiques et géographiques. Le deuxième est
-l'estimation des facteurs de confusion pour corriger les tests d'association.
-Les méthodes statistiques développer lors de cette thèse repose sur la
-factorisation de matrice. Nous allons maintenant introduire plus en détails les
-contextes biologiques dans lesquels interviennent les méthodes développées
-durant cette thèse.
+répondre à deux problématiques. Le premier est l'estimation de la structure
+génétique de population à partir de données génétiques et géographiques. Le
+deuxième est l'estimation des facteurs de confusion pour corriger les tests
+d'association. Les méthodes statistiques développer lors de cette thèse repose
+sur la factorisation de matrice. Nous allons maintenant introduire plus en
+détails les contextes biologiques dans lesquels interviennent les méthodes
+développées durant cette thèse.
 
 ** La génomique des populations
 <<intro_genet>>
@@ -326,8 +326,8 @@ pose de nouveau problème aux statisticien. L'objectif de cette thèse de doctor
 est d'améliorer les outils statistique qui permettent aux biologistes de
 répondre à des question concrète sur le vivant. Dans cette thèse nous nous
 sommes intéressé à deux problématique en analyse de données génétiques :
-l'estimation de la structure de population et les test d'associations. L'accent
-a été mis sur la rapidité des méthodes développées afin qu'elles soient
+l'estimation de la structure génétique de population et les test d'associations.
+L'accent a été mis sur la rapidité des méthodes développées afin qu'elles soient
 applicables aux données génétiques modernes. En outre, afin que nos méthodes
 statistiques soient utilisables par la communauté scientifique en génétique, il
 a été important de rendre accessible une implémentation informatique efficace
@@ -371,28 +371,28 @@ utilités.
 :END:
 <<tess3_intro>>
 
-Représenter la structure de population est une étape importante dans l'étude de
-données génétique. Les données génétiques sont volumineuse et multivariées. La
-structure de population fournit une représentation synthétique qui de visualiser
-la variation génétique induite par la stratification en population. La
-stratification en population ainsi observée fourni des informations sur
-l'histoire et l'évolution démographique de l'espèce étudié cite:Li_2008; il est
-également indispensable de l'utiliser comme facteur de correction dans les
-études d'associations avec un phénotype, un gradient environnementale ou encore
-une maladie cite:marchini2004effects. De même, il existe de nombreuses
-applications en médecine génétique nécessitant de connaitre la structure de
-population comme par exemple le calcule d'un score de risque génétique pour une
-maladie cite:Wray_2013. Enfin, l'étude de la répartition en population d'une
-espèce dans son habitat est une étape clée en génétique du paysage
-cite:Fran_ois_2015.
+Représenter la structure génétique de population est une étape importante dans
+l'étude de données génétique. Les données génétiques sont volumineuse et
+multivariées. La structure de population fournit une représentation
+synthétique qui de visualiser la variation génétique induite par la
+stratification en population. La stratification en population ainsi observée
+fourni des informations sur l'histoire et l'évolution démographique de l'espèce
+étudié cite:Li_2008; il est également indispensable de l'utiliser comme facteur
+de correction dans les études d'associations avec un phénotype, un gradient
+environnementale ou encore une maladie cite:marchini2004effects. De même, il
+existe de nombreuses applications en médecine génétique nécessitant de connaitre
+la structure de population comme par exemple le calcule d'un score de risque
+génétique pour une maladie cite:Wray_2013. Enfin, l'étude de la répartition en
+population d'une espèce dans son habitat est une étape clée en génétique du
+paysage cite:Fran_ois_2015.
 
-Pour représenter la structure de population nous supposons que le génome de
-chaque individu est la combinaison de morceau de génome provenant de $K$ cluster
-génétiques (aussi appelé population ancestrale). Dans chaque cluster génétique
-nous devons estimer les fréquences d'allèle pour chaque SNPs. Pour chaque
-individu nous devons estimer la proportion de son génotype qui provient de
-chaque cluster génétique. Ces proportions sont appelées coefficients de métissage
-individuel (aussi appelés coefficients d'ascendance).
+Pour représenter la structure génétique de population, nous supposons que le
+génome de chaque individu est la combinaison de morceau de génome provenant de
+$K$ cluster génétiques (aussi appelé population ancestrale). Dans chaque cluster
+génétique nous devons estimer les fréquences d'allèle pour chaque SNPs. Pour
+chaque individu nous devons estimer la proportion de son génotype qui provient
+de chaque cluster génétique. Ces proportions sont appelées coefficients de
+métissage individuel (aussi appelés coefficients d'ascendance).
 
 *DESSIN ?*
 
@@ -556,21 +556,21 @@ fonction objectif.
 
 Parmi les approches reposant sur un modèle probabiliste, on compte le logiciel
 =structure= introduit par cite:Pritchard2000 qui à introduit le modèle de
-structure de population dont nous avons parlé dans l'introduction. L'acces à des
-données génétype de plus en plus grandes on provoquer l'émergence de plusieurs
-algorithmes plus rapides que celui de =structure=. En effet, l'algorithme du
-logiciel =structure= implémente un algorithme d'échantillonnage de monte carlo
-pour estimer la distribution à posteriori des coefficients de métissage et les
-fréquence d'allèle dans les clusters génétiques. Cependant les algorithmes de
-monte carlo ne passe à l'échelle des grands jeux de données génétiques modernes.
-Il a été proposé des améliorations du logicielle structure reposant sur une
-fonction de vraisemblance définie pour la matrice des coefficients de métissage
-et les fréquences d'allèle dans les clusters. L'estimation est effectuée en
-maximisant la fonction log-vraisemblance. La première amélioration de
-l'algorithme =structure= est fondée sur un algorithme EM (Expectation
-Maximisation) maximisant la fonction de vraisemblance cite:Tang_2005. Des
-algorithmes de vraisemblance plus récents sont implémentés dans les programmes
-=admixture= et =fastStructure= cite:Alexander_2011,Raj_2014.
+structure génétique de population dont nous avons parlé dans l'introduction.
+L'acces à des données génétype de plus en plus grandes on provoquer l'émergence
+de plusieurs algorithmes plus rapides que celui de =structure=. En effet,
+l'algorithme du logiciel =structure= implémente un algorithme d'échantillonnage
+de monte carlo pour estimer la distribution à posteriori des coefficients de
+métissage et les fréquence d'allèle dans les clusters génétiques. Cependant les
+algorithmes de monte carlo ne passe à l'échelle des grands jeux de données
+génétiques modernes. Il a été proposé des améliorations du logicielle structure
+reposant sur une fonction de vraisemblance définie pour la matrice des
+coefficients de métissage et les fréquences d'allèle dans les clusters.
+L'estimation est effectuée en maximisant la fonction log-vraisemblance. La
+première amélioration de l'algorithme =structure= est fondée sur un algorithme
+EM (Expectation Maximisation) maximisant la fonction de vraisemblance
+cite:Tang_2005. Des algorithmes de vraisemblance plus récents sont implémentés
+dans les programmes =admixture= et =fastStructure= cite:Alexander_2011,Raj_2014.
 
 Dans les approches reposant sur l'optimisation d'un fonction objective, les
 coefficients de métissage sont estimés à l'aide de méthodes de moindres carrés
@@ -1302,7 +1302,6 @@ Le merge c'est bien passé, la sortie :
 - State "TODO"       from              [2017-09-26 mar. 14:32]
 :END:
 
-
 #+NAME: code:Simons_CQ
 #+CAPTION: Dépend de [[code:Simons_fusion]]
 #+begin_src shell
@@ -1322,8 +1321,10 @@ CLOCK: [2017-09-28 jeu. 09:07]
   tar -xvf cteam_lite_public3.tar
 #+end_src
 
-***** RUNNING Download 
+***** DONE Download 
+CLOSED: [2017-09-28 jeu. 18:54]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-09-28 jeu. 18:54]
 - State "RUNNING"    from "TODO"       [2017-09-28 jeu. 09:41]
 - State "TODO"       from              [2017-09-28 jeu. 09:26]
 :END:
@@ -1331,12 +1332,79 @@ CLOCK: [2017-09-28 jeu. 09:07]
 D'après le [[https://sharehost.hms.harvard.edu/genetics/reich_lab/sgdp/phased_data/README][README]] c'est PS1 qui est le mieux phasé. Ce dataset esy filtré pour
 les SNPs bi-allélique.
 
-#+NAME: code:Simons_ddl2
+#+NAME: code:Simons_dl2
 #+CAPTION: Dépend de 
 #+begin_src shell
   cd /home/cayek/Projects/Thesis/MaThese/Data/Simons
   wget https://sharehost.hms.harvard.edu/genetics/reich_lab/sgdp/phased_data/PS1_by_sample_public.tar
+  mkdir Samples
+  tar -xvf PS1_by_sample_public.tar Samples
 #+end_src
+***** RUNNING Fusion et conversion en bed
+#+NAME: code:Simons_fusion2
+#+CAPTION: Dépend de [[code:Simons_dl2]]
+#+begin_src shell
+  cd /home/cayek/Projects/Thesis/MaThese/Data/Simons/Samples
+
+  for dir in [BS]_*
+  do
+      echo "===== $dir ====="
+      cd $dir
+      rm all_beds.txt
+      for file in *.chr[0-9][0-9].vcf.gz *.chr[0-9].vcf.gz
+      do
+          echo "===== $file ====="
+          ## convert into bed
+          basefile=`basename $file .vcf.gz`
+          plink --vcf $file --biallelic-only --out $basefile
+          echo $basefile >> all_beds.txt
+      done
+      ## fusion
+      plink --merge-list all_beds.txt --make-bed --out ../"$dir"
+      ## rm bed files
+      cd ../
+      rm -f "$dir"/*.{bed,bim,fam,log}
+  done
+
+  ## test
+  ls *.bed | wc -l
+
+  ## fusion of all samples
+  ls *.bed > all.beds.txt
+  sed -i 's/\.bed//g' all.beds.txt
+  plink --merge-list all.beds.txt --make-bed --out Simons
+
+  ## rm individual files
+  rm [BS]_*.bed [BS]_*.bim [BS]_*.fam
+#+end_src
+:LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-09-28 jeu. 19:39]
+- State "TODO"       from              [2017-09-28 jeu. 18:55]
+:END:
+***** TODO Quality control
+:LOGBOOK:
+- State "TODO"       from              [2017-09-28 jeu. 19:39]
+:END:
+#+NAME: code:Simons_QC2
+#+CAPTION: Dépend de [[code:Simons_fusion2]]
+#+begin_src shell
+  cd /home/cayek/Projects/Thesis/MaThese/Data/Simons/Samples
+
+  plink --bfile Simons --maf 0.05 --mind 0.05 --geno 0.05 --snps-only --autosome --make-bed --out Simons_CQ --threads 16
+#+end_src
+***** TODO Prunning
+:LOGBOOK:
+- State "TODO"       from              [2017-09-28 jeu. 19:45]
+:END:
+***** TODO Conversion au format R et scalling
+:LOGBOOK:
+- State "TODO"       from              [2017-09-28 jeu. 19:45]
+:END:
+****** Data for tess3r
+Il me faut les données pruned et la représentation binaire
+****** Data not pruned for lfmm
+Il me faut les données non pruned au format matter que je scale 
+****** Data pruned for lfmm
 
 ** Résultats
 :PROPERTIES:
@@ -15305,7 +15373,7 @@ Voir cahier le 7/08/2017
 - Note taken on [2017-09-22 ven. 14:47] \\
   Check list : 
   - [ ] rappel de la pbq de la thèse
-  - [ ] en qui jai rempli l'objectif
+  - [ ] en quoi jai rempli l'objectif
   - [ ] rappel de l'utilité de mes méthodes 
   - [ ] ce qui n'est pas fait
   - [ ] vers ou on pourrait aller pour faire ca
@@ -15447,8 +15515,6 @@ outils.
 [fn:online] Un algorithme online, ou algorithme en ligne, est un algorithme qui
 reçoit son entrée non pas d'un seul coup, mais comme un flux de données, et qui
 doit prendre des décisions au fur et à mesure.
-
-
 ** Valeurs aberrantes et données manquantes
 :LOGBOOK:
 - Note taken on [2017-09-28 jeu. 14:47] \\
@@ -15466,8 +15532,7 @@ observé. Il est fréquent par exemple que les données génétique comporte des
 erreurs de séquençage. Des données génétique de très mauvaise qualité sont par
 exemple les données génétique prélevé sur des espèce qui se sont éteintes.
 
-
-Les algorithmes que nous avons développé ont été penssé pour fonctionné sur des
+Les algorithmes que nous avons développé ont été pensé pour fonctionné sur des
 matrice de données complètes. Dans le cas des données génétique l'imputation
 pour les données manquantes est très étudiés cite:Browning_2016. L'approche la
 plus simple est d'imputer les valeurs manquantes avant de considéré les étude
@@ -15477,7 +15542,7 @@ beaucoup de génomes complet pouvant servir de référence pour l'imputation
 cite:Howie_2012. Pour des espèce ancienne ou simplement moins étudier
 l'imputation est moins évidentes. 
 
-Les algorithme que nous avons dévelopé peuvent être découpé en une suite
+Les algorithme que nous avons développé peuvent être découpé en une suite
 d'opération matricielle. Les opération matricielle n'étant pas défini avec des
 matrice incomplète il est nécéssaire d'adapter les algorithmes. Nos algorithmes
 repose sur des fonctions objectifs. Il est possible d'écrire les fonction
@@ -15495,37 +15560,31 @@ Une autre approche consiste pour prendre en compte les données manquante consit
 d'estimation itératif à chaque étape on utilise la valeur prédite par le modèle.
 Il s'agit de l'approche utilisé par l'algorithme SOFT-IMPUTE prévu pour
 fonctionner sur des matrice de données très incomplète
-cite:mazumder10_spect_regul_algor_learn_large_incom_matric. Cetet approche
+cite:mazumder10_spect_regul_algor_learn_large_incom_matric. Cette approche
 pourrait être directement adaptable au algorithme APLS, AQP et lassoLFMM qui
 sont des algorithme itératif. Nous perdons cependant les propriété de
 convergence démontré sur le algorithme AQP et lassoLFMM.
 
-
-Nous pouvons nous interroger sur l'effets des valeurs aberrantes sur nos
-méthodes. On attribu parfois un score sur la confiance que l'on a sur la mesure
-d'un génome. Une méthode simple consiste à filtrer les observation ayant un
-score trop faible pour les traiter comme des données manquante. De la même
-manière les valaur extrème d'un variable peuvent être considéré comme abbérante
-et considéré comme manquante. Le problème est autrement plus complexe quand on
-on nous ne somme pas capable de detecter les erreurs de mesure présentes dans
-les données. 
-
-
-Ainsi
-que comment adapter nos méthodes pour prendre en compte les valeurs manquantes.
-
-
-
-
-
-Nous avons évalué dans le chapitre [[chap:tess3]]. 
-
+On attribue parfois un score sur la confiance que l'on a sur la mesure d'un
+génome. Une méthode simple consiste à filtrer les observation ayant un score
+trop faible pour les traiter comme des données manquante. De la même manière les
+valeur extrême d'un variable peuvent être considéré comme abbérante et considéré
+comme manquante. Le problème est autrement plus complexe lorsque que nous ne
+somme pas capable de détecter les erreurs de mesure présentes dans les données
+biologiques. Nous avons évalué dans le chapitre [[chap:tess3]] l'effet du bruit dans
+les données géographique sur nos algorithme spatiaux d'estimation de
+l'ascendance. Cependant, nous pouvons nous interroger sur l'effets des valeurs
+aberrantes présentes dans les données génétique. Ainsi que comment les erreurs
+de mesure peuvent influencer les étude d'association et structure faite à partir
+de notre package lfmm.
 
 ** Les études d'associations statistiques
-
+Il e
 ** Source de confusion dans les études d'association avec données de SNPs
 
 ** lien entre les SNPs
+
+\printbibliography
 
 * Soutenance                                                       :noexport:
 :LOGBOOK:
