@@ -1079,9 +1079,15 @@ APLS appliqué avec ces paramètres par défaut aux résultats du programme =snm
 qui n'utilise pas l'informations géographiques.
 
 *** Application au Simons Genome Diversity Project               :noexport:
-
 **** Scripts
-***** DONE Download
+***** CANCELLED Wrong way 
+CLOSED: [2017-09-28 jeu. 09:32]
+:LOGBOOK:
+- State "CANCELLED"  from              [2017-09-28 jeu. 09:32]
+:END:
+J'ai d'abord essayé de ddl le data set pas phasé, je pense que que dans les
+données phasé j'aurais aussi moins de missing value
+****** DONE Download all génomes
 CLOSED: [2017-09-27 mer. 16:44]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-09-27 mer. 16:44]
@@ -1100,10 +1106,7 @@ CLOSED: [2017-09-27 mer. 16:44]
   curl -O https://sharehost.hms.harvard.edu/genetics/reich_lab/sgdp/vcf_variants/vcfs.variants.public_samples.279samples.tar
   tar -xvf vcfs.variants.public_samples.279samples.tar
 
-  ## SGDP-lite version
-  cd ../
-  wget http://sharehost.hms.harvard.edu/genetics/reich_lab/cteam_lite_public3.tar
-  tar -xvf cteam_lite_public3.tar
+  
 
   ## meta information
   curl -O https://sharehost.hms.harvard.edu/genetics/reich_lab/sgdp/SGDP_metadata.279public.21signedLetter.samples.txt
@@ -1149,8 +1152,10 @@ Je test le hash des fichiers
 
 #+RESULTS:
 [[./OUTPUT/Rplots/Simons_indiv.png]]
-***** RUNNING fusion des indiv dans un bed
+****** DONE fusion des indiv dans un bed
+CLOSED: [2017-09-28 jeu. 08:58]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-09-28 jeu. 08:58]
 - State "RUNNING"    from "TODO"       [2017-09-27 mer. 20:57]
 - State "TODO"       from              [2017-09-27 mer. 09:29]
 :END:
@@ -1194,9 +1199,11 @@ Je test le hash des fichiers
   ls *_aux.bed > all.beds.txt
   sed -i 's/\.bed//g' all.beds.txt
   plink --merge-list all.beds.txt --make-bed --out Simons
+
+  mv Simons.bed Simons.fam Simons.bim ../
 #+end_src
 
-****** Rmks
+******* Outputs
 Il n'y a que 278 individu car il semblerait qu'il y a une erreur dans
 =LP6005443-DNA_G07.annotated.nh2.variants.vcf.gz= plink dit :  
 
@@ -1258,20 +1265,74 @@ Quand j'ai essayé de merge voila ce que plink m'a dit :
 Je pense que c'est par ce que les individus sont dans différent vcf... du coup
 j'ai exclude les snps de Simons-merge.missnp.
 
-***** TODO Contrôle qualité
+Le merge c'est bien passé, la sortie : 
+
+#+begin_example
+  PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to Simons.log.
+  Options in effect:
+    --make-bed
+    --merge-list all.beds.txt
+    --out Simons
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  Performing single-pass merge (278 people, 23950548 variants).
+  Merged fileset written to Simons-merge.bed + Simons-merge.bim +
+  Simons-merge.fam .
+  23950548 variants loaded from .bim file.
+  278 people (0 males, 0 females, 278 ambiguous) loaded from .fam.
+  Ambiguous sex IDs written to Simons.nosex .
+  Using 1 thread (no multithreaded calculations invoked).
+  Before main variant filters, 278 founders and 0 nonfounders present.
+  Calculating allele frequencies... done.
+  Total genotyping rate is 0.160179.
+  23950548 variants and 278 people pass filters and QC.
+  Note: No phenotypes present.
+  --make-bed to Simons.bed + Simons.bim + Simons.fam ... done.
+#+end_example
+
+****** TODO Contrôle qualité
 :LOGBOOK:
 - State "TODO"       from              [2017-09-26 mar. 14:32]
 :END:
+
+
 #+NAME: code:Simons_CQ
-#+CAPTION: Dépend de [[code:Simons_ddl]]
+#+CAPTION: Dépend de [[code:Simons_fusion]]
+#+begin_src shell
+#+end_src
+
+****** TODO Download Simons lite
+:LOGBOOK:
+CLOCK: [2017-09-28 jeu. 09:07]
+- State "TODO"       from              [2017-09-28 jeu. 09:07]
+:END:
+#+NAME: code:
+#+CAPTION: Dépend de 
+#+begin_src shell
+  ## SGDP-lite version
+  cd ../
+  wget http://sharehost.hms.harvard.edu/genetics/reich_lab/cteam_lite_public3.tar
+  tar -xvf cteam_lite_public3.tar
+#+end_src
+
+***** RUNNING Download 
+:LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-09-28 jeu. 09:41]
+- State "TODO"       from              [2017-09-28 jeu. 09:26]
+:END:
+
+D'après le [[https://sharehost.hms.harvard.edu/genetics/reich_lab/sgdp/phased_data/README][README]] c'est PS1 qui est le mieux phasé. Ce dataset esy filtré pour
+les SNPs bi-allélique.
+
+#+NAME: code:Simons_ddl2
+#+CAPTION: Dépend de 
 #+begin_src shell
   cd /home/cayek/Projects/Thesis/MaThese/Data/Simons
-  for file in *.vcf.gz
-  do
-      echo "===== $file ====="
-      plink --vcf $file --autosome --make-bed --out `basename $file .vcf.gz`
-  done
+  wget https://sharehost.hms.harvard.edu/genetics/reich_lab/sgdp/phased_data/PS1_by_sample_public.tar
 #+end_src
+
 ** Résultats
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -15318,32 +15379,79 @@ Dans le cadre de cette thèse nous avons proposé plusieurs algorithmes basés s
 des problèmes de factorisation de matrice. Pour certain algorithme nous avons
 prouvé leur convergence vers un point critique de leur fonction objectif. Nous
 avons démontré l'utilité de chacun de nos algorithmes sur des données réelle
-afin de répondre à des question de la génétique moderne. Des implémentation
-efficace de nos algorithmes sont disponible dans deux package R : tess3r et lfmm.
+afin de répondre à des questions de la génétique moderne. Des implémentations
+efficace de nos algorithmes sont disponibles dans deux packages R : tess3r et
+lfmm. Nous proposons maintenant différente perspectives de nos travaux.
 
-Le package tess3r proposent des algorithmes qui permette de calculé une
-représentation synthétique des données génétique appelé structure de population.
-En plus des données génétique nous utilisons des données géographique. Nous
-avons montré les algorithmes implémenté dans tess3r reproduise les erreurs
-statistiques des méthodes de référence utillsant aussi des donénes génétiques et
-géographiques. Par ailleurs, nous avons exposé des exemples où l'utilisation de
-l'information géographique en plus des donénes génétique permet de mieux estimer
-la structure de population. En outre, nous avons observé que l'information des
-test d'adaptation local qui repose sur celle-ci on plus de puissance quand on
-ajoute l'inforamtion géographique. Nous avons enfin l'utilité de notre package
-pour étudier la structure de population et de faire un scan à la selection de AT.
-
-
+# Le package tess3r proposent des algorithmes qui permette de calculé une
+# représentation synthétique des données génétique appelé rendant compte de la
+# structure de population. En plus des données génétique nous utilisons des
+# données géographique. Nous avons montré les algorithmes implémenté dans tess3r
+# reproduise les erreurs statistiques des méthodes de référence utillsant aussi
+# des donénes génétiques et géographiques. Par ailleurs, nous avons exposé des
+# exemples où l'utilisation de l'information géographique en plus des donénes
+# génétique permet de mieux estimer la structure de population. En outre, nous
+# avons observé que l'information des test d'adaptation local qui repose sur
+# celle-ci on plus de puissance quand on ajoute l'inforamtion géographique. Nous
+# avons enfin l'utilité de notre package pour étudier la structure de population
+# et de faire un scan à la selection de AT.
 
 
 ** Développement et maintenance des packages tess3r et lfmm
 
+Le choix de l'implémentation des package en R n'est pas anodin. La communauté R
+est très vivante et en particulier en analyse de données biologique. Les package
+que nous avons développé peuvent ainsi être des pipeline d'analyse de donénes
+faisant intervenir d'autre package R. Par ailleurs, le language de programmation
+R est un language "aux niveau" permettant une maintenance plus facile que sur
+des language de programmation bas niveau. Une perspective majeur de nos traveaux
+est de maintenir le package en fonction des mise à jour du langague R ou bien
+des rapport d'erreur renvoyé par les utilisateurs. 
+
+Un autre aspect important du développement de nos package est la mise en plca
+d'une documentation complète. Au même titre que le développement des fonction
+informatique la documentation dois évoluer avec les retours des utilisateurs.
+Les fonctions des packages tess3r et lfmm sont documenté et nous proposons des
+documentation plus longue proposant une vu d'ensemble des fonctionnalité des
+packages. Dans l'écosystème R les documentation longue d'un package sont appelé
+vignette. Il sera donc important de faire évoluer la documentation des fonctions
+ainsi que leur vignette en fonction des retours des utilisateurs. 
+
+Les packages tess3r et lfmm repose sur des structure de données matricielle.
+Nous avons choisi d'utilisé la structure matricielle classique du language R
+afin d'etre le plus généraliste possible. Un question majeur pour les
+utilisateur est comment charger les données en mémoire vive afin d'utiliser nos
+outils. Certain format de fichier se sont imposer dans la communauté de la
+génétique comme le format du logiciel plink .bed et les .vcf. Ajouter une option
+permettant au utilisateur de fournir dirrectement un fichier dans un de ces
+format standard serait un réelle avantage. En outre, certain format de fichier
+ont été penssé pour permette une acces rapide aux données génétique à la manière
+des algorithmes onlines[fn:online], c'est le cas par exemple du format de bed.
+Ne pas charger toutes les données dans la mémoire vive de l'ordinateur
+permettrait au utilisateur ayant des capacité en mémoire vive modeste d'utiliser
+nos algorithmes.
+
+Enfin pour rendre nos outils utilisable par le plus grand nombre il est très
+important de communiquer sur ceux-ci. En particulier, il faut inciter les
+utilisateurs a poser des questions sur les platforme d'échange du type Stack
+Exchange comme [[https://www.biostars.org/][biostars]] et [[https://stackoverflow.com/documentation/r/topics][stackoverflow]]. C'est platform permettent des échange
+avec les utilisateurs a la fois sur les aspect pratique d'utilisation des
+pacakge mais aussi sur les aspect plus généraliste d'analyse de données avec nos
+outils.
+
+** Les données manquantes 
 
 ** Les études d'associations statistiques
 
+** Source de confusion dans les études d'association avec données de SNPs
 
 bibliographystyle:apalike
 bibliography:../biblio.bib
+
+[fn:online] Un algorithme online, ou algorithme en ligne, est un algorithme qui
+reçoit son entrée non pas d'un seul coup, mais comme un flux de données, et qui
+doit prendre des décisions au fur et à mesure.
+
 * Soutenance                                                       :noexport:
 :LOGBOOK:
 - Note taken on [2017-09-05 mar. 10:31] \\
