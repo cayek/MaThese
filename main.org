@@ -20,8 +20,6 @@
 #+latex_header: \newtheorem{corollaire}{Corollaire}
 #+latex_header: \newtheorem{proposition}{Proposition}
 #+latex_header: \renewcommand{\proofname}{Preuve}
-#+LATEX_HEADER: \usepackage[natbib=true, style=authoryear, backend=bibtex, sorting=none]{biblatex}
-#+LATEX_HEADER: \addbibresource{biblio.bib}
 
 #+PROPERTY: header-args :exports none :eval no-export
 
@@ -267,6 +265,8 @@ position sur l'ADN, nous parlons ainsi du locus d'un SNP. Nous représentons les
 données génétique comme une matrice avec une ligne par individu et une colonne
 par locus.
 
+*DESSIN*
+
 Une étape très imporante en génétique des populations et particulièrement quand
 on étudie des données de SNPs est d'inférer une représentation synthétique de la
 structure de population à partir des données de SNPs. Dans cette thèse nous
@@ -386,9 +386,9 @@ génétique pour une maladie cite:Wray_2013. Enfin, l'étude de la répartition 
 population d'une espèce dans son habitat est une étape clée en génétique du
 paysage cite:Fran_ois_2015.
 
-Pour représenter la structure génétique de population, nous supposons que le
+Pour modéliser la structure génétique de population, nous supposons que le
 génome de chaque individu est la combinaison de morceau de génome provenant de
-$K$ cluster génétiques (aussi appelé population ancestrale). Dans chaque cluster
+$K$ clusters génétiques (aussi appelé populations ancestrales). Dans chaque cluster
 génétique nous devons estimer les fréquences d'allèle pour chaque SNPs. Pour
 chaque individu nous devons estimer la proportion de son génotype qui provient
 de chaque cluster génétique. Ces proportions sont appelées coefficients de
@@ -1341,56 +1341,86 @@ les SNPs bi-allélique.
   tar -xvf PS1_by_sample_public.tar Samples
 #+end_src
 ***** RUNNING Fusion et conversion en bed
-#+NAME: code:Simons_fusion2
-#+CAPTION: Dépend de [[code:Simons_dl2]]
-#+begin_src shell
-  cd /home/cayek/Projects/Thesis/MaThese/Data/Simons/Samples
-
-  for dir in [BS]_*
-  do
-      echo "===== $dir ====="
-      cd $dir
-      rm all_beds.txt
-      for file in *.chr[0-9][0-9].vcf.gz *.chr[0-9].vcf.gz
-      do
-          echo "===== $file ====="
-          ## convert into bed
-          basefile=`basename $file .vcf.gz`
-          plink --vcf $file --biallelic-only --out $basefile
-          echo $basefile >> all_beds.txt
-      done
-      ## fusion
-      plink --merge-list all_beds.txt --make-bed --out ../"$dir"
-      ## rm bed files
-      cd ../
-      rm -f "$dir"/*.{bed,bim,fam,log}
-  done
-
-  ## test
-  ls *.bed | wc -l
-
-  ## fusion of all samples
-  ls *.bed > all.beds.txt
-  sed -i 's/\.bed//g' all.beds.txt
-  plink --merge-list all.beds.txt --make-bed --out Simons
-
-  ## rm individual files
-  rm [BS]_*.bed [BS]_*.bim [BS]_*.fam
-#+end_src
 :LOGBOOK:
 - State "RUNNING"    from "TODO"       [2017-09-28 jeu. 19:39]
 - State "TODO"       from              [2017-09-28 jeu. 18:55]
 :END:
+
+#+NAME: code:Simons_fusion2
+#+CAPTION: Dépend de [[code:Simons_dl2]]
+#+begin_src R
+  library(stringr)
+  setwd("/home/cayek/Projects/Thesis/MaThese/Data/Simons/Samples")
+
+  for (chr in paste0("chr", 1:22)) {
+    message("===", chr, "====")
+    sample.dir <- list.dirs() %>% str_subset("./[BS]_*")
+    all.bed <- NULL
+    for (sd in sample.dir) {
+      vcf <- paste0(sd,"/",basename(sd),".",chr,".vcf.gz")
+      out <- paste0(sd,"/",basename(sd),".",chr)
+      ## convert chrm into bed
+      plink.cmd <- paste("plink -vcf",
+                         vcf,
+                         "--biallelic-only --const-fid 0 --out",
+                         out
+                         )
+      system(plink.cmd)
+      all.bed <- c(all.bed, out)
+    }
+    ## fusion chr
+    all.bed %>% writeLines(con = "all.beds.txt")
+    plink.cmd <- paste("plink -merge-list all.beds.txt",
+                         "--make-bed --out",
+                         paste0("Simons.", chr)
+                         )
+    system(plink.cmd)
+  }
+#+end_src
+****** Rmks
+J'ai eu cette erreur : 
+#+begin_example
+  PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to B_Ju_hoan_North-4.chr10.log.
+  Options in effect:
+    --biallelic-only
+    --out B_Ju_hoan_North-4.chr10
+    --vcf B_Ju_hoan_North-4.chr10.vcf.gz
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  Error: Multiple instances of '_' in sample ID.
+  If you do not want '_' to be treated as a FID/IID delimiter, use --double-id or
+  --const-fid to choose a different method of converting VCF sample IDs to PLINK
+  IDs, or --id-delim to change the FID/IID delimiter.
+#+end_example
+
+résolue par[[https://github.com/chrchang/plink-ng/issues/21][--const-fid 0]] 
+
 ***** TODO Quality control
 :LOGBOOK:
 - State "TODO"       from              [2017-09-28 jeu. 19:39]
 :END:
+
+Je vais filtrer les SNPs qui dérive trop de l'équilibre de Hardy Weinberg car il
+peut être des erreurs de séquençage. Il ne faut pas filtrer trop fort car la
+sélection fait diverger de l'équilibre de hardi weinberg.
+
+Pour les GWAS cas-control il propose de tracer le qqplot sur les contrôles pour
+trouver un seuil les contrôle et de filtrer sur les controle ([[https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5007749/][Automated quality
+control for genome wide association studies]]).
+
+Je vais calculer la pvalue hwe la mais je vais les filtrer que pour le calcule de la
+structure latente par lfmm. Ceux qui dérive trop de l'équilibre HW peuvent etre
+du bruit ou sous un sélection forte donc il faut pas les avoir pour calculer la
+structure latente.
+
 #+NAME: code:Simons_QC2
 #+CAPTION: Dépend de [[code:Simons_fusion2]]
 #+begin_src shell
   cd /home/cayek/Projects/Thesis/MaThese/Data/Simons/Samples
 
-  plink --bfile Simons --maf 0.05 --mind 0.05 --geno 0.05 --snps-only --autosome --make-bed --out Simons_CQ --threads 16
+  plink --bfile Simons --maf 0.05 --mind 0.05 --geno 0.05 --hwe  --snps-only --autosome --make-bed --out Simons_CQ --threads 16
 #+end_src
 ***** TODO Prunning
 :LOGBOOK:
@@ -3615,6 +3645,7 @@ millier de génotypes /A.thaliana/, chacun incluant plus de 210k SNP, n'a pris
 que quelques minutes à l'aide d'un seul CPU.
 
 * Algorithmes d'estimation pour les modèles de régression à facteurs latents
+<<chap:lfmm>>
 ** Introduction
 <<sec:lfmm_intro>> 
 
@@ -15447,14 +15478,15 @@ Voir cahier le 7/08/2017
 
 Un grande partie de la biologie repose sur l'analyse des données provenant du
 monde qui nous entoure. Les techniques qui permettent d'acquérir les données
-évoluent, il est donc nécessaire que les méthodes d'analyse évoluent également.
-Dans le cadre de cette thèse nous avons proposé plusieurs algorithmes basés sur
-des problèmes de factorisation de matrice. Pour certain algorithme nous avons
-prouvé leur convergence vers un point critique de leur fonction objectif. Nous
-avons démontré l'utilité de chacun de nos algorithmes sur des données réelle
-afin de répondre à des questions de la génétique moderne. Des implémentations
-efficace de nos algorithmes sont disponibles dans deux packages R : tess3r et
-lfmm. Nous proposons maintenant différente perspectives de nos travaux.
+évoluent, il est donc nécessaire que les méthodes pour les analyser évoluent
+également. Dans le cadre de cette thèse nous avons proposé plusieurs algorithmes
+reposant sur des problèmes de factorisation de matrice. Pour certain algorithme
+nous avons prouvé leur convergence vers un point critique de leur fonction
+objectif. Nous avons démontré l'utilité de chacun de nos algorithmes sur des
+données réelles afin de répondre à des questions de la génétique moderne. Des
+implémentations efficace de nos algorithmes sont disponibles dans deux packages
+R : tess3r et lfmm. Nous proposons maintenant différente perspectives de nos
+travaux.
 
 # Le package tess3r proposent des algorithmes qui permette de calculé une
 # représentation synthétique des données génétique appelé rendant compte de la
@@ -15471,46 +15503,56 @@ lfmm. Nous proposons maintenant différente perspectives de nos travaux.
 
 
 ** Développement et maintenance des packages tess3r et lfmm
+:LOGBOOK:
+- Note taken on [2017-09-29 ven. 19:08] \\
+  Comment inciter les utilisateurs a utilisé github issu stac over flow etc : 
+  - si mail renvoyer vers stack over flow
+  - en cas d'erreur dir ou poser les questions
+  - etre actife quand on pose des questions
+:END:
 
-Le choix de l'implémentation des package en R n'est pas anodin. La communauté R
-est très vivante et en particulier en analyse de données biologique. Les package
-que nous avons développé peuvent ainsi être des pipeline d'analyse de donénes
-faisant intervenir d'autre package R. Par ailleurs, le language de programmation
-R est un language "aux niveau" permettant une maintenance plus facile que sur
-des language de programmation bas niveau. Une perspective majeur de nos traveaux
-est de maintenir le package en fonction des mise à jour du langague R ou bien
-des rapport d'erreur renvoyé par les utilisateurs. 
+Le choix de d'implémentation des packages en R n'est pas anodin. La communauté R
+est très vivante et en particulier en analyse de données biologique. Les
+packages que nous avons développés peuvent ainsi être intégré à des pipelines
+d'analyse de données biologiques faisant intervenir d'autre package R. Par
+ailleurs, le language de programmation R est un language "haut niveau"
+permettant une maintenance plus facile que sur des languages de programmation
+bas niveau tel que le language C par exemple. Une perspective majeur de nos
+travaux est de maintenir nos packages en fonction des mises à jour du langague R
+ou bien des rapports d'erreur renvoyés par les utilisateurs.
 
-Un autre aspect important du développement de nos package est la mise en plca
-d'une documentation complète. Au même titre que le développement des fonction
-informatique la documentation dois évoluer avec les retours des utilisateurs.
-Les fonctions des packages tess3r et lfmm sont documenté et nous proposons des
-documentation plus longue proposant une vu d'ensemble des fonctionnalité des
-packages. Dans l'écosystème R les documentation longue d'un package sont appelé
-vignette. Il sera donc important de faire évoluer la documentation des fonctions
-ainsi que leur vignette en fonction des retours des utilisateurs. 
+Un autre aspect important du développement des packages est la mise en place
+d'une documentation complète. Au même titre que le développement des fonctions
+informatiques, la documentation doit évoluer avec les retours des utilisateurs.
+Les fonctions des packages tess3r et lfmm sont documentées. Nous avons également
+écrit des documentations plus longue proposant une vu d'ensemble des
+fonctionnalités des packages. Dans l'écosystème R les documentations longues
+sont appelées vignette. Il sera donc important de faire évoluer les
+documentations des fonctions ainsi que leur vignette en fonction des retours des
+utilisateurs.
 
-Les packages tess3r et lfmm repose sur des structure de données matricielle.
-Nous avons choisi d'utilisé la structure matricielle classique du language R
-afin d'etre le plus généraliste possible. Un question majeur pour les
-utilisateur est comment charger les données en mémoire vive afin d'utiliser nos
-outils. Certain format de fichier se sont imposer dans la communauté de la
-génétique comme le format du logiciel plink .bed et les .vcf. Ajouter une option
-permettant au utilisateur de fournir dirrectement un fichier dans un de ces
-format standard serait un réelle avantage. En outre, certain format de fichier
-ont été pensé pour permette une acces rapide aux données génétique à la manière
-des algorithmes onlines[fn:online], c'est le cas par exemple du format de bed.
-Ne pas charger toutes les données dans la mémoire vive de l'ordinateur
-permettrait au utilisateur ayant des capacité en mémoire vive modeste d'utiliser
-nos algorithmes.
+Les packages tess3r et lfmm reposent sur des structures de données matricielles.
+Nous avons choisi d'utiliser la structure matricielle classique du language R
+afin d'etre le plus général possible. Un question majeur pour les utilisateurs
+est de savoir comment charger les données en mémoire vive afin d'utiliser nos
+outils. Certain format de fichier se sont imposé dans la communauté de la
+génétique, comme par exemple le format du logiciel plink .bed et les .vcf.
+Ajouter une option permettant au utilisateurs de fournir directement un fichier
+formater dans un format standard serait un réelle avantage pour les
+utilisateurs. En outre, certain format de fichier ont été pensé pour permette
+une accès rapide aux données génétiques à la manière des algorithmes
+onlines[fn:online]. C'est le cas par exemple du format de bed. Ne pas charger
+toutes les données dans la mémoire vive de l'ordinateur permettrait aux
+utilisateurs ayant des capacités en mémoire vive modeste d'utiliser nos
+algorithmes sur des grandes données.
 
-Enfin pour rendre nos outils utilisable par le plus grand nombre il est très
+Enfin pour rendre nos outils utilisables par le plus grand nombre il est très
 important de communiquer sur ceux-ci. En particulier, il faut inciter les
-utilisateurs a poser des questions sur les platforme d'échange du type Stack
-Exchange comme [[https://www.biostars.org/][biostars]] et [[https://stackoverflow.com/documentation/r/topics][stackoverflow]]. C'est platform permettent des échange
-avec les utilisateurs a la fois sur les aspect pratique d'utilisation des
-pacakge mais aussi sur les aspect plus généraliste d'analyse de données avec nos
-outils.
+utilisateurs à poser des questions sur les plateformes d'échange du type Stack
+Exchange comme [[https://www.biostars.org/][biostars]] et [[https://stackoverflow.com/documentation/r/topics][stackoverflow]]. Ces plateformes permettent des
+échanges avec les utilisateurs à la fois sur les aspects pratiques d'utilisation
+des packages mais aussi sur les aspects plus généraliste d'analyse de données
+avec nos outils.
 
 [fn:online] Un algorithme online, ou algorithme en ligne, est un algorithme qui
 reçoit son entrée non pas d'un seul coup, mais comme un flux de données, et qui
@@ -15523,68 +15565,97 @@ doit prendre des décisions au fur et à mesure.
   - [[https://en.wikipedia.org/wiki/Ancient_DNA][Ancient DNA]]
 :END:
 
-Les données réelles analysée lors de cette thèse peuvent être qualifier de
-"propre". Il y a peut d'erreur dans les données de SNPs et peut de données
-manquante. Cependant, il est fréquent sur les grands jeux de données biologique avec
-beaucoup variables qu'un certain nombre de variables ne soit pas observé pour
-tous les échantillons. Ou bien qu'il y ai des erreurs dans les variables
-observé. Il est fréquent par exemple que les données génétique comporte des
-erreurs de séquençage. Des données génétique de très mauvaise qualité sont par
-exemple les données génétique prélevé sur des espèce qui se sont éteintes.
+Les données réelles analysées lors de cette thèse peuvent être qualifié de
+données "propre". Dit autrement, les données contiennent peu d'erreur et peu de
+valeurs manquantes. Cependant, il est fréquent sur les grands jeux de données
+biologiques avec beaucoup variables qu'un certain nombre de variables ne soit pas
+observé pour tous les échantillons. Ou bien qu'il y ai des erreurs dans les
+variables observées. Il est fréquent par exemple que les données génétiques
+comportent des erreurs de séquençage. Des données génétique de très mauvaises
+qualités sont par exemple les données génétiques prélevées sur des espèces qui se
+sont éteintes.
 
-Les algorithmes que nous avons développé ont été pensé pour fonctionné sur des
-matrice de données complètes. Dans le cas des données génétique l'imputation
-pour les données manquantes est très étudiés cite:Browning_2016. L'approche la
-plus simple est d'imputer les valeurs manquantes avant de considéré les étude
-d'assocaition ou d'inférence de la structure de population. Cette approche
-fonctionne très bien pour les espèce des étudié comme l'humain car on a accès à
-beaucoup de génomes complet pouvant servir de référence pour l'imputation
-cite:Howie_2012. Pour des espèce ancienne ou simplement moins étudier
-l'imputation est moins évidentes. 
+Les algorithmes que nous avons développés ont été pensés pour fonctionner sur
+des matrices de données complètes. Dans le cas des données génétiques
+l'imputation des valeurs manquantes a été très étudiés cite:Browning_2016.
+Ainsi, l'approche la plus simple est d'imputer les valeurs manquantes avant de
+considérer d'autre analyse, d'association ou d'inférence de la structure de
+population par exemple. Cette approche fonctionne très bien pour les espèces
+très étudiées comme l'Humain. Pour de tel espèce, on a accès à beaucoup de
+génomes complets pouvant servir de référence pour l'imputation cite:Howie_2012.
+Pour des espèces anciennes ou simplement moins étudier l'imputation est moins
+évidentes. 
 
-Les algorithme que nous avons développé peuvent être découpé en une suite
+Les algorithmes que nous avons développé peuvent être découpé en une suite
 d'opération matricielle. Les opération matricielle n'étant pas défini avec des
-matrice incomplète il est nécéssaire d'adapter les algorithmes. Nos algorithmes
-repose sur des fonctions objectifs. Il est possible d'écrire les fonction
-objectifs avec des matrices imcomplète. Nous perdons cependant les structure
-matricielle des variable à a optimisé. Il faut alors envisager d'autre
-algorithme d'optimisation que les algorithmes de descente par bloque de
-coordonnées utilisé dans nos algorithmes. Une autre approche simple a implémenté
-consiste à imputer les données manquante par leur moyenne ou une autre
-statistique. Quand il y a peut de données manquante, on s'attend a ce que cette
-méthode ne biaise pas trop les facteurs dans les méthodes à facteurs comme l'ACP
-cite:josse2009gestion. 
+matrice incomplète il est nécessaire d'adapter les algorithmes pour qu'ils
+gèrent les valeurs manquantes. Nos algorithmes reposent sur des fonctions
+objectifs. Il donc est possible d'écrire les fonctions objectifs avec des
+matrices incomplète. Nous perdons cependant les structures matricielles des
+variables lors de l'optimisation de fonction objectif. Il faut alors envisager
+d'autres algorithmes d'optimisation que les algorithmes de descente par bloque
+de coordonnées utilisés dans nos méthodes. Une autre approche simple à
+implémenter consiste à imputer les données manquantes par leur moyenne ou une
+autre statistique. Quand il y a peu de données manquante, on s'attend a ce que
+cette méthode ne biaise pas trop l'inférence des facteurs dans les méthodes à
+facteurs comme l'ACP cite:josse2009gestion.
 
-Une autre approche consiste pour prendre en compte les données manquante consite
-à imputer au hasard une première fois. Puis dans le cadre d'un algorithme
-d'estimation itératif à chaque étape on utilise la valeur prédite par le modèle.
-Il s'agit de l'approche utilisé par l'algorithme SOFT-IMPUTE prévu pour
-fonctionner sur des matrice de données très incomplète
+Une autre approche consiste à imputer au hasard une première fois les données
+manquantes. Puis dans le cadre d'un algorithme d'estimation itératif à chaque
+étape on utilise la valeur prédite par le modèle. Il s'agit de l'approche
+utilisé par l'algorithme SOFT-IMPUTE prévu pour fonctionner sur des matrices de
+données très incomplètes
 cite:mazumder10_spect_regul_algor_learn_large_incom_matric. Cette approche
-pourrait être directement adaptable au algorithme APLS, AQP et lassoLFMM qui
-sont des algorithme itératif. Nous perdons cependant les propriété de
-convergence démontré sur le algorithme AQP et lassoLFMM.
+pourrait être directement adaptable aux algorithmes APLS, AQP et lassoLFMM étant
+des algorithmes itératifs. Nous perdons cependant les propriétés de convergenceq
+démontré sur le algorithme AQP et lassoLFMM.
 
-On attribue parfois un score sur la confiance que l'on a sur la mesure d'un
-génome. Une méthode simple consiste à filtrer les observation ayant un score
-trop faible pour les traiter comme des données manquante. De la même manière les
-valeur extrême d'un variable peuvent être considéré comme abbérante et considéré
-comme manquante. Le problème est autrement plus complexe lorsque que nous ne
-somme pas capable de détecter les erreurs de mesure présentes dans les données
-biologiques. Nous avons évalué dans le chapitre [[chap:tess3]] l'effet du bruit dans
-les données géographique sur nos algorithme spatiaux d'estimation de
-l'ascendance. Cependant, nous pouvons nous interroger sur l'effets des valeurs
-aberrantes présentes dans les données génétique. Ainsi que comment les erreurs
-de mesure peuvent influencer les étude d'association et structure faite à partir
-de notre package lfmm.
+On attribue parfois un score sur la confiance sur la mesure expérimental des
+génomes. Une méthode simple consiste à filtrer les observations ayant un score
+trop faible pour les traiter comme des données manquantes. Le problème est
+autrement plus complexe lorsque que nous ne somme pas capable de détecter les
+erreurs de mesure présentes dans les données biologiques. Nous avons évalué,
+dans le chapitre [[chap:tess3]], l'effet du bruit dans les données géographiques sur
+les résultats de nos algorithmes spatiaux d'estimation de l'ascendance.
+Cependant, nous pouvons nous interroger sur l'effets des valeurs aberrantes
+présentes dans les données génétiques. Ainsi que comment les erreurs de mesure
+peuvent influencer les études d'association faite à partir de notre package
+lfmm.
 
-** Les études d'associations statistiques
+bibliographystyle:apalike
+bibliography:biblio.bib
+
+** Perspective pour les études d'association sur des données génétiques :noexport:
+
+Nous avons montré que lfmm peut être utilisé des études d'assocation a partir de
+données de SNPS. Cependant, les données de SNPs sont binomial. Dans notre
+méthode nous supposons que le bruit est gaussien de moyen nulle et de variance
+identique pour toutes les variables. Comme nous l'avons vu cette approche permet
+tout de même de d'inférer des variables latentes qui représente la variance
+systématique des données génétique. Cependant une modélisation plus addapté à la
+nature des données génétiques permettrait certainement d'apprendre des meilleurs
+représentant pour les facteurs de confusion. De même que dans
+cite:agarwal09_regres et en utilisant les notations du chapitre [[chap:lfmm]] nous
+modélisons les SNPs de la facon suivante
+\begin{equation}
+\label{eq:1}
+Y_{i,j} \sim \mathrm{Bernoulli}(\mathcal{j}(\Sum_{k = 1}^{\K} U_{i,k} V_{j,k} + X_{i} B_{j}))
+\end{equation}
+où $\mathcal{l}$ est la fonction logistique. 
+
+Afin de mieux modéliser les données génétique on pourrait
+
+Nous n'a
+
+Les études d'assocaition statistique est un problème complexe 
+
 Il e
-** Source de confusion dans les études d'association avec données de SNPs
 
-** lien entre les SNPs
+Chez les espèce diploide les gènes sont transmis aux enfant par bloque appelé
+chromosomes. Le mode de transmition des chromosomes des parents au enfant
+provoque un déséquilibre de liaison entre les SNPs voisins. Avant 
 
-\printbibliography
+
 
 * Soutenance                                                       :noexport:
 :LOGBOOK:
@@ -15644,3 +15715,6 @@ Tout ce que je peux dire c'est que ce que je trouve en plus sont pas abérant:
 # eval: (load-file "./these-publish.el")
 # End:
 #  LocalWords:  variogrammes
+**** Comment on se compare avec les modèles mixes ?
+En théorie les modèle mixe c'est en n^2p pour calculer la matrice de kindchip.
+lfmm c'est du npk !!
