@@ -14,6 +14,7 @@
 #+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(g!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
 #+LaTeX_CLASS: these
 #+LATEX_HEADER: \input{notations.tex}
+#+LATEX_HEADER: \input{packages.tex}
 #+HTML_MATHJAX: align: left indent: 5em tagside: left font: Neo-Euler
 #+latex_header: \usepackage{amsthm, bm}
 #+latex_header: \newtheorem{theorem}{Théoreme}
@@ -156,11 +157,11 @@
   :D et la on fait le lien avec les tests d'hypothèe multiple....
 :END:
 Cette dernière décennie a été marquée par une accumulation des données dans tous
-les domaines de la sciences. Cette accumulation de données est une aubaine pour
+les domaines de la science. Cette accumulation de données est une aubaine pour
 les scientifiques. En particulier en génétique l'abondance des données permet de
 comprendre toujours mieux le vivant. Cependant, que faire d'autant de données et
-comment en tirer l'information qui permettrait de mieux comprendre le monde qui
-nous entoure ? Il s'agit là d'un défi majeur pour les statistiques. 
+comment en tirer l'information qui permettra de mieux comprendre le monde qui
+nous entoure ? Il s'agit là d'un défi majeur pour les statistiques.
 
 Le premier problème qui se pose avec les grands jeux de données est celui de la
 vitesse des algorithmes utilisés pour les traiter. Si nous avons beaucoup de
@@ -190,7 +191,6 @@ détails les contextes biologiques dans lesquels interviennent les méthodes
 développées durant cette thèse.
 
 ** La génomique des populations
-<<intro_genet>>
 :LOGBOOK:
 - Note taken on [2017-09-18 lun. 15:28] \\
   rmk : reproduction au hasard des individus : c'est à dire qu'on ne sait pas qui
@@ -214,6 +214,8 @@ développées durant cette thèse.
   - gwas: gemma etc
   - eas: ...
 :END:
+<<intro_genet>>
+
 La génétique des populations est l'étude de la distribution et des changement de
 la fréquence des versions d'un gêne, que l'on appel allèle, quand des
 populations d'être vivant. La génomique des population est un néologisme qui
@@ -235,7 +237,7 @@ changements de fréquences d'allèle dans les populations : la mutation, la
 sélection, la dérive génétique, et la migration. La mutation créer de nouveau
 allèle, elle peut être neutre, c'est à dire sans effet sur l'organisme, ou non
 et avoir par exemple un effet sur la capacité de l'organisme à s'adapter à son
-environement. La sélection est l'hypothèse centrale de la théorie de Darwin,
+environnement. La sélection est l'hypothèse centrale de la théorie de Darwin,
 ainsi si un allèle permet à l'organisme d'être mieux adapté à son environnement
 alors cette allèle aura plus de chance d'être transmis aux générations futures
 car l'organisme porteur de l'allèle peut se reproduire plus facilement. La
@@ -256,17 +258,50 @@ plusieurs individus provenant de plusieurs populations. De plus, les récentes
 améliorations en séquence de l'ADN ont permis le séquence, qui était jusqu'alors
 réservé aux espèces modèles, de nombreuses espèces différentes. Dans le cadre de
 cette thèse nous nous sommes intéressé seulement au données dîtes de SNPs
-(single-nucleotide polymorphism) qui sont les polymorphismes génétiques simple
-d'un seul nucleotide. Un SNP est la variation (polymorphisme) d'une seule paire
-de bases du génome, entre individus d'une même espèce. Les SNPs représentent $90
-\%$ de l'ensemble des variations génétiques humaines, et des SNPs avec une
-fréquence allélique supérieure à $1 \%$ sont présents toutes les cent à trois
-cents paires de bases en moyenne dans le génome humain. Nous appelons locus une
-position sur l'ADN, nous parlons ainsi du locus d'un SNP. Nous représentons les
-données génétique comme une matrice avec une ligne par individu et une colonne
-par locus.
+(single-nucleotide polymorphism) qui sont les polymorphismes génétiques d'un
+seul nucleotide. Un SNP est la variation (polymorphisme) d'une seule paire de
+bases du génome, entre individus d'une même espèce (Figure ref:fig:SNP). Les
+SNPs représentent $90 \%$ de l'ensemble des variations génétiques humaines, et
+des SNPs avec une fréquence allélique supérieure à $1 \%$ sont présents toutes
+les cent à trois cents paires de bases en moyenne dans le génome humain. Nous
+appelons locus une position sur l'ADN, nous parlons ainsi du locus d'un SNP.
+Nous représentons les données génétique comme la matrice contenant le nombre de
+fois que l'allèle muté a été observé pour chaque individu et chaque locus
+(Figure ref:fig:matrix).
 
-*DESSIN*
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+  \centering
+  ADNs \left \{\begin{tabular}{cccccccc}
+                \cdots &G & A & \cellcolor{blue!25} T & C &C& \cdots & \cdots \\
+                \cdots &C & T & \cellcolor{blue!25} A & G &G& \cdots & \cdots \\[14pt]
+                \cdots &G& A & \cellcolor{blue!25} G & C &C& \cdots & \cdots\\
+                \cdots &C& T & \cellcolor{blue!25} C & G &G& \cdots & \cdots 
+              \end{tabular}
+              
+              \caption{{\bf Illustration d'un SNP.} La paire de base différente
+                entre les deux séquences est un SNP.}
+\label{fig:SNP}
+\end{figure}
+#+END_EXPORT
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+  \centering
+\begin{bmatrix}
+  0      & 1    &  2    & 2& \cdots      & \cdots & \cdots \\
+  1      & 1    &  0    &1& \cdots      & \cdots    &  \cdots \\
+  \vdots      & \vdots    &  \vdots    & \vdots     & \cdots   & \cdots    &  \cdots \\
+  \vdots      & \vdots    &  \vdots    & \vdots     & \cdots   & \cdots    &  \cdots \\
+  0      & 0    &  2    &0& \cdots      & \cdots    &  \cdots \\
+\end{bmatrix}
+
+\caption{{\bf Illustration d'une matrice de SNPs pour une espèce diploïde.}
+  Chaque élément de la matrice est le nombre de fois que l'allèle muté est
+  observé pour un individu donné à un locus donné.}
+\label{fig:matrix}
+\end{figure}
+#+END_EXPORT
 
 Une étape très imporante en génétique des populations et particulièrement quand
 on étudie des données de SNPs est d'inférer une représentation synthétique de la
@@ -754,10 +789,18 @@ l'autre est fixée, nous pouvons appliquer l'algorithme de descente par bloc de
 coordonnées au problème pour trouver un minimum local de la fonction $\LS$
 définie par l'équation ref:eq:tess3LS cite:Bertsekas_1997. L'algorithme de
 descente par bloque de coordonnées consiste à alterner des étapes d'optimisation
-selon chacune des coordonnées de la fonction à optimiser. 
+selon chacune des coordonnées de la fonction à optimiser (Figure
+ref:fig:coordinate_descente).
 
-*DESSIN de https://en.wikipedia.org/wiki/Coordinate_descent ??*
-
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics{./OUTPUT/Rplots/coordinate_descente.pdf}
+\caption{{\bf Illustration de l'algorithme  de descente par bloque de
+    coordonnées}}
+\label{fig:coordinate_descente}
+\end{figure}
+#+END_EXPORT
 
 
 Cette algorithme permet de converger vers un minimum local quand la fonction
@@ -823,21 +866,64 @@ minimum local de la fonction $\LS$.
 #+END_proof
 
 **** Scripts                                                    :noexport:
+
+ggplot doit bugger je ne pouvais pas overwrite l'argument mapping dans
+stat_contour... Du coup les deux dataset ont les mêmes colonnes
+
 #+NAME: code:coordinate
 #+CAPTION: 
-#+begin_src R 
-  library(ggplot)
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(ggplot2)
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
 
-  x <- seq(70, 81, length.out = )
-  paths <- tibble(x = c(70), y = c(), vx = c(0), vy = c(0.2))
+  library(grid)
 
-  ggplot(faithful, aes(waiting, eruptions)) +
-    geom_density_2d() +
-    geom_segment(data=paths, mapping=aes(x=x, y=y, xend=x+vx, yend=y+vy),
-                 arrow=arrow(length = unit(0.07, "inch")), size=1,
-                 color="red")
+  f <- function(x, y) {
+    5 * x ^ 2 - 6 * x * y + 5 * y ^ 2
+  }
+
+  f.min <- function(d) {
+     6 * d / 10
+  }
+
+
+  toplot <- expand.grid(x = seq(-1.5, 1.5, 0.005),
+                        y = seq(-1.5, 1.5, 0.005), xend = 0, yend = 0) %>% as_tibble() %>%
+    mutate(z = f(x,y))
+
+
+  x.start <- -1.5
+  y.start <- -1.5
+  path <- tibble()
+  for (i in 1:3) {
+    aux <- tibble(x = c(x.start,x.start),
+                  y = c(y.start,f.min(x.start)),
+                  xend = c(x.start, f.min(f.min(x.start))),
+                  yend = c(f.min(x.start),f.min(x.start)), z = c(0,0))
+    path <- path %>%
+      rbind(aux)
+    y.start <- f.min(x.start)
+    x.start <- f.min(f.min(x.start))
+  }
+
+
+  pl <- ggplot(path, aes(x = x, y = y, xend = xend, yend = yend, z = z)) +
+    geom_segment(color = "red", arrow = arrow(length = unit(0.1, "inch"))) +
+    xlim(-1.5, 1.5) +
+    ylim(-1.5, 1.5) + 
+    stat_contour(data = toplot, bins = 20, color = "black") +
+    theme_classic(base_size = 12) +
+    theme(axis.text = element_blank(),
+          axis.ticks = element_blank()) +
+    ylab("$\\mathbf{Q}$") +
+    xlab("$\\mathbf{G}$")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl = pl, 
+                          basename.output = "coordinate_descente", 
+                          env = MaTheseR.params,
+                          height = 0.4 * MaTheseR.params$textheightinch,
+                          width = 1 * MaTheseR.params$textwidthinch)
 #+end_src
 *** Algorithme des moindres carrés alternés projetés (APLS)
 Dans cette partie nous présentons l'algorithme APLS de calcul d'un minimum local
@@ -15733,8 +15819,6 @@ Chez les espèce diploide les gènes sont transmis aux enfant par bloque appelé
 chromosomes. Le mode de transmition des chromosomes des parents au enfant
 provoque un déséquilibre de liaison entre les SNPs voisins. Avant 
 
-
-
 * Soutenance                                                       :noexport:
 :LOGBOOK:
 - Note taken on [2017-09-05 mar. 10:31] \\
@@ -15796,3 +15880,8 @@ Tout ce que je peux dire c'est que ce que je trouve en plus sont pas abérant:
 **** Comment on se compare avec les modèles mixes ?
 En théorie les modèle mixe c'est en n^2p pour calculer la matrice de kindchip.
 lfmm c'est du npk !!
+*** Général
+**** Les types de mutation génétiques
+indel : insertion délétion
+SNPs : 
+mircosat : répétition
