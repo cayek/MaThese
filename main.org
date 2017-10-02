@@ -119,6 +119,9 @@
 ** python
 * Introduction
 :LOGBOOK:
+- Note taken on [2017-10-02 lun. 10:04] \\
+  Source : 
+  - [[https://fr.wikipedia.org/wiki/Paradoxe_de_Simpson][Paradoxe de Simpson]]
 - Note taken on [2017-09-18 lun. 16:47] \\
   L'objectif de l'intro : 
   - expliquer le contexte et la problématique client
@@ -167,31 +170,42 @@ Le premier problème qui se pose avec les grands jeux de données est celui de l
 vitesse des algorithmes utilisés pour les traiter. Si nous avons beaucoup de
 données rapidement nous voulons aussi des algorithmes rapides pour les traiter
 et les visualiser. L'augmentation de la puissance des ordinateurs ne suffis pas
-toujours à adapter un modèle à un plus grand jeux de données. Il faut parfois
-trouver de nouvelles méthodes pour passer à une échelle de données plus grandes.
+toujours à rendre applicable un algorithme à un plus grand jeux de données. Par
+conséquence il est toujours nécessaire de trouver des nouveaux algorithmes afin
+de traiter des rapidement données plus grandes.
 
-Par ailleurs, plus nous avons d'observation de variables plus il est possible de
-détecter des corrélations faibles entre celles-ci. Ce qui paradoxalement n'est
-pas forcément une bonne chose puisque toute corrélation aussi faible soit elle
-est significative quand on à trop de données. De plus, une corrélation n'est pas
-un lien de cause à effet. Une corrélation entre des variables peut ne plus être
-observé quand on considère dans l'étude d'autres variables explicatives
-(paradoxe de Simpson). Il faut donc être très prudent dans la recherche de
-corrélation dans des données, surtout dans le contexte actuelle où l'accès au
-données est très facile.
+Un deuxième problèmes important avec les grands échantillons de données concerne
+les études de liaison entre variables. Il est bien connu des statisticiens qu'un
+lien statistique entres variables ne correspond pas nécessairement à un lien de
+causalité. Nous pouvons par exemple citer l'effet de Yule-Simpsons, un paradoxe
+statistique dans lequel un phénomène observé de plusieurs groupes semble
+s'inverser lorsque les groupes sont combinés cite:simpson1951interpretation.
+Historiquement, les études de corrélations étaient faites sur des échantillons
+de données construits pour l'occasion et contrôlés pour les facteurs de
+confusion. Cependant, dans le contexte actuelle les scientifiques ont accès à
+beaucoup de données provenant de sources éparses. Utiliser de tel données pour
+trouver des liens statistiques intéressant pour une problématique scientifique
+est alors beaucoup complexe qu'avec des données contrôlées. A cela s'ajoute le
+fait que plus l'échantillon de données est grand plus il est possible de
+détecter des liens statistiques subtiles. Par conséquent, dans le contexte
+actuelle où l'accès aux données est très facile il faut être très prudent et
+rigoureux dans les études de corrélations.
 
-Dans le cadre de cette thèse nous nous sommes intéressé à développer des
-méthodes statistiques adaptées au traitement de données génétiques afin de
-répondre à deux problématiques. Le premier est l'estimation de la structure
-génétique de population à partir de données génétiques et géographiques. Le
-deuxième est l'estimation des facteurs de confusion pour corriger les tests
-d'association. Les méthodes statistiques développer lors de cette thèse repose
-sur la factorisation de matrice. Nous allons maintenant introduire plus en
-détails les contextes biologiques dans lesquels interviennent les méthodes
-développées durant cette thèse.
+Dans le cadre de cette thèse de doctorat nous nous sommes intéressé à développer
+des méthodes statistiques adaptées au traitement de données génétiques afin de
+répondre à deux problèmes. Le premier est l'estimation de la structure génétique
+de population à partir de données génétiques et géographiques. Le deuxième est
+l'estimation des facteurs de confusion pour corriger les tests d'association.
+Les méthodes statistiques développées lors de cette thèse reposent sur la
+factorisation de matrice. Nous allons maintenant introduire plus en détails les
+contextes biologiques dans lesquels interviennent les méthodes statistiques que
+nous avons développées.
 
 ** La génomique des populations
 :LOGBOOK:
+- Note taken on [2017-10-02 lun. 10:24] \\
+  Source : 
+  - [[https://fr.wikipedia.org/wiki/Acide_d%25C3%25A9soxyribonucl%25C3%25A9ique][Acide désoxyribonucléique wiki]]
 - Note taken on [2017-09-18 lun. 15:28] \\
   rmk : reproduction au hasard des individus : c'est à dire qu'on ne sait pas qui
   se repruidit avec qui !! et ca ca fait que "par hasard" (comprendre sans qu'on
@@ -216,10 +230,10 @@ développées durant cette thèse.
 :END:
 <<intro_genet>>
 
-La génétique des populations est l'étude de la distribution et des changement de
-la fréquence des versions d'un gêne, que l'on appel allèle, quand des
-populations d'être vivant. La génomique des population est un néologisme qui
-souligne le fait que l'on n'étudie plus les différences génétiques dans et entre
+La génétique des populations est l'étude de la distribution et des changements
+de la fréquence des versions d'un gêne, que l'on appel allèle, dans des
+populations d'être vivant. La génomique des populations est un néologisme qui
+souligne le fait que l'on étudie plus les différences génétiques dans et entre
 les populations à l'échelle d'un seul gêne mais à l'échelle du génome complet.
 La génomique des populations a des applications en épidémiologie où elle permet
 de comprendre la transmission des maladies génétiques. En agronomie, où des
@@ -232,55 +246,57 @@ Les populations étudiées par la génétique des populations sont formées d'un
 ensemble d'individus qui montrent une unité de reproduction : les individus
 d'une population peuvent se croiser entre eux, ils se reproduisent moins avec
 les individus des populations voisines, desquelles ils sont géographiquement
-isolés. On considère 4 pressions évolutives qui permettent d'expliquer des
-changements de fréquences d'allèle dans les populations : la mutation, la
-sélection, la dérive génétique, et la migration. La mutation créer de nouveau
-allèle, elle peut être neutre, c'est à dire sans effet sur l'organisme, ou non
-et avoir par exemple un effet sur la capacité de l'organisme à s'adapter à son
-environnement. La sélection est l'hypothèse centrale de la théorie de Darwin,
-ainsi si un allèle permet à l'organisme d'être mieux adapté à son environnement
-alors cette allèle aura plus de chance d'être transmis aux générations futures
-car l'organisme porteur de l'allèle peut se reproduire plus facilement. La
-dérive génétique provient du fait qu'il n'existe pas de populations infinies.
-Ainsi au file des générations les distributions allélique change à cause de la
-reproduction au hasard des individus. Ce processus peut engendrer la disparition
-ou la fixation d'un allèle neutre juste par hasard. Enfin la migration est le
-passage de gènes d'une population à une autre (par des individus qui passent
-d'une population à l'autre, par exemple sous forme de graines ou de pollen chez
-les plantes). Si cet échange se fait entre des populations ayant des fréquences
-alléliques différentes, il va tendre à modifier les fréquences alléliques.
+isolés. Les changements de fréquences d'allèle dans les populations peuvent être
+expliqué par quartes pressions évolutives : la mutation, la sélection, la dérive
+génétique, et la migration. La mutation créer de nouveau allèle, elle peut être
+neutre, c'est à dire sans effet sur l'organisme, ou non et avoir par exemple un
+effet sur la capacité de l'organisme à s'adapter à son environnement. La
+sélection est l'hypothèse centrale de la théorie de Darwin, ainsi si un allèle
+permet à l'organisme d'être mieux adapté à son environnement alors cette allèle
+aura plus de chance d'être transmis aux générations futures puisque l'organisme
+porteur de l'allèle peut se reproduire plus facilement. La dérive génétique
+provient du fait qu'il n'existe pas de populations infinies. Ainsi au file des
+générations les distributions alléliques changent à cause de la reproduction au
+hasard des individus. Ce processus peut engendrer la disparition ou la fixation
+d'un allèle neutre juste par hasard. Enfin la migration est le passage de gènes
+d'une population à une autre (par des individus qui passent d'une population à
+l'autre, par exemple sous forme de graines ou de pollen chez les plantes). Si
+cet échange se fait entre des populations ayant des fréquences alléliques
+différentes, il va tendre à modifier les fréquences alléliques.
 
 Bien que la génétique des populations trouve ses origines dans les travaux de
 Sewall Wright, J. B. S. Haldane et Ronald Fisher qui sont anterieurs à la
-découverte de la structure de l'ADN par Watson et Crick en 1953, la génomique
-des populations moderne utilise des données d'observation de génomes de
-plusieurs individus provenant de plusieurs populations. De plus, les récentes
-améliorations en séquence de l'ADN ont permis le séquence, qui était jusqu'alors
-réservé aux espèces modèles, de nombreuses espèces différentes. Dans le cadre de
-cette thèse nous nous sommes intéressé seulement au données dîtes de SNPs
-(single-nucleotide polymorphism) qui sont les polymorphismes génétiques d'un
-seul nucleotide. Un SNP est la variation (polymorphisme) d'une seule paire de
-bases du génome, entre individus d'une même espèce (Figure ref:fig:SNP). Les
-SNPs représentent $90 \%$ de l'ensemble des variations génétiques humaines, et
-des SNPs avec une fréquence allélique supérieure à $1 \%$ sont présents toutes
-les cent à trois cents paires de bases en moyenne dans le génome humain. Nous
-appelons locus une position sur l'ADN, nous parlons ainsi du locus d'un SNP.
-Nous représentons les données génétique comme la matrice contenant le nombre de
-fois que l'allèle muté a été observé pour chaque individu et chaque locus
-(Figure ref:fig:matrix).
+découverte de la structure de l'ADN (Acide désoxyribonucléique) par Watson et
+Crick en 1953, la génomique des populations moderne utilise des données
+d'observation de génomes de plusieurs individus provenant de plusieurs
+populations. L'ADN contient toute l'information génétique, appelée génome,
+permettant le développement, le fonctionnement et la reproduction des êtres
+vivants. L'ADN peut être considérée comme une longue séquence des nucléotides :
+A, C, T, G. Les récentes améliorations en séquençage de l'ADN ont permis le
+séquence de nombreuses espèces différentes. Dans le cadre de cette thèse nous
+nous sommes intéressé seulement au données dîtes de SNPs (single-nucleotide
+polymorphism) qui sont les polymorphismes génétiques d'un seul nucleotide
+(Figure ref:fig:SNP). Les SNPs représentent $90 \%$ de l'ensemble des variations
+génétiques humaines, et des SNPs avec une fréquence allélique supérieure à $1
+\%$ sont présents toutes les cent à trois cents paires de bases en moyenne dans
+le génome humain. Nous appelons locus une position sur l'ADN, nous parlons ainsi
+du locus d'un SNP. Nous représentons les données génétique comme la matrice
+contenant le nombre de fois que l'allèle muté a été observé pour chaque individu
+et chaque locus (Figure ref:fig:matrix).
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
   \centering
   ADNs \left \{\begin{tabular}{cccccccc}
-                \cdots &G & A & \cellcolor{blue!25} T & C &C& \cdots & \cdots \\
-                \cdots &C & T & \cellcolor{blue!25} A & G &G& \cdots & \cdots \\[14pt]
-                \cdots &G& A & \cellcolor{blue!25} G & C &C& \cdots & \cdots\\
-                \cdots &C& T & \cellcolor{blue!25} C & G &G& \cdots & \cdots 
+                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} A & C & C & \cdots & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} A & C & C & \cdots & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots & \cdots 
               \end{tabular}
               
-              \caption{{\bf Illustration d'un SNP.} La paire de base différente
-                entre les deux séquences est un SNP.}
+              \caption{{\bf Illustration d'un SNP.} Le nucléotide différent
+                entre les séquences est un SNP.}
 \label{fig:SNP}
 \end{figure}
 #+END_EXPORT
@@ -303,13 +319,12 @@ fois que l'allèle muté a été observé pour chaque individu et chaque locus
 \end{figure}
 #+END_EXPORT
 
-Une étape très imporante en génétique des populations et particulièrement quand
-on étudie des données de SNPs est d'inférer une représentation synthétique de la
-structure de population à partir des données de SNPs. Dans cette thèse nous
-proposons une méthode permettant l'inférence des coefficients de métissage
-individuels à partir de données de SNPs et géographique de chaque individu. Nous
-expliquons plus en détail ce que sont les coefficients de métissage dans la
-partie [[tess3_intro]].
+Une étape très importante en génétique des populations est l'inférence d'une
+représentation synthétique de la structure génétique de populations à partir des
+données de SNPs. Dans cette thèse nous proposons une méthode permettant
+l'inférence des coefficients de métissage individuels à partir de données de
+SNPs et géographique de chaque individu. Nous expliquons plus en détail ce que
+sont les coefficients de métissage dans la partie [[tess3_intro]].
 ** Test d'association
 :LOGBOOK:
 - Note taken on [2017-09-18 lun. 16:54] \\
