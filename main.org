@@ -34,7 +34,7 @@
 
 #+BEGIN_EXPORT latex
 %% to review
-% \baselineskip 0.8cm
+ \baselineskip 0.8cm
 #+END_EXPORT
 
 
@@ -461,7 +461,7 @@ ref:fig:tess3_intro B). Il s'agit du résultat attendu connaissant l'histoire
 démographique des individus afro-américain.
 
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[H]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_intro.pdf}
 \caption{{\bf Structure génétique des populations d'invidus humains européens,
@@ -814,7 +814,7 @@ les rôles de $\G$ et $\Q$, c'est pour cela que l'algorithme est dit
 d'optimisation quadratique alterné (AQP).
 
 #+BEGIN_EXPORT latex
-\begin{figure}[!h]
+\begin{figure}[t]
 \centering
 \includegraphics{./OUTPUT/Rplots/coordinate_descente.pdf}
 \caption{{\bf Illustration de l'algorithme  de descente par bloque de
@@ -1150,7 +1150,7 @@ métissage, noté $\Q_0$, est entièrement décrite par la position des individu
 échantillonnés.
 
 #+BEGIN_EXPORT latex
-\begin{figure}[h!]
+\begin{figure}[th!]
 \def\svgwidth{\linewidth}
 \LARGE
 \input{cline_inkscape.pdf_tex}
@@ -9171,7 +9171,7 @@ sva-irw (Figure ref:fig:method_comp B).
                                         height = MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{sidewaysfigure}[!h]
+\begin{sidewaysfigure}[h]
 \centering
 \includegraphics{./OUTPUT/Rplots/lfmm_method_comp.pdf}
 \caption{{\bf Comparaison des méthodes sur des simulations rélisées à partir du jeu de
@@ -13977,7 +13977,7 @@ dans le GWAS catalog n'est détecté par les méthodes lm et PCAlm.
 #+BEGIN_EXPORT latex
 \begin{figure}[!th]
 \centering
-\includegraphics{./OUTPUT/Rplots/geas_venn.png}
+\includegraphics[width=\textwidth]{./OUTPUT/Rplots/geas_venn.png}
 \caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
     un gradient environnemental (GEAS).} Diagramme de Venn des listes controlés à
   un taux de fausses de découvertes de $1 \%$ pour chaque méthode.}
@@ -13997,9 +13997,8 @@ dans le GWAS catalog n'est détecté par les méthodes lm et PCAlm.
   ## table.df %>% names() %>% paste0(collapse = "|")
 
   table.df %>%
-    xtable(align = "lp{4cm}ll", type = "latex",
-           label = "table:geas",
-           caption = "{\\bf SNPs associés avec un gradiant climatique qui ont été associés avec des phénotypes dans d'autres études}. SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\\%$.") %>%
+    xtable(align = "lp{4cm}ll", type = "latex", label = "table:geas",
+           caption = "{\\bf SNPs associés avec un gradient climatique qui ont été associés avec des phénotypes dans d'autres études.} SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\\%$.") %>%
     print(include.rownames=FALSE,
           sanitize.colnames.function=identity,
           sanitize.text.function=identity,
@@ -14011,7 +14010,7 @@ dans le GWAS catalog n'est détecté par les méthodes lm et PCAlm.
 #+RESULTS: code:geas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Wed Sep 27 19:34:24 2017
+% Mon Oct  2 18:05:16 2017
 \begin{sidewaystable}[ht]
 \centering
 \begin{tabular}{p{4cm}ll}
@@ -14036,7 +14035,7 @@ rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\
   rs17158483 & lassoLFMM & Obesity-related traits \\ 
    \hline
 \end{tabular}
-\caption{{\bf SNPs associés avec un gradiant climatique qui ont été associés avec des phénotypes dans d'autres études}. SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\%$.} 
+\caption{{\bf SNPs associés avec un gradient climatique qui ont été associés avec des phénotypes dans d'autres études.} SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\%$.} 
 \label{table:geas}
 \end{sidewaystable}
 #+END_EXPORT
@@ -15582,9 +15581,7 @@ CLOSED: [2017-08-31 jeu. 12:12]
                        )
 
   save_plot_png(venn, filename = "eas_venn.png")
-  save_plot_MaTheseR(venn, "eas_venn.pdf.png",
-                     height = 0.5 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+  save_expr(venn, "geas_venn_toprint.rds")
 
 #+end_src
 
