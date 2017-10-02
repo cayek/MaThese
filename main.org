@@ -339,25 +339,25 @@ sont les coefficients de métissage dans la partie [[tess3_intro]].
 Un problème fondamental en science du vivant est de détecter les relations de
 causalité qui existes entre des événements. En statistique, un événement est
 modélisé par une variable aléatoire. Il est seulement possible détecter des
-liens statistique entre les variables aléatoires, qu'on appel corrélation. La
+liens statistique entre les variables aléatoires, appelés corrélations. La
 corrélation renseigne sur les probabilités jointes des variables aléatoires en
 question. Dans un cadre statistique nous parlons de test d'association quand on
 test si deux variables aléatoires sont corrélées.
 
 Les tests d'association sont très utilisée en génétique pour comprendre les
 fonctions des gènes. Par exemple on peut chercher quel SNP est corrélé à une
-maladie pour comprendre les causes génétiques celle-ci. Cependant, comme nous
+maladie pour comprendre les causes génétiques de celle-ci. Cependant, comme nous
 l'avons vu dans la partie précédente il existe de nombreux facteurs responsables
 de la diversité génétique. Quand les facteurs de variation du génome sont
 corrélés à la variable d'étude (la maladie par exemple) alors les études
-d'association sont faussées et on observe en général une augmentation du nombre
-de gènes associés à la variable d'étude. Une telle situation n'est pas
-souhaitable car bien qu'il agit de corrélation, il ne s'agit pas de corrélation
-intéressante pour la biologique. Dans les données génétique qui nous
+d'association sont faussées. On observe en général une augmentation du nombre de
+gènes associés à la variable d'étude. Une telle situation n'est pas souhaitable
+car bien qu'il agisse de corrélations, il ne s'agit pas de corrélations
+intéressantes pour l'étude biologique. Dans les données génétique qui nous
 intéresse dans cette thèse, il est possible d'inférer les facteurs responsable
-de la variation génétique. On appel de tel facteur les facteurs de confusion
+de la variation génétique. On appel de tels facteurs les facteurs de confusion
 pour le test d'association. Les facteurs de confusion doivent être pris en
-compte dans les étude d'association pour éviter les fausses associations.
+compte dans les études d'association pour éviter les fausses associations.
 
 Dans cette thèse nous proposons une méthode statistique qui permet de corriger
 les tests d'association pour les facteurs de confusion. Nous expliquons plus en
@@ -373,26 +373,26 @@ dans la partie [[sec:lfmm_intro]].
 
 La génétique produit beaucoup de données et de en plus vite grâce aux
 technologies de séquençage toujours plus efficace. Cette affluence de données
-pose de nouveau problème aux statisticien. L'objectif de cette thèse de doctorat
-est d'améliorer les outils statistique qui permettent aux biologistes de
-répondre à des question concrète sur le vivant. Dans cette thèse nous nous
-sommes intéressé à deux problématique en analyse de données génétiques :
+pose de nouveaux problèmes aux statisticiens. L'objectif de cette thèse de
+doctorat est d'améliorer les outils statistiques qui permettent aux biologistes
+de répondre à des questions concrètes sur le vivant. Dans cette thèse nous nous
+sommes intéressé à deux problématiques en analyse de données génétiques :
 l'estimation de la structure génétique de population et les test d'associations.
-L'accent a été mis sur la rapidité des méthodes développées afin qu'elles soient
-applicables aux données génétiques modernes. En outre, afin que nos méthodes
-statistiques soient utilisables par la communauté scientifique en génétique, il
+L'accent a été mis sur la rapidité des méthodes statistiques développées afin
+qu'elles soient applicables aux données génétiques modernes. En outre, afin que
+nos méthodes statistiques soient utilisables par la communauté scientifique, il
 a été important de rendre accessible une implémentation informatique efficace
-des nouvelles méthodes.
+des nouvelles méthodes statistiques.
 
 Dans un premier chapitre nous présentons un cadre méthodologique permettant
 l'inférence de l'ascendance à partir de données génétique et géographiques. Dans
 une deuxième partie nous présentons un cadre méthodologique permettant d'estimer
 les facteurs de confusion qui augmente le nombre de fausses découvertes dans les
-test d'association. Chaque chapitre commence par une introduction du contexte et
-de la problématique biologique. Nous développons ensuite notre méthodologie
-statistique. Enfin, nos méthodes sont comparées aux méthodes existantes et
-appliquées à des jeux de données réelles de la biologie afin d'illustrer leurs
-utilités.
+études d'association. Chaque chapitre commence par une introduction du contexte
+et de la problématique biologique. Nous développons ensuite notre méthodologie
+statistique et exposons nos algorithmes. Enfin, nos méthodes sont comparées aux
+méthodes existantes et appliquées à des échantillons de données réelles de la
+biologie afin d'illustrer leurs utilités.
 
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
@@ -9141,17 +9141,34 @@ pour sva-irw la différence de l'AUC de sva-two-step avec l'AUC de l'oracle
 croit avec le paramètre de corrélation $\rho$ mais plus faiblement que pour
 sva-irw (Figure ref:fig:method_comp B).
 
+#+NAME: code:lfmm_comp_toprint
+#+CAPTION: Dépend de [[code:num_val_plot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl.leg <- readRDS("./OUTPUT/Expr/lfmm_comp_all_toprint.rds")
+
+  pl <- pl.leg$pl
+  mylegend <- pl.leg$mylegend
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl.leg,
+                                        basename.output = "lfmm_method_comp",
+                                        env = MaTheseR.params,
+                                        width = MaTheseR.params$textheightinch,
+                                        height = MaTheseR.params$textwidthinch)
+#+end_src
 #+BEGIN_EXPORT latex
-\begin{sidewaysfigure}[ht]
+\begin{sidewaysfigure}[!h]
 \centering
-\includegraphics{./OUTPUT/Rplots/method_comp.pdf.png}
-\caption{Comparaison des méthodes sur des simulations faites à partir du jeux de
-  données 1000Genomes. A-B) Aire sous la courbe précision-rappel en fonction
-  respectivement de la proportion de colonnes de $\Y$ associées à $\X$ et la
-  corrélation de la variable explicative $\X$ avec les variables latentes. C-D)
-  Facteur d'inflation calculé sur les variables nulles en fonction
-  respectivement de la proportion de colonnes de $\Y$ associées à $\X$ et la
-  corrélation de la variable explicative $\X$ avec les variables latentes.}
+\includegraphics{./OUTPUT/Rplots/lfmm_method_comp.pdf}
+\caption{{\bf Comparaison des méthodes sur des simulations rélisées à partir du jeu de
+  données 1000Genomes.} A-B) Aire sous la courbe précision-rappel en fonction de
+  la proportion de colonnes de $\Y$ associées à $\X$ et de la corrélation de la
+  variable explicative $\X$ avec les variables latentes. C-D) Facteur
+  d'inflation calculé sur les variables nulles en fonction de la proportion de
+  colonnes de $\Y$ associées à $\X$ et la corrélation de la variable explicative
+  $\X$ avec les variables latentes.}
 \label{fig:method_comp}
 \end{sidewaysfigure}
 #+END_EXPORT
@@ -9482,8 +9499,8 @@ CLOSED: [2017-08-14 lun. 11:46]
   mylegend <- g_legend(C.pl)
   C.pl <- C.pl +
     theme(legend.position = "none") +
-    xlab("Proportion de vrais associations") +
-    ylab("Facteur d'inflaction")
+    xlab("Proportion de vraies associations") +
+    ylab("Facteur\nd'inflaction")
 
     ## A
     A.pl <- auc.prop.pl +
@@ -9495,7 +9512,7 @@ CLOSED: [2017-08-14 lun. 11:46]
     D.pl <- gif.rho.pl +
       MaTheseR.params$gtheme +
       theme(legend.position = "none") +
-      xlab(TeX("Paramètre de corrélation entre et U et X ($\\rho$)")) +
+      xlab("Param\\`etre de corr\\'elation entre $\\mathbf{U}$ et $\\mathbf{X}$ ($\\rho$)") +
       ylab("") 
     ## B
     B.pl <- auc.rho.pl +
@@ -9509,20 +9526,48 @@ CLOSED: [2017-08-14 lun. 11:46]
 
     ## add legend
   pl.leg <- drawable(function() {
-    grid.arrange(pl,
+    gridExtra::grid.arrange(pl,
                  mylegend, nrow=2, heights=c(10, 1))
   })
+  pl.leg$pl <- pl 
+  pl.leg$mylegend <- mylegend
 
   save_plot_png(pl.leg, filename = "method_comp.png")
-  save_plot_MaTheseR(pl.leg, filename = "method_comp.pdf.png", height = 14, width = 20)
+  save_expr(pl.leg, "lfmm_comp_all_toprint.rds")
+
 #+end_src
 
 #+RESULTS: code:num_val_plot
+#+begin_example
+[1] cate         lassoLFMM    lm           oracle       PCAlm       
+[6] ridgeLFMM    sva-irw      sva-two-step
+Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
+[1] cate         lassoLFMM    lm           oracle       PCAlm       
+[6] ridgeLFMM    sva-irw      sva-two-step
+Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
 [[./OUTPUT/Rplots/num_val_auc_prop.png]]
 [[./OUTPUT/Rplots/num_val_gif_prop.png]]
 [[./OUTPUT/Rplots/num_val_auc_rho.png]]
 [[./OUTPUT/Rplots/num_val_gif_rho.png]]
 [[./OUTPUT/Rplots/method_comp.png]]
+Expr save in ./OUTPUT/Expr/lfmm_comp_all_toprint.rds
+#+end_example
+#+begin_example
+[1] cate         lassoLFMM    lm           oracle       PCAlm       
+[6] ridgeLFMM    sva-irw      sva-two-step
+Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
+[1] cate         lassoLFMM    lm           oracle       PCAlm       
+[6] ridgeLFMM    sva-irw      sva-two-step
+Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
+Error: '\m' is an unrecognized escape in character string starting ""Paramètre de corrélation entre $\\mathbf{U}$ et $\m"
+$y
+[1] ""
+
+attr(,"class")
+[1] "labels"
+[[./OUTPUT/Rplots/method_comp.png]]
+Expr save in ./OUTPUT/Expr/lfmm_comp_all_toprint.rds
+#+end_example
 
 ****** CANCELLED Tests d'hypothèse
 CLOSED: [2017-08-10 jeu. 11:30]
@@ -9577,21 +9622,36 @@ donnent les mêmes valeurs moyennes d'erreur de prédiction (Figure
 ref:fig:ewas_params C). Nous avons choisi de prendre $\lambRidge = 10^{-5}$ pour
 ridgeLFMM.
 
+
+#+NAME: code:lfmm_ewas_param_print
+#+CAPTION: Dépend de [[code:ewas_screeplot_CV]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/ewas_param_toplot.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "ewas_hyperparams",
+                                        env = MaTheseR.params,
+                                        height = 0.9 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+#+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!ht]
 \centering
-\includegraphics{./OUTPUT/Rplots/ewas_hyperparams.pdf.png}
-\caption{Choix des paramètres pour l'étude d'association entre des sites
-  méthylation de l'ADN et la maladie polyarthrite rhumatoïde. A) Proportion de
-  variance expliquées de la projection de $\Y$ sur l'espace orthogonal à $\X$
+\includegraphics{./OUTPUT/Rplots/ewas_hyperparams.pdf}
+\caption{{\bf Choix des paramètres pour l'étude d'association entre des sites
+    méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS).} A) Proportion de
+  variance expliquée de la projection de $\Y$ sur l'espace orthogonal à $\X$
   (c'est à dire $\matr{D}_{0} \Q^{T} \Y$) par chacune des composantes
   principales. B)C) Erreur de prédiction calculée grâce à la validation croisée
   des estimateurs $L_{2}$ des paramètres de LFMM pour différente valeurs du
-  paramètre de régularisation $\lambda$ et du nombre variable latentes $\K$, le
-  point représente l'erreur de prédiction moyen et les bar l'erreur standard. La
-  ligne pointillée vertical marque sur A et B le nombre de variables latentes
-  choisies, c'est à dire 10, et sur C le paramètre de régularisation choisie,
-  c'est à dire $10^{-5}$. }
+  paramètre de régularisation $\lambda$ et du nombre variable latentes $\K$. Le
+  point représente l'erreur de prédiction moyen et les barres l'erreur standard.
+  La ligne pointillée verticale marque sur A et B le nombre de variables
+  latentes choisies, c'est à dire 10, et sur C le paramètre de régularisation
+  choisi, c'est à dire $\lambda = 10^{-5}$. }
 \label{fig:ewas_params}
 \end{figure}
 #+END_EXPORT
@@ -9612,14 +9672,32 @@ le rang 11881 pour trouver le premier candidat de cite:Zou_2014,Rahmani_2016 et
 le rang 138038 pour tous les avoir. Pour la méthode sva-irw, les candidats de
 cite:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et $87659$.
 
+#+NAME: code:lfmm_ewas_res_print
+#+CAPTION: Dépend de [[code:ewas_qqplot_top]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl.leg <- readRDS("./OUTPUT/Expr/ewas_qqplot_top_toplot.rds")
+  pl <- pl.leg$pl
+  legend <- pl.leg$legend
+
+  ThesisRpackage::Plots_export_png(pl.leg,
+                                   basename.output = "ewas_qqplot_top",
+                                   env = MaTheseR.params,
+                                   height = 0.9 * MaTheseR.params$textheightinch,
+                                   width = MaTheseR.params$textwidthinch)
+#+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!ht]
 \centering
-\includegraphics{./OUTPUT/Rplots/ewas_qqplot_top.pdf.png}
-\caption{A) Diagrame quantile-quantile de l'inverse du logarithme en base 10 des
-  \pvaleurs renvoyées par chaque méthode. Les quantiles théoriques suivent la
-  loi exponetielle. B) Proportion des candidats proposés par \cite{Rahmani_2016}
-  et \cite{Zou_2014} retrouvés dans la top liste revoyée par chaque méthode.}
+\includegraphics{./OUTPUT/Rplots/ewas_qqplot_top.png}
+\caption{{\bf Q-Q plot et rang pour l'étude d'association entre des sites de
+    méthylation et la polyarthrite rhumatoïde (EWAS).} A) Diagramme quantile-quantile de
+  l'inverse du logarithme en base 10 des \pvalues renvoyées par chaque méthode.
+  Les quantiles théoriques suivent la loi exponentielle. B) Proportion des
+  candidats proposés par \cite{Rahmani_2016} et \cite{Zou_2014} retrouvés dans
+  la top liste renvoyée par chaque méthode.}
 \label{fig:ewas_qqplot_top}
 \end{figure}
 #+END_EXPORT
@@ -9633,12 +9711,37 @@ avant les 5 candidats de la littérature. En particulier, nous trouvons des gèn
 situés dans le complexe de gènes HLA qui joue un rôle central dans le système
 immunitaire (Table ref:table:ewas).
 
+#+NAME: code:lfmm_ewas_venn_print
+#+CAPTION: Dépend de [[code:ewas_venn]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  venn <- readRDS("./OUTPUT/Expr/ewas_venn_toplot.rds")
+
+  pl <- drawable(pl.func = function() {
+    grid::grid.draw(venn)
+  })
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "ewas_venn",
+                                        env = MaTheseR.params,
+                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+
+  convert.cmd <- paste("convert",
+                       "-density 600",
+                       "./OUTPUT/Rplots/ewas_venn.pdf",
+                       "-quality 100",
+                       "./OUTPUT/Rplots/ewas_venn.png")
+  system(convert.cmd)
+#+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!th]
 \centering
-\includegraphics{./OUTPUT/Rplots/ewas_venn.pdf.png}
-\caption{Diagramme de Venn de la liste des candidats controlés à un taux de
-  fausses de découvertes de 1 \%.}
+\includegraphics[width=\textwidth]{./OUTPUT/Rplots/ewas_venn.png}
+\caption{{\bf Diagramme de Venn de l'étude d'association entre des sites de
+    méthylation et la polyarthrite rhumatoïde (EWAS).} Diagramme de Venn de la liste des
+  candidats controlés à un taux de fausses de découvertes de 1 \%.}
 \label{fig:ewas_venn}
 \end{figure}
 #+END_EXPORT
@@ -9653,7 +9756,7 @@ immunitaire (Table ref:table:ewas).
   ewas.table %>%
     xtable(align = "lllllcccc",
            digits = -2, type = "latex",
-           caption = "{\\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde}. \\pvalues des candidates détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\cite{Zou_2014, Rahmani_2016}",
+           caption = "{\\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \\pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\cite{Zou_2014, Rahmani_2016}",
            label = "table:ewas") %>%
     print(include.rownames=FALSE,
           sanitize.text.function=identity,
@@ -9664,7 +9767,7 @@ immunitaire (Table ref:table:ewas).
 #+RESULTS: code:ewas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Tue Sep 26 16:00:27 2017
+% Mon Oct  2 14:18:21 2017
 \begin{sidewaystable}[ht]
 \centering
 \begin{tabular}{llllcccc}
@@ -9692,7 +9795,7 @@ ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\
   cg05874806 & 2 & 102350276 & MAP4K4 & 1.1e-06 & 1.1e-06 & 4.7e-07 & 5.6e-07 \\ 
    \hline
 \end{tabular}
-\caption{{\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde}. \pvalues des candidates détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \cite{Zou_2014, Rahmani_2016}} 
+\caption{{\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \cite{Zou_2014, Rahmani_2016}} 
 \label{table:ewas}
 \end{sidewaystable}
 #+END_EXPORT
@@ -11092,20 +11195,24 @@ CLOSED: [2017-08-29 mar. 11:46]
 #+begin_src R 
   library(MaTheseR)
   library(cowplot)
-  library(latex2exp)
   library(scales)
   MaTheseR.params <- get_MaTheseRparams()
+
+  latex_percent <- function (x) {
+      x <- plyr::round_any(x, scales:::precision(x)/100)
+      stringr::str_c(comma(x * 100), "\\%")
+  }
 
   ## screeplot
   df.res <- readRDS("./OUTPUT/Expr/ewas_screeplot_expr.rds")
   plA <- ggplot(df.res, aes(x = index, y = var.expl)) +
     geom_point() +
     coord_cartesian(xlim = c(1,30)) +
-    xlab(TeX("Nombre de variables latentes ($K$)")) +
-    ylab("Variance\nexpliquée") +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Variance\nexpliqu\\'ee") +
     MaTheseR.params$gtheme +
-    scale_color_discrete(name = TeX("$\\lambda$")) +
-    scale_y_continuous(labels=percent) +
+    scale_color_discrete(name = "$\\lambda$") +
+    scale_y_continuous(labels=latex_percent) +
     geom_vline(xintercept = 10, linetype = "dashed") +
     theme(legend.position=c(0.8, 0.6))
   save_plot_png(plA, "ewas_screeplot.png")
@@ -11113,20 +11220,20 @@ CLOSED: [2017-08-29 mar. 11:46]
   ## cross validation K
   expr <- readRDS("./OUTPUT/Expr/ewas_CV_lfmm_encore_encore.rds")
   toplot <- expr$errs %>%
-    mutate(lambda = as.factor(lambda)) %>%
-    group_by(lambda, K) %>%
-    summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
-    ungroup()
+    dplyr::mutate(lambda = as.factor(lambda)) %>%
+    dplyr::group_by(lambda, K) %>%
+    dplyr::summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
+    dplyr::ungroup()
   plB <- ggplot(toplot, aes(x = K, y = err.mean, color = lambda)) +
     geom_point() + 
     geom_errorbar(aes(ymin = err.mean - se,
                       ymax = err.mean + se,
                       width = 0.4)) +
     geom_line() +
-    xlab(TeX("Nombre de variables latentes ($K$)")) +
-    ylab("Erreur de\nprédiction") +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Erreur de\npr\\'ediction") +
     MaTheseR.params$gtheme +
-    scale_color_discrete(name = TeX("$\\lambda$")) + 
+    scale_color_discrete(name = "$\\lambda$") + 
     geom_vline(xintercept = 10, linetype = "dashed") +
     coord_cartesian(xlim = c(1,30)) +
     theme(legend.position=c(0.8, 0.6))
@@ -11135,19 +11242,19 @@ CLOSED: [2017-08-29 mar. 11:46]
   ## cross validation lambda
   expr <- readRDS("./OUTPUT/Expr/ewas_CV_lambda_lfmm.rds")
   toplot <- expr$errs %>%
-    mutate(K = as.factor(K)) %>%
-    group_by(lambda, K) %>%
-    summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
-    ungroup()
+    dplyr::mutate(K = as.factor(K)) %>%
+    dplyr::group_by(lambda, K) %>%
+    dplyr::summarise(err.mean = mean(err), N = length(err), sd = sd(err), se = sd / sqrt(N)) %>%
+    dplyr::ungroup()
   plC <- ggplot(toplot, aes(x = lambda, y = err.mean, color = K)) +
     geom_point() + 
     geom_errorbar(aes(ymin = err.mean - se,
                       ymax = err.mean + se,
                       width = 0.5)) +
     geom_line() +
-    xlab(TeX("Paramètre de regularisation $L_{2}$ en échelle logarithmique ($\\lambda$)")) +
+    xlab("Param\\`etre de regularisation $L_{2}$ ($\\lambda$)") +
     scale_x_log10() +
-    ylab("Erreur de\nprédiction") +
+    ylab("Erreur de\npr\\'ediction") +
     geom_vline(xintercept = 1e-5, linetype = "dashed") +
     MaTheseR.params$gtheme +
     theme(legend.position=c(0.15, 0.8))
@@ -11156,16 +11263,33 @@ CLOSED: [2017-08-29 mar. 11:46]
   ## gather plot
   pl <- plot_grid(plA, plB, plC, ncol = 1, labels = c("A", "B", "C"))
 
-  save_plot_MaTheseR(pl, "ewas_hyperparams.pdf.png",
-                     height = 0.9 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+  save_expr(pl, "ewas_param_toplot.rds")
+
 #+end_src
 
 #+RESULTS: code:ewas_screeplot_CV
-: [[./OUTPUT/Rplots/ewas_screeplot.png]]
-: [[./OUTPUT/Rplots/ewas_CV_K.png]]
-: [[./OUTPUT/Rplots/ewas_CV_lambda.png]]
-: [[./OUTPUT/Rplots/ewas_hyperparams.pdf.png]]
+#+begin_example
+
+Attaching package: ‘cowplot’
+
+The following object is masked from ‘package:ggplot2’:
+
+    ggsave
+
+Attaching package: ‘scales’
+
+The following object is masked from ‘package:purrr’:
+
+    discard
+
+The following object is masked from ‘package:readr’:
+
+    col_factor
+[[./OUTPUT/Rplots/ewas_screeplot.png]]
+[[./OUTPUT/Rplots/ewas_CV_K.png]]
+[[./OUTPUT/Rplots/ewas_CV_lambda.png]]
+Expr save in ./OUTPUT/Expr/ewas_param_toplot.rds
+#+end_example
 
 ****** DONE Résultats des méthodes
 CLOSED: [2017-08-09 mer. 13:56]
@@ -11193,7 +11317,7 @@ CLOSED: [2017-08-09 mer. 13:56]
   ## filter and order method
   expr$df.res$method %>% unique()
   df.res <- expr$df.res %>%
-    dplyr::filter(!(method %in% c("famt"))) %>%
+    dplyr::filter(!(method %in% c("famt", "lm"))) %>%
     transmute(method = factor(article3_method_name(method), method.ordered),
               index = index,
               pvalue = pvalue,
@@ -11221,20 +11345,21 @@ CLOSED: [2017-08-09 mer. 13:56]
   toplot <-  df.res %>%
     group_by(method) %>%
     arrange(method, pvalue) %>%
-    mutate(power = cumsum(outlier) / m1, top = seq_along(pvalue)) %>%
+    mutate(power = cumsum(outlier) / m1,
+           count = cumsum(outlier),
+           top = seq_along(pvalue)) %>%
     ungroup() 
   toplot <- toplot  %>%
-    add_row(method = unique(toplot$method), top = 0, power = 0)
+    add_row(method = unique(toplot$method), top = 0, power = 0, count = 0)
 
-  pl.top <- ggplot(toplot, aes(x = top, y = power, color = method)) +
+  pl.top <- ggplot(toplot, aes(x = top, y = count, color = method)) +
     geom_line() +
     coord_cartesian(xlim = c(0,50)) +
     scale_color_manual(values = color.values) +
     gtheme +
     theme(legend.position="none") + 
     xlab("Taille de la top liste") + 
-    ylab("Candidats retrouvés") +
-    scale_y_continuous(labels=percent)
+    ylab("Candidats retrouvés")
 
   ## pl.top
   save_plot_png(pl.top, filename = "ewas_top_power_all.png")
@@ -11243,14 +11368,34 @@ CLOSED: [2017-08-09 mer. 13:56]
   pl <- plot_grid(pl.qq, pl.top, ncol = 1, labels = c("A", "B"))
   ## add legend
   pl.leg <- drawable(function() {
-    grid.arrange(pl,
+    gridExtra::grid.arrange(pl,
                  legend, nrow=2, heights=c(10, 1))
   })
-  save_plot_MaTheseR(pl.leg, "ewas_qqplot_top.pdf.png",
-                     height = 0.9 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+  pl.leg$pl <- pl
+  pl.leg$legend <- legend
+
+  save_expr(pl.leg, "ewas_qqplot_top_toplot.rds")
+
 
 #+END_SRC
+
+#+RESULTS: code:ewas_qqplot_top
+#+begin_example
+[1] "ridgeLFMM"    "lm"           "PCAlm"        "cate"         "famt"        
+[6] "sva-irw"      "lassoLFMM"    "sva_two-step"
+[1] ridgeLFMM    PCAlm        cate         sva-irw      lassoLFMM   
+[6] sva-two-step
+Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
+Warning message:
+Removed 22333 rows containing non-finite values (stat_qq).
+[[./OUTPUT/Rplots/ewas_qqplot_notcalibrated_all.png]]
+Warning message:
+Removed 22333 rows containing non-finite values (stat_qq).
+[[./OUTPUT/Rplots/ewas_top_power_all.png]]
+Warning message:
+Removed 22333 rows containing non-finite values (stat_qq).
+Expr save in ./OUTPUT/Expr/ewas_qqplot_top_toplot.rds
+#+end_example
 
 #+RESULTS: code:ewas_qqplot_top_venn
 [[./OUTPUT/Rplots/ewas_qqplot_notcalibrated_all.png]]
@@ -11371,9 +11516,7 @@ CLOSED: [2017-09-16 sam. 16:02]
                        )
 
   save_plot_png(venn, filename = "ewas_venn.png")
-  save_plot_MaTheseR(venn, "ewas_venn.pdf.png",
-                     height = 0.5 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+  save_expr(venn, "ewas_venn_toplot.rds")
 
 
   ## list de l'intersection total
@@ -11519,20 +11662,34 @@ une valeur plus grande que $10^3$. Nous avons choisi $10^3$ car, comme nous
 l'avons discuté dans la partie [[sec:paramL2]], $\lambRidge$ trop grand conduit la
 méthode ridgeLFMM à renvoyer les mêmes résultats que PCAlm.
 
+#+NAME: code:gwas_hyperparams_print
+#+CAPTION: Dépend de [[code:gwas_screeplot_CV]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/gwas_hyperparams_toprint.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "gwas_hyperparams",
+                                        env = MaTheseR.params,
+                                        height = 0.9 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+#+end_src
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/gwas_hyperparams.pdf.png}
-\caption{Choix des paramètres pour l'étude d'association entre génotype et la
-  maladie \celiac. A) Proportion de variance expliquées de la projection de $\Y$
-  sur l'espace orthogonal à $\X$ (c'est à dire $\matr{D}_{0} \Q^{T} \Y$) par
-  chacune des composantes principales. B)C) Erreur de prédiction calculée grâce à
-  la validation croisée des estimateurs $L_{2}$ des paramètres de LFMM pour
-  différente valeurs du paramètre de régularisation $\lambda$ et du nombre
-  variables latentes $\K$, le point représente l'erreur de prédiction moyenne et
-  les bars l'erreur standard de la moyenne. La ligne pointillée vertical marque
+\includegraphics{./OUTPUT/Rplots/gwas_hyperparams.pdf}
+\caption{{\bf Choix des paramètres pour l'étude d'association entre génotype et
+    la maladie c\oe{}liaque (GWAS).}  A) Proportion de variance expliquée de la
+  projection de $\Y$ sur l'espace orthogonal à $\X$ (c'est à dire $\matr{D}_{0}
+  \Q^{T} \Y$) par chacune des composantes principales. B)C) Erreur de prédiction
+  calculée grâce à la validation croisée des estimateurs $L_{2}$ des paramètres
+  de LFMM pour différente valeurs du paramètre de régularisation $\lambda$ et du
+  nombre variable latentes $\K$. Le point représente l'erreur de prédiction
+  moyen et les barres l'erreur standard. La ligne pointillée verticale marque
   sur A et B le nombre de variables latentes choisies, c'est à dire 9, et sur C
-  le paramètre de régularisation choisie, c'est à dire $10^3$.}
+  le paramètre de régularisation choisi, c'est à dire $\lambda = 10^{-3}$. }
 \label{fig:gwas_params}
 \end{figure}
 #+END_EXPORT
@@ -11550,7 +11707,7 @@ B). Sur les autres chromosomes ce sont les méthodes lassoLFMM et cate qui
 retrouve le plus vite les candidats du GWAS catalog (Figure
 ref:fig:gwas_qqplot_top B). Parmi
 
-#+NAME: code:gwas_qqplot_top
+#+NAME: code:gwas_qqplot_top_print
 #+CAPTION: Dépend de [[code:gwas_qqplot]]
 #+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
   library(MaTheseR)
@@ -11574,16 +11731,16 @@ ref:fig:gwas_qqplot_top B). Parmi
                                    height = 0.9 * MaTheseR.params$textheightinch,
                                    width = MaTheseR.params$textwidthinch,
                                    res = 600)
-
 #+end_src
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/gwas_qqplot_top.png}
-\caption{A) Diagrame quantile-quantile de l'inverse du logarithme en base
-  \pvaleur renvoyé par chaques méthodes. Les quantiles théoriques suivent la loi
-  exponetielle. B) Proportion des candidats du GWAS catalogue
-  retrouvés dans la top liste revoyée par chaques méthodes.}
+\caption{{\bf Q-Q plot et rang pour l'étude d'association entre des génomes et
+    la maldie c\oe{}liaque (GWAS).} A) Diagramme quantile-quantile de l'inverse
+  du logarithme en base 10 des \pvalues renvoyées par chaque méthode. Les quantiles
+  théoriques suivent la loi exponentielle. B) Proportion des candidats du GWAS
+  catalog retrouvés dans la top liste revoyée par chaque méthode.}
 \label{fig:gwas_qqplot_top}
 \end{figure}
 #+END_EXPORT
@@ -11598,12 +11755,37 @@ catalog. Dans les 20 premières zone détecté par lassoLFMM, en dehors du
 chromosome 6, 6 zones ne contiennent pas de SNPs référencé dans le GWAS catalog
 (Table ref:table:gwas_table).
 
+#+NAME: code:lfmm_gwas_venn_print
+#+CAPTION: Dépend de [[code:gwas_venn]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  venn <- readRDS("./OUTPUT/Expr/gwas_venn_toprint.rds")
+
+  pl <- drawable(pl.func = function() {
+    grid::grid.draw(venn)
+  })
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "gwas_venn",
+                                        env = MaTheseR.params,
+                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+
+  convert.cmd <- paste("convert",
+                       "-density 600",
+                       "./OUTPUT/Rplots/gwas_venn.pdf",
+                       "-quality 100",
+                       "./OUTPUT/Rplots/gwas_venn.png")
+  system(convert.cmd)
+#+end_src
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/gwas_venn.pdf.png}
-\caption{Diagramme de Venn des listes controlés à un taux de fausses de
-  découvertes de $1 \%$ pour chaque méthode.}
+\includegraphics[width=\textwidth]{./OUTPUT/Rplots/gwas_venn.png}
+\caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
+    la maladie c\oe{}liaque (GWAS).} Diagramme de Venn des listes controlés à
+  un taux de fausses de découvertes de $1 \%$ pour chaque méthode.}
 \label{fig:gwas_venn}
 \end{figure}
 #+END_EXPORT
@@ -11625,7 +11807,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencé dans le GWAS catal
     xtable(align = "lllp{2.5cm}p{2.8cm}ccp{4cm}",
     type = "latex",
     label = "table:gwas_table",
-    caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM}. Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.") %>%
+    caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.") %>%
     print(include.rownames=FALSE,
           sanitize.colnames.function=identity,
           sanitize.text.function=identity,
@@ -11639,7 +11821,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencé dans le GWAS catal
 #+RESULTS: code:gwas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Wed Sep 27 19:20:06 2017
+% Mon Oct  2 14:29:57 2017
 \begin{sidewaystable}[ht]
 \centering
 \begingroup\fontsize{8pt}{8pt}
@@ -11670,7 +11852,7 @@ Chr & Snp & LD block (Mb) & Odds ratio [$95\%$ IC] & \pvalue & \qvalue & Gènes 
    \hline
 \end{tabular}
 \endgroup
-\caption{{\bf 20 premiers groupes de SNPs associés avec la maladie \coeliac retrounés par l'algorithme lassoLFMM}. Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.} 
+\caption{{\bf 20 premiers groupes de SNPs associés avec la maladie \coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.} 
 \label{table:gwas_table}
 \end{sidewaystable}
 #+END_EXPORT
@@ -13181,20 +13363,25 @@ CLOSED: [2017-09-01 ven. 09:35]
 #+begin_src R 
   library(MaTheseR)
   library(cowplot)
-  library(latex2exp)
   library(scales)
   MaTheseR.params <- get_MaTheseRparams()
+
+  latex_percent <- function (x) {
+    x <- plyr::round_any(x, scales:::precision(x)/100)
+    stringr::str_c(comma(x * 100), "\\%")
+  }
+
 
   ## screeplot
   df.res <- readRDS("./OUTPUT/Expr/gwas_screeplot_expr.rds")
   plA <- ggplot(df.res, aes(x = index, y = var.expl)) +
     geom_point() +
     coord_cartesian(xlim = c(1,50)) +
-    xlab(TeX("Nombre de variables latentes ($K$)")) +
-    ylab("Variance\nexpliquée") +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Variance\nexpliqu\\'ee") +
     MaTheseR.params$gtheme +
-    scale_color_discrete(name = TeX("$\\lambda$")) +
-    scale_y_continuous(labels=percent) +
+    scale_color_discrete(name = "$\\lambda$") +
+    scale_y_continuous(labels=latex_percent) +
     geom_vline(xintercept = 9, linetype = "dashed") +
     theme(legend.position=c(0.8, 0.6))
   save_plot_png(plA, "gwas_screeplot.png")
@@ -13212,10 +13399,10 @@ CLOSED: [2017-09-01 ven. 09:35]
                       ymax = err.mean + se,
                       width = 1)) +
     geom_line() +
-    xlab(TeX("Nombre de variables latentes ($K$)")) +
-    ylab("Erreur de\nprédiction") +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Erreur de\npr\\'ediction") +
     MaTheseR.params$gtheme +
-    scale_color_discrete(name = TeX("$\\lambda$")) + 
+    scale_color_discrete(name = "$\\lambda$") + 
     geom_vline(xintercept = 9, linetype = "dashed") +
     theme(legend.position=c(0.8, 0.6))
   save_plot_png(plB, "gwas_CV_K.png")
@@ -13233,10 +13420,10 @@ CLOSED: [2017-09-01 ven. 09:35]
                       ymax = err.mean + se,
                       width = 1)) +
     geom_line() +
-    xlab(TeX("Paramètre de regularisation $L_{2}$ en échelle logarithmique ($\\lambda$)")) +
+    xlab("Paramètre de regularisation $L_{2}$ ($\\lambda$)") +
     scale_x_log10() +
     geom_vline(xintercept = 1e3, linetype = "dashed") +
-    ylab("Erreur de\nprédiction") +
+    ylab("Erreur de\npr\\'ediction") +
     MaTheseR.params$gtheme +
     theme(legend.position=c(0.2, 0.2))
   save_plot_png(plC, "gwas_CV_lambda.png")
@@ -13244,9 +13431,8 @@ CLOSED: [2017-09-01 ven. 09:35]
   ## gather plot
   pl <- plot_grid(plA, plB, plC, ncol = 1, labels = c("A", "B", "C"))
 
-  save_plot_MaTheseR(pl, "gwas_hyperparams.pdf.png",
-                     height = 0.9 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+  save_expr(pl, "gwas_hyperparams_toprint.rds")
+
 #+end_src
 
 #+RESULTS: code:gwas_screeplot_CV
@@ -13401,73 +13587,13 @@ Removed 310 rows containing non-finite values (stat_qq).
 Error in saveRDS(expr, output.file) : object 'pl.reg' not found
 #+end_example
 
-#+RESULTS: code:gwas_qqplot_venn
-#+begin_example
-  [1] lm        ridgeLFMM PCAlm     cate      lassoLFMM
-  Levels: lm PCAlm sva-two-step sva-irw lassoLFMM cate ridgeLFMM oracle
-  Warning message:
-  Removed 310 rows containing non-finite values (stat_qq).
-  [[./OUTPUT/Rplots/gwas_qqplot_notcalibrated_all.png]]
-  Warning message:
-  Removed 310 rows containing non-finite values (stat_qq).
-  == Top all ==
-
-
-  |method    |    top|
-  |:---------|------:|
-  |lm        | 213444|
-  |PCAlm     | 259689|
-  |lassoLFMM | 151172|
-  |cate      | 156858|
-  |ridgeLFMM | 247464|
-  == Top 3000 ==
-
-
-  |method    |  index|    pvalue| calibrated.pvalue|outlier |     power|  top|
-  |:---------|------:|---------:|-----------------:|:-------|---------:|----:|
-  |lm        | 274194| 0.0005995|         0.0040140|FALSE   | 0.7755102| 3000|
-  |PCAlm     |  68895| 0.0047380|         0.0066796|FALSE   | 0.8367347| 3000|
-  |lassoLFMM | 148728| 0.0030905|         0.0048138|FALSE   | 0.8775510| 3000|
-  |cate      |  86890| 0.0027883|         0.0043251|FALSE   | 0.8775510| 3000|
-  |ridgeLFMM |  28408| 0.0045857|         0.0062832|FALSE   | 0.8367347| 3000|
-  == Top 1000 ==
-
-
-  |method    |  index|    pvalue| calibrated.pvalue|outlier |     power|  top|
-  |:---------|------:|---------:|-----------------:|:-------|---------:|----:|
-  |lm        | 103211| 0.0000000|          0.000000|FALSE   | 0.1224490| 1000|
-  |PCAlm     | 103161| 0.0001711|          0.000303|FALSE   | 0.5714286| 1000|
-  |lassoLFMM | 102648| 0.0000000|          0.000000|FALSE   | 0.1836735| 1000|
-  |cate      | 103120| 0.0000000|          0.000000|FALSE   | 0.1428571| 1000|
-  |ridgeLFMM |  28634| 0.0001809|          0.000310|FALSE   | 0.6326531| 1000|
-  [[./OUTPUT/Rplots/gwas_top_power_all.png]]
-  Warning message:
-  Removed 310 rows containing non-finite values (stat_qq).
-  [[./OUTPUT/Rplots/gwas_qqplot_top.pdf.png]]
-  == List with fdr controle ==
-  # A tibble: 5 x 3
-       method     n     power
-       <fctr> <int>     <dbl>
-  1        lm  1319 0.4489796
-  2     PCAlm   777 0.3673469
-  3 lassoLFMM  1267 0.6122449
-  4      cate  1319 0.6734694
-  5 ridgeLFMM   754 0.3673469
-  [[./OUTPUT/Rplots/gwas_venn.png]]
-  [[./OUTPUT/Rplots/gwas_venn.pdf.png]]
-  == Prop of candidate in inter all ==
-  [1] 0.2857143
-  == Prop of candidate in inter cate lfmm pcalm ==
-  [1] 0.3673469
-#+end_example
-
 ****** DONE Diagramme de venn
 CLOSED: [2017-09-16 sam. 17:21]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2017-09-16 sam. 17:21]
 - State "TODO"       from              [2017-09-16 sam. 17:18]
 :END:
-#+NAME: code:gwas_qqplot_venn
+#+NAME: code:gwas_venn
 #+CAPTION: Dépend de [[code:gwas_expr]]
 #+BEGIN_SRC R
   library(MaTheseR)
@@ -13565,9 +13691,7 @@ CLOSED: [2017-09-16 sam. 17:21]
                        )
 
   save_plot_png(venn, filename = "gwas_venn.png")
-  save_plot_MaTheseR(venn, "gwas_venn.pdf.png",
-                     height = 0.5 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+  save_expr(venn, "gwas_venn_toprint.rds")
 
 
   ## list de l'intersection total
@@ -13730,21 +13854,35 @@ différentes. Pour $\K = 9$ , la validation croisée du paramètre de
 régularisation $L_{2}$ est plus faible pour $\lambRidge = 10^{-5}$. Nous avons
 choisi une proportion de lignes non nulles de $\B$ valant $1 \%$ pour lassoLFMM.
 
+#+NAME: code:lfmm_geas_param_print
+#+CAPTION: Dépend de [[code:eas_screeplot_CV]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/eas_hyperparams_toprint.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "eas_hyperparams",
+                                        env = MaTheseR.params,
+                                        height = 0.9 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+#+end_src
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
-\includegraphics{./OUTPUT/Rplots/eas_hyperparams.pdf.png}
-\caption{Choix des paramètres pour l'étude d'association entre un génotype et un
-  gradient environnemental. A) Proportion de variance expliquées de la
-  projection de $\Y$ sur l'espace orthogonal à $\X$ (c'est à dire $\matr{D}_{0}
-  \Q^{T} \Y$) par chacune des composantes principales. B)C) Erreur de prédiction
-  calculée grâce à la validation croisée des estimateurs $L_{2}$ des paramètres
-  de LFMM pour différentes valeurs du paramètre de régularisation $\lambdaRidge$
-  et du nombre de variables latentes $\K$, le point représente l'erreur de
-  prédiction moyenne et les bars l'erreur standard. Les lignes pointillées
-  verticales marquent sur A et B le nombre de variables latentes choisi, c'est à
-  dire 9, et sur C le paramètre de régularisation $L_2$ choisi, c'est à dire
-  $10^3$.}
+\includegraphics{./OUTPUT/Rplots/eas_hyperparams.pdf}
+\caption{{\bf Choix des paramètres pour l'étude d'association entre génotype et
+    un gradient environnemental (GEAS).} A) Proportion de variance expliquée de
+  la projection de $\Y$ sur l'espace orthogonal à $\X$ (c'est à dire
+  $\matr{D}_{0} \Q^{T} \Y$) par chacune des composantes principales. B)C) Erreur
+  de prédiction calculée grâce à la validation croisée des estimateurs $L_{2}$
+  des paramètres de LFMM pour différente valeurs du paramètre de régularisation
+  $\lambda$ et du nombre variable latentes $\K$. Le point représente l'erreur de
+  prédiction moyen et les barres l'erreur standard. La ligne pointillée
+  verticale marque sur A et B le nombre de variables latentes choisies, c'est à
+  dire 9, et sur C le paramètre de régularisation choisi, c'est à dire $\lambda
+  = 10^{-3}$. }
 \label{fig:eas_params}
 \end{figure}
 #+END_EXPORT
@@ -13774,23 +13912,63 @@ SNPs sont référencé dans le GWAS catalog pour être associés avec différent
 phénotype lié à l'environnement (Table ref:table:geas). Aucun SNP référencé
 dans le GWAS catalog n'est détecté par les méthodes lm et PCAlm.
 
+#+NAME: code:geas_qqplot_print
+#+CAPTION: Dépend de [[code:geas_qqplot]]
+#+begin_src R :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/eas_qqplot_toprint.rds")
+  ThesisRpackage::Plots_export_png(pl,
+                                   basename.output = "geas_qqplot",
+                                   env = MaTheseR.params,
+                                   height = 0.5 * MaTheseR.params$textheightinch,
+                                   width = MaTheseR.params$textwidthinch,
+                                   res = 600)
+#+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!th]
 \centering
-\includegraphics{./OUTPUT/Rplots/eas_qqplot_notcalibrated_all.pdf.png}
-\caption{Diagrame quantile-quantile de l'inverse du logarithme en base 10 des
-  \pvaleur renvoyé par chaques méthodes. Les quantiles théoriques suivent la loi
-  exponentielle.}
+\includegraphics{./OUTPUT/Rplots/geas_qqplot.png}
+\caption{{\bf Q-Q plot de l'étude d'association entre génotype et un gradient
+    environnemental (GEAS).} Diagramme quantile-quantile de l'inverse du
+  logarithme en base 10 des \pvalues renvoyées par chaques méthodes. Les quantiles
+  théoriques suivent la loi exponentielle.}
 \label{fig:geas_qqplot}
 \end{figure}
 #+END_EXPORT
 
+#+NAME: code:lfmm_gwas_venn_print
+#+CAPTION: Dépend de [[code:gwas_venn]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  venn <- readRDS("./OUTPUT/Expr/geas_venn_toprint.rds")
+
+  pl <- drawable(pl.func = function() {
+    grid::grid.draw(venn)
+  })
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "geas_venn",
+                                        env = MaTheseR.params,
+                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+
+  convert.cmd <- paste("convert",
+                       "-density 600",
+                       "./OUTPUT/Rplots/geas_venn.pdf",
+                       "-quality 100",
+                       "./OUTPUT/Rplots/geas_venn.png")
+  system(convert.cmd)
+#+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!th]
 \centering
-\includegraphics{./OUTPUT/Rplots/eas_venn.pdf.png}
-\caption{Diagramme de Venn des listes controlés à un taux de fausses de
-  découvertes de $1 \%$ pour chaque méthode.}
+\includegraphics{./OUTPUT/Rplots/geas_venn.png}
+\caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
+    un gradient environnemental (GEAS).} Diagramme de Venn des listes controlés à
+  un taux de fausses de découvertes de $1 \%$ pour chaque méthode.}
 \label{fig:geas_venn}
 \end{figure}
 #+END_EXPORT
@@ -15223,20 +15401,24 @@ CLOSED: [2017-08-28 lun. 16:07]
 #+begin_src R 
   library(MaTheseR)
   library(cowplot)
-  library(latex2exp)
   library(scales)
   MaTheseR.params <- get_MaTheseRparams()
+
+  latex_percent <- function (x) {
+    x <- plyr::round_any(x, scales:::precision(x)/100)
+    stringr::str_c(comma(x * 100), "\\%")
+  }
 
   ## screeplot
   expr <- readRDS("./OUTPUT/Expr/geas_screeplot_expr.rds")
   plA <- ggplot(expr, aes(x = index, y = var.expl)) +
     geom_point() +
     coord_cartesian(xlim = c(1,15)) +
-    xlab(TeX("Nombre de variables latentes ($K$)")) +
-    ylab("Variance\nexpliquée") +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Variance\nexpliqu\\'ee") +
     MaTheseR.params$gtheme +
-    scale_color_discrete(name = TeX("$\\lambda$")) +
-    scale_y_continuous(labels=percent) +
+    scale_color_discrete(name = "$\\lambda$") +
+    scale_y_continuous(labels=latex_percent) +
     geom_vline(xintercept = 9, linetype = "dashed") +
     theme(legend.position=c(0.8, 0.6))
   save_plot_png(plA, "eas_screeplot.png")
@@ -15254,10 +15436,10 @@ CLOSED: [2017-08-28 lun. 16:07]
                       ymax = err.mean + se,
                       width = 0.5)) +
     geom_line() +
-    xlab(TeX("Nombre de variables latentes ($K$)")) +
-    ylab("Erreur de\nprédiction") +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Erreur de\npr\\'ediction") +
     MaTheseR.params$gtheme +
-    scale_color_discrete(name = TeX("$\\lambda$")) + 
+    scale_color_discrete(name = "$\\lambda$") + 
     geom_vline(xintercept = 9, linetype = "dashed") +
     theme(legend.position=c(0.8, 0.8))
   save_plot_png(plB, "eas_CV_K.png")
@@ -15275,10 +15457,10 @@ CLOSED: [2017-08-28 lun. 16:07]
                       ymax = err.mean + se,
                       width = 1)) +
     geom_line() +
-    xlab(TeX("Paramètre de regularisation $L_{2}$ en échelle logarithmique ($\\lambda$)")) +
+    xlab("Param\\`etre de r\\'egularisation $L_{2}$ ($\\lambda$)") +
     scale_x_log10() +
     geom_vline(xintercept = 1e-5, linetype = "dashed") +
-    ylab("Erreur de\nprédiction") +
+    ylab("Erreur de\npr\\'ediction") +
     MaTheseR.params$gtheme +
     theme(legend.position=c(0.8, 0.2))
   save_plot_png(plC, "eas_CV_lambda.png")
@@ -15286,9 +15468,7 @@ CLOSED: [2017-08-28 lun. 16:07]
   ## gather plot
   pl <- plot_grid(plA, plB, plC, ncol = 1, labels = c("A", "B", "C"))
 
-  save_plot_MaTheseR(pl, "eas_hyperparams.pdf.png",
-                     height = 0.9 * MaTheseR.params$textheightcm,
-                     width = MaTheseR.params$textwidthcm)
+  save_expr(pl, "eas_hyperparams_toprint.rds")
 #+end_src
 
 #+RESULTS: code:eas_screeplot_CV
@@ -15341,9 +15521,7 @@ CLOSED: [2017-08-31 jeu. 12:12]
 
   ## pl.qq
   save_plot_png(pl.qq, filename = "eas_qqplot_notcalibrated_all.png")
-  save_plot_MaTheseR(pl.qq, "eas_qqplot_notcalibrated_all.pdf.png",
-                       height = 0.5 * MaTheseR.params$textheightcm,
-                       width = MaTheseR.params$textwidthcm)
+  save_expr(pl.qq, "eas_qqplot_toprint.rds")
 
   #############################################################################
   ## venn
