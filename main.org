@@ -54,6 +54,7 @@
   install.packages("roxygen2")
   install.packages("VennDiagram")
   install.packages("ggmap")
+  install.packages("pBrackets") 
   install.packages("rvest")
   install.packages("raster")
   install.packages('printr')
@@ -118,6 +119,9 @@
 
 ** python
 * Introduction
+:PROPERTIES:
+:header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+:END:
 :LOGBOOK:
 - Note taken on [2017-10-02 lun. 10:04] \\
   Source : 
@@ -159,6 +163,7 @@
   suffisament de données pour se rendre compte que nos test d'hypothèse sont faux
   :D et la on fait le lien avec les tests d'hypothèe multiple....
 :END:
+
 Cette dernière décennie a été marquée par une accumulation des données dans tous
 les domaines de la science. Cette accumulation de données est une aubaine pour
 les scientifiques. En particulier en génétique l'abondance des données permet de
@@ -175,26 +180,26 @@ conséquence il est toujours nécessaire de trouver des nouveaux algorithmes afi
 de traiter des rapidement données plus grandes.
 
 Un deuxième problèmes important avec les grands échantillons de données concerne
-les études de liaison entre variables. Il est bien connu des statisticiens qu'un
-lien statistique entres variables ne correspond pas nécessairement à un lien de
-causalité. Nous pouvons par exemple citer l'effet de Yule-Simpsons, un paradoxe
-statistique dans lequel un phénomène observé de plusieurs groupes semble
-s'inverser lorsque les groupes sont combinés cite:simpson1951interpretation.
-Historiquement, les études de corrélations étaient faites sur des échantillons
-de données construits pour l'occasion et contrôlés pour les facteurs de
-confusion. Cependant, dans le contexte actuelle les scientifiques ont accès à
-beaucoup de données provenant de sources éparses. Utiliser de tel données pour
-trouver des liens statistiques intéressant pour une problématique scientifique
-est alors beaucoup complexe qu'avec des données contrôlées. A cela s'ajoute le
-fait que plus l'échantillon de données est grand plus il est possible de
-détecter des liens statistiques subtiles. Par conséquent, dans le contexte
-actuelle où l'accès aux données est très facile il faut être très prudent et
-rigoureux dans les études de corrélations.
+les études de liaisons entre variables. Il est bien connu des statisticiens
+qu'un lien statistique entres variables ne correspond pas nécessairement à un
+lien de causalité. Nous pouvons par exemple citer l'effet de Yule-Simpsons, un
+paradoxe statistique dans lequel un phénomène observé de plusieurs groupes
+semble s'inverser lorsque les groupes sont combinés
+cite:simpson1951interpretation. Historiquement, les études de corrélations
+étaient faites sur des échantillons de données construits pour l'occasion et
+contrôlés pour les facteurs de confusion. Cependant, dans le contexte actuelle
+les scientifiques ont accès à beaucoup de données provenant de sources éparses.
+Utiliser de tel données pour trouver des liens statistiques intéressant pour une
+problématique scientifique est alors beaucoup complexe qu'avec des données
+contrôlées. A cela s'ajoute le fait que plus l'échantillon de données est grand
+plus il est possible de détecter des liens statistiques subtiles. Par
+conséquent, dans le contexte actuelle où l'accès aux données est très facile il
+faut être très prudent et rigoureux dans les études de corrélations.
 
 Dans le cadre de cette thèse de doctorat nous nous sommes intéressé à développer
 des méthodes statistiques adaptées au traitement de données génétiques afin de
 répondre à deux problèmes. Le premier est l'estimation de la structure génétique
-de population à partir de données génétiques et géographiques. Le deuxième est
+des populations à partir de données génétiques et géographiques. Le deuxième est
 l'estimation des facteurs de confusion pour corriger les tests d'association.
 Les méthodes statistiques développées lors de cette thèse reposent sur la
 factorisation de matrice. Nous allons maintenant introduire plus en détails les
@@ -282,7 +287,8 @@ génétiques humaines, et des SNPs avec une fréquence allélique supérieure à
 le génome humain. Nous appelons locus une position sur l'ADN, nous parlons ainsi
 du locus d'un SNP. Nous représentons les données génétique comme la matrice
 contenant le nombre de fois que l'allèle muté a été observé pour chaque individu
-et chaque locus (Figure ref:fig:matrix).
+et chaque locus (Figure ref:fig:matrix). Nous noterons $\Y$ la matrice de SNPs
+dans ce qui suit.
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
@@ -304,6 +310,7 @@ et chaque locus (Figure ref:fig:matrix).
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
   \centering
+$ \Y = 
 \begin{bmatrix}
   0      & 1    &  2    & 2& \cdots      & \cdots & \cdots \\
   1      & 1    &  0    &1& \cdots      & \cdots    &  \cdots \\
@@ -311,7 +318,7 @@ et chaque locus (Figure ref:fig:matrix).
   \vdots      & \vdots    &  \vdots    & \vdots     & \cdots   & \cdots    &  \cdots \\
   0      & 0    &  2    &0& \cdots      & \cdots    &  \cdots \\
 \end{bmatrix}
-
+$
 \caption{{\bf Illustration d'une matrice de SNPs pour une espèce diploïde.}
   Chaque élément de la matrice est le nombre de fois que l'allèle muté est
   observé pour un individu donné à un locus donné.}
@@ -319,12 +326,324 @@ et chaque locus (Figure ref:fig:matrix).
 \end{figure}
 #+END_EXPORT
 
+*** Estimation de la structure génétique des populations
+
 Une étape très importante en génétique des populations est l'inférence d'une
-représentation synthétique de la structure génétique de populations à partir des
-données de SNPs. Dans cette thèse nous proposons une méthode permettant
-l'inférence des coefficients de métissage individuels à partir de données de
-SNPs et géographique de chaque individu. Nous expliquons plus en détail ce que
-sont les coefficients de métissage dans la partie [[tess3_intro]].
+représentation synthétique de la structure de populations à partir des données
+génétiques. La structure de population influence les distributions des SNPs par
+le biais des quatre pressions évolutives dont nous avons parlé dans le début de
+cette partie. Les pressions évolutives induisent une différenciation des
+distributions alléliques entre les populations. Nous avons illustré se résultats
+en représentant les distributions alléliques d'un SNPs pour des individus
+humains provenant de populations africaine, européenne et afro-américaine. Nous
+constatons une différence de distribution allélique dans les différentes
+populations (Figure ref:fig:tess3_intro_freq).
+
+#+NAME: code:intro_freq_print
+#+CAPTION: Dépend de [[code:tess3_intro_plot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_intro_freq_toprint.rds")
+
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "tess3_intro_freq",
+                                   env = MaTheseR.params,
+                                   height = 0.45 * MaTheseR.params$textheightinch,
+                                   width = MaTheseR.params$textwidthinch)
+#+end_src
+#+BEGIN_EXPORT latex
+\begin{figure}[h]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_intro_freq.pdf}
+\caption{{\bf Différenciation allélique entre des populations}. Distribution des
+  allèles du SNP rs17066888 dans des popualtions européenne, africaine et
+  afro-américaine.}
+\label{fig:tess3_intro_freq}
+\end{figure}
+#+END_EXPORT
+
+Une méthode très utilisée pour visualiser la structure de population est
+l'analyse en composante principal (ACP). Dans une populations d'individus
+structuré en $K$ populations, il faut $K-1$ axes principaux pour représenter la
+structure de populations à partir de données génétique cite:Patterson_2006. Nous
+proposons d'illustrer ce résultats en calculant les deux premiers axes
+principaux d'un échantillons de données de SNPs composés d'individu humains de
+populations africaine, européenne et afro-américaine. Les deux premiers axes
+principaux permettent de visualiser un groupe composé des individus européens,
+deux groupe composé des individus africains et les individus afro-américains
+répartis entre les groupes européens et afro-américains (Figure
+ref:fig:tess3_intro_pca)
+
+#+NAME: code:intro_pca_print
+#+CAPTION: Dépend de [[code:tess3_intro_plot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_intro_pca_toprint.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "tess3_intro_pca",
+                                        env = MaTheseR.params,
+                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+#+end_src
+#+BEGIN_EXPORT latex
+\begin{figure}[h]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_intro_pca.pdf}
+\caption{{\bf Visualisation de la structure de population avec l'ACP.} Scores
+  des deux premières composantes principales calculées sur des données de SNPs
+  d'invidus humains de populations européenne, africaine et afro-américaine.}
+\label{fig:tess3_intro_pca}
+\end{figure}
+#+END_EXPORT
+
+Un modèle très utilisé pour étudier la structure génétique des populations à
+partir de données de SNPs est celui du logiciel =structure= cite:Pritchard2000.
+Dans ce modèle, nous supposons que le génome de chaque individu est la
+combinaison de morceau de génome provenant de $K$ clusters génétiques, aussi
+appelé populations ancestrales. Dans le cadre de ce modèle nous pouvons écrire
+\begin{equation}
+\label{eq:structure}
+\Pr(\Y_{i,\ell} = j) = \sum_{k = 1}^{K} \G_{(d + 1)\ell + j, k} \Q_{i,k},
+\end{equation}
+où $\Pr(\Y_{i,j} = d)$ est la probabilité d'observé l'allèle $j$ au locus $\ell$
+chez l'individu $i$. Le terme $\G_{(d + 1)\ell + j, k}$ représente la fréquence
+d'apparition de l'allèle $j$ au locus $\ell$ dans la cluster $k$. Le terme
+$Q_{i,k}$ est la proportion de gène de l'individu $i$ prévenant de la population
+$k$, appelé coefficients de métissage ou d'ascendance. Les coefficients
+d'ascendance et les fréquences d'allèle dans les clusters génétiques sont
+respectivement rangés dans des matrices $\Q$ et $\G$. Nous proposons d'illustrer
+ce résultats en calculant les coefficients de métissage sur le jeux de données
+utilisé pour illustrer la visualisation de la structure de population par l'ACP.
+Nous avons utilisé le logiciel =snmf= qui permet d'inférer les coefficient de
+métissage à partir de données SNPs avec $K = 2$ clusters génétique
+cite:Frichot_2015. Les groupes génétique trouvé par le logiciel =snmf= sont
+européen et africains. Tandis que les individus afro-américains ont des génomes
+provenant des groupes génétique africain et européen (Figure
+ref:fig:tess3_intro). Il s'agit du résultat attendu connaissant l'histoire
+démographique des individus afro-américain cite:tishkoff2009genetic.
+
+#+NAME: code:intro_pca_print
+#+CAPTION: Dépend de [[code:tess3_intro_plot]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/tess3_intro_barplot_toprint.rds")
+
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "tess3_intro_barplot",
+                                   env = MaTheseR.params,
+                                   height = 0.3 * MaTheseR.params$textheightinch,
+                                   width = MaTheseR.params$textwidthinch)
+#+end_src
+#+BEGIN_EXPORT latex
+\begin{figure}[h]
+\centering
+\includegraphics{./OUTPUT/Rplots/tess3_intro_barplot.pdf}
+\caption{{\bf Coefficients de métissage individuel.} Estimation par le logiciel
+  \texttt{snmf} des coéficients de métissage pour un jeux de données composé
+  d'individus humains provenant de populations européenne, africaine et
+  afro-américaine.}
+\label{fig:tess3_intro}
+\end{figure}
+#+END_EXPORT
+
+Dans cette thèse nous proposons une méthode permettant l'inférence des
+coefficients de métissage individuels à partir de données de SNPs et
+géographique de chaque individu. Cette méthode repose sur une factorisation
+matricielle de la matrice de SNPs avec un régularisation utilisant les données
+géographiques. De nombreuse approches ont été proposées pour estimer les
+coefficients de métissage ainsi les fréquences ancestrales à partir de données
+génétiques. Nous présentons dans le chapitre [[chap:tess3]] un état de l'art des
+méthodes d'inférence des coefficients de métissage à partir des données
+génétiques et géographiques.
+
+**** Scripts                                                    :noexport:
+***** DONE Africain Européen et Afro américain 
+CLOSED: [2017-09-14 jeu. 11:38]
+:LOGBOOK:
+- State "DONE"       from "STARTED"    [2017-09-14 jeu. 11:38]
+- State "STARTED"    from              [2017-09-06 mer. 10:45]
+:END:
+
+Tuto pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-for-plotting-pies-on-ggplot/][here]]
+
+#+NAME: code:tess3_intro
+#+CAPTION: Dépend de [[code:1000g_G_prunned_bigsnpr]]
+#+begin_src R :results output :exports both
+  library("tidyverse")
+  library(tess3r)
+  library(MaTheseR)
+  library(ggplot2)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  expr <- list()
+
+  ## 1000Genome dataset
+  Y <- readRDS("./Data/1000Genomes/Phase3/G_prunned.rds")
+  dim(Y)
+  indiv.df <- readRDS("./Data/1000Genomes/Phase3/indiv_df.rds") %>%
+    dplyr::filter(sample %in% rownames(Y))
+  dim(indiv.df)
+
+  ## filter indiv
+  indiv.df <- indiv.df %>%
+    dplyr::filter(pop %in% c("GBR","YRI", "LWK", "ASW", "TSI"))
+  Y <- Y[indiv.df$sample,]
+
+  ## remove NA
+  na.cols <- apply(Y, 2, anyNA)
+  Y <- Y[,!na.cols]
+  dim(Y)
+
+  ## remove no sd
+  sd.cols <- apply(Y, 2, sd)
+  sd.cols %>% length()
+  mean(sd.cols == 0)
+  Y <- Y[,sd.cols != 0]
+  dim(Y)
+
+  ## test
+  rownames(Y) %in% indiv.df$sample %>% mean()
+  indiv.df$sample %in% rownames(Y) %>% mean()
+
+  ## compute PCA
+  library(RSpectra)
+  A <- scale(Y)
+  expr$svd.res <- RSpectra::svds(A = A, k = 10)
+
+  ## compute Fst and snms
+  dat <- list(G = Y)
+  snmf.res <- sNMFMethod(K = 2) %>% fit(dat)
+  expr$G <- snmf.res$G
+  expr$Q <- snmf.res$Q
+  expr$fst <- ComputeFst(expr$Q, expr$G, 3)
+
+  ## keep info on dataset
+  expr$indiv.df <- indiv.df
+
+
+  ## find a snps to show
+  id <- order(expr$fst, decreasing = TRUE)[50000]
+  expr$freq.df <- expr$indiv.df %>%
+    mutate(snps = dat$G[,id]) %>%
+    group_by(pop) %>%
+    dplyr::summarise(freq = mean(snps) / 2)
+  expr$freq.df
+  expr$snps.rs <- colnames(Y)[id]
+
+  ## save
+  save_expr(expr, "tess3_intro.rds")
+#+end_src
+
+#+NAME: code:tess3_intro_plot
+#+CAPTION: Dépend de [[code:tess3_intro]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese
+  library("tidyverse")
+  library(tess3r)
+  library(cowplot)
+  library(MaTheseR)
+  library(grid)
+  library(pBrackets) 
+  library(scatterpie)
+  MaTheseR.params <- get_MaTheseRparams()
+  gtheme <- MaTheseR.params$gtheme
+
+
+  expr <- readRDS("./OUTPUT/Expr/tess3_intro.rds")
+
+  ## plot pca
+  toplot <- as_tibble(expr$svd.res$u) %>%  cbind(expr$indiv.df) %>%
+    mutate(population = pop)
+  toplot$population[toplot$super_pop == "EUR"] <- "europ\\'eenne"
+  toplot$population[toplot$pop %in% c("YRI", "LWK")] <- "africaine"
+  toplot$population[toplot$pop %in% c("ASW")] <- "afro-am\\'ericaine"
+  pl <- ggplot(toplot, aes(x = V1, y = V2, color = population)) +
+    geom_point() +
+    xlab("Composante principale 1") +
+    ylab("Composante principale 2") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "bottom")
+  pl
+  save_plot_png(pl, "tess3_intro_pca.png")
+  save_expr(pl, "tess3_intro_pca_toprint.rds")
+
+  ## plot freq
+  ## get location
+  toplot <- expr$indiv.df %>%
+    dplyr::distinct(pop) %>%
+    mutate(citie = NA)
+  toplot[toplot$pop == "LWK",]$citie = "Kenya"
+  toplot[toplot$pop == "YRI",]$citie = "Nigeria"
+  toplot[toplot$pop == "ASW",]$citie = "New-york"
+  toplot[toplot$pop == "TSI",]$citie = "Italia"
+  toplot[toplot$pop == "GBR",]$citie = "England"
+  toplot <- cbind(toplot, ggmap::geocode(toplot$citie))
+
+  ## frequencie
+  toplot <- toplot %>%
+    inner_join(expr$freq.df, by = c("pop"))
+  toplot <- toplot %>%
+    mutate(`allèle 1` = freq, `allèle 2` = 1 - freq)
+
+  mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
+  map.world <- ggmap::get_map(location = "world")
+  pl <- ggplot(toplot, aes(x = lon, y = lat, color = pop)) +
+    mapWorld +
+    MaTheseR.params$gtheme +
+    scale_size_continuous(guide = FALSE) +
+    xlab("Longitude") +
+    ylab("Latitude")
+  pl.res <- pl + geom_scatterpie(aes(x = lon, y = lat, r = 8), data = toplot, cols = c("allèle 1", "allèle 2")) +
+    guides(fill = guide_legend(title = paste0("SNP ", expr$snps.rs))) +
+    scale_fill_manual(values = c("steelblue", "lightgreen")) +
+    theme(legend.position="bottom")
+
+  save_plot_png(pl.res, "tess3_intro_freq.png")
+  save_expr(pl.res, "tess3_intro_freq_toprint.rds")
+
+  ## barplot
+  expr$indiv.df$pop %>% unique()
+  ## ordering
+  expr$indiv.df$pop %>% unique()
+  breaks <- 1:3
+  Q <- expr$Q[expr$indiv.df$pop %in% c("YRI"), ]
+  Q <- expr$Q[expr$indiv.df$pop %in% c("GRB","TSI"), ] %>% rbind(Q)
+  Q <- expr$Q[expr$indiv.df$pop %in% c("ASW"), ] %>% rbind(Q)
+  toplot <- data.frame(Q, index = 1:nrow(Q)) %>% reshape2::melt(id = "index") %>%
+    dplyr::mutate(`Cluster génétique` = factor(variable, labels = c("européen",
+                                                                    "africain")))
+
+  brplot <- ggplot(toplot, aes(x = index, y = value)) +
+    geom_bar(stat = "identity", aes(color =`Cluster génétique` , fill = `Cluster génétique`)) +
+    xlab("Individus") +
+    ylab("Coefficient\nde métissage") +
+    scale_y_continuous(breaks = c(0.0,0.5,1.0)) +
+    gtheme + 
+    theme(legend.position="bottom",
+          axis.ticks.x = element_blank()) +
+    scale_x_continuous("",breaks=c(24, 110, 220), labels=c("Afro-américains",
+                                                           "Eropéens",
+                                                           "Africains"
+                                                           ))
+  brplot
+  ## if i want for bracket https://stackoverflow.com/questions/7001799/ggplot2-curly-braces-on-an-axis
+
+  save_plot_png(brplot, "tess3_intro_barplot.png")
+  save_expr(brplot, "tess3_intro_barplot_toprint.rds")
+
+  ## gather plots
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/tess3_intro_pca.png]]
+[[./OUTPUT/Rplots/tess3_intro_freq.png]]
+[[./OUTPUT/Rplots/tess3_intro_barplot.png]]
 ** Test d'association
 :LOGBOOK:
 - Note taken on [2017-09-18 lun. 16:54] \\
@@ -359,10 +678,150 @@ de la variation génétique. On appel de tels facteurs les facteurs de confusion
 pour le test d'association. Les facteurs de confusion doivent être pris en
 compte dans les études d'association pour éviter les fausses associations.
 
+*** Les facteurs de confusions
+<<sec:fact_conf>>
+
+Basée sur l'analyse de la corrélation, les études d'association sont confrontées
+aux problèmes des facteurs de confusion et de la causalité. En effet lorsque
+l'on détecte de la corrélation entre deux variables, cela n'implique pas
+nécessairement qu'il y a un lien de causalité entre celles-ci. Le lien de
+causalité entre les deux variables peut être bien plus complexe et notamment
+impliquer des liens avec d'autres variables non observées. En particulier, il
+est possible de conclure à une association entre deux variables alors qu'elles
+sont associées à une autre variable non considérée dans l'étude. On appelle
+alors la variable non observée un facteur de confusion. La figure
+[[graph:conf_factor]] illustre cette situation. Le problème des facteurs de
+confusion est connue depuis longtemps. En effet, on le retrouve déjà dans
+l'ouvrage /The Design of Experiment/ de Ronald Fisher qui introduisit entre
+autre le concept de d'hypothèse nulle en statistique cite:fisher1937design. Dans
+cette thèse nous nous intéressons aux études d'association à très grande
+échelle. Nous avons d'une part des observations de $\Ycol$ variables sur $\Yrow$
+individus rassemblées dans une matrice $\Y$ de taille $\Yrow \times \Ycol$, et
+en général $\Ycol$ est très grand devant $\Yrow$. Nous avons d'autre part
+l'observation d'une variable sur les mêmes $\Xrow$ individus que l'on rassemble
+dans une matrice $\X$, de taille $\Xrow \times 1$. L'objectif est alors de
+trouver parmi les $\Ycol$ variables $\Y$ celles qui sont associées à $\X$. Nous
+supposons de plus qu'il existe un certain nombre de variables non observées qui
+permettent d'expliquer les variations de $\Y$. Ces variables non observées, que
+l'on appellera variables latentes, sont potentiellement des facteurs de
+confusion pour l'étude d'association entre les matrices $\Y$ et $\X$. Les
+variables latentes sont potentiellement corrélées à $\X$, il faut donc les
+prendre en compte dans l'étude d'association.
+
+#+NAME: code:conf_factor
+#+BEGIN_SRC dot :file Figures/conf_factor.png :exports results :eval no-export
+  graph {
+    graph [fontname = "serif"];
+    node [fontname = "serif"];
+    edge [fontname = "serif"];
+    U -- Y;
+    U -- X;
+  }
+#+END_SRC
+
+#+NAME: graph:conf_factor
+#+CAPTION: Graphe de corrélation entre la variable $\Y$ la variable $\X$ et le facteur de confusion $\U$. Dans cette situation si on ne prend pas en compte $\U$ dans l'étude d'association alors $\X$ et $\Y$ apparaitront comme étant associées.
+#+ATTR_LATEX: :width 5cm
+#+RESULTS: code:conf_factor
+[[file:Figures/conf_factor.png]]
+
+*** Simulation numérique d'une association avec facteurs de confusions
+<<sec:simu_ex>>
+
+Dans cette partie nous proposons de montrer l'intérêt de prendre en
+considération les facteurs de confusion dans les études d'association par une
+simulation numérique. Pour cela nous simulons une variable explicative $\X$ et
+une variable latente de sorte que le coefficient de corrélation entre ces deux
+variables soit égale à $0.6$. Nous simulons ensuite une matrice de bruit
+gaussien de moyenne nulle et variance égale à 1, noté $\E$. La matrice des
+effets de la variable latente sur $\Y$ est aussi simulée à l'aide de la loi
+normale. Nous notons la matrice des effets latents $\V$. La matrice des effets
+de $\X$ sur $\Y$, notée $\B$, est simulée de sorte que $1 \%$ de ses lignes
+soient non nulles. Enfin, la matrice des variables expliquées $\Y$ est calculée
+telle que
+\begin{equation} 
+\Y = \U \V^{T} + \X \B^{T} + \E. 
+\end{equation} 
+Cette simulation correspond à une situation où $1 \%$ des colonnes de $\Y$ sont
+associées avec $\X$. La variable latente est un facteur de confusion pour cette
+étude d'association car $\U$ est corrélée avec $\X$.
+
+Afin de détecter les variables expliquées associés à la variable explicative,
+nous réalisons une régression linéaire de $\Y$ par $\X$. Nous effectuons une
+seconde régression linéaire avec cette fois la variable $\X$ ainsi que la
+variable latente $\U$ comme variables explicatives de la régression. Nous
+réalisons un test de Student pour tester la nullité des coefficients associés à
+la variable $\X$ dans chacune des deux régressions. Quand on ne prend pas en
+compte la variable latente plus de $40 \%$ des \pvalues sont inférieures à
+$10^{-15}$, alors que quand on prend en compte les facteurs latents la
+distribution des \pvalues est bien uniforme comme on s'y attend (Figure
+ref:fig:simu_intro). En effet, on s'attend à une distribution uniforme des
+\pvalues car la majorité des colonnes de $\Y$ ne sont pas associées avec la
+variable $\X$, seulement $1\%$ par simulation. Dans le cas de cette simulation il
+est impossible de ne pas prendre en compte la variable latente, sans celle-ci on
+détecte presque la moitié des colonnes de $\Y$ comme étant associées à $\X$.
+
+#+NAME: code:confusion_plot
+#+CAPTION: 
+#+begin_src R 
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  library(scales)
+
+  dat <- ExpRsampler_generativeData(n = 200,
+                                    p = 5000,
+                                    K = 1,
+                                    outlier.prop = 0.01,
+                                    cs = c(0.6)) %>%
+    ExpRmouline()
+
+  ## lm
+  lm.res <- method_lm() %>% ExpRmouline(dat)
+  toplot <- data.frame(Régression = "Y ~ X",
+                       pvalue = lm.res$pvalue)
+
+  mean(toplot$pvalue < 1e-15)
+
+  ## lm with U
+  oracle.res <- method_oracle() %>% ExpRmouline(dat)
+
+
+  ## qqplot
+  toplot <- data.frame(Régression = "Y ~ X + U",
+                       pvalue = oracle.res$pvalue) %>%
+    rbind(toplot)
+  toplot <- as_tibble(toplot)
+  pl <- ggplot(toplot, aes(pvalue, fill = Régression)) +
+    geom_histogram(position = "dodge", aes(y = (..count..)/sum(..count..))) +
+    MaTheseR.params$gtheme +
+    xlab("P-valeur") +
+    ylab("Pourcentage") +
+    scale_y_continuous(labels=percent)
+
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   "simu_intro",
+                                   MaTheseR.params,
+                                   height = 0.3 * MaTheseR.params$textheightinch,
+                                   width = MaTheseR.params$textwidthinch)
+#+end_src
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/simu_intro.pdf}
+\caption{Histogramme des \pvalues du test de nullité des coefficients de la
+  régression sans et avec le facteur de confusion.}
+\label{fig:simu_intro}
+\end{figure}
+#+END_EXPORT
+
 Dans cette thèse nous proposons une méthode statistique qui permet de corriger
-les tests d'association pour les facteurs de confusion. Nous expliquons plus en
-détail ce que sont les facteurs de confusions et comment nous les modélisons
-dans la partie [[sec:lfmm_intro]].
+les tests d'association pour les facteurs de confusion. Il existe plusieurs
+approche pour corriger les études d'associations que nous expliquons plus en
+détail dans le chapitre [[sec:lfmm_intro]]. La méthodes que nous présentons repose
+sur une décomposition de la matrice $\Y$ par en une partie expliquant la variance
+systématique que l'on souhaite corriger et une partie représentant l'effet de la
+variable explicative $\X$ sur les variables expliquées.
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
@@ -415,6 +874,31 @@ biologie afin d'illustrer leurs utilités.
   (recalibration propre !)
 :END:
 <<chap:tess3>>
+** Résumé
+
+L'évaluation précise de la répartition de l'ascendance génétique dans l'espace
+géographique est l'une des principales questions abordées par les biologistes de
+l'évolution. Cette question a été communément abordée par l'application de
+programmes d'estimation bayésiens permettant à leurs utilisateurs d'estimer les
+proportions individuelles de métissage et les fréquences alléliques parmi les
+populations ancestrales putatives. Suite à l'explosion des technologies de
+séquençage à haut débit, plusieurs algorithmes ont été proposés pour faire face
+au fardeau de calcul généré par les données massives dans ces études. Dans ce
+contexte, l'intégration de la proximité géographique dans les algorithmes
+d'estimation de l'ascendance est un défi statistique et computationnel ouvert.
+Dans ce chapitre, nous introduisons de nouveaux algorithmes qui utilisent
+l'information géographique pour estimer les proportions d'ascendance et les
+fréquences génotypiques ancestrales à partir des données génétiques de la
+population étudiée. Nos algorithmes combinent les méthodes de factorisation
+matricielle et les statistiques spatiales pour fournir des estimations des
+matrices d'ascendance basées sur l'approximation des moindres carrés. Nous
+démontrons le bénéfice de l'utilisation d'algorithmes spatiaux grâce à des
+simulations numériques et nous fournissons un exemple d'application de nos
+nouveaux algorithmes à un ensemble d'échantillons référencés spatialement pour
+les espèces végétales {\it Arabidopsis thaliana}. Sans perte de précision
+statistique, les nouveaux algorithmes présentent des temps d'exécution beaucoup
+plus courts que ceux observés pour les méthodes spatiales développées
+antérieurement. Nos algorithmes sont implémentés dans le package R, =tess3r=.
 
 ** Introduction
 :PROPERTIES:
@@ -437,162 +921,14 @@ génétique pour une maladie cite:Wray_2013. Enfin, l'étude de la répartition 
 population d'une espèce dans son habitat est une étape clée en génétique du
 paysage cite:Fran_ois_2015.
 
-Pour modéliser la structure génétique de population, nous supposons que le
+Pour modéliser la structure génétique des populations, nous supposons que le
 génome de chaque individu est la combinaison de morceau de génome provenant de
-$K$ clusters génétiques, aussi appelé populations ancestrales. Dans chaque
-cluster génétique l'objectif est d'estimer les fréquences d'allèle pour chaque
-SNPs. Pour chaque individu il faut estimer la proportion de son génotype qui
-provient de chaque cluster génétique. Les proportions sont appelées coefficients
-de métissage individuel, aussi appelés coefficients d'ascendance.
-
-Les clusters génétiques se forment par les processus de différenciation des
-distributions allélique dont nous avons parlé dans la partie [[intro_genet]]. Pour
-illustrer cela nous avons pris un échantillon de données de SNPs d'individus
-humains provenant de populations européennes, africaines et afro-américaines des
-États Unis d'Amérique. La Figure ref:fig:tess3_intro A montre les fréquences des
-différentes version du SNP rs499627 dans des populations européennes, africaines
-et afro-américaine. Nous constatons une différence de distribution allélique
-dans les différentes populations. À partir l'échantillon de données de SNPs
-humain, nous avons calculé les coefficients de métissage en supposant 2 clusters
-génétiques à l'aide du logiciel =snmf=. Nous constatons que la méthode sNMF
-trouve des clusters génétiques africain et européen. Les individus afro-américain
-ont des génomes provenant des clusters africain et européen (Figure
-ref:fig:tess3_intro B). Il s'agit du résultat attendu connaissant l'histoire
-démographique des individus afro-américain.
-
-#+BEGIN_EXPORT latex
-\begin{figure}[H]
-\centering
-\includegraphics{./OUTPUT/Rplots/tess3_intro.pdf}
-\caption{{\bf Structure génétique des populations d'invidus humains européens,
-    africains et afro-américains.} A) Distribution des allèles du SNP rs499627 dans
-  des populations européennes, africaines et afro-américaines. B) Estimation par
-  le logiciel \texttt{snmf} de la proportion pour chaque individu de SNPs provenant des
-  clusters génétiques africains et européens.}
-\label{fig:tess3_intro}
-\end{figure}
-#+END_EXPORT
-
-**** Scripts                                                    :noexport:
-***** DONE Africain Européen et Afro américain 
-CLOSED: [2017-09-14 jeu. 11:38]
-:LOGBOOK:
-- State "DONE"       from "STARTED"    [2017-09-14 jeu. 11:38]
-- State "STARTED"    from              [2017-09-06 mer. 10:45]
-:END:
-
-Tudo pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-for-plotting-pies-on-ggplot/][here]]
-#+NAME: code:tess3_intro
-#+CAPTION: Dépend de 
-#+begin_src R :results output :exports both
-  library("tidyverse")
-  library(tess3r)
-  library(MaTheseR)
-
-  ## 1000Genome dataset
-  dat <- readRDS("./Data/1000Genomes/Phase3/Eu_Af_Afam.chr1.maf.05.rds")
-  dim(dat$G)
-
-  expr <- list()
-  ## compute Fst
-  snmf.res <- sNMFMethod(K = 2) %>% fit(dat)
-  expr$G <- snmf.res$G
-  expr$Q <- snmf.res$Q
-  expr$fst <- ComputeFst(expr$Q, expr$G, 3)
-
-  ## keep info on dataset
-  expr$indiv.df <- dat$indiv
-  expr$snps.df <- dat$snps.info
-  id <- which.max(expr$fst) 
-  expr$indiv.df <- expr$indiv.df %>%
-    mutate(snps = dat$G[,id])
-
-  save_expr(expr, "tess3_intro.rds")
-#+end_src
-
-#+NAME: code:tess3_intro_plot
-#+CAPTION: Dépend de [[code:tess3_intro]]
-#+begin_src R 
-  library("tidyverse")
-  library(tess3r)
-  library(cowplot)
-  library(MaTheseR)
-  library(scatterpie)
-  MaTheseR.params <- get_MaTheseRparams()
-  gtheme <- MaTheseR.params$gtheme
-
-
-  expr <- readRDS("./OUTPUT/Expr/tess3_intro.rds")
-
-  ## plot freq
-  ## get location
-  toplot <- expr$indiv.df %>%
-    dplyr::distinct(pop) %>%
-    mutate(citie = NA)
-  toplot[toplot$pop == "LWK",]$citie = "Kenya"
-  toplot[toplot$pop == "YRI",]$citie = "Nigeria"
-  toplot[toplot$pop == "ASW",]$citie = "New-york"
-  toplot[toplot$pop == "TSI",]$citie = "Italia"
-  toplot[toplot$pop == "GBR",]$citie = "England"
-  toplot <- cbind(toplot, ggmap::geocode(toplot$citie))
-
-  ## frequencie
-  id <- which.max(expr$fst)
-  expr$snps.df[id,]
-  freq.df <- expr$indiv.df %>% group_by(pop) %>%
-    dplyr::summarise(freq = mean(snps) / 2)
-  toplot <- toplot %>%
-    inner_join(freq.df, by = c("pop"))
-  toplot <- toplot %>%
-    mutate(`allèle T` = freq, `allèle C` = 1 - freq)
-
-  mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
-  map.world <- ggmap::get_map(location = "world")
-  pl <- ggplot(toplot, aes(x = lon, y = lat, color = pop)) +
-    mapWorld + 
-    MaTheseR.params$gtheme +
-    scale_size_continuous(guide = FALSE) +
-    xlab("Longitude") +
-    ylab("Latitude")
-  pl.res <- pl + geom_scatterpie(aes(x = lon, y = lat, r = 8), data = toplot, cols = c("allèle T", "allèle C")) +
-    guides(fill = guide_legend(title = "SNP rs499627")) +
-    scale_fill_manual(values = c("steelblue", "lightgreen")) +
-    theme(legend.position="bottom")
-
-  save_plot_png(pl.res, "tess3_intro_freq.png")
-
-  ## barplot
-  expr$indiv.df$pop %>% unique()
-  ## ordering
-  expr$indiv.df$pop %>% unique()
-  Q <- expr$Q[expr$indiv.df$pop %in% c("YRI"), ]
-  Q <- expr$Q[expr$indiv.df$pop %in% c("GRB","TSI"), ] %>% rbind(Q)
-  Q <- expr$Q[expr$indiv.df$pop %in% c("ASW"), ] %>% rbind(Q)
-  toplot <- data.frame(Q, index = 1:nrow(Q)) %>% reshape2::melt(id = "index") %>%
-    dplyr::mutate(`Cluster génétique` = factor(variable, labels = c("africain",
-                                                  "européen")))
-  brplot <- ggplot(toplot, aes(x = index, y = value)) +
-    geom_bar(stat = "identity", aes(color =`Cluster génétique` , fill = `Cluster génétique`)) +
-    xlab("Individus") +
-    ylab("Coefficient\nde métissage") +
-    scale_y_continuous(breaks = c(0.0,0.5,1.0)) +
-    gtheme + 
-    theme(legend.position="bottom",
-          axis.text.x = element_blank(),
-          axis.ticks.x = element_blank())
-  save_plot_png(brplot, "tess3_intro_barplot.png")
-
-  ## gather plots
-  pl <- plot_grid(pl.res, brplot, ncol = 1, labels = c("A", "B"),
-                  rel_heights = c(6,4))
-  ThesisRpackage::Plots_export_pdf(pl, "tess3_intro", MaTheseR.params,
-                                   height = 0.8 * MaTheseR.params$textheightinch,
-                                   width = MaTheseR.params$textwidthinch)
-#+end_src
-
-#+RESULTS:
-[[./OUTPUT/Rplots/tess3_intro_freq.png]]
-[[./OUTPUT/Rplots/tess3_intro_barplot.png]]
+$K$ clusters génétiques, aussi appelé populations ancestrales
+cite:Pritchard2000. Dans chaque cluster génétique l'objectif est d'estimer les
+fréquences d'allèle pour chaque SNPs. Pour chaque individu il faut estimer la
+proportion de son génotype qui provient de chaque cluster génétique. Les
+proportions sont appelées coefficients de métissage individuel, aussi appelés
+coefficients d'ascendance.
 
 *** Méthodes d'inférence des coefficients de métissage 
 :LOGBOOK:
@@ -3837,6 +4173,37 @@ que quelques minutes à l'aide d'un seul CPU.
 
 * Algorithmes d'estimation pour les modèles de régression à facteurs latents
 <<chap:lfmm>>
+
+** Résumé
+
+Les études d'associations sont massivement utilisées en biologie pour trouver
+par exemple les causes génétiques d'une maladie ou bien les gènes impliqués dans
+un processus d'adaptation au climat. Lors de ces études nous sommes amené à
+tester la corrélation entre un grand nombre de variables expliquées avec
+quelques variables explicatives. Dans certaines de ces études des variables
+latentes telles que la structure de population ou bien les conditions
+expérimentales peuvent sévèrement biaiser les résultats des tests. Cependant
+lors les test d'hypothèse multiple il est possible d'estimer la variance
+systématique biaisant les résultats afin de corriger les tests statistiques.
+Dans ce chapitre nous introduisons deux nouveaux algorithmes qui permettent
+d'estimer les variables latentes afin de corriger les tests d'association. Nos
+algorithmes reposent sur une décomposition de la matrice des variables
+expliquées en une matrice des effets systématiques latents et une matrice des
+effets des variables explicatives. Nos deux algorithmes reposent sur une
+régularisation de l'effet des variables explicatives sur les variables
+expliquées différentes. L'un utilise une régularisons en norme $L_{2}$, tandis
+que l'autre utilise un régularisation en norme $L_{1}$. Pour chaque algorithme
+nous démontrons leur convergence vers le minimum de leur fonction objectif
+respective. Nous montrons sur des simulations numériques que nos algorithmes
+reproduisent les performances d'autres algorithmes de correction des tests
+d'association pour les variables de confusion. Nous montrons enfin que nos
+algorithmes permettent de reproduire des résultats d'une étude d'associations
+entre des génomes et la maladie \celiac ainsi qu'une étude d'association entre
+des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde. Nous
+présentons enfin des résultats trouvés par nos algorithmes sur un exemple
+d'étude d'association entre des génotypes et un gradient climatique. Nos
+algorithmes sont implémentés dans le package R, =lfmm=.
+
 ** Introduction
 <<sec:lfmm_intro>> 
 
@@ -3865,142 +4232,6 @@ de temps, les études d'association ont permis des progrès considérables dans
 l'identification des variants génétiques qui confèrent une susceptibilité aux
 maladies ainsi qu'une compréhension plus approfondie de l'évolution des génomes
 en réponse à la sélection naturelle.
-
-*** Les facteurs de confusions
-<<sec:fact_conf>>
-
-Basée sur l'analyse de la corrélation, les études d'association sont confrontées
-aux problèmes des facteurs de confusion et de la causalité. En effet lorsque
-l'on détecte de la corrélation entre deux variables, cela n'implique pas
-nécessairement qu'il y a un lien de causalité entre celles-ci. Le lien de
-causalité entre les deux variables peut être bien plus complexe et notamment
-impliquer des liens avec d'autres variables non observées. En particulier, il
-est possible de conclure à une association entre deux variables alors qu'elles
-sont associées à une autre variable non considérée dans l'étude. On appelle
-alors la variable non observée un facteur de confusion. La figure
-[[graph:conf_factor]] illustre cette situation. Le problème des facteurs de
-confusion est connue depuis longtemps. En effet, on le retrouve déjà dans
-l'ouvrage /The Design of Experiment/ de Ronald Fisher qui introduisit entre
-autre le concept de d'hypothèse nulle en statistique cite:fisher1937design. Dans
-cette thèse nous nous intéressons aux études d'association à très grande
-échelle. Nous avons d'une part des observations de $\Ycol$ variables sur $\Yrow$
-individus rassemblées dans une matrice $\Y$ de taille $\Yrow \times \Ycol$, et
-en général $\Ycol$ est très grand devant $\Yrow$. Nous avons d'autre part
-l'observation d'une variable sur les mêmes $\Xrow$ individus que l'on rassemble
-dans une matrice $\X$, de taille $\Xrow \times 1$. L'objectif est alors de
-trouver parmi les $\Ycol$ variables $\Y$ celles qui sont associées à $\X$. Nous
-supposons de plus qu'il existe un certain nombre de variables non observées qui
-permettent d'expliquer les variations de $\Y$. Ces variables non observées, que
-l'on appellera variables latentes, sont potentiellement des facteurs de
-confusion pour l'étude d'association entre les matrices $\Y$ et $\X$. Les
-variables latentes sont potentiellement corrélées à $\X$, il faut donc les
-prendre en compte dans l'étude d'association.
-
-#+NAME: code:conf_factor
-#+BEGIN_SRC dot :file Figures/conf_factor.png :exports results :eval no-export
-  graph {
-    graph [fontname = "serif"];
-    node [fontname = "serif"];
-    edge [fontname = "serif"];
-    U -- Y;
-    U -- X;
-  }
-#+END_SRC
-
-#+NAME: graph:conf_factor
-#+CAPTION: Graphe de corrélation entre la variable $\Y$ la variable $\X$ et le facteur de confusion $\U$. Dans cette situation si on ne prend pas en compte $\U$ dans l'étude d'association alors $\X$ et $\Y$ apparaitront comme étant associées.
-#+ATTR_LATEX: :width 5cm
-#+RESULTS: code:conf_factor
-[[file:Figures/conf_factor.png]]
-
-*** Simulation numérique d'une association avec facteurs de confusions
-<<sec:simu_ex>>
-
-Dans cette partie nous proposons de montrer l'intérêt de prendre en
-considération les facteurs de confusion dans les études d'association par une
-simulation numérique. Pour cela nous simulons une variable $\X$ et une variable
-latente de sorte que le coefficient de corrélation entre ces deux variables soit
-égale à $0.6$. Nous simulons ensuite une matrice de bruit gaussien de moyenne
-nulle et variance égale à 1, noté $\E$. La matrice des effets de la variable
-latente sur $\Y$ est aussi simulée à l'aide de la loi normale. Nous notons la
-matrice des effets latents $\V$. La matrice des effets de $\X$ sur $\Y$, notée
-$\B$, est simulée de sorte que $1 \%$ de ses lignes soient non nulles. Enfin, la
-matrice $\Y$ est calculée telle que
-\begin{equation} 
-\Y = \U \V^{T} + \X \B^{T} + \E. 
-\end{equation} 
-Cette simulation correspond à une situation où $1 \%$ des colonnes de $\Y$ sont
-associées avec $\X$. La variable latente est un facteur de confusion pour cette
-étude d'association car $\U$ est corrélée avec $\X$.
-
-Afin de détecter les variables expliquées associés à la variable explicative,
-nous réalisons une régression linéaire de $\Y$ par $\X$. Nous effectuons une
-seconde régression linéaire avec cette fois la variable $\X$ ainsi que la
-variable latente $\U$ comme variables explicatives de la régression. Nous
-réalisons un test de Student pour tester la nullité des coefficients associés à
-la variable $\X$ dans chacune des deux régressions. Quand on ne prend pas en
-compte la variable latente plus de $40 \%$ des \pvalues sont inférieures à
-$10^{-15}$, alors que quand on prend en compte les facteurs latents la
-distribution des \pvalues est bien uniforme comme on s'y attend (Figure
-ref:fig:simu_intro). En effet, on s'attend à une distribution uniforme des
-\pvalues car la majorité des colonnes de $\Y$ ne sont pas associées avec la
-variable $\X$, seulement $1\%$ par simulation. Dans le cas de cette simulation il
-est impossible de ne pas prendre en compte la variable latente, sans celle-ci on
-détecte presque la moitié des colonnes de $\Y$ comme étant associées à $\X$.
-
-#+NAME: code:confusion_plot
-#+CAPTION: 
-#+begin_src R 
-  library(MaTheseR)
-  MaTheseR.params <- get_MaTheseRparams()
-  library(scales)
-
-  dat <- ExpRsampler_generativeData(n = 200,
-                                    p = 5000,
-                                    K = 1,
-                                    outlier.prop = 0.01,
-                                    cs = c(0.6)) %>%
-    ExpRmouline()
-
-  ## lm
-  lm.res <- method_lm() %>% ExpRmouline(dat)
-  toplot <- data.frame(Régression = "Y ~ X",
-                       pvalue = lm.res$pvalue)
-
-  mean(toplot$pvalue < 1e-15)
-
-  ## lm with U
-  oracle.res <- method_oracle() %>% ExpRmouline(dat)
-
-
-  ## qqplot
-  toplot <- data.frame(Régression = "Y ~ X + U",
-                       pvalue = oracle.res$pvalue) %>%
-    rbind(toplot)
-  toplot <- as_tibble(toplot)
-  pl <- ggplot(toplot, aes(pvalue, fill = Régression)) +
-    geom_histogram(position = "dodge", aes(y = (..count..)/sum(..count..))) +
-    MaTheseR.params$gtheme +
-    xlab("P-valeur") +
-    ylab("Pourcentage") +
-    scale_y_continuous(labels=percent)
-
-  ThesisRpackage::Plots_export_pdf(pl,
-                                   "simu_intro",
-                                   MaTheseR.params,
-                                   height = 0.3 * MaTheseR.params$textheightinch,
-                                   width = MaTheseR.params$textwidthinch)
-#+end_src
-
-#+BEGIN_EXPORT latex
-\begin{figure}[!t]
-\centering
-\includegraphics{./OUTPUT/Rplots/simu_intro.pdf}
-\caption{Histogramme des \pvalues du test de nullité des coefficients de la
-  régression sans et avec le facteur de confusion.}
-\label{fig:simu_intro}
-\end{figure}
-#+END_EXPORT
 
 *** Méthodes de correction pour les facteurs latents
 :LOGBOOK:
@@ -16080,8 +16311,14 @@ Tout ce que je peux dire c'est que ce que je trouve en plus sont pas abérant:
 # End:
 #  LocalWords:  variogrammes
 **** Comment on se compare avec les modèles mixes ?
-En théorie les modèle mixe c'est en n^2p pour calculer la matrice de kindchip.
-lfmm c'est du npk !!
+En théorie les modèle mixe c'est en n^2p pour calculer la matrice de kindship.
+lfmm c'est du npk !! 
+
+La grande différence est dans le calcule de l'acp
+
+Du coups la matrice de kindship pourrait etre calculé avec l'acp et du coup on a
+aussi un complexité faible pour le smodèle mixte :D
+
 *** Général
 **** Les types de mutation génétiques
 indel : insertion délétion
@@ -16091,3 +16328,5 @@ mircosat : répétition
 On ne s'arrête pas au même endroit !!!!
 - scree plot c'est pour la PC avant les PC qui explique le bruit
 - pour CV c'est le coude !!
+**** Les gamètes :D
+par humain il y a 2 ^ 23 gamète possibles car on 23 paire de chromosomes.
