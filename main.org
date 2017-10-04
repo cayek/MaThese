@@ -37,6 +37,8 @@
  \baselineskip 0.8cm
 #+END_EXPORT
 
+#+begin_abstract
+#+end_abstract
 
 * Workenv                                                          :noexport:
 ** emacs
