@@ -1,0 +1,27 @@
+%% théorèmes
+\newtheorem{theorem}{Théoreme}
+\newtheorem{corollaire}{Corollaire}
+\newtheorem{proposition}{Proposition}
+\renewcommand{\proofname}{Preuve}
+
+
+%% defining colors
+\definecolor{customDarkGreen}{RGB}{47,79,79}
+\definecolor{customDarkGrey}{RGB}{25,25,25}
+\definecolor{customGreen}{RGB}{41,124,120}
+\definecolor{customGrey}{RGB}{105,105,105}
+\definecolor{customSteelBlue}{RGB}{65,131,196}
+
+%% coloring title
+\chapterfont{\color{black}\huge}  % sets colour of chapters
+\sectionfont{\color{customDarkGrey}\LARGE}  % sets colour of sections
+\subsectionfont{\color{customGreen}}
+\subsubsectionfont{\color{customGrey}}  % sets colour of sections
+
+%% hyperlink
+\hypersetup{unicode=true,
+            colorlinks=true,
+            linkcolor=black,
+            citecolor=customSteelBlue,
+            urlcolor=customSteelBlue,
+            breaklinks=true}

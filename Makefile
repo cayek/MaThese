@@ -72,4 +72,12 @@ krakenator_umount_OUTPUT:
 	if [ $(HOSTNAME) == "timc-bcm-15.imag.fr" ] ; then \
 		sudo umount OUTPUT; \
 	fi
+###############################################################################
+## main export
+
+main_clean:
+	latexmk main -C
+
+main.pdf: main.tex
+	latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f main
 

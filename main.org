@@ -13,14 +13,12 @@
 #+COLUMNS: %25ITEM %TODO %3PRIORITY %TAGS
 #+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(g!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
 #+LaTeX_CLASS: these
-#+LATEX_HEADER: \input{notations.tex}
+#+latex_header: \usepackage[citestyle=authoryear-icomp, bibstyle=authoryear, hyperref=true,backref=true,maxcitenames=3,url=true,backend=biber,natbib=true]{biblatex}
+#+latex_header: \addbibresource{biblio.bib}
 #+LATEX_HEADER: \input{packages.tex}
+#+LATEX_HEADER: \input{setup.tex}
+#+LATEX_HEADER: \input{notations.tex}
 #+HTML_MATHJAX: align: left indent: 5em tagside: left font: Neo-Euler
-#+latex_header: \usepackage{amsthm, bm}
-#+latex_header: \newtheorem{theorem}{Théoreme}
-#+latex_header: \newtheorem{corollaire}{Corollaire}
-#+latex_header: \newtheorem{proposition}{Proposition}
-#+latex_header: \renewcommand{\proofname}{Preuve}
 
 #+PROPERTY: header-args :exports none :eval no-export
 
@@ -33,12 +31,9 @@
 # #+END_QUOTE
 
 #+BEGIN_EXPORT latex
-%% to review
- \baselineskip 0.8cm
+ \baselineskip 0.6cm
+\frontmatter
 #+END_EXPORT
-
-#+begin_abstract
-#+end_abstract
 
 * Workenv                                                          :noexport:
 ** emacs
@@ -120,6 +115,42 @@
 - =47 : homo_sapiens_vep_89_GRCh38.tar.gz=
 
 ** python
+
+* Résumés courts
+
+*Résumé*  
+
+*Mots-clés*
+
+*Summary*  
+
+*Keyword*  
+
+* Résumé de la thèse
+Les analyses de données génétiques se sont démocratisé en biologie grâce aux
+dernières techniques de sequencage de l'ADN. Afin de traiter des données
+génétique de plus en plus complexe et volumineux il est nécessaire de développer
+des méthodes statistiques appropriées.
+
+*Objectif* L'objectif de cette thèse de doctorat est d'améliorer les outils
+statistiques qui permettent aux biologistes de répondre à des questions
+concrètes sur le vivant. Dans cette thèse nous nous sommes intéressé à deux
+problématiques en analyse de données génétiques : l'estimation de la structure
+génétique de population et les études d'associations. 
+*Méthode*  
+
+Nous avons développé des méthodes reposant sur de la factorisation de matrice.
+Nous avons développer un premier modèle permettant d'estimer l'ascendance
+génétique 
+permettant d'estimer 
+*Résultats*
+*Conclusion*
+
+* Remerciements
+#+BEGIN_EXPORT latex
+\mainmatter
+#+END_EXPORT
+
 * Introduction
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -848,8 +879,8 @@ génétique intégrant l'information spatial est nécessaire.
 
 Répondant à l'arrivée massive de données, le développement de méthodes pour les
 études d'association à grandes échelle est très actif en ce moment. Dans les
-étude d'association un aspect très important est de détecter et corriger la
-variance indésirable pour l'étude. Chaque méthode utilise des approches
+étude d'association un aspect très important est de détecter et corriger les
+source de variance indésirable pour l'étude. Chaque méthode utilise des approches
 différentes et aucunes ne s'est imposées comme étant la méthode de référence.
 Dans le contexte actuelle il est nécessaire de développer des méthodes rapides
 et utilisables sur les grandes données. Par ailleurs, une comparaison des méthodes
@@ -871,10 +902,10 @@ afin qu'ils soient applicables aux données génétiques modernes. L'importance 
 implémentation. Afin que nos méthodes statistiques soient utilisables par la
 communauté scientifique, il a été important de rendre accessible une
 implémentation informatique efficace des nouvelles méthodes statistiques.
-
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+:alt_title: Inférence des coefficients de métissage
 :END:
 :LOGBOOK:
 - State "TODO"       from              [2017-07-20 Thu 17:49]
@@ -914,7 +945,7 @@ matrices d'ascendance basées sur l'approximation des moindres carrés. Nous
 démontrons le bénéfice de l'utilisation d'algorithmes spatiaux grâce à des
 simulations numériques et nous fournissons un exemple d'application de nos
 nouveaux algorithmes à un ensemble d'échantillons référencés spatialement pour
-les espèces végétales {\it Arabidopsis thaliana}. Sans perte de précision
+les espèces végétales /Arabidopsis thaliana/. Sans perte de précision
 statistique, les nouveaux algorithmes présentent des temps d'exécution beaucoup
 plus courts que ceux observés pour les méthodes spatiales développées
 antérieurement. Nos algorithmes sont implémentés dans le package R, =tess3r=.
@@ -1511,7 +1542,7 @@ métissage, noté $\Q_0$, est entièrement décrite par la position des individu
 \input{cline_inkscape.pdf_tex}
 \caption{{\bf Simulation de génotypes métissés spatialement.} Les populations
   sources sont simulé à l'aide du programme \texttt{ms} pour obtenir les
-  matrices de fréquences de génotypes $\G_1$ et $\G_2$. La matrice $\Y$ est
+  matrices de fréquences de génotypes $\mathbf{G}_{1}$ et $\mathbf{G}_2$. La matrice $\Y$ est
   générée en tirant des gènes des deux populations sources avec des probabilités
   générées selon un gradient longitudinal et stoquées dans la matrice $\Q$.}
 \label{tess3:cline}
@@ -4191,6 +4222,9 @@ millier de génotypes /A.thaliana/, chacun incluant plus de 210k SNP, n'a pris
 que quelques minutes à l'aide d'un seul CPU.
 
 * Algorithmes d'estimation pour les modèles de régression à facteurs latents
+:PROPERTIES:
+:alt_title: Algorithmes d'estimation des facteurs de confusion
+:END:
 <<chap:lfmm>>
 
 ** Résumé
@@ -4199,29 +4233,28 @@ Les études d'associations sont massivement utilisées en biologie pour trouver
 par exemple les causes génétiques d'une maladie ou bien les gènes impliqués dans
 un processus d'adaptation au climat. Lors de ces études nous sommes amené à
 tester la corrélation entre un grand nombre de variables expliquées avec
-quelques variables explicatives. Dans certaines de ces études des variables
-latentes telles que la structure de population ou bien les conditions
-expérimentales peuvent sévèrement biaiser les résultats des tests. Cependant
-lors les test d'hypothèse multiple il est possible d'estimer la variance
-systématique biaisant les résultats afin de corriger les tests statistiques.
-Dans ce chapitre nous introduisons deux nouveaux algorithmes qui permettent
-d'estimer les variables latentes afin de corriger les tests d'association. Nos
-algorithmes reposent sur une décomposition de la matrice des variables
-expliquées en une matrice des effets systématiques latents et une matrice des
-effets des variables explicatives. Nos deux algorithmes reposent sur une
-régularisation de l'effet des variables explicatives sur les variables
-expliquées différentes. L'un utilise une régularisons en norme $L_{2}$, tandis
-que l'autre utilise un régularisation en norme $L_{1}$. Pour chaque algorithme
-nous démontrons leur convergence vers le minimum de leur fonction objectif
-respective. Nous montrons sur des simulations numériques que nos algorithmes
-reproduisent les performances d'autres algorithmes de correction des tests
-d'association pour les variables de confusion. Nous montrons enfin que nos
-algorithmes permettent de reproduire des résultats d'une étude d'associations
-entre des génomes et la maladie \celiac ainsi qu'une étude d'association entre
-des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde. Nous
-présentons enfin des résultats trouvés par nos algorithmes sur un exemple
-d'étude d'association entre des génotypes et un gradient climatique. Nos
-algorithmes sont implémentés dans le package R, =lfmm=.
+quelques variables explicatives. Dans certaines de ces études des sources de
+variation indésirable telles que la structure de population ou bien les
+conditions expérimentales peuvent sévèrement biaiser les résultats des tests.
+Une méthode communément utilisé consiste à utiliser des variables latentes afin
+de capter les sources de variation indésirable. Dans ce chapitre nous
+introduisons deux nouveaux algorithmes qui permettent d'estimer les variables
+latentes afin de corriger les étude d'association pour les source de variations
+indésirable. Nos algorithmes reposent sur une décomposition de la matrice des
+variables étudié en une matrice des effets latents et une matrice des effets des
+variables explicatives. Nos deux algorithmes reposent sur une régularisation de
+l'effet des variables explicatives sur les variables expliquées différentes.
+L'un utilise une régularisons en norme $L_{2}$, tandis que l'autre utilise un
+régularisation en norme $L_{1}$. Pour chaque algorithme nous démontrons leur
+convergence vers le minimum de leur fonction objectif respective. Nous montrons
+sur des simulations numériques que nos algorithmes reproduisent les performances
+d'autres algorithmes de correction des tests d'association pour les variables de
+confusion. Nous montrons enfin que nos algorithmes permettent de reproduire des
+résultats d'une étude d'associations entre des génomes et la maladie \celiac
+ainsi qu'une étude d'association entre des niveaux de méthylation de l'ADN et la
+polyarthrite rhumatoïde. Nous présentons enfin des résultats trouvés par nos
+algorithmes sur un exemple d'étude d'association entre des génotypes et un
+gradient climatique. Nos algorithmes sont implémentés dans le package R, =lfmm=.
 
 ** Introduction
 <<sec:lfmm_intro>> 
@@ -16238,9 +16271,10 @@ présentes dans les données génétiques. Ainsi que comment les erreurs de mesu
 peuvent influencer les études d'association faite à partir de notre package
 lfmm.
 
-bibliographystyle:apalike
-bibliography:biblio.bib
-
+#+BEGIN_EXPORT latex
+\printbibliography
+\backmatter
+#+END_EXPORT
 ** Perspective pour les études d'association sur des données génétiques :noexport:
 
 Nous avons montré que lfmm peut être utilisé des études d'assocation a partir de
@@ -16270,6 +16304,10 @@ Il e
 Chez les espèce diploide les gènes sont transmis aux enfant par bloque appelé
 chromosomes. Le mode de transmition des chromosomes des parents au enfant
 provoque un déséquilibre de liaison entre les SNPs voisins. Avant 
+
+Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que la redaction...
+
+* Publications
 
 * Soutenance                                                       :noexport:
 :LOGBOOK:
