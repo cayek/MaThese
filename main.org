@@ -13,7 +13,7 @@
 #+COLUMNS: %25ITEM %TODO %3PRIORITY %TAGS
 #+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(g!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
 #+LaTeX_CLASS: these
-#+latex_header: \usepackage[citestyle=authoryear-icomp, bibstyle=authoryear, hyperref=true,backref=true,maxcitenames=3,url=true,backend=biber,natbib=true]{biblatex}
+#+latex_header: \usepackage[citestyle=authoryear-icomp, bibstyle=authoryear, hyperref=true,backref=true,maxcitenames=2,url=true,backend=biber,natbib=true]{biblatex}
 #+latex_header: \addbibresource{biblio.bib}
 #+LATEX_HEADER: \input{packages.tex}
 #+LATEX_HEADER: \input{setup.tex}
@@ -31,8 +31,8 @@
 # #+END_QUOTE
 
 #+BEGIN_EXPORT latex
- \baselineskip 0.6cm
-\frontmatter
+ \baselineskip 0.8cm
+ \frontmatter
 #+END_EXPORT
 
 * Workenv                                                          :noexport:
@@ -118,6 +118,8 @@
 
 * Résumés courts
 
+TODO
+
 *Résumé*  
 
 *Mots-clés*
@@ -127,24 +129,27 @@
 *Keyword*  
 
 * Résumé de la thèse
-Les analyses de données génétiques se sont démocratisé en biologie grâce aux
-dernières techniques de sequencage de l'ADN. Afin de traiter des données
-génétique de plus en plus complexe et volumineux il est nécessaire de développer
-des méthodes statistiques appropriées.
 
-*Objectif* L'objectif de cette thèse de doctorat est d'améliorer les outils
-statistiques qui permettent aux biologistes de répondre à des questions
-concrètes sur le vivant. Dans cette thèse nous nous sommes intéressé à deux
-problématiques en analyse de données génétiques : l'estimation de la structure
-génétique de population et les études d'associations. 
-*Méthode*  
+TODO
 
-Nous avons développé des méthodes reposant sur de la factorisation de matrice.
-Nous avons développer un premier modèle permettant d'estimer l'ascendance
-génétique 
-permettant d'estimer 
-*Résultats*
-*Conclusion*
+# Les analyses de données génétiques se sont démocratisé en biologie grâce aux
+# dernières techniques de sequencage de l'ADN. Afin de traiter des données
+# génétique de plus en plus complexe et volumineux il est nécessaire de développer
+# des méthodes statistiques appropriées.
+
+# *Objectif* L'objectif de cette thèse de doctorat est d'améliorer les outils
+# statistiques qui permettent aux biologistes de répondre à des questions
+# concrètes sur le vivant. Dans cette thèse nous nous sommes intéressé à deux
+# problématiques en analyse de données génétiques : l'estimation de la structure
+# génétique de population et les études d'associations. 
+# *Méthode*  
+
+# Nous avons développé des méthodes reposant sur de la factorisation de matrice.
+# Nous avons développer un premier modèle permettant d'estimer l'ascendance
+# génétique 
+# permettant d'estimer 
+# *Résultats*
+# *Conclusion*
 
 * Remerciements
 #+BEGIN_EXPORT latex
@@ -199,10 +204,10 @@ permettant d'estimer
 
 Cette dernière décennie a été marquée par une accumulation des données dans tous
 les domaines de la science. Cette accumulation de données est une aubaine pour
-les scientifiques. En particulier en génétique, l'abondance des données permet de
-comprendre toujours mieux le vivant. Cependant, que faire d'autant de données et
-comment en tirer l'information qui permettra de mieux comprendre le monde qui
-nous entoure ? Il s'agit là d'un défi majeur pour les statistiques.
+les scientifiques. En génétique, l'abondance des données permet de comprendre
+toujours mieux le vivant. Cependant, que faire d'autant de données et comment en
+tirer l'information qui permettra de mieux comprendre le monde qui nous entoure
+? Il s'agit là d'un défi majeur pour les statistiques.
 
 Le premier problème qui se pose avec les grands jeux de données est celui de la
 vitesse des algorithmes utilisés pour les traiter. Si nous avons beaucoup de
@@ -218,7 +223,7 @@ qu'un lien statistique entre variables ne correspond pas nécessairement à un
 lien de causalité. Nous pouvons par exemple citer l'effet de Yule-Simpsons, un
 paradoxe statistique dans lequel un phénomène observé de plusieurs groupes
 semble s'inverser lorsque les groupes sont combinés
-cite:simpson1951interpretation. Historiquement, les études de corrélation
+citep:simpson1951interpretation. Historiquement, les études de corrélation
 étaient faites sur des échantillons de données construits pour l'occasion et
 contrôlés pour les facteurs de confusion. Cependant, dans le contexte actuel
 les scientifiques ont accès à beaucoup de données provenant de sources éparses.
@@ -398,9 +403,9 @@ constatons une différence de distribution allélique entre les populations
 #+END_EXPORT
 
 Une méthode très utilisée pour visualiser la structure de population est
-l'analyse en composante principal (ACP). Dans une population d'individus
+l'analyse en composantes principales (ACP). Dans une population d'individus
 structuré en $K$ populations, il faut $K-1$ axes principaux pour représenter la
-structure de populations à partir de données génétique cite:Patterson_2006. Nous
+structure de populations à partir de données génétique citep:Patterson_2006. Nous
 proposons d'illustrer ce résultat en calculant les deux premiers axes
 principaux d'un échantillons de données de SNPs composés d'individu humains de
 populations africaine, européenne et afro-américaine. Les deux premiers axes
@@ -435,7 +440,7 @@ ref:fig:tess3_intro_pca)
 #+END_EXPORT
 
 Un modèle très utilisé pour étudier la structure génétique des populations à
-partir de données de SNPs est celui du logiciel =structure= cite:Pritchard2000.
+partir de données de SNPs est celui du logiciel =structure= citep:Pritchard2000.
 Dans ce modèle, nous supposons que le génome de chaque individu est la
 combinaison de morceaux de génomes provenant de $K$ clusters génétiques, aussi
 appelé populations ancestrales. Dans le cadre de ce modèle, nous pouvons écrire
@@ -454,11 +459,11 @@ d'illustrer le modèle de =structure=, nous avons calculé les coefficients de
 métissage sur le jeu de données utilisé précédemment pour illustrer l'ACP. Nous
 avons utilisé le logiciel =snmf= qui permet de calculer des coefficients de
 métissage à partir de données de SNPs avec $K = 2$ clusters génétiques
-cite:Frichot_2015. Les groupes génétique trouvé par le logiciel =snmf= sont
+citep:Frichot_2015. Les groupes génétique trouvé par le logiciel =snmf= sont
 européen et africains. Tandis que les individus afro-américains ont des génomes
 provenant des clusters génétiques africain et européen (Figure
 ref:fig:tess3_intro). Il s'agit du résultat attendu connaissant l'histoire
-démographique des individus afro-américains cite:tishkoff2009genetic.
+démographique des individus afro-américains citep:tishkoff2009genetic.
 
 #+NAME: code:intro_pca_print
 #+CAPTION: Dépend de [[code:tess3_intro_plot]]
@@ -479,7 +484,7 @@ démographique des individus afro-américains cite:tishkoff2009genetic.
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_intro_barplot.pdf}
 \caption{{\bf Coefficients de métissage individuel.} Estimation par le logiciel
-  \texttt{snmf} des coéficients de métissage pour un jeux de données composé
+  \texttt{snmf} des coéficients de métissage pour un jeu de données composé
   d'individus humains provenant de populations européenne, africaine et
   afro-américaine.}
 \label{fig:tess3_intro}
@@ -489,18 +494,18 @@ démographique des individus afro-américains cite:tishkoff2009genetic.
 
 Il existe de nombreuses méthodes pour estimer les coefficients d'ascendance à
 partir de données génétiques. Le modèle du logiciel =structure= est bayésien et
-l'inférence repose sur des méthodes d'échantillonage de la loi a posteriori des
-coefficients d'ascendance cite:Pritchard2000. D'autres méthodes visant à rendre
-plus rapide l'inférence des matrice d'ascendance minimisent la fonction
+l'inférence repose sur des méthodes d'échantillonnage de la loi a posteriori des
+coefficients d'ascendance citep:Pritchard2000. D'autres méthodes visant à rendre
+plus rapide l'inférence des matrices d'ascendance minimisent la fonction
 log-vraisemblance des paramètres d'ascendance génétique
-cite:Tang_2005,Alexander_2011,Raj_2014. Des méthodes très rapide ne reposant pas
-sur une modélisation probabiliste ont aussi été proposées pour passer à
-l'échelle des grands échantillons de données modernes
-cite:Frichot_2014,Popescu_2014. Par ailleurs, de nombreuses méthodes utilisent
-l'information spatial individuelle afin d'améliorer l'estimation de l'ascendance
-génétique et de localiser les clusters génétiques dans l'espace. Des méthodes ont
-incorporé l'information géographique au modèle bayesien de =structure=
-cite:CHEN_2007,Corander2008. Cependant, ces méthodes bayésiennes ne passe pas a
+citep:Tang_2005,Alexander_2011,Raj_2014. Des méthodes très rapides ne reposant
+pas sur une modélisation probabiliste ont aussi été proposées pour passer à
+l'échelle des grands jeux de données modernes citep:Frichot_2014,Popescu_2014.
+Par ailleurs, de nombreuses méthodes utilisent l'information spatial
+individuelle afin d'améliorer l'estimation de l'ascendance génétique et de
+localiser les clusters génétiques dans l'espace. Des méthodes ont incorporé
+l'information géographique au modèle bayésien de =structure=
+citep:CHEN_2007,Corander2008. Cependant, ces méthodes bayésiennes ne passent pas à
 l'échelle des grands jeux de données modernes.
 
 **** Scripts                                                    :noexport:
@@ -697,7 +702,7 @@ Tuto pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
 
 Un problème fondamental en science du vivant consiste à détecter les relations
 de causalité qui existes entre des événements. En statistique, un événement est
-modélisé par une variable aléatoire. Il est seulement possible détecter des
+modélisé par une variable aléatoire. Il est seulement possible de détecter des
 liens statistique entre les variables aléatoires, appelés corrélations. La
 corrélation renseigne sur les probabilités jointes des variables aléatoires en
 question. Dans un cadre statistique, nous parlons de test d'association lorsque
@@ -708,15 +713,15 @@ fonctions des gènes. Par exemple, on peut chercher quels SNPs sont corrélés �
 une maladie pour comprendre les causes génétiques de celle-ci. Cependant, comme
 nous l'avons vu dans la partie précédente, il existe de nombreux facteurs
 responsables de la diversité génétique. Quand les facteurs de variation du
-génome sont corrélés à la variable d'étude (la maladie par exemple) alors les
+génome sont corrélés à la variable d'étude (la maladie par exemple), alors les
 études d'association sont faussées. On observe en général une augmentation du
 nombre de gènes associés à la variable d'étude. Une telle situation n'est pas
 souhaitable car bien qu'il s'agisse de corrélations, il ne s'agit pas de
 corrélations intéressantes pour l'étude biologique. Nous expliquons maintenant
-plus en détail ce que sont les facteurs de confusions dans les études
+plus en détail ce que sont les facteurs de confusion dans les études
 d'associations.
 
-*** Les facteurs de confusions
+*** Les facteurs de confusion
 <<sec:fact_conf>>
 
 Basée sur l'analyse de la corrélation, les études d'association sont confrontées
@@ -731,7 +736,7 @@ alors la variable non observée un facteur de confusion. La figure
 [[graph:conf_factor]] illustre cette situation. Le problème des facteurs de
 confusion est connue depuis longtemps. En effet, on le retrouve déjà dans
 l'ouvrage /The Design of Experiment/ de Ronald Fisher qui introduisit entre
-autre le concept de d'hypothèse nulle en statistique cite:fisher1937design. Dans
+autre le concept de d'hypothèse nulle en statistique citep:fisher1937design. Dans
 cette thèse nous nous intéressons aux études d'association à très grande
 échelle. Nous avons d'une part des observations de $\Ycol$ variables sur $\Yrow$
 individus rassemblées dans une matrice $\Y$ de taille $\Yrow \times \Ycol$, et
@@ -763,7 +768,7 @@ prendre en compte dans l'étude d'association.
 #+RESULTS: code:conf_factor
 [[file:Figures/conf_factor.png]]
 
-*** Simulation numérique d'une association avec facteurs de confusions
+*** Simulation numérique d'une association avec facteurs de confusion
 <<sec:simu_ex>>
 
 Dans cette partie nous proposons de montrer l'intérêt de prendre en
@@ -852,15 +857,16 @@ détecte presque la moitié des colonnes de $\Y$ comme étant associées à $\X$
 \end{figure}
 #+END_EXPORT
 
-Prendre en comprendre les facteurs latentes est un problème importants des
-études d'associations. Certaines méthodes très efficace utilise l'analyse en
-composante principal pour estimer les facteurs de confusion et les intégrer aux
-tests d'hypothèses statistiques cite:Rahmani_2016,Price_2006. D'autre méthodes
-utilisent les modèle mixte cite:Kang_2008,Zhou_2014,Loh194944. Récemment, de
+Prendre en comprendre les facteurs latents est un problème importants des études
+d'associations. Certaines méthodes utilisent l'analyse en composantes
+principales pour estimer les facteurs de confusion et les intégrer aux tests
+d'hypothèses statistiques citep:Rahmani_2016,Price_2006. D'autre méthodes
+utilisent les modèles mixtes pour corriger les test d'hypothèse pour les sources
+de variation indésirable citep:Kang_2008,Zhou_2014,Loh194944. Récemment, de
 nombreuses méthodes ont été proposées pour permettre d'estimer dans un même
-modèle les effets des variables latentes et les effets des variables
-explicatives
-cite:frichot13_testin_assoc_between_loci_envir,article_Leek_Storey_2007,gerard2017unifying,gerard2017empirical.
+modèle les effets des variables latentes et les effets des variables étudiées
+pour l'association
+citep:frichot13_testin_assoc_between_loci_envir,article_Leek_Storey_2007,gerard2017unifying,gerard2017empirical.
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
@@ -870,22 +876,22 @@ cite:frichot13_testin_assoc_between_loci_envir,article_Leek_Storey_2007,gerard20
 ** Résumé de la problématique
 
 L'évaluation de l'ascendance génétique est un problème majeur en génétique des
-populations. Des méthodes très efficace ont été proposées pour l'estimation des
+populations. Des méthodes très efficaces ont été proposées pour l'estimation des
 coefficients d'ascendance à partir de données génétique. Cependant, l'estimation
-de l'ascendance génétique en intégrant l'information spatial à reçus moins
+de l'ascendance génétique en intégrant l'information spatiale à reçus moins
 d'attention. Ainsi, afin de permettre l'étude des données génétiques modernes,
 le développement de méthodes statistiques pour l'inférence de l'ascendance
-génétique intégrant l'information spatial est nécessaire.
+génétique intégrant l'information spatiale est nécessaire.
 
 Répondant à l'arrivée massive de données, le développement de méthodes pour les
-études d'association à grandes échelle est très actif en ce moment. Dans les
+études d'association à grandes échelles est très actif en ce moment. Dans les
 étude d'association un aspect très important est de détecter et corriger les
-source de variance indésirable pour l'étude. Chaque méthode utilise des approches
-différentes et aucunes ne s'est imposées comme étant la méthode de référence.
-Dans le contexte actuelle il est nécessaire de développer des méthodes rapides
-et utilisables sur les grandes données. Par ailleurs, une comparaison des méthodes
-de correction pour les facteurs de confusion permettrait de mieux comprendre les
-spécificités de chaque méthodes.
+sources de variation indésirable pour l'étude. Chaque méthode utilise des
+approches différentes et aucunes ne s'est imposées comme étant la méthode de
+référence. Dans le contexte actuelle il est nécessaire de développer des
+méthodes rapides et utilisables sur les données massives. Par ailleurs, une
+comparaison des méthodes de correction pour les facteurs de confusion
+permettrait de mieux comprendre les spécificités de chaque méthode.
 
 ** Objectifs de la thèse
 
@@ -897,11 +903,13 @@ de répondre à des questions concrètes sur le vivant. Dans cette thèse nous n
 sommes intéressé à deux problématiques en analyse de données génétiques :
 l'estimation de la structure génétique de population et les études
 d'associations. L'accent a été mis sur la complexité des algorithmes développées
-afin qu'ils soient applicables aux données génétiques modernes. L'importance a
-été placé aussi bien sur le développement mathématique des méthodes que sur leur
-implémentation. Afin que nos méthodes statistiques soient utilisables par la
-communauté scientifique, il a été important de rendre accessible une
-implémentation informatique efficace des nouvelles méthodes statistiques.
+afin qu'ils soient applicables aux données génétiques modernes. De plus,
+l'importance a été placé aussi bien sur le développement mathématique des
+méthodes que sur leurs implémentations informatiques. Afin que nos méthodes
+statistiques soient utilisables par la communauté scientifique, il a été
+important de rendre accessible des implémentations informatiques efficaces des
+nouvelles méthodes statistiques.
+
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -957,25 +965,25 @@ antérieurement. Nos algorithmes sont implémentés dans le package R, =tess3r=.
 <<tess3_intro>>
 
 Représenter la structure génétique de population est une étape importante dans
-l'étude de données génétiques. Les données génétiques sont volumineuse et
+l'étude de données génétiques. Les données génétiques sont volumineuses et
 multivariées. La structure génétique des populations fournit une représentation
 synthétique qui permet de visualiser la variation génétique induite par la
-stratification en population. La stratification en population ainsi observée
-fourni des informations sur l'histoire et l'évolution démographique de l'espèce
-étudié cite:Li_2008; il est également indispensable de l'utiliser comme facteur
-de correction dans les études d'associations avec un phénotype, un gradient
-environnementale ou encore une maladie cite:marchini2004effects. De même, il
-existe de nombreuses applications en médecine génétique nécessitant de connaitre
-la structure de population, comme par exemple le calcule d'un score de risque
-génétique pour une maladie cite:Wray_2013. Enfin, l'étude de la répartition en
-population d'une espèce dans son habitat est une étape clée en génétique du
-paysage cite:Fran_ois_2015.
+stratification en populations. La stratification en populations observée fournie
+des informations sur l'histoire et l'évolution démographique de l'espèce étudié
+citep:Li_2008; il est également indispensable de l'utiliser comme facteur de
+correction dans les études d'associations avec un phénotype, un gradient
+environnemental ou encore une maladie citep:marchini2004effects. De même, il
+existe de nombreuses applications en médecine génétique nécessitant de connaître
+la structure de populations, comme par exemple le calcul d'un score de risque
+génétique pour une maladie citep:Wray_2013. Enfin, l'étude de la répartition en
+population d'une espèce dans son habitat est une étape clé en génétique du
+paysage citep:Fran_ois_2015.
 
 Pour modéliser la structure génétique des populations, nous supposons que le
-génome de chaque individu est la combinaison de morceau de génome provenant de
+génome de chaque individu est la combinaison de morceaux de génome provenant de
 $K$ clusters génétiques, aussi appelé populations ancestrales
-cite:Pritchard2000. Dans chaque cluster génétique l'objectif est d'estimer les
-fréquences d'allèle pour chaque SNPs. Pour chaque individu il faut estimer la
+citep:Pritchard2000. Dans chaque cluster génétique, l'objectif est d'estimer les
+fréquences d'allèle pour chaque SNPs. Pour chaque individu, il faut estimer la
 proportion de son génotype qui provient de chaque cluster génétique. Les
 proportions sont appelées coefficients de métissage individuel, aussi appelés
 coefficients d'ascendance.
@@ -986,66 +994,66 @@ coefficients d'ascendance.
   Rmk : ici je parle de modèle probabiliste au sens de Kevin p murphy :D
 :END:
 
-L'inférence des coefficients de métissage a été largement étudiée et il existe de
-nombreuse méthodes. On distingue deux types d'approches : les approches reposant
-sur un modèle probabiliste et les approches fondées sur l'optimisation une
-fonction objectif.
+L'inférence des coefficients de métissage a été largement étudiée et il existe
+de nombreuse méthodes. On distingue deux types d'approches : les approches
+reposant sur un modèle probabiliste et les approches fondées sur l'optimisation
+d'une fonction objectif.
 
 Parmi les approches reposant sur un modèle probabiliste, on compte le logiciel
-=structure= introduit par cite:Pritchard2000 qui à introduit le modèle de
+=structure= introduit par citet:Pritchard2000 qui a introduit le modèle de
 structure génétique de population dont nous avons parlé dans l'introduction.
 L'accès à des données génétiques de plus en plus grandes a provoqué l'émergence
 de plusieurs algorithmes plus rapides que celui de =structure=. En effet,
 l'algorithme du logiciel =structure= implémente un algorithme d'échantillonnage
-de monte carlo pour estimer la distribution à posteriori des coefficients de
+de Monte-Carlo pour estimer la distribution a posteriori des coefficients de
 métissage et les fréquences d'allèle dans les clusters génétiques. Cependant les
-algorithmes de monte carlo ne passent pas à l'échelle des grands jeux de données
-génétiques modernes. Il a été proposé des améliorations du logicielle
+algorithmes de Monte-Carlo ne passent pas à l'échelle des grands jeux de données
+génétiques modernes. Il a été proposé des améliorations du logiciel
 =structure= reposant sur une fonction de vraisemblance définie pour la matrice
 des coefficients de métissage et les fréquences d'allèle dans les clusters.
 L'estimation est effectuée en maximisant la fonction log-vraisemblance. Une
 première amélioration de l'algorithme =structure= est fondée sur un algorithme
 EM (Expectation Maximisation) maximisant la fonction de vraisemblance
-cite:Tang_2005. Des algorithmes de vraisemblance plus récents sont implémentés
-dans les programmes =admixture= et =fastStructure= cite:Alexander_2011,Raj_2014.
+citep:Tang_2005. Des algorithmes de vraisemblance plus récents sont implémentés
+dans les programmes =admixture= et =fastStructure= citep:Alexander_2011,Raj_2014.
 
-Dans les approches reposant sur l'optimisation d'un fonction objective, les
+Dans les approches reposant sur l'optimisation d'une fonction objectif, les
 coefficients de métissage sont estimés à l'aide de méthodes de moindres carrés
 ou d'analyse factorielle. Pour estimer les matrices des coefficients de
-métissage et de fréquence d'allèle dans les clusters, cite:Engelhardt_2010
-propose d'utiliser l'analyse des facteurs parcimonieuse, cite:Frichot_2014
-utilise des algorithmes de factorisation de matrice non négative et
-cite:Popescu_2014 utilise l'analyse en composantes principales. Ces méthodes
+métissage et de fréquence d'allèle dans les clusters, citet:Engelhardt_2010
+proposent d'utiliser une analyse parcimonieuse à facteurs, citet:Frichot_2014
+utilisent des algorithmes de factorisation de matrice non négative et
+citet:Popescu_2014 utilisent l'analyse en composantes principales. Ces méthodes
 reposant sur des problèmes d'optimisation permettent de reproduire avec
 précision les résultats des approches considérant une fonction de vraisemblance
-cite:Frichot_2014. En outre, cette catégorie de méthodes fournie des algorithmes
+citep:Frichot_2014. En outre, cette catégorie de méthodes fournit des algorithmes
 qui sont généralement plus rapides que ceux des méthodes reposant sur un modèle
 probabiliste.
 
 *** Méthodes d'inférence des coefficients de métissage à l'aide de données géographiques
 
-Dans la natures, les individus d'une espèce évolue dans un environnement
+Dans la nature, les individus d'une espèce évoluent dans un environnement
 géographique. Les clusters génétiques identifiés par les méthodes d'estimations
 de la structure génétique des populations sont induits par les pressions
-évolutives qui ont une réalité dans l'environnement géographique de l'espèce.
-Les clusters génétiques peuvent par exemple être générés par l'isolation des
+évolutives qui s'opèrent dans l'environnement géographique de l'espèce. Les
+clusters génétiques peuvent par exemple être générés par l'isolation des
 populations à cause d'une mer les séparant ou bien des différences d'altitude
-entre celles-ci. L'étude réalisée par cite:Novembre_2008 a montré qu'il est
-possible de prédire la position des individus à partir de l'étude de leur
+entre celles-ci. L'étude réalisée par citet:Novembre_2008 a montré qu'il est
+possible de prédire la position des individus à partir de l'étude de la
 structure génétique des populations. De nombreuse méthodes ont permis
 d'améliorer la prédiction de la position géographique des individus à partir du
-génome cite:Baran_2013,Yang_2012,Bhaskar_2016,Ra_ola_2014. Si la structure
+génome citep:Baran_2013,Yang_2012,Bhaskar_2016,Ra_ola_2014. Si la structure
 génétique des populations permet de prédire la position spatiale des individus,
 alors il est possible d'améliorer l'estimation de la structure génétique des
 populations en utilisant l'information géographique. Cette idée a été exploitée
 pour améliorer le modèle bayésien de =structure= en incorporant des données
-géographiques à travers la loi de distribution à priori des coefficients de
-métissage cite:CHEN_2007,Corander2008. Les algorithmes spatiaux fournissent des
+géographiques dans la loi de distribution a priori des coefficients de métissage
+citep:CHEN_2007,Corander2008. Les algorithmes spatiaux fournissent des
 estimations de la structure de population plus robustes que des algorithmes non
 spatiaux qui peuvent conduire à des estimations biaisées du nombre de clusters
-cite:Durand_2009. Certaines méthodes bayésiennes sont basées sur des algorithmes
-de Monte Carlo de chaîne de Markov qui nécessitent beaucoup de calcul
-cite:FRAN_OIS_2010. Ainsi, les méthodes d'estimation des coefficient
+citep:Durand_2009. Certaines méthodes bayésiennes sont basées sur des algorithmes
+de Monte-Carlo de chaîne de Markov qui nécessitent beaucoup de calcul
+citep:FRAN_OIS_2010. Ainsi, les méthodes existantes d'estimation des coefficients
 d'ascendance à l'aide de données géographiques ne sont pas adaptées aux grands
 jeux de données modernes.
 
@@ -1062,7 +1070,7 @@ programing), l'autre sur un algorithme des moindres carrés alternés projetés
 algorithmes fait référence au fait que l'on alterne une étape d'optimisation
 selon la matrice des coefficients de métissage puis la matrice des fréquences de
 génotypes ancestraux. Alors que l'algorithme AQP ont un fondement théorique bien
-établi par cite:Bertsekas_1997, ce n'est pas le cas de l'algorithme APLS. En
+établi par citet:Bertsekas_1997, ce n'est pas le cas de l'algorithme APLS. En
 utilisant des simulations coalescentes, nous montrons que les estimations
 calculées par l'algorithme APLS sont de bonnes approximations des solutions de
 l'algorithme AQP. En outre, nous montrons que les performances de l'algorithme
@@ -1076,7 +1084,7 @@ sNMF. L'algorithme de sNMF repose aussi sur un problème de factorisation de
 matrice mais n'utilise pas l'information spatiale. Enfin, nous discutons de
 l'application de nos algorithmes aux données d'écotypes européens de l'espèce
 végétale /Arabidopsis thaliana/, pour lesquelles des données géographiques
-individuelles et génétiques sont disponibles cite:Horton_2012.
+individuelles et génétiques sont disponibles citep:Horton_2012.
 
 ** Nouvelles méthodes d'estimation des coefficients de métissage
 Dans cette section, nous présentons deux nouveaux algorithmes pour estimer les
@@ -1084,24 +1092,24 @@ coefficients de métissage individuel et les fréquences de génotypes dans les
 clusters génétiques en supposant $\K$ clusters génétiques. En plus des
 génotypes, les nouveaux algorithmes présentés ici nécessitent les coordonnées
 géographiques de chaque individu.
-*** Matrices d'ascendance génétiques
+*** Matrices d'ascendance génétique
 
 Nous considérons une matrice de génotype, $\Y$, enregistrant des données de $n$
 individus à $p$ locus polymorphes pour une espèce ayant une ploïdie de $d$,
 c'est-à-dire qui possède un génome composé de $d$ exemplaires de chaque
 chromosome. Pour les SNPs autosomiques dans un organisme diploïde, le génotype
 au locus $\ell$ est un nombre entier, 0, 1 ou 2, correspondant au nombre
-d'allèles de référence observé à ce locus. De même que dans cite:Frichot_2014,
-dans nos algorithmes nous utilisons des formes disjonctives pour coder les
+d'allèles de référence observé à ce locus. Dans nos algorithmes nous utilisons
+des formes disjonctives introduites par citet:Frichot_2014 pour coder les
 génotypes. Par exemple pour un organisme diploïde, le nombre d'allèles observés
 à chaque locus $,0,1,2$ est encodé comme $100$, $010$ et $001$. Pour les
 organismes de ploïdie $d$, il existe $(d + 1)$ génotypes possibles à chaque
 locus, et chaque valeur est encodée sous une forme disjonctif unique.
 
-De la même manière que dans cite:Frichot_2014, si l'on suppose qu'il y a $K$
-clusters génétiques, nous cherchons à décomposer la matrice $\Y$ en une matrice
-de coefficients de métissage $\Q$, de taille $n \times K$ et une matrice de
-fréquences de génotypes dans les $K$ clusters génétiques $\G$, de taille $p
+En utilisant la même approche que citet:Frichot_2014, si l'on suppose qu'il y a
+$K$ clusters génétiques, nous cherchons à décomposer la matrice $\Y$ en une
+matrice de coefficients de métissage $\Q$, de taille $n \times K$ et une matrice
+de fréquences de génotypes dans les $K$ clusters génétiques $\G$, de taille $p
 \times K$. Nous notons $\Q_{i,k}$ le coefficient de métissage de l'individu $i$
 pour le cluster $k$. Nous avons de plus
 \begin{equation}
@@ -1123,7 +1131,7 @@ de génotype de la façon suivante
 Ainsi le problème d'inférence peut être résolu en utilisant les méthodes de
 factorization de matrice non négatives avec en plus les contraintes convexes
 décrite par les équations eqref:eq:QConst et eqref:eq:GConst
-cite:lee1999learning,Cichocki2009. Dans la suite, nous utiliserons les notations
+citep:lee1999learning,Cichocki2009. Dans la suite, nous utiliserons les notations
 $\DQ$ et $\DG$ pour représenter les ensembles formés à partir des contraintes
 sur les matrices $\Q$ et $\G$.
 *** Information géographique
@@ -1156,7 +1164,7 @@ où $\D$ est la matrice diagonale tel que
 \label{eq:tess3Diag}
 \left\{ \D_{,i,i} \right\}_{i = 1..n}= \left\{\sum_{j = 1}^n \W_{i,j}\right\}_{i = 1..n}.
 \end{equation}
-Par le calcul, les auteurs de cite:DengCai2011 ont montré que 
+Par le calcul, les citet:DengCai2011 ont montré que 
 \begin{equation}
 \label{eq:tess3Reg}
 {\rm Tr} (\Q^{T} \Laplacienne \Q)  = \frac{1}{2} \sum_{i,j = 1}^n  \W_{i,j}  \| \Q_{i,.} - \Q_{j,.} \|^2.
@@ -1194,7 +1202,7 @@ par bloque de coordonnées consiste à alterner des étapes d'optimisation selon
 chacune des coordonnées de la fonction à optimiser (Figure
 ref:fig:coordinate_descente). Cette algorithme converge vers un minimum local
 quand la fonction objectif est convexe et définie sur un ensemble convexe
-cite:Bertsekas_1997. Le problème d'optimisation selon $\G$, quand $\Q$ est fixé,
+citep:Bertsekas_1997. Le problème d'optimisation selon $\G$, quand $\Q$ est fixé,
 est un problème d'optimisation quadratique. Il en va de même quand on échange
 les rôles de $\G$ et $\Q$, c'est pour cela que l'algorithme est dit
 d'optimisation quadratique alterné (AQP).
@@ -1261,9 +1269,9 @@ fonction $\LS$ définie par l'équation eqref:eq:tess3LS.
 #+BEGIN_proof
 La fonction $\LS$ définie par l'équation eqref:eq:tess3LS est convexe par
 rapport à $\Q$ quand $\G$ est fixé et inversement. De plus les ensembles de
-définition $\DQ$ et $\DG$ sont convexes. Alors d'après le corollaire 2 de
-cite:Grippo_2000, tout point limite de l'algorithme AQP converge vers un point de
-minimum local de la fonction $\LS$.
+définition $\DQ$ et $\DG$ sont convexes. Alors d'après le corollaire 2 établi
+par citet:Grippo_2000, tout point limite de l'algorithme AQP converge vers un
+point de minimum local de la fonction $\LS$.
 #+END_proof
 
 **** Scripts                                                    :noexport:
@@ -1392,11 +1400,11 @@ permette d'aider le choix de ces paramètres.
 :END:
 Tester la corrélation entre le génotype et les coordonnées géographiques à une
 longue tradition en génétique des populations. Des approches populaires reposent
-sur le test de Mantel cite:mantel1967 et la mesure de l'auto-corrélation spatial
-cite:HARDY_1999,Epperson_1996. Avant d'utiliser notre méthode spatiale
+sur le test de Mantel citep:mantel1967; et la mesure de l'auto-corrélation spatial
+citep:HARDY_1999,Epperson_1996. Avant d'utiliser notre méthode spatiale
 d'estimation des coefficients de métissage, nous proposons de choisir des
 valeurs de l'échelle géographique en visualisant le variogramme spatial
-cite:Cressie1993. Le variogramme peut être étendu aux données génétiques de la
+citep:Cressie1993. Le variogramme peut être étendu aux données génétiques de la
 façons suivante
 \begin{equation}
 \label{eq:tess3:variogram}
@@ -1426,7 +1434,7 @@ la plus grande valeur propre de la matrice laplacienne.
 
 Le nombre de cluster génétiques, $K$, peut être évalué en utilisant une
 technique de validation croisée fondée sur l'imputation des génotypes masqués
-cite:Wold_1978,Eastment_1982,Alexander_2011,Frichot_2014. La procédure de
+citep:Wold_1978,Eastment_1982,Alexander_2011,Frichot_2014. La procédure de
 validation croisée divise les entrées matricielles génotypiques en un ensemble
 d'apprentissage et un ensemble de tests. Les probabilités de génotype pour les
 entrées masquées sont prédites à partir des estimations des matrices $\G$ et
@@ -1435,30 +1443,30 @@ Ensuite, l'erreur de prédiction est calculée en utilisant l'erreur quadratique
 moyenne (RMSE, Root Square Mean Error) entre le génotype prédit et le génotype
 réellement observé.
 
-*** Statistique de différentiation des clusters génétiques pour détecter les locus sous adaptation locale
+*** Statistique de différenciation des clusters génétiques pour détecter les locus sous adaptation locale
 
 Les méthodes d'estimation de la structure génétiques des populations arrivent à
 détecter des clusters génétiques grâces aux pressions évolutives (décrient dans
 la partie [[intro_genet]]) qui provoquent la différenciation des distributions
 alléliques entre les différent clusters génétiques. À l'origine de cette
-différentiation il y a la migration, la dérive génétique et l'adaptation à
+différenciation il y a la migration, la dérive génétique et l'adaptation à
 l'environnement. Les locus qui ne sont pas impliqués dans un processus
 d'adaptation à l'environnement sont dit neutres. Nous faisons l'hypothèse qu'une
 large majorité des locus observés sont neutres. La migration et la dérive
 génétique influence de la même façon les distributions alléliques de tous les
-locus neutres induisant une différentiation typique entre les différents clusters
+locus neutres induisant une différenciation typique entre les différents clusters
 génétiques identifiés par les méthodes d'estimation de la structure. Les locus
 impliqués dans l'adaptation local peuvent être identifier en cherchant les locus
-pour lesquels on observe une différentiation anormal entre les clusters
-génétiques cite:Lewontin175. Nous proposons de calculer une statistique de
-différentiation entre les fréquences génomiques dans les clusters génétiques
+pour lesquels on observe une différenciation anormal entre les clusters
+génétiques citep:Lewontin175. Nous proposons de calculer une statistique de
+différenciation entre les fréquences génomiques dans les clusters génétiques
 inférées par nos algorithmes pour détecter les locus sous adaptation à
 l'environnement.
 
 En supposant qu'il y à $K$ cluster génétiques, les matrices $\Q$ et $\G$
 obtenues à partir des algorithmes AQP et APLS sont utilisées pour calculer la
-statistique de différentiation entre les clusters génétiques pour chaque locus
-de la façon suivante cite:Martins_2016
+statistique de différenciation entre les clusters génétiques pour chaque locus
+de la façon suivante citep:Martins_2016
 \begin{equation*}
 F^{Q}_{\rm ST} = 1 - \sum_{k=1}^K q_k \frac{f_k (1-f_k)}{f(1-f)},
 \end{equation*}
@@ -1482,10 +1490,10 @@ latente
 F^Q _{\rm ST}  =  \frac{\sigma^2_T - \sigma^2_S}{\sigma^2_T },
 \end{equation*}
 où $\sigma^2_T$ est la variance totale et $\sigma^2_S$ est la variance de
-l'erreur cite:Weir1996. En suivant la théorie ANOVA nous utilisons les
+l'erreur citep:Weir1996. En suivant la théorie ANOVA nous utilisons les
 statistiques $ F^Q_{\rm ST}$ pour effectuer des tests statistiques de neutralité
 à chaque locus, en comparant les valeurs observées à la valeur de
-différentiation génomique de fond.
+différenciation génomique de fond.
 
 Le test porte sur la statistique du \zscore au carré 
 \begin{equation*}
@@ -1493,11 +1501,11 @@ z^2 = (nK) F^{Q}_{\rm ST} / (1 - F^{Q}_{\rm ST}),
 \end{equation*}
 pour lequel une distribution du $\chi^{2}$ à $K-1$ degrés de liberté est attendue sous
 l'hypothèse nulle. L'hypothèse nulle est ensuite calibrée empiriquement en
-mesurant le niveau différentiation correspondant à une différentiation neutre.
+mesurant le niveau différenciation correspondant à une différenciation neutre.
 Nous utilisons pour cela le facteur d'inflation génomique
-cite:Devlin_1999,Fran_ois_2016. Après une calibration du test, le contrôle du
+citep:Devlin_1999,Fran_ois_2016. Après une calibration du test, le contrôle du
 taux de fausse découverte est effectué en utilisant l'algorithme de
-Benjamini-Hochberg cite:benjamini1995controlling.
+Benjamini-Hochberg citep:benjamini1995controlling.
 
 *** Implémentation en R
 Les deux algorithmes APLS et AQP que nous avons présentés dans cette partie ont
@@ -1515,7 +1523,7 @@ matrices.
 ** Données simulées et réelles
 *** Données simulées
 **** Simulations à partir de données réelle
-Des sous-échantillons provenant du jeux de données réelles d'/Arabidopsis
+Des sous-échantillons provenant du jeu de données réelles d'/Arabidopsis
 thaliana/ (données décrites dans la partie [[simu_At]]) ont été utilisés pour
 effectuer une analyse de la convergence et du temps de calcul des algorithmes
 AQP et APLS. Les temps d'exécution ont été évalués en utilisant un seul
@@ -1523,11 +1531,11 @@ processeur informatique Intel Xeon 2.0 GHz.
 **** Simulations coalescentes
 Nous avons utilisé le programme informatique =ms= pour effectuer des simulations
 coalescentes de SNPs neutres et de SNPs sous adaptation à l'environnement
-cite:Hudson_2002. Deux populations sources ont été créées à partir de la
+citep:Hudson_2002. Deux populations sources ont été créées à partir de la
 simulation du modèle à deux îles de Wright's. Ensuite nous avons généré des
 génotypes en mélangeant les génotypes des deux populations simulées avec =ms=
 grâce à des proportions de mélange qui varient continuellement selon un gradient
-longitudinal cite:Durand_2009,FRAN_OIS_2010 (Figure ref:tess3:cline). Dans ce
+longitudinal citep:Durand_2009,FRAN_OIS_2010 (Figure ref:tess3:cline). Dans ce
 scénario, les individus à chaque extrémité de la zone géographique sont
 représentatifs de leur population d'origine, tandis que les individus au centre
 de la gamme partagent des niveaux intermédiaires d'ascendance dans les deux
@@ -1564,7 +1572,7 @@ segments chromosomiques ancestraux supplémentaires ont été générés en simu
 des séquences d'ADN avec un taux de migration $m_s$ inférieur à $m$. Les
 simulations ont permis de reproduire pour les SNPs sous adaptation local les
 niveaux de diversité attendu lors du balayage sélectif d'un segment
-chromosomique particulier cite:Martins_2016. Pour chaque simulation, la taille
+chromosomique particulier citep:Martins_2016. Pour chaque simulation, la taille
 de l'échantillon a varié pour un nombre d'individus allant de 50 à 700.
 
 Nous avons comparé les estimateurs des algorithmes APLS et AQP entre eux. De
@@ -1576,7 +1584,7 @@ estimées et connues de la matrice $\Q$, et entre les valeurs estimées et connu
 de la matrice $\G$. Ensuite, pour évaluer le bénéfice des algorithmes spatiaux,
 nous avons comparé les erreurs statistiques de l'algorithme APLS aux erreurs
 obtenues avec la méthode sNMF qui reproduit les résultats du programme
-=structure= avec précision cite:Frichot_2014,Frichot_2015. Pour quantifier les
+=structure= avec précision citep:Frichot_2014,Frichot_2015. Pour quantifier les
 performances des tests de détection de l'adaptation local en fonction de
 l'intensité de la sélection environnementale, nous avons utilisé l'aire sous la
 courbe précision-rappel du test d'adaptation local (AUC) pour plusieurs valeurs
@@ -1618,19 +1626,19 @@ de l'intensité de la sélection ($m/m_s$).
                                         height = 0.2 * MaTheseR.params$textheightinch,
                                         width = 1 * MaTheseR.params$textwidthinch)
 #+end_src
-*** Application à des écotypes européen d'Arabidopsis thaliana
+*** Application à des écotypes européens d'/Arabidopsis thaliana/
 <<simu_At>>
 
 Nous avons utilisé l'algorithme APLS pour étudier la structure de population
 spatiale et pour détecter les locus sous adaptions local en considérant 214k SNP à
 partir de 1 095 écotypes européens des espèces végétales /A.thaliana/
-cite:Horton_2012. Le critère de validation croisée a été utilisé pour évaluer le
+citep:Horton_2012. Le critère de validation croisée a été utilisé pour évaluer le
 nombre de clusters génétiques dans l'échantillon, et nous avons utilisé le
 variogramme spatial des données génétique pour évaluer l'échelle de
 l'auto-corrélation spatiale. Nous avons utilisé les fonctions du package
 =tess3r= pour afficher les coefficients de métissage interpolés sur une carte
 géographique d'Europe. Une analyse d'enrichissement de l'ontologie des gènes
-utilisant le logiciel =AMIGO= cite:Carbon_2008 a été réalisée afin d'évaluer
+utilisant le logiciel =AMIGO= citep:Carbon_2008 a été réalisée afin d'évaluer
 quelles fonctions moléculaires et processus biologiques pourraient être
 impliqués dans l'adaptation locale de /A.thaliana/ en Europe.
 
@@ -2064,7 +2072,7 @@ objectif $\LS$.
 \end{figure}
 #+END_EXPORT
 
-Nous avons sous-échantillonné un grand jeux de données de SNPs d'écotypes de
+Nous avons sous-échantillonné un grand jeu de données de SNPs d'écotypes de
 /A.thaliana/ pour comparer les propriétés de convergence et les temps
 d'exécution des algorithmes AQP et APLS. Dans ces expériences, nous utilisons
 les méthodes avec $6$ cluster génétiques et avons répliqué 5 fois chaque
@@ -2429,13 +2437,13 @@ The following object is masked from ‘package:readr’:
 [[./OUTPUT/Rplots/tess3_vitesse.png]]
 Expr save in ./OUTPUT/Expr/tess3_vitesse_plot.rds
 #+end_example
-*** Comparaison avec une méthode spatial bayésienne : TESS
+*** Comparaison avec une méthode spatiale bayésienne : TESS
 
 Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
 un modèle spatial de mélange pour évaluer les capacités de l'algorithme APLS à
 reproduire les estimations obtenues avec le logiciel =TESS= 2.3. Nous avons
 simulé deux clusters génétiques de 100 échantillons de 2000 locus pour différent
-niveau de différentiation moyen $F_{\rm ST}$. Cela a permis de créer des jeux de
+niveau de différenciation moyen $F_{\rm ST}$. Cela a permis de créer des jeux de
 données pour lesquels il est plus ou moins dure d'estimer la structure de
 population. Les erreurs statistiques, mesurées par RMSE, pour l'estimation des
 matrices $\Q$ et $\G$ varie entre $0.02$ et $0.15$ (Figure
@@ -2471,7 +2479,7 @@ Dans l'ensemble, les performances statistiques sont du même ordre pour =TESS=
 Code trop vieux...
 ***** Plots
 J'ai mis un petit coup ink scape à des plot qui trainaient :D
-*** Comparaison avec une méthode non spatial : sNMF
+*** Comparaison avec une méthode non spatiale : sNMF
 En utilisant des simulations coalescentes de polymorphismes neutres avec un
 modèle spatial de mélange, nous avons comparé les estimations statistiques
 obtenues à partir d'un algorithme spatial (APLS) et d'un algorithme non spatial
@@ -3469,7 +3477,7 @@ SNP pour détecter les locus sous sélection naturelle dans le génome de l'esp�
 /A.thaliana/. /A. thaliana/ se trouve dans une large variété d'habitats, et
 l'adaptation locale à l'environnement est reconnue comme étant pression
 importante qui façonner la diversité génétique dans l'espace
-cite:Hancock2011,Fournier-Level2011. L'algorithme APLS a été exécuté sur les
+citep:Hancock2011,Fournier-Level2011. L'algorithme APLS a été exécuté sur les
 1095 écotypes européennes de /A. thaliana/ avec 6 de clusters génétique et 1,5
 pour le paramètre d'échelle spatiale. En utilisant l'algorithme
 Benjamini-Hochberg pour contrôler le FDR à $1 \%$, le programme a produit une
@@ -3477,7 +3485,7 @@ liste de 12 701 SNP candidats. Les 100 meilleurs candidats inclus des SNPs dans
 les gènes liés à la floraison SHORT VEGETATIVE PHASE (SVP), COP1-interacting
 protein 4.1 (CIP4.1) et FRIGIDA (FRI) ($p\text{-valeur} < 10^{-300}$). Ces gènes
 ont été détectés par des analyses antérieures de la sélection sur cet ensemble
-de données cite:Horton_2012. Nous avons réalisé une analyse d'enrichissement en
+de données citep:Horton_2012. Nous avons réalisé une analyse d'enrichissement en
 ontologie des gènes en utilisant AmiGO afin d'évaluer quelles fonctions
 biologiques pourraient être impliquées dans l'adaptation locale en Europe. Nous
 avons trouvé une sur-représentation significative des gènes impliqués dans les
@@ -4171,7 +4179,7 @@ CLOSED: [2017-09-11 lun. 19:44]
 :END:
 L'inclusion de l'information géographique dans l'inférence des relations
 ancestrales entre les organismes est un objectif majeur des études en génétique
-des populations cite:Malecot1948,Epperson_1996,Cavalli-Sforza1994. En supposant
+des populations citep:Malecot1948,Epperson_1996,Cavalli-Sforza1994. En supposant
 que des individus géographiquement proches sont plus susceptibles de partager la
 même ascendance que des individus dans des sites éloignés, nous avons introduit
 deux nouveaux algorithmes pour estimer les proportions d'ascendance à l'aide
@@ -4195,7 +4203,7 @@ numériques les erreurs des méthodes spatiales sont inférieures à celles
 observées avec des méthodes non spatiales, et les algorithmes spatiaux ont
 permis de détecter une structure de population plus subtile. En outre, nous
 avons mis en place un test de détection de la sélection reposant sur les
-estimations spatiales des matrices $\Q$ et $\G$ cite:Martins_2016, et nous avons
+estimations spatiales des matrices $\Q$ et $\G$ citep:Martins_2016; et nous avons
 observé que les tests rejettent la neutralité des locus avec plus de
 précision que ceux fondés sur des approches non spatiales. Ainsi, l'information
 spatiale a contribué à améliorer la détection des signatures de balayages
@@ -4204,11 +4212,11 @@ mélange. Nous avons appliqué les tests de neutralité pour effectuer un balaya
 du génome pour la sélection dans des écotypes européens de l'espèce végétale
 /A.thaliana/. Le scan du génome a confirmé la preuve de la sélection des gènes
 liés à la floraison /CIP4.1/, /FRI/ et /DOG1/ différenciant la Fenno-Scandinavie
-du nord-ouest de l'Europe cite:Horton_2012.
+du nord-ouest de l'Europe citep:Horton_2012.
 
 L'estimation des coefficients de métissage en utilisant des algorithmes rapides
 qui étendent des approches non spatiales telles que, =structure=, a été
-intensément discutée au cours des dernières années cite:Wollstein2015. Dans ces
+intensément discutée au cours des dernières années citep:Wollstein2015. Dans ces
 améliorations, les approches spatiales ont reçu moins d'attention que les
 approches non spatiales. Dans cette étude, nous avons présenté un cadre
 conceptuelle permettant de développer des méthodes rapides d'estimation de
@@ -4229,32 +4237,33 @@ que quelques minutes à l'aide d'un seul CPU.
 
 ** Résumé
 
-Les études d'associations sont massivement utilisées en biologie pour trouver
-par exemple les causes génétiques d'une maladie ou bien les gènes impliqués dans
-un processus d'adaptation au climat. Lors de ces études nous sommes amené à
-tester la corrélation entre un grand nombre de variables expliquées avec
-quelques variables explicatives. Dans certaines de ces études des sources de
-variation indésirable telles que la structure de population ou bien les
-conditions expérimentales peuvent sévèrement biaiser les résultats des tests.
-Une méthode communément utilisé consiste à utiliser des variables latentes afin
-de capter les sources de variation indésirable. Dans ce chapitre nous
-introduisons deux nouveaux algorithmes qui permettent d'estimer les variables
-latentes afin de corriger les étude d'association pour les source de variations
-indésirable. Nos algorithmes reposent sur une décomposition de la matrice des
-variables étudié en une matrice des effets latents et une matrice des effets des
-variables explicatives. Nos deux algorithmes reposent sur une régularisation de
-l'effet des variables explicatives sur les variables expliquées différentes.
-L'un utilise une régularisons en norme $L_{2}$, tandis que l'autre utilise un
-régularisation en norme $L_{1}$. Pour chaque algorithme nous démontrons leur
-convergence vers le minimum de leur fonction objectif respective. Nous montrons
-sur des simulations numériques que nos algorithmes reproduisent les performances
-d'autres algorithmes de correction des tests d'association pour les variables de
-confusion. Nous montrons enfin que nos algorithmes permettent de reproduire des
-résultats d'une étude d'associations entre des génomes et la maladie \celiac
-ainsi qu'une étude d'association entre des niveaux de méthylation de l'ADN et la
-polyarthrite rhumatoïde. Nous présentons enfin des résultats trouvés par nos
-algorithmes sur un exemple d'étude d'association entre des génotypes et un
-gradient climatique. Nos algorithmes sont implémentés dans le package R, =lfmm=.
+Les études d'associations sont massivement utilisées en biologie. Elles
+permettent par exemple de découvrir les causes génétiques d'une maladie ou bien
+les gènes impliqués dans un processus d'adaptation au climat. Lors de ces études
+nous sommes amené à tester les corrélations entre un grand nombre de variables.
+Dans certaines de ces études, des sources de variation indésirable telles que la
+structure de population ou bien les conditions expérimentales peuvent sévèrement
+biaiser les résultats des tests. Une méthode communément utilisée consiste à
+modéliser les sources de variation indésirable a l'aide de variables latentes.
+Dans ce chapitre, nous introduisons deux nouveaux algorithmes qui permettent
+d'estimer les variables latentes afin de corriger les études d'association pour
+les sources de variations indésirable. Nous appelons ces variables latentes les
+facteurs de confusions pour l'étude. Nos algorithmes reposent sur une
+décomposition de la matrice des variables étudiés en une matrice des effets
+latents et une matrice des effets des variables d'intérêt pour l'étude. Nos deux
+algorithmes reposent sur des régularisations sur les effets d'intérêt
+différentes. L'un utilise une régularisons en norme $L_{2}$, tandis que l'autre
+utilise un régularisation en norme $L_{1}$. Pour chaque algorithme, nous
+démontrons leur convergence vers le minimum de leur fonction objectif
+respective. Nous montrons sur des simulations numériques que nos algorithmes
+reproduisent les performances d'autres algorithmes de correction des études
+d'association. Nous montrons enfin que nos algorithmes permettent de reproduire
+des résultats d'une étude d'associations entre des génomes et la maladie
+\celiac, ainsi qu'une étude d'association entre des niveaux de méthylation de
+l'ADN et la polyarthrite rhumatoïde. Nous présentons enfin des résultats trouvés
+par nos algorithmes sur un exemple d'étude d'association entre des génotypes et
+un gradient climatique. Nos algorithmes sont implémentés dans le package R,
+=lfmm=.
 
 ** Introduction
 <<sec:lfmm_intro>> 
@@ -4269,21 +4278,21 @@ significatives entre les marqueurs et le phénotype. Par exemple, les études
 d'association à l'échelle du génome (GWAS genome-wide association studies) se
 concentrent sur des polymorphismes à un seul nucléotide (SNP pour
 single-nucleotide polymorphism) en examinant des variants génétiques chez
-différents individus cite:Balding_2006. Les GWAS ont été étendus à des études
+différents individus citep:Balding_2006. Les GWAS ont été étendus à des études
 d'association à l'échelle de l'épigénome (EWAS epigenome-wide association
 studies) qui mesurent les niveaux de méthylation de l'ADN chez différents
 individus pour des associations entre la variation épigénétique et des
-phénotypes cite:Rakyan_2011. Des approches similaires ont été appliquées à la
+phénotypes citep:Rakyan_2011. Des approches similaires ont été appliquées à la
 caractérisation de la variation observée dans l'ARN par rapport à différents
-environnements, traitements médicaux, phénotypes ou maladies cite:Slonim_2002.
+environnements, traitements médicaux, phénotypes ou maladies citep:Slonim_2002.
 D'autres exemples d'études d'association incluent des études d'association
 génétique-environnement (GEAS) dans lesquelles des locus sont testés pour leurs
 corrélations avec des gradients écologiques afin de détecter des signatures de
-sélection naturelle cite:rellstab15_pract_guide_to_envir_assoc. En un court laps
-de temps, les études d'association ont permis des progrès considérables dans
-l'identification des variants génétiques qui confèrent une susceptibilité aux
-maladies ainsi qu'une compréhension plus approfondie de l'évolution des génomes
-en réponse à la sélection naturelle.
+sélection naturelle citep:rellstab15_pract_guide_to_envir_assoc. En un court
+laps de temps, les études d'association ont permis des progrès considérables
+dans l'identification des variants génétiques qui confèrent une susceptibilité
+aux maladies ainsi qu'une compréhension plus approfondie de l'évolution des
+génomes en réponse à la sélection naturelle.
 
 *** Méthodes de correction pour les facteurs latents
 :LOGBOOK:
@@ -4332,7 +4341,7 @@ où $\bare{\U}$ est la matrice des variables latents calculée a priori et
 $\V_{j}$ la matrice des effets des variables latentes sur $\Y_{j}$. Par exemple,
 les méthodes EIGENSTRAT et Refactor calculent les variables latentes à l'aide de
 l'analyse en composantes principales (ACP) de la matrice $\Y$
-cite:Price_2006,Rahmani_2016.
+citep:Price_2006,Rahmani_2016.
 **** Les modèles mixtes
 Une autre approche de correction pour les facteurs de confusion est le modèle
 mixte. Dans un tel modèle, on ajoute un effet aléatoire au modèle de la
@@ -4345,7 +4354,7 @@ modèles mixtes, on suppose de plus que la matrice de covariance de l'effet
 aléatoire est connue. La matrice de covariance doit correspondre à la variance
 du facteur de confusion, elle est en général calculée à partir de $\Y$. Les
 modèles mixtes ont été largement utilisés pour les GWAS
-cite:Kang_2008,Zhou_2014. Dans le cas des GWAS, l'effet aléatoire permet
+citep:Kang_2008,Zhou_2014. Dans le cas des GWAS, l'effet aléatoire permet
 d'expliquer la variation de $\Y_{j}$ qui est due à la structure de population.
 Dans ce cas, la matrice de covariance est estimée a priori sur les données
 génétiques.
@@ -4366,24 +4375,24 @@ même temps. Les matrice $\U$ et $\V$ permettent d'apprendre les variations
 systématiques observées dans la matrice $\Y$ tandis que la matrice des effets
 $\B$ permet d'apprendre l'effet de $\X$ sur certaines colonnes de $\Y$. Il
 existe différentes méthodes pour estimer les paramètres de LFMM. On distingue
-d'abord des approches qui reposent sur des algorithmes de Monte Carlo
-cite:frichot13_testin_assoc_between_loci_envir,carvalho08_high_dimen_spars_factor_model.
+d'abord des approches qui reposent sur des algorithmes de Monte-Carlo
+citep:frichot13_testin_assoc_between_loci_envir,carvalho08_high_dimen_spars_factor_model.
 Ces approches reposent sur une modélisation bayésienne de LFMM qui permet
 d'échantillonner les lois a posteriori des paramètres. L'avantage des méthodes
 MCMC est qu'elles permettent d'estimer la variance du paramètre $\B$ grâce au
-bootstrap bayésien cite:rubin1981bayesian; et de faire un test de
+bootstrap bayésien citep:rubin1981bayesian; et de faire un test de
 significativité statistique. Certaines approches reposent sur des algorithmes EM
 (Expectation Maximisation)
-cite:friguet09_factor_model_approac_to_multip,agarwal09_regres,zhou16_spars_multiv_factor_analy_regres.
+citep:friguet09_factor_model_approac_to_multip,agarwal09_regres,zhou16_spars_multiv_factor_analy_regres.
 Ces approches sont souvent plus rapides que les méthodes utilisant des
-algorithmes de Monte Carlo. Enfin, d'autres approches reposent sur une
+algorithmes de Monte-Carlo. Enfin, d'autres approches reposent sur une
 estimation des variables latentes à partir d'une transformation de $\Y$
-cite:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007. Cette
+citep:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007. Cette
 transformation a pour but de séparer la variation de $\Y$ expliquée par les
 variables latentes de celle expliquée par $\X$. Parmi les méthodes reposant sur
 une transformation des données, on distingue des autres les méthodes dites à
-contrôles négatifs qui supposent connu un sous ensemble de colonnes de $\Y$ qui ne
-sont pas associées avec $\X$. Les méthodes à contrôles négatifs utilisent les
+contrôles négatifs qui supposent connu un sous ensemble de colonnes de $\Y$ qui
+ne sont pas associées avec $\X$. Les méthodes à contrôles négatifs utilisent les
 variables dîtes nulles pour estimer les variables latentes. L'estimation des
 variables latentes pour corriger les études d'association est un problème très
 vaste et aucune méthode ne s'est imposée comme étant le méthode référence.
@@ -4411,8 +4420,8 @@ Nous proposons dans ce chapitre, deux algorithmes d'estimation rapide et
 efficace des paramètres du modèle LFMM. Nos deux algorithmes d'estimation
 consistent à isoler la variation de $\Y$ expliquée par les variables latentes de
 celle expliquée par les variables explicatives $\X$. Les méthodes que nous
-présentons sont comparables aux méthodes sva cite:article_Leek_Storey_2007; et
-cate cite:wang2015confounder; qui procède d'une façon très similaire. Nous
+présentons sont comparables aux méthodes sva citep:article_Leek_Storey_2007; et
+cate citep:wang2015confounder; qui procède d'une façon très similaire. Nous
 décrivons plus en détail les méthodes cate et sva dans la partie
 [[sec:similar_method]]. Chacun des algorithmes que nous présentons découle de
 l'optimisation d'une fonction objectif. Nous montrons que nos algorithmes
@@ -4420,7 +4429,7 @@ d'estimation convergent vers le point de minimum global de leur fonction
 objectif respective. Enfin, nous comparons nos méthodes à sva et cate sur des
 simulations numériques ainsi que pour des exemples de GWAS, EWAS et GEAS.
 
-** Nouvelles méthodes de correction pour les facteurs de confusions
+** Nouvelles méthodes de correction pour les facteurs de confusion
 *** Modèle mixte à facteurs latents
 <<sec:model>>
 Dans cette partie nous introduisons les notations du modèle mixtes à facteurs
@@ -4550,7 +4559,7 @@ prendre le résidu d'une régression linéaire de $\Y$ par $\X$, on enlève alor
 toute la part de variance expliquée par $\X$. À la limite, $\D$ n'est plus
 inversible. Si $\lambRidge$ est très grand, $\D$ tend vers la matrice identité.
 Dans ce cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en
-composante principale de la matrice des variables expliquées $\Y$. Nous
+composantes principales de la matrice des variables expliquées $\Y$. Nous
 expliquons dans la partie [[sec:hyperparametre]] plus en détail comment choisir
 l'hyperparamètre $\lambRidge$.
 
@@ -4621,7 +4630,7 @@ problème de trouver la meilleure approximation de rang $\K$ de la matrice
 \D \matr{Q}^{T} \Y,
 \end{equation*}
 qui est obtenue en tronquant la SVD pour ne garder que les $\K$ valeurs
-singulières les plus grandes cite:Eckart_1936. Nous avons bien montré que
+singulières les plus grandes citep:Eckart_1936. Nous avons bien montré que
 \begin{align*}
 &\hat{\U} \hat{\V}^{T} = \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
 &\hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}^{T})
@@ -4654,20 +4663,20 @@ motivé par le fait que l'on s'attend à ce que seulement une certaine proportio
 des colonnes de $\Y$ soit associée à $\X$. Autrement dit seule certaines lignes
 de la matrice des effets $\B$ doivent être non nulles. La régularisation $L_{1}$
 est connue pour produire des estimateurs parcimonieux de $\B$
-cite:Tibshirani_1996. La fonction $\Llasso$ fait aussi intervenir une
+citep:Tibshirani_1996. La fonction $\Llasso$ fait aussi intervenir une
 régularisation sur la matrice latente $\W$. Nous ajoutons la régularisation en
 norme nucléaire afin de lever la contrainte de rang sur $\W$ empechant de
 définir un problème d'optimisation convexe. Avec le terme de régularisation sur
 $\W$, la fonction $\Llasso$ devient convexe. En outre, les pénalisations sur la
 norme nucléaire sont utilisées pour pénaliser le rang
-cite:article_Mishra_Meyer_Bach_Sepulchre_2011. Ainsi, la régularisation en norme
+citep:article_Mishra_Meyer_Bach_Sepulchre_2011. Ainsi, la régularisation en norme
 nucléaire contraint le rang de $\W$ et donc le nombre de variables latentes.
 
 **** Algorithme de minimisation de la fonction objectif $\Llasso$
 <<sec:lasso_algo>>
 
 Nous présentons maintenant un algorithme de descente par blocs de coordonnées
-qui permet d'estimer les paramètres de LFMM en minimisant la fonction objective
+qui permet d'estimer les paramètres de LFMM en minimisant la fonction objectif
 $\Llasso$ définie par eqref:eq:optim_lasso_reg. Nous initialisons l'algorithme
 avec des matrices nulles :
 \begin{align*}
@@ -4697,14 +4706,14 @@ régularisée en norme $L_{1}$ de la matrice résiduelle
 \end{equation}
 par les variables explicatives $\X$. Il existe plusieurs algorithmes pour
 estimer les paramètres de cette régression. Nous utilisons l'algorithme de
-descente par coordonnées cite:Friedman_2007. Dans le cas présent, on s'intéresse
+descente par coordonnées citep:Friedman_2007. Dans le cas présent, on s'intéresse
 plus particulièrement à l'estimation des variables latentes, qui permettront
 ensuite de faire le test d'association (voir la partie [[sec:hypothese]]). Nous
 supposons donc que les variables explicatives $\X$ ont été transformées de sorte que
 \begin{equation}
 \X^{T} \X = \Id_{d}.
 \end{equation}
-On a alors d'après cite:Tibshirani_1996,
+On a alors d'après citet:Tibshirani_1996,
 \begin{equation}
 \hat{\B}_{t} = \sign(\bar{\B}_{t}) (\bar{\B}_{t} - \lambLasso)_{+}
 \end{equation}
@@ -4724,7 +4733,7 @@ de la matrice résiduelle
 \matr{E}^{2}_{t} = \Y - \X \hat{\B}_{t}^{T},
 \end{equation}
 Cette approximation est donnée grâce à un seuillage des valeurs singulières de
-la matrice $\matr{E}^{2}_{t}$ cite:cai10_singul_value_thres_algor_matrix_compl.
+la matrice $\matr{E}^{2}_{t}$ citep:cai10_singul_value_thres_algor_matrix_compl.
 Pour cela, on commence par calculer la décomposition en valeurs singulières de
 la matrice résiduelle :
 \begin{equation}
@@ -4750,7 +4759,7 @@ vers un point minimum quand la fonction objectif n'est pas continûment
 différentiable, comme c'est le cas pour la fonction $\Llasso$. On peut trouver
 dans la littérature des résultats généraux sur les algorithmes par blocs de
 coordonnées dans des cas ou la fonction objectif n'est pas différentiable
-cite:Tseng_2001. Cependant, les théorèmes démontrés dans cite:Tseng_2001
+citep:Tseng_2001. Cependant, les théorèmes démontrés par citet:Tseng_2001
 dépassent largement le cadre de la convergence de l'algorithme d'estimation
 $L_{1}$ présenté ici et compliquent l'extraction des résultats intéressants.
 Pour faciliter la compréhension, nous proposons de démontrer un théorème plus
@@ -4767,8 +4776,8 @@ par blocs de coordonnées est défini par la formule de récurrence suivante :
 x_{i}^{k+1} \in \mathrm{arg} \min_{\zeta \in X_{i}} f(x_{1}^{k}, ...,x_{i-1}^{k},\zeta,x_{i+1}^{k},..., x_{m}^{k}), ~
 i = 1,...,m.
 \end{equation}
-En nous inspirant des résultats présentés dans cite:Tseng_2001 et de la
-proposition 2.7.1 de cite:Bertsekas_1997 qui démontre la convergence de
+En nous inspirant des résultats présentés par citet:Tseng_2001 et de la
+proposition 2.7.1 de citet:Bertsekas_1997 qui démontre la convergence de
 l'algorithme de descente par bloc de coordonnées dans le cas où la fonction
 objectif est différentiable, nous pouvons énoncer le théorème suivant :
 #+BEGIN_theorem 
@@ -4841,11 +4850,11 @@ eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$ et la résolution du
 problème d'optimisation de la fonction $\mathcal{L}_{\mathrm{lasso}}^{''}$
 définie par eqref:eq:lasso1 pour l'estimation $L_{1}$.
 
-D'après cite:Halko_2011, le calcul des $K$ composantes dominantes de la
+D'après citet:Halko_2011, le calcul des $K$ composantes dominantes de la
 décomposition en valeurs singulières demande $O(\Yrow \Ycol \K)$ opérations.
 Cette complexité peut être réduite à $O(\Yrow \Ycol \log(\K))$ opérations si on
-utilise une méthode avec projections aléatoires, comme celle présentée dans
-cite:Halko_2011.
+utilise une méthode avec projections aléatoires, comme celle présentée par
+citet:Halko_2011.
 
 La deuxième étape importante consiste en une projection du résidu de
 l'approximation de rang faible sur l'espace engendré par $\X$. Le nombre précis
@@ -4912,12 +4921,12 @@ d'estimations $L_1$ et $L_2$ présentés ici correspondent à la fonction object
 de l'analyse en composantes principales (ACP). Nous utilisons donc les méthodes
 d'estimation du nombre de composantes dans l'ACP pour $\matr{D}_{0} \Q^{T} \Y$.
 Il existe de nombreuses approches pour déterminer le nombre de composantes
-principales de l'ACP, très bien expliquées dans cite:jolliffe1986principal. On
+principales de l'ACP, très bien expliquées par citet:jolliffe1986principal. On
 peut grouper les approches en trois catégories. La première catégorie regroupe
 les approches subjectives comme l'utilisation du scree plot (le graphe des
 valeurs singulières de la matrice des données). La seconde catégorie comprend
 les approches basées sur une modélisation de la distribution des données
-observées, comme par exemple la méthode présentée dans cite:choi2014selecting.
+observées, comme par exemple la méthode présentée par citet:choi2014selecting.
 La dernière catégorie est formée des approches basées sur la validation croisée,
 comme celle que nous détaillons plus loin. Aucune méthode ne s'est imposée comme
 la référence, et il est préférable d'en utiliser plusieurs. Pour les expériences
@@ -4961,8 +4970,8 @@ variables latentes plutôt que de choisir le paramètre de régularisation
 $\lambLasso$, il est équivalent de choisir la proportion de colonnes de $\Y$
 corrélées aux variables $\X$. Pour trouver un paramètre de régularisation qui
 correspond à la proportion de lignes non nulles, nous proposons une heuristique
-basée sur un chemin de régularisation inspirée par
-cite:friedman10_regul_paths_gener_linear_model. Nous commençons par la plus
+basée sur un chemin de régularisation inspirée par les travaux de
+citet:friedman10_regul_paths_gener_linear_model. Nous commençons par la plus
 petite valeur du paramètre de régularisation $\lambLasso$ tel que le vecteur
 \begin{equation}
 \hat{\B}_{t = 1} = \sign(\bar{\B}_{t = 1}) (\bar{\B}_{t = 1} - \lambLasso)_{+}
@@ -5017,7 +5026,7 @@ toutefois pas de calculer les variables latentes pour les données de test (la
 matrice $\U$ dans LFMM). Le plus simple est de séparer les variables des données
 de test. Nous utilisons ensuite une partie des variables des données de test
 pour estimer les variables latentes et l'autre partie pour calculer l'erreur de
-prédiction cite:Bro_2008. Nous présentons maintenant plus formellement notre
+prédiction citep:Bro_2008. Nous présentons maintenant plus formellement notre
 procédure de validation croisée.
 
 Nous commençons par séparer les données en une partie d'entraînement et une
@@ -5044,7 +5053,7 @@ où $|I|$ est le nombre d'indices dans l'ensemble $I$. Cette procédure
 permet de mesurer une erreur sur des observations des variables expliquées qui
 n'ont pas été utilisées pour estimer les paramètres du modèle.
 
-*** Tests d'hypothèse corrigés pour les facteurs de confusions
+*** Tests d'hypothèse corrigés pour les facteurs de confusion
 <<sec:hypothese>>
 :LOGBOOK:
 - Note taken on [2017-08-04 ven. 17:14] \\
@@ -5069,7 +5078,7 @@ latentes $\hat{\U}$ comme les vraies valeurs de $\U$ et de les utiliser comme
 variables explicatives dans le modèle. C'est une méthode très courante dans les
 études d'association qui a montré de très bons résultats quand il y suffisamment
 d'individus
-cite:gerard2017unifying,Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016.
+citep:gerard2017unifying,Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016.
 Nous avons choisi de réaliser un test d'hypothèse qui repose sur la régression
 linéaire car cela correspond au modèle LFMM quand on suppose que $\U$ est
 connue. Les estimations des variables latentes peuvent être traitées comme
@@ -5101,19 +5110,20 @@ $\Y_{j}$ une statistique de test $z_{j}$, assimilable à un \zscore. Sous
 l'hypothèse nulle, la statistique de test suit la loi de Student à $\Yrow - \K -
 1$ degrés de liberté. On peut donc calculer une \pvalue pour chaque variable
 expliquée $\Y_{j}$. Le détail du calcul de la statistique de test est très
-classique. Par exemple, il est donné dans la section 3.2 de cite:Hastie_2009.
+classique. Par exemple, il est donné dans la section 3.2 du livre de
+citet:Hastie_2009.
 
 **** Calibration du test d'hypothèse
 <<sec:calibration>> 
 
 Il arrive parfois que la statistique de test ne suive pas la distribution
 théorique sous l'hypothèse nulle. On dit dans ce cas que le test est mal
-calibré. On peut trouver dans cite:Efron_2004 des exemples de situations qui
-peuvent aboutir à des tests mal calibrés. Dans les exemples que nous présentons
-ici ont s'attend à ce que la majorité des variables expliquées $\Y_{j}$ ne soit
-pas associées avec la variable $\X$. Ainsi une majorité des statistiques de test
-sont distribuées selon l'hypothèse nulle. Pour la calibration, nous utilisons
-l'approche choisie dans cite:Sun_2012, qui consiste à calculer la médiane et la
+calibré. citet:Efron_2004 propose des exemples de situations qui peuvent aboutir
+à des tests mal calibrés. Dans les exemples que nous présentons ici ont s'attend
+à ce que la majorité des variables expliquées $\Y_{j}$ ne soit pas associées
+avec la variable $\X$. Ainsi une majorité des statistiques de test sont
+distribuées selon l'hypothèse nulle. Pour la calibration, nous utilisons
+l'approche choisie par citet:Sun_2012, qui consiste à calculer la médiane et la
 déviation absolue à la médiane (MAD pour median absolute déviation) directement
 sur les $z$ statistiques. En effet, la médiane donne une estimation robuste de
 la moyenne et le MAD de l'écart-type. On a alors une nouvelle statistique de
@@ -5151,7 +5161,7 @@ régularisation $L_{2}$. L'algorithme lassoLFMM prend la proportion de lignes no
 nulles dans la matrice des effets $\B$. Enfin les deux algorithmes retournent
 les estimations pour les paramètres de LFMM ainsi qu'une \pvalue pour le test
 d'association de chaque colonne de $\Y$ avec $\X$.
-** Autres méthodes de correction pour les facteurs de confusions
+** Autres méthodes de correction pour les facteurs de confusion
 <<sec:similar_method>>
 
 Dans cette section nous présentons d'autres méthodes pour les études
@@ -5169,23 +5179,23 @@ d'association. D'autre part, nous comparons nos tests à une méthode qui repose
 sur une estimation des variables latentes par l'ACP. Dans ce cas, il s'agit de
 faire une régression de $\Y$ par $\X$ et $\bar{\U)}$ définie comme la matrice
 des scores sur les $\K$ premières composantes principales. Un principe similaire
-est utilisé dans la méthode EIGENSTRAT cite:Price_2006. Les deux méthodes,
+est utilisé dans la méthode EIGENSTRAT citep:Price_2006. Les deux méthodes,
 reposant sur la régression linéaire avec et sans les score de l'ACP, ont été
 implémentées en langage R et nous les appelons respectivement lm et PCAlm.
 
-*** COMMENT emma cite:Kang_2008
+*** COMMENT emma citep:Kang_2008
 :LOGBOOK:
 - Note taken on [2017-08-07 lun. 10:23] \\
   Non on va pas ajouter emma aux méthodes ca serais trop compliqué.
 :END:
-*** Méthode "Surrogate Variable Analysis" (SVA) cite:article_Leek_Storey_2007
+*** Méthode "Surrogate Variable Analysis" (SVA) citep:article_Leek_Storey_2007
 :LOGBOOK:
 - Note taken on [2017-08-05 Sat 13:57] \\
   sva utilisé:[[file:Rpackage/R/ExpRmethod-sva.R::ExpRmouline.method_sva%20<-%20function(m,%20dat)%20{][sva function]]
 :END:
 
-Il existe deux versions de SVA : sva-two-step cite:article_Leek_Storey_2007 et
-sva-irw cite:article_Leek_Storey_2008. La méthode sva-two-step se découpe en
+Il existe deux versions de SVA : sva-two-step citep:article_Leek_Storey_2007; et
+sva-irw citep:article_Leek_Storey_2008. La méthode sva-two-step se découpe en
 deux étapes : une étape d'estimation de la matrice des axes factoriel $\V$ et
 une étape d'estimation de la matrice des variables latentes $\U$. Lors de la
 premières étape la méthode sva-two-step estime les axes factoriel en faisant une
@@ -5212,9 +5222,9 @@ l'utilisateur. Le désavantage de cette procédure est qu'on ne sais pas vers qu
 elle converge ni si elle converge. Nous avons utilisé le package R sva fourni
 par ses auteurs.
 
-*** "High dimensional factor analysis and confounder adjusted testing and estimation" (CATE) cite:wang2015confounder
+*** "High dimensional factor analysis and confounder adjusted testing and estimation" (CATE) citep:wang2015confounder
 
-Nous présentons dans cette partie la méthode cate cite:wang2015confounder. Pour
+Nous présentons dans cette partie la méthode cate citep:wang2015confounder. Pour
 faciliter les explications, nous considérons le cas où il n'y a qu'une variable
 explicative $\X$. Dans la méthode cate, on commence par transformer la matrice
 des variables expliquées $\Y$ afin d'isoler les variations expliquées par les
@@ -5229,7 +5239,7 @@ factoriels. Cette première étape est comparable à l'étape de calcul de la
 matrice $\V$ dans notre méthode ridgeLFMM (voir partie [[sec:estimator_L2]]). Dans
 ridgeLFMM, plutôt que d'enlever complétement les variations de $\Y$ expliquées
 par $\X$ nous la réduisons en fonction du paramètre de régularisation
-$\lambRidge$. Comme cela a été montré dans cite:wang2015confounder sva et cate
+$\lambRidge$. Comme cela a été montré par citet:wang2015confounder sva et cate
 calcule la même matrice des axes factorielles. Cette matrice correspond à celle
 estimée par ridgeLFMM dans le cas où $\lambRidge$ vaut zéro. La méthode cate
 diffère de sva dans sa façon de calculer les variables latentes et les effets de
@@ -5268,8 +5278,8 @@ cherche. Nous avons utilisé le package R cate fourni par ses auteurs.
 
 Nous avons simulé des données pour lesquelles nous connaissons les variables
 expliquées associées avec la variable explicative. Pour cela, nous utilisons une
-matrice de variables expliquées $\Y$ d'un jeux de données réelles. Pour obtenir
-les données simulées nous réalisons une analyse en composante principale de
+matrice de variables expliquées $\Y$ d'un jeu de données réelles. Pour obtenir
+les données simulées nous réalisons une analyse en composantes principales de
 la matrice $\Y$ et ne gardons que les $\K$ premières composantes en fonction
 du nombre de facteurs de confusion que nous souhaitons simuler. Nous avons alors
 \begin{equation}
@@ -5332,12 +5342,12 @@ Afin d'évaluer la calibration des \pvalues renvoyées par les méthodes nous
 calculons le facteurs d'inflation des $\pvalues des fausses associations. Le
 facteur d'inflation est calculé comme la médiane des \zscores au carré divisée
 par le quantile à $50 \%$ de la lois du $\chi^{2}$ à un degré de liberté
-cite:Devlin_1999. Si les \pvalues des fausse associations sont réparties
+citep:Devlin_1999. Si les \pvalues des fausse associations sont réparties
 uniformément alors le facteur d'inflation vaut 1. Une méthode qui renvoie des
 \pvalues correctement calibrées permet de calculer une liste de candidats avec
 un taux de fausses découvertes moyen contrôlé. Pour cela on peut par exemple
-utiliser l'algorithme de Benjamini-Hoshberg cite:benjamini1995controlling ou
-bien la \qvalue cite:Storey_2011.
+utiliser l'algorithme de Benjamini-Hoshberg de citet:benjamini1995controlling ou
+bien la \qvalue de citet:Storey_2011.
 
 *** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
 La polyarthrite rhumatoïde est une maladie auto-immune d'origine inconnue. Dans
@@ -5347,21 +5357,21 @@ processus au cours duquel un groupe méthyle est ajouté aux molécules d'ADN. L
 méthylation peut changer l'activité de l'ADN et en particulier modifier sa
 transcription en protéine. Pour cette étude, nous nous intéressons au niveau de
 méthylation de $485 577$ sites de l'ADN chez 354 individus atteints de
-polyarthrite rhumatoïde et chez 335 individus sains cite:Liu_2013. Il est connu
+polyarthrite rhumatoïde et chez 335 individus sains citep:Liu_2013. Il est connu
 que la methylation de l'ADN dépend de l'âge, du genre et de la consommation de
 tabac de chaque individu. Nous savons aussi que le type de la cellule sur
 laquelle on prélève la mesure influence le niveau de méthylation. Tous ces
 facteurs peuvent être des facteurs de confusion pour l'étude d'association avec
 la maladie. Ils ont été pris en compte explicitement dans les études
 d'association qui ont été faites à partir des mêmes données que celles étudiées
-ici cite:Rahmani_2016,Zou_2014. Afin d'évaluer la capacité des méthodes
+ici citep:Rahmani_2016,Zou_2014. Afin d'évaluer la capacité des méthodes
 à bien corriger les test d'association, nous ne prenons pas en compte
 les facteurs de confusion connus et nous comparons les résultats à ceux obtenus
-par les études cite:Rahmani_2016 et cite:Zou_2014 qui prennent en compte
+par les études citep:Rahmani_2016 et citep:Zou_2014 qui prennent en compte
 explicitement les facteurs de confusion connus (type cellulaire, genre,
 consommation de tabac et âge).
 
-De la même façon que dans cite:Zou_2014 nous avons filtré les sites avec un
+De la même façon que dans citep:Zou_2014 nous avons filtré les sites avec un
 niveau de methylation moyen constitutif, c'est-à-dire inférieur à 0.2 ou
 supérieur à 0.8. De plus, nous avons centré et divisé par l'écart-type les
 données de méthylation. Nous avons ensuite appliqué les méthodes cate, lm, PCAlm,
@@ -5372,16 +5382,16 @@ Enfin pour chaque méthode nous avons calculé la liste obtenue quand on contrô
 le taux de fausse découverte (FDR) à $1 \%$. Les algorithmes de contrôle du FDR
 nécessitent que les \pvalues soient correctement calibrées. Pour cela nous avons
 calibrées les \pvalues grâce à la méthode présentée dans la partie
-[[sec:calibration]]. Le contrôle du FDR a été réalisé à l'aide du package R qvalue
-cite:Storey_2011.
+[[sec:calibration]]. Le contrôle du FDR a été réalisé à l'aide du package R =qvalue=
+citep:Storey_2011.
 
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
 <<sec:gwas>> 
 
 La maladie \celiac est une maladie auto-immune ayant une prévalence de près de
-$1 \%$ dans la population générale cite:Gujral_2012. Bien que les mécanismes
+$1 \%$ dans la population générale citep:Gujral_2012. Bien que les mécanismes
 d'apparition de cette maladie ne sont pas comprise, des études montrent de
-fortes associations avec certains gènes cite:dubois2010multiple; laissant
+fortes associations avec certains gènes citep:dubois2010multiple; laissant
 envisager des causes génétiques à la maladie. Comme la maladie \celiac est très
 étudiée, faire une étude d'association de celle-ci avec des données génomiques
 constitue un bon test pour les méthodes de correction pour les variables
@@ -5392,10 +5402,10 @@ données GWAS catalog pour récupérer les SNPs ayant été identifiés dans d'a
 que la stratification des individus en populations peut être un facteur de
 confusion dans les GWAS. Il est habituel de corriger les GWAS en utilisant les
 scores de l'ACP des données génétiques pour représenter la structure de
-population cite:Price_2006. Nous proposons ici de faire une étude d'association
+population citep:Price_2006. Nous proposons ici de faire une étude d'association
 entre la maladie \celiac et des données génétique présentées dans
-cite:dubois2010multiple. Ces données comportent 281122 SNPs pour 15155
-individus, 10659 individus sains et 4496 atteints de la maladie \celiac. 
+citep:dubois2010multiple. Ces données comportent 281122 SNPs pour 15155
+individus, 10659 individus sains et 4496 atteints de la maladie \celiac.
 
 Avant d'appliquer les méthodes d'étude d'association, nous avons filtré les
 données génétiques afin de garder seulement les SNPs ayant le variant le moins
@@ -5411,8 +5421,8 @@ que le SNP de variance maximum sur une fenêtre de 100 SNPs et cela sur les SNPs
 ayant un coefficient de corrélation linéaire au carré qui est supérieur à $0.2$.
 Cette procédure de prunning nous a permis d'identifier un sous ensemble de 80275
 SNPs. Les opérations de filtrage ont été effectuées à l'aide du logiciel plink
-cite:Purcell_2007. Enfin nous avons utilisé le logiciel beagle pour imputer les
-données manquantes de la matrice de SNPs cite:Browning_2016.
+citep:Purcell_2007. Enfin nous avons utilisé le logiciel beagle pour imputer les
+données manquantes de la matrice de SNPs citep:Browning_2016.
 
 Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM, ridgeLFMM dans le
 but de trouver les SNPs associés avec la maladie \celiac. Afin d'estimer les
@@ -6103,7 +6113,7 @@ GRCh38.
 *** Étude d'association entre des données génétiques et un gradient environnemental (GEAS)
 
 Depuis Darwin nous savons que les organismes vivants s'adaptent à leur
-environnement cite:Darwin. Ainsi les organismes les mieux adaptés à leur habitat
+environnement citep:Darwin. Ainsi les organismes les mieux adaptés à leur habitat
 ont plus de chance de survivre et de se reproduire. Si l'avantage adaptatif a
 des causes génétiques, c'est à dire qu'il existe une combinaison de gènes qui
 confère à l'organisme une fonction lui permettant d'être mieux adapté à son
@@ -6115,10 +6125,10 @@ l'avons fait dans le chapitre précédent.
 Nous proposons maintenant de détecter les signatures de l'adaptation à
 l'environnement en faisant une étude d'association d'un gradient environnemental
 avec des données génétiques. Pour cela nous avons récupéré les données
-génétiques du projet 1000Genome phase 3 cite:1000Genome_2015. Ces données
+génétiques du projet 1000Genome phase 3 citep:1000Genome_2015. Ces données
 regroupent $84.4$ millions de variants génétiques pour 2506 individus venant de
 26 populations différentes. Par ailleurs nous avons récupéré des données
-climatiques à partir de la base de données WorldClim 2.0 cite:fick17_world. Nous
+climatiques à partir de la base de données WorldClim 2.0 citep:fick17_world. Nous
 avons filtré les individus trop apparentés et les variants génétiques de faible
 fréquences de la même façon que l'étude GWAS (voir section [[sec:gwas]]). Nous avons
 enlevé les populations afro-américaine et africaine des caraïbes pour ne garder
@@ -6131,7 +6141,7 @@ ridgeLFMM. Nous avons calculé ensuite des \pvalues pour chacun des 5397214 locu
 et pour chacune des méthodes. La liste des candidats retournées par les méthodes
 a été étudiée grâce au logiciel VEP (Variant Effect Predictor). Le logiciel VEP
 permet d'annoter l'effet d'un polymorphisme sur l'expression des gènes
-cite:McLaren_2016. Les annotations retournés par VEP sont classées en catégorie
+citep:McLaren_2016. Les annotations retournés par VEP sont classées en catégorie
 d'importance: LOW, MODERATE et HIGH. Nous avons réalisé un test exact de Fisher
 afin d'étudier la sur-représentation de chacune des catégories d'annotations.
 Nous avons enfin utiliser le package BiomaRt afin d'annoter les SNPs qui ont été
@@ -6170,7 +6180,7 @@ représente la valeur du gradient climatique pour chaque population.
 #+END_EXPORT
 
 **** Scripts                                                    :noexport:
-***** DONE Téléchargement du jeux de données
+***** DONE Téléchargement du jeu de données
 CLOSED: [2017-07-26 mer. 18:17]
 :LOGBOOK:
 - State "DONE"       from              [2017-07-26 mer. 18:17]
@@ -6203,7 +6213,7 @@ CLOSED: [2017-07-27 jeu. 14:15]
 :END:
 
 Tout le pré traitement a été fait avec le logicielle =plink= cite:Purcell_2007.
-Le jeux de données a d'abord été filtrer avec les opérations suivantes: 
+Le jeu de données a d'abord été filtrer avec les opérations suivantes: 
 - on ne garde que les SNPs ayant une fréquence d'allele supérieur à $0.05$
 - ... voir doc de plink
 
@@ -9389,7 +9399,7 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
 
 Dans cette partie, nous présentons les expériences numériques que nous avons
 réalisées pour évaluer la performance de nos algorithmes de correction des
-facteurs de confusions dans les études d'association. Les deux nouveaux
+facteurs de confusion dans les études d'association. Les deux nouveaux
 algorithmes ont été implémentés dans le langage de programmation R et sont
 appelés respectivement ridgeLFMM pour l'estimation $L_{2}$ et lassoLFMM pour
 l'estimation $L_{1}$. Nos méthodes sont comparées aux méthodes présentées dans
@@ -9956,16 +9966,16 @@ pour chaque site de méthylation renvoyées par chaque méthode contre la
 distribution théorique sous l'hypothèse nulle. On constate une inflation du
 nombre de petites \pvalues pour toutes les méthodes. Il y a une forte inflation
 pour les méthodes lm et sva-irw. La figure ref:fig:ewas_qqplot_top B montre la
-proportion des candidats identifiés par cite:Zou_2014,Rahmani_2016 qui sont
+proportion des candidats identifiés par citet:Zou_2014,Rahmani_2016 qui sont
 retrouvés dans les "top" listes de chaque méthode. Nous rappelons que les
-candidats identifiés par cite:Zou_2014 et cite:Rahmani_2016 sont au nombre de 5.
+candidats identifiés par citet:Zou_2014,Rahmani_2016 sont au nombre de 5.
 Ils ont été identifiés en prenant en compte les facteurs de confusion tel que
 l'age, le sexe et une estimation de la composition cellulaire. Les méthodes
 considérées dans notre analyse retrouvent les candidats de la littérature dans
 leurs 40 premiers rangs, sauf lm et sva_irw. Pour la méthode lm, il faut prendre
-le rang 11881 pour trouver le premier candidat de cite:Zou_2014,Rahmani_2016 et
+le rang 11881 pour trouver le premier candidat de citet:Zou_2014,Rahmani_2016 et
 le rang 138038 pour tous les avoir. Pour la méthode sva-irw, les candidats de
-cite:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et $87659$.
+citet:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et $87659$.
 
 #+NAME: code:lfmm_ewas_res_print
 #+CAPTION: Dépend de [[code:ewas_qqplot_top]]
@@ -9991,7 +10001,7 @@ cite:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et $8765
     méthylation et la polyarthrite rhumatoïde (EWAS).} A) Diagramme quantile-quantile de
   l'inverse du logarithme en base 10 des \pvalues renvoyées par chaque méthode.
   Les quantiles théoriques suivent la loi exponentielle. B) Proportion des
-  candidats proposés par \cite{Rahmani_2016} et \cite{Zou_2014} retrouvés dans
+  candidats proposés par \citet{Rahmani_2016,Zou_2014} retrouvés dans
   la top liste renvoyée par chaque méthode.}
 \label{fig:ewas_qqplot_top}
 \end{figure}
@@ -10000,7 +10010,7 @@ cite:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et $8765
 Nous avons écarté lm et sva-irw car ils renvoyaient des listes trop différentes
 des autres. Parmi les 19 candidats trouvés par toutes les méthodes quand on
 contrôle de FDR à $1 \%$ on retrouve les 5 candidats identifiés par
-cite:Zou_2014 et cite:Rahmani_2016 (Figure ref:fig:ewas_venn). Nous remarquons
+citet:Zou_2014,Rahmani_2016 (Figure ref:fig:ewas_venn). Nous remarquons
 de plus que d'autres sites de méthylation situés dans des gènes sont détectés
 avant les 5 candidats de la littérature. En particulier, nous trouvons des gènes
 situés dans le complexe de gènes HLA qui joue un rôle central dans le système
@@ -11994,7 +12004,7 @@ nombre de petites \pvalues (Figure ref:fig:gwas_qqplot_top A). La méthode la
 plus libérale est lm alors que ridgeLFMM et PCAlm est la méthode la plus
 conservative. Le chromosome 6 contient le complexe de gènes HLA. Ce complexe de
 gènes joue un rôle important dans le système immunitaire et dans la maladie
-\celiac cite:dubois2010multiple. Nous avons séparer les SNPs candidats du GWAS
+\celiac citep:dubois2010multiple. Nous avons séparer les SNPs candidats du GWAS
 catalog retrouvés sur le chromosome 6 des autre chromosomes. Les candidats du
 GWAS catalog sur le chromosome 6 sont retrouvé plus tôt dans les listes
 retournées par les méthodes PCAlm et ridgeLFMM (Figure ref:fig:gwas_qqplot_top
@@ -15909,7 +15919,7 @@ CLOSED: [2017-09-22 ven. 11:28]
   - On a un cadre mathématique pour trouver les variables latentes pour corriger
     les tests d'assocaitions
   - les algos converge les solutions optimals de leur problème d'otim
-  - quand on prend pas en compte les variables de confusions on est mal calibré et
+  - quand on prend pas en compte les variables de confusion on est mal calibré et
     on trouve pas les assocaiton
   - quand on les prend comme avec l'ACP on passe a coté de certaine associations
   - mes méthodes font comme l'oracle sur les simulations et trouve plus de
@@ -15942,7 +15952,7 @@ Afin dévaluer l'intérêt d'estimer les facteurs latents dans les études
 d'association nous avons considéré la méthode lm qui repose sur un modèle de
 régression de chaque variable expliquée par la variable explicative. Nous avons
 observé que les \pvalues retournées par lm sont mal calibrées en présence de
-facteurs de confusions. En outre, la méthode lm a montré moins de puissance pour
+facteurs de confusion. En outre, la méthode lm a montré moins de puissance pour
 retrouver les candidats sur les données simulées et réelles. Cela montre que la
 présence de facteurs de confusion influence la calibration des \pvalues ainsi
 que leurs rangs.
@@ -15966,7 +15976,7 @@ la convergence de sva-irw ce qui rend compliqué l'exploration pour trouver les
 bons paramètres de l'algorithme.
 
 Sur les jeux de données simulées nos algorithmes ont les mêmes performances que
-la méthode oracle qui connait les facteurs de confusions. Les \pvalues renvoyé
+la méthode oracle qui connait les facteurs de confusion. Les \pvalues renvoyé
 par nos algorithmes sont bien calibrées sur les vrais jeux de données et
 permettent de retrouver les candidats trouvées par d'autres étude. Les
 performances globales de ces méthodes sont très comparable à la méthode cate.
@@ -15979,7 +15989,7 @@ les résultats d'une étude d'association.
 
 Dans les études d'association sur des données réelles considérées ici il n'y pas
 de vérité terrain. De plus, une méthode peut toujours donner de meilleurs
-résultats qu'une autre sur des simulations bien choisis cite:Wolpert_1997. Sur
+résultats qu'une autre sur des simulations bien choisis citep:Wolpert_1997. Sur
 les données réelles nous avons constaté que les méthodes cate, lassoLFMM et
 ridgeLFMM retournent des \pvalues correctement calibré qui permette de calculer
 des listes de candidats pour l'association plus grandes que les autres méthodes.
@@ -16128,13 +16138,13 @@ Voir cahier le 7/08/2017
 Un grande partie de la biologie repose sur l'analyse des données provenant du
 monde qui nous entoure. Les techniques qui permettent d'acquérir les données
 évoluent, il est donc nécessaire que les méthodes pour les analyser évoluent
-également. Dans le cadre de cette thèse nous avons proposé plusieurs algorithmes
+également. Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes
 reposant sur des problèmes de factorisation de matrice. Pour certain algorithme
 nous avons prouvé leur convergence vers un point critique de leur fonction
 objectif. Nous avons démontré l'utilité de chacun de nos algorithmes sur des
 données réelles afin de répondre à des questions de la génétique moderne. Des
-implémentations efficace de nos algorithmes sont disponibles dans deux packages
-R : tess3r et lfmm. Nous proposons maintenant différente perspectives de nos
+implémentations efficaces de nos algorithmes sont disponibles dans deux packages
+R : =tess3r= et =lfmm=. Nous proposons maintenant différentes perspectives de nos
 travaux.
 
 # Le package tess3r proposent des algorithmes qui permette de calculé une
@@ -16151,7 +16161,7 @@ travaux.
 # et de faire un scan à la selection de AT.
 
 
-** Développement et maintenance des packages tess3r et lfmm
+** Développement et maintenance des packages =tess3r= et =lfmm=
 :LOGBOOK:
 - Note taken on [2017-09-29 ven. 19:08] \\
   Comment inciter les utilisateurs a utilisé github issu stac over flow etc : 
@@ -16161,47 +16171,41 @@ travaux.
 :END:
 
 Le choix de d'implémentation des packages en R n'est pas anodin. La communauté R
-est très vivante et en particulier en analyse de données biologique. Les
+est très vivante et en particulier en analyse de données biologiques. Les
 packages que nous avons développés peuvent ainsi être intégré à des pipelines
 d'analyse de données biologiques faisant intervenir d'autre package R. Par
-ailleurs, le language de programmation R est un language "haut niveau"
-permettant une maintenance plus facile que sur des languages de programmation
-bas niveau tel que le language C par exemple. Une perspective majeur de nos
-travaux est de maintenir nos packages en fonction des mises à jour du langague R
-ou bien des rapports d'erreur renvoyés par les utilisateurs.
+ailleurs, le langage de programmation R est un langage "haut niveau" permettant
+une maintenance plus facile que sur des langages de programmation bas niveau tel
+que le langage C par exemple. Une perspective majeur de nos travaux est de
+maintenir nos packages en fonction des mises à jour du langage R, ou bien des
+rapports d'erreurs renvoyés par les utilisateurs. Un autre aspect important du
+développement des packages est la mise en place d'une documentation complète. Au
+même titre que le développement des fonctions informatiques, la documentation
+doit évoluer avec les retours des utilisateurs.
 
-Un autre aspect important du développement des packages est la mise en place
-d'une documentation complète. Au même titre que le développement des fonctions
-informatiques, la documentation doit évoluer avec les retours des utilisateurs.
-Les fonctions des packages tess3r et lfmm sont documentées. Nous avons également
-écrit des documentations plus longue proposant une vu d'ensemble des
-fonctionnalités des packages. Dans l'écosystème R les documentations longues
-sont appelées vignette. Il sera donc important de faire évoluer les
-documentations des fonctions ainsi que leur vignette en fonction des retours des
-utilisateurs.
-
-Les packages tess3r et lfmm reposent sur des structures de données matricielles.
-Nous avons choisi d'utiliser la structure matricielle classique du language R
-afin d'etre le plus général possible. Un question majeur pour les utilisateurs
-est de savoir comment charger les données en mémoire vive afin d'utiliser nos
-outils. Certain format de fichier se sont imposé dans la communauté de la
-génétique, comme par exemple le format du logiciel plink .bed et les .vcf.
-Ajouter une option permettant au utilisateurs de fournir directement un fichier
-formater dans un format standard serait un réelle avantage pour les
-utilisateurs. En outre, certain format de fichier ont été pensé pour permette
-une accès rapide aux données génétiques à la manière des algorithmes
-onlines[fn:online]. C'est le cas par exemple du format de bed. Ne pas charger
+Les packages =tess3r= et =lfmm= reposent sur des structures de données
+matricielles. Nous avons choisi d'utiliser la structure matricielle classique du
+langage R afin d'etre le plus général possible. Un question majeure pour les
+utilisateurs est de savoir comment charger les données en mémoire vive afin
+d'utiliser nos outils. Certains formats de fichier se sont imposés dans la
+communauté de la génétique, comme par exemple le format =.bed= du logiciel
+=plink=, ou le format =.vcf=. Ajouter une option permettant au utilisateurs de
+fournir directement un fichier formaté dans un format standard serait un réel
+avantage pour les utilisateurs. En outre, certains formats de fichier ont été
+pensés pour permette un accès rapide des données à la manière des algorithmes
+onlines[fn:online]. C'est le cas par exemple du format =.bed=. Ne pas charger
 toutes les données dans la mémoire vive de l'ordinateur permettrait aux
 utilisateurs ayant des capacités en mémoire vive modeste d'utiliser nos
-algorithmes sur des grandes données.
+algorithmes sur des données massives.
 
-Enfin pour rendre nos outils utilisables par le plus grand nombre il est très
+Enfin, pour rendre nos outils utilisables par le plus grand nombre il est très
 important de communiquer sur ceux-ci. En particulier, il faut inciter les
 utilisateurs à poser des questions sur les plateformes d'échange du type Stack
 Exchange comme [[https://www.biostars.org/][biostars]] et [[https://stackoverflow.com/documentation/r/topics][stackoverflow]]. Ces plateformes permettent des
 échanges avec les utilisateurs à la fois sur les aspects pratiques d'utilisation
-des packages mais aussi sur les aspects plus généraliste d'analyse de données
-avec nos outils.
+des packages mais aussi sur les aspects plus généralistes d'analyse de données.
+Ces échanges permettent de faire le lien entre statisticiens et biologistes et
+stimule la recherche de nouvelles méthodes statistiques.
 
 [fn:online] Un algorithme online, ou algorithme en ligne, est un algorithme qui
 reçoit son entrée non pas d'un seul coup, mais comme un flux de données, et qui
@@ -16214,26 +16218,26 @@ doit prendre des décisions au fur et à mesure.
   - [[https://en.wikipedia.org/wiki/Ancient_DNA][Ancient DNA]]
 :END:
 
-Les données réelles analysées lors de cette thèse peuvent être qualifié de
-données "propre". Dit autrement, les données contiennent peu d'erreur et peu de
+Les données réelles analysées lors de cette thèse peuvent être qualifiées de
+données "propre". Dit autrement, les données contiennent peu d'erreurs et peu de
 valeurs manquantes. Cependant, il est fréquent sur les grands jeux de données
-biologiques avec beaucoup variables qu'un certain nombre de variables ne soit pas
-observé pour tous les échantillons. Ou bien qu'il y ai des erreurs dans les
-variables observées. Il est fréquent par exemple que les données génétiques
-comportent des erreurs de séquençage. Des données génétique de très mauvaises
-qualités sont par exemple les données génétiques prélevées sur des espèces qui se
-sont éteintes.
+biologiques avec beaucoup variables qu'un certain nombre de variables ne soit
+pas observés pour tous les échantillons. Ou bien qu'il y ai des erreurs dans les
+variables observées. Par exemple, il et fréquent que les données génétiques
+comportent des erreurs de séquençage. Des données génétiques de très mauvaises
+qualités sont par exemple les données génétiques prélevées sur des espèces qui
+se sont éteintes.
 
 Les algorithmes que nous avons développés ont été pensés pour fonctionner sur
 des matrices de données complètes. Dans le cas des données génétiques
-l'imputation des valeurs manquantes a été très étudiés cite:Browning_2016.
+l'imputation des valeurs manquantes a été très étudiés citep:Browning_2016.
 Ainsi, l'approche la plus simple est d'imputer les valeurs manquantes avant de
 considérer d'autre analyse, d'association ou d'inférence de la structure de
 population par exemple. Cette approche fonctionne très bien pour les espèces
 très étudiées comme l'Humain. Pour de tel espèce, on a accès à beaucoup de
-génomes complets pouvant servir de référence pour l'imputation cite:Howie_2012.
+génomes complets pouvant servir de référence pour l'imputation citep:Howie_2012.
 Pour des espèces anciennes ou simplement moins étudier l'imputation est moins
-évidentes. 
+évidentes.
 
 Les algorithmes que nous avons développé peuvent être découpé en une suite
 d'opération matricielle. Les opération matricielle n'étant pas défini avec des
@@ -16247,29 +16251,28 @@ de coordonnées utilisés dans nos méthodes. Une autre approche simple à
 implémenter consiste à imputer les données manquantes par leur moyenne ou une
 autre statistique. Quand il y a peu de données manquante, on s'attend a ce que
 cette méthode ne biaise pas trop l'inférence des facteurs dans les méthodes à
-facteurs comme l'ACP cite:josse2009gestion.
+facteurs comme l'ACP citep:josse2009gestion.
 
 Une autre approche consiste à imputer au hasard une première fois les données
 manquantes. Puis dans le cadre d'un algorithme d'estimation itératif à chaque
 étape on utilise la valeur prédite par le modèle. Il s'agit de l'approche
 utilisé par l'algorithme SOFT-IMPUTE prévu pour fonctionner sur des matrices de
 données très incomplètes
-cite:mazumder10_spect_regul_algor_learn_large_incom_matric. Cette approche
+citep:mazumder10_spect_regul_algor_learn_large_incom_matric. Cette approche
 pourrait être directement adaptable aux algorithmes APLS, AQP et lassoLFMM étant
 des algorithmes itératifs. Nous perdons cependant les propriétés de convergenceq
 démontré sur le algorithme AQP et lassoLFMM.
 
-On attribue parfois un score sur la confiance sur la mesure expérimental des
-génomes. Une méthode simple consiste à filtrer les observations ayant un score
-trop faible pour les traiter comme des données manquantes. Le problème est
-autrement plus complexe lorsque que nous ne somme pas capable de détecter les
-erreurs de mesure présentes dans les données biologiques. Nous avons évalué,
-dans le chapitre [[chap:tess3]], l'effet du bruit dans les données géographiques sur
-les résultats de nos algorithmes spatiaux d'estimation de l'ascendance.
-Cependant, nous pouvons nous interroger sur l'effets des valeurs aberrantes
-présentes dans les données génétiques. Ainsi que comment les erreurs de mesure
-peuvent influencer les études d'association faite à partir de notre package
-lfmm.
+On attribue parfois un score sur la confiance des séquençages génétiques. Une
+méthode simple consiste à filtrer les observations ayant un score trop faible
+pour les traiter comme des données manquantes. Le problème est autrement plus
+complexe lorsque que nous ne somme pas capable de détecter les erreurs de mesure
+présentes dans les données biologiques. Nous avons évalué, dans le chapitre
+[[chap:tess3]], l'effet du bruit dans les données géographiques sur les résultats de
+nos algorithmes spatiaux d'estimation de l'ascendance. Cependant, nous pouvons
+nous interroger sur l'effets des valeurs aberrantes présentes dans les données
+génétiques. Ainsi que comment les erreurs de mesure peuvent influencer les
+études d'association faite à partir de notre package =lfmm=.
 
 #+BEGIN_EXPORT latex
 \printbibliography
