@@ -166,7 +166,7 @@
 
 Cette dernière décennie a été marquée par une accumulation des données dans tous
 les domaines de la science. Cette accumulation de données est une aubaine pour
-les scientifiques. En particulier en génétique l'abondance des données permet de
+les scientifiques. En particulier en génétique, l'abondance des données permet de
 comprendre toujours mieux le vivant. Cependant, que faire d'autant de données et
 comment en tirer l'information qui permettra de mieux comprendre le monde qui
 nous entoure ? Il s'agit là d'un défi majeur pour les statistiques.
@@ -174,37 +174,36 @@ nous entoure ? Il s'agit là d'un défi majeur pour les statistiques.
 Le premier problème qui se pose avec les grands jeux de données est celui de la
 vitesse des algorithmes utilisés pour les traiter. Si nous avons beaucoup de
 données rapidement nous voulons aussi des algorithmes rapides pour les traiter
-et les visualiser. L'augmentation de la puissance des ordinateurs ne suffis pas
-toujours à rendre applicable un algorithme à un plus grand jeux de données. Par
-conséquence il est toujours nécessaire de trouver des nouveaux algorithmes afin
-de traiter des rapidement données plus grandes.
+et les visualiser. L'augmentation de la puissance des ordinateurs ne suffit pas
+toujours à rendre applicable un algorithme à un plus grand jeu de données. Par
+conséquence, il est toujours nécessaire de trouver des nouveaux algorithmes afin
+de traiter rapidement des données plus grandes.
 
-Un deuxième problèmes important avec les grands échantillons de données concerne
+Un deuxième problème important avec les grands échantillons de données concerne
 les études de liaisons entre variables. Il est bien connu des statisticiens
-qu'un lien statistique entres variables ne correspond pas nécessairement à un
+qu'un lien statistique entre variables ne correspond pas nécessairement à un
 lien de causalité. Nous pouvons par exemple citer l'effet de Yule-Simpsons, un
 paradoxe statistique dans lequel un phénomène observé de plusieurs groupes
 semble s'inverser lorsque les groupes sont combinés
-cite:simpson1951interpretation. Historiquement, les études de corrélations
+cite:simpson1951interpretation. Historiquement, les études de corrélation
 étaient faites sur des échantillons de données construits pour l'occasion et
-contrôlés pour les facteurs de confusion. Cependant, dans le contexte actuelle
+contrôlés pour les facteurs de confusion. Cependant, dans le contexte actuel
 les scientifiques ont accès à beaucoup de données provenant de sources éparses.
-Utiliser de tel données pour trouver des liens statistiques intéressant pour une
-problématique scientifique est alors beaucoup complexe qu'avec des données
-contrôlées. A cela s'ajoute le fait que plus l'échantillon de données est grand
-plus il est possible de détecter des liens statistiques subtiles. Par
-conséquent, dans le contexte actuelle où l'accès aux données est très facile il
-faut être très prudent et rigoureux dans les études de corrélations.
+Utiliser de telles données pour identifier des liens statistiques pertinents pour une
+problématique scientifique est alors beaucoup plus complexe qu'avec des données
+contrôlées. À cela s'ajoute le fait que plus l'échantillon de données est grand,
+plus il est possible de détecter des liens statistiques subtils. Par
+conséquent, dans le contexte actuel où l'accès aux données est très facile, il
+faut être très prudent et rigoureux dans les études de corrélation.
 
-Dans le cadre de cette thèse de doctorat nous nous sommes intéressé à développer
+Dans le cadre de cette thèse de doctorat nous nous sommes intéressés à développer
 des méthodes statistiques adaptées au traitement de données génétiques afin de
 répondre à deux problèmes. Le premier est l'estimation de la structure génétique
 des populations à partir de données génétiques et géographiques. Le deuxième est
 l'estimation des facteurs de confusion pour corriger les tests d'association.
 Les méthodes statistiques développées lors de cette thèse reposent sur la
 factorisation de matrice. Nous allons maintenant introduire plus en détails les
-contextes biologiques dans lesquels interviennent les méthodes statistiques que
-nous avons développées.
+problématiques biologiques.
 
 ** La génomique des populations
 :LOGBOOK:
@@ -236,43 +235,44 @@ nous avons développées.
 <<intro_genet>>
 
 La génétique des populations est l'étude de la distribution et des changements
-de la fréquence des versions d'un gêne, que l'on appel allèle, dans des
-populations d'être vivant. La génomique des populations est un néologisme qui
+de la fréquence des variants d'un gène, que l'on appelle allèle, dans des
+populations d'êtres vivants. La génomique des populations est un néologisme qui
 souligne le fait que l'on étudie plus les différences génétiques dans et entre
-les populations à l'échelle d'un seul gêne mais à l'échelle du génome complet.
+les populations à l'échelle d'un seul gène mais à l'échelle du génome complet.
 La génomique des populations a des applications en épidémiologie où elle permet
-de comprendre la transmission des maladies génétiques. En agronomie, où des
-programmes de sélection modifient le patrimoine génétique de certains organismes
-pour créer des races ou variétés plus performantes, ou plus résistantes à des
-maladies. Elle permet également de comprendre les mécanismes de conservation et
-de disparition des populations et des espèces.
+de comprendre la transmission des maladies génétiques. Elle est aussi utilisée
+en agronomie où des programmes de sélection modifient le patrimoine génétique
+de certains organismes pour créer des races ou variétés plus performantes, ou
+plus résistantes à des maladies. Elle permet également de comprendre les
+mécanismes de conservation et de disparition des populations et des espèces.
 
 Les populations étudiées par la génétique des populations sont formées d'un
-ensemble d'individus qui montrent une unité de reproduction : les individus
-d'une population peuvent se croiser entre eux, ils se reproduisent moins avec
-les individus des populations voisines, desquelles ils sont géographiquement
-isolés. Les changements de fréquences d'allèle dans les populations peuvent être
-expliqué par quartes pressions évolutives : la mutation, la sélection, la dérive
-génétique, et la migration. La mutation créer de nouveau allèle, elle peut être
-neutre, c'est à dire sans effet sur l'organisme, ou non et avoir par exemple un
-effet sur la capacité de l'organisme à s'adapter à son environnement. La
-sélection est l'hypothèse centrale de la théorie de Darwin, ainsi si un allèle
-permet à l'organisme d'être mieux adapté à son environnement alors cette allèle
-aura plus de chance d'être transmis aux générations futures puisque l'organisme
-porteur de l'allèle peut se reproduire plus facilement. La dérive génétique
-provient du fait qu'il n'existe pas de populations infinies. Ainsi au file des
-générations les distributions alléliques changent à cause de la reproduction au
-hasard des individus. Ce processus peut engendrer la disparition ou la fixation
-d'un allèle neutre juste par hasard. Enfin la migration est le passage de gènes
-d'une population à une autre (par des individus qui passent d'une population à
+ensemble d'individus qui une unité de reproduction : les individus d'une
+population peuvent se croiser entre eux, ils se reproduisent moins avec les
+individus des populations voisines, desquelles ils sont géographiquement isolés.
+Les changements de fréquences d'allèle dans les populations peuvent être
+expliqué par quatre pressions évolutives : la mutation, la sélection, la dérive
+génétique, et la migration. La mutation créée de nouveaux allèles qui peuvent
+être neutre, c'est à dire sans effet sur l'organisme, ou non. Les mutations non
+neutres peuvent par exemple avoir un effet sur la capacité de l'organisme à
+s'adapter à son environnement. La sélection est l'hypothèse centrale de la
+théorie de Darwin. Si un allèle permet à l'organisme d'être mieux adapté à son
+environnement alors il aura plus de chance d'être transmis aux générations
+futures. Par exemple, un organisme porteur d'un allèle apportant un avantage
+sélectif peut se reproduire plus facilement. La dérive génétique provient du
+fait qu'il n'existe pas de populations infinies. Ainsi, au fil des générations
+les distributions alléliques changent à cause de la reproduction au hasard des
+individus. Ce processus peut engendrer la disparition ou la fixation d'un allèle
+neutre simplement par hasard. Enfin, la migration est le passage de gènes d'une
+population à une autre (par des individus migrant d'une population à
 l'autre, par exemple sous forme de graines ou de pollen chez les plantes). Si
 cet échange se fait entre des populations ayant des fréquences alléliques
 différentes, il va tendre à modifier les fréquences alléliques.
 
-Bien que la génétique des populations trouve ses origines dans les travaux de
-Sewall Wright, J. B. S. Haldane et Ronald Fisher qui sont anterieurs à la
-découverte de la structure de l'ADN (Acide désoxyribonucléique) par Watson et
-Crick en 1953, la génomique des populations moderne utilise des données
+La génétique des populations trouve ses origines dans les travaux de Sewall
+Wright, J. B. S. Haldane et Ronald Fisher. bien que ces travaux sont antérieurs
+à la découverte de la structure de l'ADN (acide désoxyribonucléique) par Watson
+et Crick en 1953, la génomique des populations moderne utilise des données
 d'observation de génomes de plusieurs individus provenant de plusieurs
 populations. L'ADN contient toute l'information génétique, appelée génome,
 permettant le développement, le fonctionnement et la reproduction des êtres
@@ -285,7 +285,7 @@ polymorphism) qui sont les polymorphismes génétiques d'un seul nucleotide
 génétiques humaines, et des SNPs avec une fréquence allélique supérieure à $1
 \%$ sont présents toutes les cent à trois cents paires de bases en moyenne dans
 le génome humain. Nous appelons locus une position sur l'ADN, nous parlons ainsi
-du locus d'un SNP. Nous représentons les données génétique comme la matrice
+du locus d'un SNP. Nous représentons les données génétiques comme la matrice
 contenant le nombre de fois que l'allèle muté a été observé pour chaque individu
 et chaque locus (Figure ref:fig:matrix). Nous noterons $\Y$ la matrice de SNPs
 dans ce qui suit.
@@ -330,14 +330,14 @@ $
 
 Une étape très importante en génétique des populations est l'inférence d'une
 représentation synthétique de la structure de populations à partir des données
-génétiques. La structure de population influence les distributions des SNPs par
-le biais des quatre pressions évolutives dont nous avons parlé dans le début de
-cette partie. Les pressions évolutives induisent une différenciation des
-distributions alléliques entre les populations. Nous avons illustré se résultats
-en représentant les distributions alléliques d'un SNPs pour des individus
-humains provenant de populations africaine, européenne et afro-américaine. Nous
-constatons une différence de distribution allélique dans les différentes
-populations (Figure ref:fig:tess3_intro_freq).
+génétiques. La structure de populations influence les distributions des SNPs par
+le biais des quatre pressions évolutives dont nous avons parlées dans le début
+de cette partie. Les pressions évolutives induisent une différenciation des
+distributions alléliques entre les populations. Nous avons illustré ce résultat
+en représentant les distributions alléliques d'un SNP pour des individus humains
+provenant de populations africaine, européenne et afro-américaine. Nous
+constatons une différence de distribution allélique entre les populations
+(Figure ref:fig:tess3_intro_freq).
 
 #+NAME: code:intro_freq_print
 #+CAPTION: Dépend de [[code:tess3_intro_plot]]
@@ -365,15 +365,15 @@ populations (Figure ref:fig:tess3_intro_freq).
 #+END_EXPORT
 
 Une méthode très utilisée pour visualiser la structure de population est
-l'analyse en composante principal (ACP). Dans une populations d'individus
+l'analyse en composante principal (ACP). Dans une population d'individus
 structuré en $K$ populations, il faut $K-1$ axes principaux pour représenter la
 structure de populations à partir de données génétique cite:Patterson_2006. Nous
-proposons d'illustrer ce résultats en calculant les deux premiers axes
+proposons d'illustrer ce résultat en calculant les deux premiers axes
 principaux d'un échantillons de données de SNPs composés d'individu humains de
 populations africaine, européenne et afro-américaine. Les deux premiers axes
-principaux permettent de visualiser un groupe composé des individus européens,
-deux groupe composé des individus africains et les individus afro-américains
-répartis entre les groupes européens et afro-américains (Figure
+principaux permettent de visualiser un groupe composé des individus européens et
+deux groupes composés des individus africains. Les individus afro-américains
+sont répartis entre les groupes européens et afro-américains (Figure
 ref:fig:tess3_intro_pca)
 
 #+NAME: code:intro_pca_print
@@ -404,28 +404,28 @@ ref:fig:tess3_intro_pca)
 Un modèle très utilisé pour étudier la structure génétique des populations à
 partir de données de SNPs est celui du logiciel =structure= cite:Pritchard2000.
 Dans ce modèle, nous supposons que le génome de chaque individu est la
-combinaison de morceau de génome provenant de $K$ clusters génétiques, aussi
-appelé populations ancestrales. Dans le cadre de ce modèle nous pouvons écrire
+combinaison de morceaux de génomes provenant de $K$ clusters génétiques, aussi
+appelé populations ancestrales. Dans le cadre de ce modèle, nous pouvons écrire
 \begin{equation}
 \label{eq:structure}
 \Pr(\Y_{i,\ell} = j) = \sum_{k = 1}^{K} \G_{(d + 1)\ell + j, k} \Q_{i,k},
 \end{equation}
-où $\Pr(\Y_{i,j} = d)$ est la probabilité d'observé l'allèle $j$ au locus $\ell$
-chez l'individu $i$. Le terme $\G_{(d + 1)\ell + j, k}$ représente la fréquence
-d'apparition de l'allèle $j$ au locus $\ell$ dans la cluster $k$. Le terme
-$Q_{i,k}$ est la proportion de gène de l'individu $i$ prévenant de la population
-$k$, appelé coefficients de métissage ou d'ascendance. Les coefficients
-d'ascendance et les fréquences d'allèle dans les clusters génétiques sont
-respectivement rangés dans des matrices $\Q$ et $\G$. Nous proposons d'illustrer
-ce résultats en calculant les coefficients de métissage sur le jeux de données
-utilisé pour illustrer la visualisation de la structure de population par l'ACP.
-Nous avons utilisé le logiciel =snmf= qui permet d'inférer les coefficient de
-métissage à partir de données SNPs avec $K = 2$ clusters génétique
+où $\Pr(\Y_{i,j} = d)$ est la probabilité d'observer l'allèle $j$ au locus
+$\ell$ chez l'individu $i$. Le terme $\G_{(d + 1)\ell + j, k}$ représente la
+fréquence d'apparition de l'allèle $j$ au locus $\ell$ dans la cluster génétique
+$k$. Le terme $Q_{i,k}$ est la proportion de gène de l'individu $i$ prévenant de
+la population $k$, appelé coefficient de métissage ou d'ascendance. Les
+coefficients d'ascendance et les fréquences d'allèles dans les clusters
+génétiques sont respectivement rangés dans des matrices $\Q$ et $\G$. Afin
+d'illustrer le modèle de =structure=, nous avons calculé les coefficients de
+métissage sur le jeu de données utilisé précédemment pour illustrer l'ACP. Nous
+avons utilisé le logiciel =snmf= qui permet de calculer des coefficients de
+métissage à partir de données de SNPs avec $K = 2$ clusters génétiques
 cite:Frichot_2015. Les groupes génétique trouvé par le logiciel =snmf= sont
 européen et africains. Tandis que les individus afro-américains ont des génomes
-provenant des groupes génétique africain et européen (Figure
+provenant des clusters génétiques africain et européen (Figure
 ref:fig:tess3_intro). Il s'agit du résultat attendu connaissant l'histoire
-démographique des individus afro-américain cite:tishkoff2009genetic.
+démographique des individus afro-américains cite:tishkoff2009genetic.
 
 #+NAME: code:intro_pca_print
 #+CAPTION: Dépend de [[code:tess3_intro_plot]]
@@ -453,15 +453,22 @@ démographique des individus afro-américain cite:tishkoff2009genetic.
 \end{figure}
 #+END_EXPORT
 
-Dans cette thèse nous proposons une méthode permettant l'inférence des
-coefficients de métissage individuels à partir de données de SNPs et
-géographique de chaque individu. Cette méthode repose sur une factorisation
-matricielle de la matrice de SNPs avec un régularisation utilisant les données
-géographiques. De nombreuse approches ont été proposées pour estimer les
-coefficients de métissage ainsi les fréquences ancestrales à partir de données
-génétiques. Nous présentons dans le chapitre [[chap:tess3]] un état de l'art des
-méthodes d'inférence des coefficients de métissage à partir des données
-génétiques et géographiques.
+
+Il existe de nombreuses méthodes pour estimer les coefficients d'ascendance à
+partir de données génétiques. Le modèle du logiciel =structure= est bayésien et
+l'inférence repose sur des méthodes d'échantillonage de la loi a posteriori des
+coefficients d'ascendance cite:Pritchard2000. D'autres méthodes visant à rendre
+plus rapide l'inférence des matrice d'ascendance minimisent la fonction
+log-vraisemblance des paramètres d'ascendance génétique
+cite:Tang_2005,Alexander_2011,Raj_2014. Des méthodes très rapide ne reposant pas
+sur une modélisation probabiliste ont aussi été proposées pour passer à
+l'échelle des grands échantillons de données modernes
+cite:Frichot_2014,Popescu_2014. Par ailleurs, de nombreuses méthodes utilisent
+l'information spatial individuelle afin d'améliorer l'estimation de l'ascendance
+génétique et de localiser les clusters génétiques dans l'espace. Des méthodes ont
+incorporé l'information géographique au modèle bayesien de =structure=
+cite:CHEN_2007,Corander2008. Cependant, ces méthodes bayésiennes ne passe pas a
+l'échelle des grands jeux de données modernes.
 
 **** Scripts                                                    :noexport:
 ***** DONE Africain Européen et Afro américain 
@@ -644,7 +651,7 @@ Tuto pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
 [[./OUTPUT/Rplots/tess3_intro_pca.png]]
 [[./OUTPUT/Rplots/tess3_intro_freq.png]]
 [[./OUTPUT/Rplots/tess3_intro_barplot.png]]
-** Test d'association
+** Tests d'association
 :LOGBOOK:
 - Note taken on [2017-09-18 lun. 16:54] \\
   Biblio:
@@ -655,28 +662,26 @@ Tuto pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
   jardin commum, vidéo les stat expliqué a mon chat :D)
 :END:
 
-Un problème fondamental en science du vivant est de détecter les relations de
-causalité qui existes entre des événements. En statistique, un événement est
+Un problème fondamental en science du vivant consiste à détecter les relations
+de causalité qui existes entre des événements. En statistique, un événement est
 modélisé par une variable aléatoire. Il est seulement possible détecter des
 liens statistique entre les variables aléatoires, appelés corrélations. La
 corrélation renseigne sur les probabilités jointes des variables aléatoires en
-question. Dans un cadre statistique nous parlons de test d'association quand on
-test si deux variables aléatoires sont corrélées.
+question. Dans un cadre statistique, nous parlons de test d'association lorsque
+l'on cherche à identifier des corrélations entre des variables aléatoires.
 
-Les tests d'association sont très utilisée en génétique pour comprendre les
-fonctions des gènes. Par exemple on peut chercher quel SNP est corrélé à une
-maladie pour comprendre les causes génétiques de celle-ci. Cependant, comme nous
-l'avons vu dans la partie précédente il existe de nombreux facteurs responsables
-de la diversité génétique. Quand les facteurs de variation du génome sont
-corrélés à la variable d'étude (la maladie par exemple) alors les études
-d'association sont faussées. On observe en général une augmentation du nombre de
-gènes associés à la variable d'étude. Une telle situation n'est pas souhaitable
-car bien qu'il agisse de corrélations, il ne s'agit pas de corrélations
-intéressantes pour l'étude biologique. Dans les données génétique qui nous
-intéresse dans cette thèse, il est possible d'inférer les facteurs responsable
-de la variation génétique. On appel de tels facteurs les facteurs de confusion
-pour le test d'association. Les facteurs de confusion doivent être pris en
-compte dans les études d'association pour éviter les fausses associations.
+Les tests d'association sont très utilisés en génétique pour comprendre les
+fonctions des gènes. Par exemple, on peut chercher quels SNPs sont corrélés à
+une maladie pour comprendre les causes génétiques de celle-ci. Cependant, comme
+nous l'avons vu dans la partie précédente, il existe de nombreux facteurs
+responsables de la diversité génétique. Quand les facteurs de variation du
+génome sont corrélés à la variable d'étude (la maladie par exemple) alors les
+études d'association sont faussées. On observe en général une augmentation du
+nombre de gènes associés à la variable d'étude. Une telle situation n'est pas
+souhaitable car bien qu'il s'agisse de corrélations, il ne s'agit pas de
+corrélations intéressantes pour l'étude biologique. Nous expliquons maintenant
+plus en détail ce que sont les facteurs de confusions dans les études
+d'associations.
 
 *** Les facteurs de confusions
 <<sec:fact_conf>>
@@ -731,8 +736,8 @@ prendre en compte dans l'étude d'association.
 Dans cette partie nous proposons de montrer l'intérêt de prendre en
 considération les facteurs de confusion dans les études d'association par une
 simulation numérique. Pour cela nous simulons une variable explicative $\X$ et
-une variable latente de sorte que le coefficient de corrélation entre ces deux
-variables soit égale à $0.6$. Nous simulons ensuite une matrice de bruit
+une variable latente $\U$ de sorte que le coefficient de corrélation entre les
+deux variables soit égale à $0.6$. Nous simulons ensuite une matrice de bruit
 gaussien de moyenne nulle et variance égale à 1, noté $\E$. La matrice des
 effets de la variable latente sur $\Y$ est aussi simulée à l'aide de la loi
 normale. Nous notons la matrice des effets latents $\V$. La matrice des effets
@@ -804,7 +809,6 @@ détecte presque la moitié des colonnes de $\Y$ comme étant associées à $\X$
                                    height = 0.3 * MaTheseR.params$textheightinch,
                                    width = MaTheseR.params$textwidthinch)
 #+end_src
-
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
 \centering
@@ -815,20 +819,42 @@ détecte presque la moitié des colonnes de $\Y$ comme étant associées à $\X$
 \end{figure}
 #+END_EXPORT
 
-Dans cette thèse nous proposons une méthode statistique qui permet de corriger
-les tests d'association pour les facteurs de confusion. Il existe plusieurs
-approche pour corriger les études d'associations que nous expliquons plus en
-détail dans le chapitre [[sec:lfmm_intro]]. La méthodes que nous présentons repose
-sur une décomposition de la matrice $\Y$ par en une partie expliquant la variance
-systématique que l'on souhaite corriger et une partie représentant l'effet de la
-variable explicative $\X$ sur les variables expliquées.
+Prendre en comprendre les facteurs latentes est un problème importants des
+études d'associations. Certaines méthodes très efficace utilise l'analyse en
+composante principal pour estimer les facteurs de confusion et les intégrer aux
+tests d'hypothèses statistiques cite:Rahmani_2016,Price_2006. D'autre méthodes
+utilisent les modèle mixte cite:Kang_2008,Zhou_2014,Loh194944. Récemment, de
+nombreuses méthodes ont été proposées pour permettre d'estimer dans un même
+modèle les effets des variables latentes et les effets des variables
+explicatives
+cite:frichot13_testin_assoc_between_loci_envir,article_Leek_Storey_2007,gerard2017unifying,gerard2017empirical.
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
 - Note taken on [2017-07-18 Tue 08:55] \\
   Kenneth lange, factorisation de matrice = avenir des stat ! a retrouver !
 :END:
-** Problématique et plan
+** Résumé de la problématique
+
+L'évaluation de l'ascendance génétique est un problème majeur en génétique des
+populations. Des méthodes très efficace ont été proposées pour l'estimation des
+coefficients d'ascendance à partir de données génétique. Cependant, l'estimation
+de l'ascendance génétique en intégrant l'information spatial à reçus moins
+d'attention. Ainsi, afin de permettre l'étude des données génétiques modernes,
+le développement de méthodes statistiques pour l'inférence de l'ascendance
+génétique intégrant l'information spatial est nécessaire.
+
+Répondant à l'arrivée massive de données, le développement de méthodes pour les
+études d'association à grandes échelle est très actif en ce moment. Dans les
+étude d'association un aspect très important est de détecter et corriger la
+variance indésirable pour l'étude. Chaque méthode utilise des approches
+différentes et aucunes ne s'est imposées comme étant la méthode de référence.
+Dans le contexte actuelle il est nécessaire de développer des méthodes rapides
+et utilisables sur les grandes données. Par ailleurs, une comparaison des méthodes
+de correction pour les facteurs de confusion permettrait de mieux comprendre les
+spécificités de chaque méthodes.
+
+** Objectifs de la thèse
 
 La génétique produit beaucoup de données et de en plus vite grâce aux
 technologies de séquençage toujours plus efficace. Cette affluence de données
@@ -836,22 +862,13 @@ pose de nouveaux problèmes aux statisticiens. L'objectif de cette thèse de
 doctorat est d'améliorer les outils statistiques qui permettent aux biologistes
 de répondre à des questions concrètes sur le vivant. Dans cette thèse nous nous
 sommes intéressé à deux problématiques en analyse de données génétiques :
-l'estimation de la structure génétique de population et les test d'associations.
-L'accent a été mis sur la rapidité des méthodes statistiques développées afin
-qu'elles soient applicables aux données génétiques modernes. En outre, afin que
-nos méthodes statistiques soient utilisables par la communauté scientifique, il
-a été important de rendre accessible une implémentation informatique efficace
-des nouvelles méthodes statistiques.
-
-Dans un premier chapitre nous présentons un cadre méthodologique permettant
-l'inférence de l'ascendance à partir de données génétique et géographiques. Dans
-une deuxième partie nous présentons un cadre méthodologique permettant d'estimer
-les facteurs de confusion qui augmente le nombre de fausses découvertes dans les
-études d'association. Chaque chapitre commence par une introduction du contexte
-et de la problématique biologique. Nous développons ensuite notre méthodologie
-statistique et exposons nos algorithmes. Enfin, nos méthodes sont comparées aux
-méthodes existantes et appliquées à des échantillons de données réelles de la
-biologie afin d'illustrer leurs utilités.
+l'estimation de la structure génétique de population et les études
+d'associations. L'accent a été mis sur la complexité des algorithmes développées
+afin qu'ils soient applicables aux données génétiques modernes. L'importance a
+été placé aussi bien sur le développement mathématique des méthodes que sur leur
+implémentation. Afin que nos méthodes statistiques soient utilisables par la
+communauté scientifique, il a été important de rendre accessible une
+implémentation informatique efficace des nouvelles méthodes statistiques.
 
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
@@ -974,7 +991,7 @@ probabiliste.
 
 *** Méthodes d'inférence des coefficients de métissage à l'aide de données géographiques
 
-Dans la natures les individus d'une espèce évolue dans un environnement
+Dans la natures, les individus d'une espèce évolue dans un environnement
 géographique. Les clusters génétiques identifiés par les méthodes d'estimations
 de la structure génétique des populations sont induits par les pressions
 évolutives qui ont une réalité dans l'environnement géographique de l'espèce.
@@ -985,7 +1002,7 @@ possible de prédire la position des individus à partir de l'étude de leur
 structure génétique des populations. De nombreuse méthodes ont permis
 d'améliorer la prédiction de la position géographique des individus à partir du
 génome cite:Baran_2013,Yang_2012,Bhaskar_2016,Ra_ola_2014. Si la structure
-génétique des populations permet de prédire la position spatiale des individus
+génétique des populations permet de prédire la position spatiale des individus,
 alors il est possible d'améliorer l'estimation de la structure génétique des
 populations en utilisant l'information géographique. Cette idée a été exploitée
 pour améliorer le modèle bayésien de =structure= en incorporant des données
