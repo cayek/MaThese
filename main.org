@@ -1109,31 +1109,31 @@ locus, et chaque valeur est encodée sous une forme disjonctif unique.
 En utilisant la même approche que citet:Frichot_2014, si l'on suppose qu'il y a
 $K$ clusters génétiques, nous cherchons à décomposer la matrice $\Y$ en une
 matrice de coefficients de métissage $\Q$, de taille $n \times K$ et une matrice
-de fréquences de génotypes dans les $K$ clusters génétiques $\G$, de taille $p
+de fréquences de génotypes dans les $K$ clusters génétiques $\mathbf{G}$, de taille $p
 \times K$. Nous notons $\Q_{i,k}$ le coefficient de métissage de l'individu $i$
 pour le cluster $k$. Nous avons de plus
 \begin{equation}
 \label{eq:QConst}
 \Q \geq 0 \, , \quad \sum_{k=1}^K {\bf Q}_{i,k} = 1 .
 \end{equation}
-Nous notons $\G_{(d + 1)\ell + j, k}$ la fréquence du génotype $j$ au locus $\ell$
+Nous notons $\mathbf{G}_{(d + 1)\ell + j, k}$ la fréquence du génotype $j$ au locus $\ell$
 dans le cluster $k$ et nous avons
 \begin{equation}
 \label{eq:GConst}
-\G \geq 0 \, , \quad \sum_{j=0}^{d} {\bf G}_{(d+1)\ell + j, k} = 1.
+\mathbf{G} \geq 0 \, , \quad \sum_{j=0}^{d} {\bf G}_{(d+1)\ell + j, k} = 1.
 \end{equation}
-Enfin, nous voulons estimer les matrices $\Q$ et $\G$ en factorisant la matrice
+Enfin, nous voulons estimer les matrices $\Q$ et $\mathbf{G}$ en factorisant la matrice
 de génotype de la façon suivante
 \begin{equation}
 \label{eq:tess3:Y}
-\Y = \Q \G^{T}.
+\Y = \Q \mathbf{G}^{T}.
 \end{equation}
 Ainsi le problème d'inférence peut être résolu en utilisant les méthodes de
 factorization de matrice non négatives avec en plus les contraintes convexes
 décrite par les équations eqref:eq:QConst et eqref:eq:GConst
 citep:lee1999learning,Cichocki2009. Dans la suite, nous utiliserons les notations
 $\DQ$ et $\DG$ pour représenter les ensembles formés à partir des contraintes
-sur les matrices $\Q$ et $\G$.
+sur les matrices $\Q$ et $\mathbf{G}$.
 *** Information géographique
 L'information géographique est introduite dans le problème de factorisation de
 matrice en utilisant des poids entre les individus. Les poids sont utilisés pour
@@ -1177,14 +1177,14 @@ défini par l'équation eqref:eq:tess3Reg pour régulariser l'estimateur de la
 matrice des coefficients de métissage $\Q$.
 
 *** Problèmes d'optimisation des moindres carrés
-L'estimation des matrices $\Q$ et $\G$ à partir de la matrice de génotype $\Y$
+L'estimation des matrices $\Q$ et $\mathbf{G}$ à partir de la matrice de génotype $\Y$
 est réalisée en optimisant la fonction suivante
 \begin{equation}
-\mathcal{L}(\Q, \G) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \alpha {\rm Tr} (\Q^{T} \Laplacienne \Q), 
+\mathcal{L}(\Q, \mathbf{G}) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \alpha {\rm Tr} (\Q^{T} \Laplacienne \Q), 
 \label{eq:tess3LS}
 \end{equation}
 où la matrice $\Q$ appartient à $\DQ$ l'ensemble définie par les contraintes
-eqref:eq:QConst et la matrice $\G$ appartient à $\DG$ l'ensemble définie par les
+eqref:eq:QConst et la matrice $\mathbf{G}$ appartient à $\DG$ l'ensemble définie par les
 contraintes eqref:eq:GConst. La notation $\| \matr{M} \|_{\rm F}$ désigne la norme
 de Frobenius de la matrice $\matr{M}$. Le paramètre de régularisation $\alpha$
 contrôle la régularité des estimations des coefficients de métissage dans
@@ -1195,16 +1195,16 @@ géographiquement proches.
 *** Algorithme d'optimisation quadratique alterné (AQP)
 Nous remarquons que les polyèdres $\DQ$ et $\DG$ sont des ensembles convexes et
 que la fonction $\LS$ définie par l'équation eqref:eq:tess3LS est convexe par
-rapport à chaque variable $\Q$ ou $\G$ lorsque l'autre est fixée. Nous pouvons
+rapport à chaque variable $\Q$ ou $\mathbf{G}$ lorsque l'autre est fixée. Nous pouvons
 ainsi appliquer l'algorithme de descente par bloc de coordonnées au problème
 afin de trouver un minimum local de la fonction $\LS$ . L'algorithme de descente
 par bloque de coordonnées consiste à alterner des étapes d'optimisation selon
 chacune des coordonnées de la fonction à optimiser (Figure
 ref:fig:coordinate_descente). Cette algorithme converge vers un minimum local
 quand la fonction objectif est convexe et définie sur un ensemble convexe
-citep:Bertsekas_1997. Le problème d'optimisation selon $\G$, quand $\Q$ est fixé,
+citep:Bertsekas_1997. Le problème d'optimisation selon $\mathbf{G}$, quand $\Q$ est fixé,
 est un problème d'optimisation quadratique. Il en va de même quand on échange
-les rôles de $\G$ et $\Q$, c'est pour cela que l'algorithme est dit
+les rôles de $\mathbf{G}$ et $\Q$, c'est pour cela que l'algorithme est dit
 d'optimisation quadratique alterné (AQP).
 
 #+BEGIN_EXPORT latex
@@ -1217,12 +1217,12 @@ d'optimisation quadratique alterné (AQP).
 \end{figure}
 #+END_EXPORT
 
-L'algorithme APQ commence à partir de valeurs initiales pour les matrices $\G$
+L'algorithme APQ commence à partir de valeurs initiales pour les matrices $\mathbf{G}$
 et $\Q$, et alternent deux étapes d'optimisation. La première étape calcule la
-matrice $\G$ tandis que $\Q$ est fixé. Nous supposons que $\Q$ est fixé et
-écrivons $\G$ sous une forme vectorielle comme ceci
+matrice $\mathbf{G}$ tandis que $\Q$ est fixé. Nous supposons que $\Q$ est fixé et
+écrivons $\mathbf{G}$ sous une forme vectorielle comme ceci
 \begin{equation*} 
-g = {\rm vec}(\G) \in \mathbb{R} ^ {K(d +1)p}.
+g = {\rm vec}(\mathbf{G}) \in \mathbb{R} ^ {K(d +1)p}.
 \end{equation*}
 La première étape de l'algorithme résout le problème d'optimisation
 quadratique suivant 
@@ -1238,7 +1238,7 @@ de taille $d$. La structure en bloc de la matrice $\D^{Q}$ nous permet de
 décomposer le problème eqref:eq:AQPg en $p$ problèmes de programmation
 quadratiques indépendants à $K(d + 1)$ variables.
 
-Pour la deuxième étape de l'algorithme, nous considérons que $\G$ est la
+Pour la deuxième étape de l'algorithme, nous considérons que $\mathbf{G}$ est la
 valeur obtenue après la première étape de l'algorithme, et écrivons $\Q$ sous
 une forme vectorielle
 \begin{equation}
@@ -1251,8 +1251,8 @@ La deuxième étape résout le problème de programmation quadratique suivant
 \end{aligned}
 \label{eq:AQPq}
 \end{equation}
-où $\D_G = \Id_{n} \otimes \G^T \G + \alpha \Laplacienne \otimes \Id_K$ et $v_G
-= {\rm vec}(\G^T \Y^T)$. Contrairement au problème eqref:eq:AQPg de la première
+où $\D_G = \Id_{n} \otimes \mathbf{G}^T \mathbf{G} + \alpha \Laplacienne \otimes \Id_K$ et $v_G
+= {\rm vec}(\mathbf{G}^T \Y^T)$. Contrairement au problème eqref:eq:AQPg de la première
 étape, le problème eqref:eq:AQPq ne peut pas être séparé en plus petits
 problèmes. Ainsi, la deuxième étape de l'algorithme AQP nécessite de résoudre un
 problème de programmation quadratique à $n K$ variables, cela peut être très long
@@ -1268,7 +1268,7 @@ fonction $\LS$ définie par l'équation eqref:eq:tess3LS.
 
 #+BEGIN_proof
 La fonction $\LS$ définie par l'équation eqref:eq:tess3LS est convexe par
-rapport à $\Q$ quand $\G$ est fixé et inversement. De plus les ensembles de
+rapport à $\Q$ quand $\mathbf{G}$ est fixé et inversement. De plus les ensembles de
 définition $\DQ$ et $\DG$ sont convexes. Alors d'après le corollaire 2 établi
 par citet:Grippo_2000, tout point limite de l'algorithme AQP converge vers un
 point de minimum local de la fonction $\LS$.
@@ -1340,27 +1340,27 @@ de la fonction $\LS$ définie par l'équation eqref:eq:tess3LS. Contrairement à
 AQP, il n'y a pas de résultat qui garantisse la convergence de d'APLS vers un
 minimum local de la fonction $\LS$. Cependant, l'algorithme APLS a une
 complexité algorithmique plus faible que l'algorithme AQP. L'algorithme APLS
-commence par initialiser au hasard les matrices $\Q$ et $\G$ puis alterne deux
-étapes. La matrice $\Q$ est calculée pendant que la matrice $\G$ est fixé et
+commence par initialiser au hasard les matrices $\Q$ et $\mathbf{G}$ puis alterne deux
+étapes. La matrice $\Q$ est calculée pendant que la matrice $\mathbf{G}$ est fixé et
 vice versa. 
 
-La première étape de calcul de $\G$ consiste à calculer
+La première étape de calcul de $\mathbf{G}$ consiste à calculer
 \begin{equation}
 \label{eq:tess3:apls:g}
 {\bf G}^\star = \arg \min  \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} \, .
 \end{equation}
 Cette étape peut être séparée en $(d+1) p$ (le nombre de colonnes de $\Y$)
 problèmes indépendants. De plus, cette opération peut être parallélisée. Ensuite
-nous projetons $\G^{\star}$ sur le polyèdre $\DG$. 
+nous projetons $\mathbf{G}^{\star}$ sur le polyèdre $\DG$. 
 
 Pour la seconde étape de calcul de la matrice $\Q$ nous commençons par calculer
 la matrice des vecteurs propres de la matrice laplacienne $\laplacienne$ que
-nous notons $\U$, ainsi que la matrice diagonale $\LapVp$ formée des valeurs
+nous notons $\matr{U}$, ainsi que la matrice diagonale $\LapVp$ formée des valeurs
 propres de $\Laplacienne$. Comme la matrice laplacienne est symétrique et
 positive ses valeurs propres sont des nombres réels non-négatifs. D'après le
 théorème spectral nous avons
 \begin{equation}
-\Laplacienne = {\U}^T {\LapVp} \U.
+\Laplacienne = \matr{U}^T \LapVp \matr{U}.
 \end{equation}
 Après cette opération nous projetons la matrice des données $\Y$ sur la base des
 vecteurs propres de la façon suivante
@@ -1371,7 +1371,7 @@ vecteurs propres de la façon suivante
 et, pour chaque individu, nous calculons 
 \begin{equation}
 \label{eq:tess3:apls:q}
-q_i^\star = \arg \min \| \mathcal{P}(\Y)_i - \G q \|^{2}_{2} + \alpha \lambda_i \| q \|^{2}_{2}  ,
+q_i^\star = \arg \min \| \mathcal{P}(\Y)_i - \mathbf{G} q \|^{2}_{2} + \alpha \lambda_i \| q \|^{2}_{2}  ,
 \end{equation}
 où $\mathcal{P}(\Y)_{i}$ est la ligne d'indice $i$ de la matrice des données
 projetée, et $\lambda_{i}$ désigne la valeur propre d'indice $i$ de
@@ -1437,7 +1437,7 @@ technique de validation croisée fondée sur l'imputation des génotypes masqué
 citep:Wold_1978,Eastment_1982,Alexander_2011,Frichot_2014. La procédure de
 validation croisée divise les entrées matricielles génotypiques en un ensemble
 d'apprentissage et un ensemble de tests. Les probabilités de génotype pour les
-entrées masquées sont prédites à partir des estimations des matrices $\G$ et
+entrées masquées sont prédites à partir des estimations des matrices $\mathbf{G}$ et
 $\Q$ obtenues à partir d'entrées non masquées et de l'équation eqref:eq:tess3:Y.
 Ensuite, l'erreur de prédiction est calculée en utilisant l'erreur quadratique
 moyenne (RMSE, Root Square Mean Error) entre le génotype prédit et le génotype
@@ -1463,7 +1463,7 @@ différenciation entre les fréquences génomiques dans les clusters génétique
 inférées par nos algorithmes pour détecter les locus sous adaptation à
 l'environnement.
 
-En supposant qu'il y à $K$ cluster génétiques, les matrices $\Q$ et $\G$
+En supposant qu'il y à $K$ cluster génétiques, les matrices $\Q$ et $\mathbf{G}$
 obtenues à partir des algorithmes AQP et APLS sont utilisées pour calculer la
 statistique de différenciation entre les clusters génétiques pour chaque locus
 de la façon suivante citep:Martins_2016
@@ -1477,7 +1477,7 @@ q_k = \sum_{i =1}^n \Q_{i,k} / n,
 \end{equation}
 $f_{k}$ est la fréquence d'allèle dans la cluster $k$ au locus considéré 
 \begin{equation*}
-f_k =  \sum_{j = 1}^p  j \G_{(p+1)(\ell) + j, k}/p,
+f_k =  \sum_{j = 1}^p  j \mathbf{G}_{(p+1)(\ell) + j, k}/p,
 \end{equation}
 et 
 \begin{equation*}
@@ -1581,7 +1581,7 @@ par le logiciel =TESS= 2.3. Chaque programme a été exécuté 5 fois sur les m�
 données simulées en utilisant $K = 2$ clusters génétiques comme hyperparamètres.
 Nous avons calculé l'erreur quadratique moyenne (RMSE) entre les valeurs
 estimées et connues de la matrice $\Q$, et entre les valeurs estimées et connues
-de la matrice $\G$. Ensuite, pour évaluer le bénéfice des algorithmes spatiaux,
+de la matrice $\mathbf{G}$. Ensuite, pour évaluer le bénéfice des algorithmes spatiaux,
 nous avons comparé les erreurs statistiques de l'algorithme APLS aux erreurs
 obtenues avec la méthode sNMF qui reproduit les résultats du programme
 =structure= avec précision citep:Frichot_2014,Frichot_2015. Pour quantifier les
@@ -2029,18 +2029,18 @@ Il me faut les données non pruned au format matter que je scale
 
 Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
 un modèle spatial de mélange pour comparer les erreurs statistiques des
-estimations des matrices $\Q$ et $\G$ obtenues avec AQP et APLS. La référence
+estimations des matrices $\Q$ et $\mathbf{G}$ obtenues avec AQP et APLS. La référence
 pour la matrice $\Q$, noté $\Q_0$, est calculée à partir des proportions de
 mélange utilisées pour générer les génotypes à partir des deux populations
-sources simulées par =ms=. Pour la matrice $\G$, la matrice de référence, notée
-($\G_0$), est calculée à partir des fréquences empiriques des génotypes des
+sources simulées par =ms=. Pour la matrice $\mathbf{G}$, la matrice de référence, notée
+($\mathbf{G}_0$), est calculée à partir des fréquences empiriques des génotypes des
 deux populations sources. Les erreurs quadratiques moyennes (RMSE) pour les
-estimations des matrices $\Q$ et $\G$ diminue à mesure que la taille de
+estimations des matrices $\Q$ et $\mathbf{G}$ diminue à mesure que la taille de
 l'échantillon et le nombre de locus augmente (Figure ref:fig:tess3:comp).
 Pour tous les algorithmes, les erreurs statistiques sont généralement faibles
 lorsque le nombre de locus est supérieur à 10k. Ces résultats permettent de
 prouver que les deux algorithmes produises des estimations équivalentes des
-matrices $\Q_0$ et $\G_0$. Les résultats permettent également de vérifier que
+matrices $\Q_0$ et $\mathbf{G}_0$. Les résultats permettent également de vérifier que
 l'algorithmes APLS converge vers les mêmes estimations que celles obtenues par
 l'algorithme AQP, qui est garanti de converger vers un minimum de la fonction
 objectif $\LS$.
@@ -2064,7 +2064,7 @@ objectif $\LS$.
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_APLS_AQP_rmse_comp.pdf}
 \caption{{\bf Racine carré de l'erreur quadratique moyenne (RMSE) pour les
-    estimations des matrices $\Q$ et $\G$}. Simulations de génotype métissé
+    estimations des matrices $\Q$ et $\mathbf{G}$}. Simulations de génotype métissé
   spatialement. A-B) Erreur statistique des estimations de APLS et AQP en
   fonction du nombre d'individu $n$ ($p \sim 10^4$). C-D) Erreur statistique des
   estimations de APLS et AQP en fonction du nombre de locus $p$ ($n = 200$)}
@@ -2446,7 +2446,7 @@ simulé deux clusters génétiques de 100 échantillons de 2000 locus pour diff�
 niveau de différenciation moyen $F_{\rm ST}$. Cela a permis de créer des jeux de
 données pour lesquels il est plus ou moins dure d'estimer la structure de
 population. Les erreurs statistiques, mesurées par RMSE, pour l'estimation des
-matrices $\Q$ et $\G$ varie entre $0.02$ et $0.15$ (Figure
+matrices $\Q$ et $\mathbf{G}$ varie entre $0.02$ et $0.15$ (Figure
 ref:fig:tess3:tess23). Les erreurs statistiques augmente à mesure que les
 niveaux de différenciation entre les deux populations sources diminue, mais
 elles reste dans une gamme acceptable pour les valeurs de $F_{\rm ST} > 0.016$.
@@ -2463,7 +2463,7 @@ Dans l'ensemble, les performances statistiques sont du même ordre pour =TESS=
   \includegraphics[width=\textwidth]{./OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
 \end{minipage}
 \caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation de
-    $\Q$ (figure A) et $\G$ (figure B).} Simulations de génotypes métissés
+    $\Q$ (figure A) et $\mathbf{G}$ (figure B).} Simulations de génotypes métissés
   spatialement pour plusieurs niveaux de différenciation ($\Fst$) entre les
   populations sources. Les populations sources sont simulées par un modèle de
   Wright's à deux iles et la statistique de différenciation est définie comme
@@ -2524,7 +2524,7 @@ l'algorithme non spatial (Figure ref:fig:tess3:comp:rmse:snmf).
 Sur les simulations avec des locus sous adaptation local, nous avons utilisé
 l'aire sous la courbe de précision-rappel (AUC) pour quantifier les performances
 des tests de détection des locus sélectionnés reposant sur les estimations des
-matrices d'ascendance génétiques, $\Q$ et $\G$. De plus, nous avons calculé les
+matrices d'ascendance génétiques, $\Q$ et $\mathbf{G}$. De plus, nous avons calculé les
 AUC pour des tests de neutralité basés sur le calcul de la $\Fst$ à partir des
 génotypes des populations sources avant le mélange. Comme ils représentent les
 valeurs maximales atteignables, les AUC basés sur les génotypes des populations
@@ -4203,7 +4203,7 @@ numériques les erreurs des méthodes spatiales sont inférieures à celles
 observées avec des méthodes non spatiales, et les algorithmes spatiaux ont
 permis de détecter une structure de population plus subtile. En outre, nous
 avons mis en place un test de détection de la sélection reposant sur les
-estimations spatiales des matrices $\Q$ et $\G$ citep:Martins_2016; et nous avons
+estimations spatiales des matrices $\Q$ et $\mathbf{G}$ citep:Martins_2016; et nous avons
 observé que les tests rejettent la neutralité des locus avec plus de
 précision que ceux fondés sur des approches non spatiales. Ainsi, l'information
 spatiale a contribué à améliorer la détection des signatures de balayages
