@@ -128,7 +128,7 @@ TODO
 
 *Keyword*  
 
-* Résumé de la thèse
+* Résumé de la thèse abord
 
 TODO
 
@@ -909,6 +909,15 @@ méthodes que sur leurs implémentations informatiques. Afin que nos méthodes
 statistiques soient utilisables par la communauté scientifique, il a été
 important de rendre accessible des implémentations informatiques efficaces des
 nouvelles méthodes statistiques.
+
+** Résumé des résultats principaux
+
+résumé les résultats (démo, algo, résultat numérique) (mettre quelques ref ex th
+2 de ......).
+
+La thèse a données lieu aux travaux et réalialisation suitant : (les livrables)
+- lfmm tess3r
+- listes de publications
 
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
@@ -1974,8 +1983,10 @@ J'ai eu cette erreur :
 
 résolue par[[https://github.com/chrchang/plink-ng/issues/21][--const-fid 0]] 
 
-***** TODO Quality control
+***** DONE Quality control
+CLOSED: [2017-10-05 jeu. 10:05]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-05 jeu. 10:05]
 - State "TODO"       from              [2017-09-28 jeu. 19:39]
 :END:
 
@@ -2007,10 +2018,39 @@ structure latente.
 
 
 #+end_src
-***** TODO Prunning
+***** DONE Prunning
+CLOSED: [2017-10-05 jeu. 10:19]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-05 jeu. 10:19]
 - State "TODO"       from              [2017-09-28 jeu. 19:45]
 :END:
+
+#+NAME: code:Simons_pruning
+#+CAPTION: Dépend de [[code:Simons_QC2]]
+#+begin_src shell
+  cd /home/cayek/Projects/Thesis/MaThese/Data/Simons/Samples
+
+  for file in Simons.chr*_CQ.bed
+  do
+      basefile=`basename $file .bed`
+      echo "===== $basefile ====="
+      plink --bfile "$basefile" --indep-pairwise 100 1 0.2 --out "$basefile" --threads 8
+      plink --bfile "$basefile" --extract "$basefile".prune.in --make-bed --out "$basefile"_pruned --threads 8
+  done
+
+
+#+end_src
+***** TODO Matrice pruned
+:LOGBOOK:
+- State "TODO"       from              [2017-10-05 jeu. 10:19]
+:END:
+
+#+NAME: code:Simons_matrix
+#+CAPTION: Dépend de [
+#+begin_src R 
+
+#+end_src
+
 ***** TODO Conversion au format R et scalling
 :LOGBOOK:
 - State "TODO"       from              [2017-09-28 jeu. 19:45]
@@ -16390,3 +16430,4 @@ On ne s'arrête pas au même endroit !!!!
 - pour CV c'est le coude !!
 **** Les gamètes :D
 par humain il y a 2 ^ 23 gamète possibles car on 23 paire de chromosomes.
+**** Pk pas un EM ?
