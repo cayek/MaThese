@@ -2003,6 +2003,8 @@ structure latente par lfmm. Ceux qui dérive trop de l'équilibre HW peuvent etr
 du bruit ou sous un sélection forte donc il faut pas les avoir pour calculer la
 structure latente.
 
+On enleve tous les chrm avec des données manquantes 
+
 #+NAME: code:Simons_QC2
 #+CAPTION: Dépend de [[code:Simons_fusion2]]
 #+begin_src shell
@@ -2012,7 +2014,7 @@ structure latente.
   do
       basefile=`basename $file .bed`
       echo "===== $basefile ====="
-      plink --bfile $basefile --threads 16 --maf 0.01 --mind 0.05 --geno 0.05 --snps-only --autosome --make-bed --out "$basefile"_CQ
+      plink --bfile $basefile --threads 16 --maf 0.01 --mind 0.05 --geno 0.00 --snps-only --autosome --make-bed --out "$basefile"_CQ
   done
 
 
@@ -2040,26 +2042,81 @@ CLOSED: [2017-10-05 jeu. 10:19]
 
 
 #+end_src
-***** TODO Matrice pruned
+***** TODO Matrice pruned in R
 :LOGBOOK:
 - State "TODO"       from              [2017-10-05 jeu. 10:19]
 :END:
 
-#+NAME: code:Simons_matrix
-#+CAPTION: Dépend de [
-#+begin_src R 
+#+NAME: code:Simons_fusion
+#+CAPTION: Dépend de [[code:Simons_pruning]]
+#+begin_src shell
+  ls *CQ_pruned.bed > all.beds.txt
+  sed -i 's/\.bed//g' all.beds.txt
+  plink --merge-list all.beds.txt --make-bed --out Simons_allchrm_CQ_pruned
 
 #+end_src
 
-***** TODO Conversion au format R et scalling
-:LOGBOOK:
-- State "TODO"       from              [2017-09-28 jeu. 19:45]
-:END:
-****** Data for tess3r
-Il me faut les données pruned et la représentation binaire
-****** Data not pruned for lfmm
-Il me faut les données non pruned au format matter que je scale 
-****** Data pruned for lfmm
+#+RESULTS:
+#+begin_example
+  PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
+  (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
+  Logging to Simons_allchrm_CQ_pruned.log.
+  Options in effect:
+    --make-bed
+    --merge-list all.beds.txt
+    --out Simons_allchrm_CQ_pruned
+
+  193793 MB RAM detected; reserving 96896 MB for main workspace.
+  Performing single-pass merge (279 people, 1075292 variants).
+  Merged fileset written to Simons_allchrm_CQ_pruned-merge.bed +
+  Simons_allchrm_CQ_pruned-merge.bim + Simons_allchrm_CQ_pruned-merge.fam .
+  1075292 variants loaded from .bim file.
+  279 people (0 males, 0 females, 279 ambiguous) loaded from .fam.
+  Ambiguous sex IDs written to Simons_allchrm_CQ_pruned.nosex .
+  Using 1 thread (no multithreaded calculations invoked).
+  Before main variant filters, 279 founders and 0 nonfounders present.
+  Calculating allele frequencies... done.
+  Total genotyping rate is 0.991087.
+  1075292 variants and 279 people pass filters and QC.
+  Note: No phenotypes present.
+  --make-bed to Simons_allchrm_CQ_pruned.bed + Simons_allchrm_CQ_pruned.bim +
+  Simons_allchrm_CQ_pruned.fam ... done.
+#+end_example
+
+un millon de SNPs ...
+
+=source activate MaThese= pour activer le conda env
+
+#+NAME: code:Simons_matrix
+#+CAPTION: Dépend de [[code:Simons_fusion]]
+#+begin_src R 
+  library(bigsnpr)
+  setwd("~/Projects/Thesis/MaThese/Data/Simons/Samples/")
+  bedfile <- "Simons_allchrm_CQ_pruned.bed"
+
+  snp_readBed(bedfile, "G_pruned", backingpath = "bigsnpr")
+
+  G <- snp_attach("bigsnpr/G_pruned.rds")
+  dim(G$genotypes)
+
+  G.r <- attach.BM(G$genotypes)[,]
+  typeof(G.r)
+  rownames(G.r) <- G$fam$sample.ID
+  colnames(G.r) <- G$map$marker.ID
+  saveRDS(G.r, "G_pruned.rds")
+  rm(G.r)
+  gc()
+
+  ## test to read
+  G <- readRDS("G_pruned.rds")
+
+  ## NA
+  anyNA(G)
+
+  ## scaling
+  G.scaled <- scale(G)
+  saveRDS(G.scaled, "G_pruned_scaled.rds")
+#+end_src
 
 ** Résultats
 :PROPERTIES:
@@ -4204,6 +4261,42 @@ CLOSED: [2017-09-11 lun. 19:44]
 
 #+RESULTS: code:tess3_AT_manhattan
 [[./OUTPUT/Rplots/tess3_AT_manhattanplot.png]]
+
+*** Application au Simons Genome Diversity Project               :noexport:
+**** Scripts                                                    :noexport:
+***** RUNNING PCA
+:LOGBOOK:
+- State "RUNNING"    from              [2017-10-05 Jeu 23:04]
+:END:
+#+NAME: code:Simons_pca
+#+CAPTION: Dépend de [[code:Simons_matrix]]
+#+begin_src R 
+  library(MaTheseR)
+  library(RSpectra)
+
+  G <- readRDS("~/Projects/Thesis/Data/Simons/Samples/G_pruned_scaled.rds")
+
+  expr <- list()
+
+  start.time <- Sys.time()
+  expr$pca.res <- RSpectra::svds(A = G, k = 20)
+  end.time <- Sys.time()
+  expr$time <- end.time - start.time
+
+  save_expr(expr, "Simons_pca.rds")
+#+end_src
+***** TODO Variogram
+:LOGBOOK:
+- State "TODO"       from              [2017-10-05 Jeu 23:05]
+:END:
+***** TODO TESS3 cross validation
+:LOGBOOK:
+- State "TODO"       from              [2017-10-05 Jeu 23:05]
+:END:
+***** TODO TESS3
+:LOGBOOK:
+- State "TODO"       from              [2017-10-05 Jeu 23:05]
+:END:
 ** Discussion
 :LOGBOOK:
 - Note taken on [2017-09-25 lun. 13:14] \\
