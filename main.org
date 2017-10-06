@@ -516,7 +516,7 @@ grands jeux de données. Aucune méthode non basée sur un modèle probabiliste 
 résumons les méthodes d'inférence des coéficients d'ascendance génétique dans la
 Table [[table:tess3_etat_art]]
 
-#+ATTR_LATEX: :align lp{3cm}lp{3cm} p{4cm} :float sideways
+#+ATTR_LATEX: :align lp{3cm}lx{6cm}p{6cm} :float sideways
 #+NAME: table:tess3_etat_art
 #+CAPTION: *Méthodes d'estimation de coéficients d'ascendance non spatial et spatial.* La méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
 | Méthode       | Modèle                                         | Spatiale | Algorithme                                       | Référence                                   |
@@ -2280,12 +2280,21 @@ CLOSED: [2017-10-06 ven. 10:42]
                                 data.table=FALSE) %>% as_tibble()
   G <- readRDS("./Data/Simons/Samples/G_pruned.rds")
 
-
   ## keep only indiv in G
   indiv.df <- indiv.df %>% dplyr::filter(SGDP_ID %in% row.names(G))
+  ## missing 
+  row.names(G)[!(row.names(G) %in% indiv.df$SGDP_ID)]
+  ##
+  a = indiv.df %>% dplyr::filter(SGDP_ID == "S_Naxi-1")
+  a$SGDP_ID <- "S_Naxi-2"
+  indiv.df <- indiv.df %>% rbind(a)
   dim(indiv.df)
 
-  saveRDS(indiv.df, "./Data/ThesisDataset/Simons/indiv.df")
+  ## test
+  mean(row.names(G) %in% indiv.df$SGDP_ID)
+  mean(indiv.df$SGDP_ID %in% row.names(G) )
+
+  saveRDS(indiv.df, "./Data/ThesisDataset/Simons/indiv.df.rds")
 
   ## plot
   library(ggmap)
@@ -2348,7 +2357,8 @@ CLOSED: [2017-10-06 ven. 10:50]
     (c - m) / sqrt(m * (1 - m / 2))
   }
   G.scaled.binom <- apply(G, 2, f)
-  saveRDS(G.scaled, "./Data/ThesisDataset/Simons/G_pruned_scaled_binom.rds")
+  dim(G.scaled.binom)
+  saveRDS(G.scaled.binom, "./Data/ThesisDataset/Simons/G_pruned_scaled_binom.rds")
 #+end_src
 
 ** Résultats
@@ -4497,14 +4507,14 @@ CLOSED: [2017-09-11 lun. 19:44]
 
 *** Application au Simons Genome Diversity Project               :noexport:
 **** Scripts                                                    :noexport:
-***** DONE PCA
-CLOSED: [2017-10-06 ven. 10:18]
+***** TODO PCA
 :LOGBOOK:
+- State "TODO"       from "DONE"       [2017-10-06 ven. 18:32]
 - State "DONE"       from "RUNNING"    [2017-10-06 ven. 10:18]
 - State "RUNNING"    from              [2017-10-05 Jeu 23:04]
 :END:
 #+NAME: code:Simons_pca
-#+CAPTION: Dépend de [[code:Simons_matrix]]
+#+CAPTION: Dépend de [[code:Simons_format]]
 #+begin_src R
   library(MaTheseR)
   library(RSpectra)
@@ -4520,32 +4530,144 @@ CLOSED: [2017-10-06 ven. 10:18]
 
   save_expr(expr, "Simons_pca.rds")
 
-#+end_src
 
-#+NAME: code:Simons_pca_plot
-#+CAPTION: Dépend de [[code:Simons_pca]]
-#+begin_src R 
-  library(MaTheseR)
-
+  ## plot
   expr <- readRDS("./OUTPUT/Expr/Simons_pca.rds")
   indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df")
 
   ## screeplot
   vp <- expr$pca.res$d
   pl <- qplot(x = seq_along(vp), y = vp)
-
-
-  ## pcs
+  save_plot_png(pl, "Simons_screeplot.png")
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/Simons_screeplot.png]]
+
+Avec le scaling de keurcien 
+
+#+NAME: code:Simons_pca_binom
+#+CAPTION: Dépend de [[code:Simons_format]]
+#+begin_src R
+  library(MaTheseR)
+  library(RSpectra)
+
+  G <- readRDS("~/Projects/Thesis/Data/ThesisDataset/Simons/G_pruned_scaled_binom.rds")
+
+  expr <- list()
+
+  start.time <- Sys.time()
+  expr$pca.res <- RSpectra::svds(A = G, k = 20)
+  end.time <- Sys.time()
+  expr$time <- end.time - start.time
+
+  save_expr(expr, "Simons_pca_binom.rds")
+
+  ## plot
+  expr <- readRDS("./OUTPUT/Expr/Simons_pca_binom.rds")
+  indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df.rds")
+
+  ## screeplot
+  vp <- expr$pca.res$d
+  pl <- qplot(x = seq_along(vp), y = vp)
+  save_plot_png(pl, "Simons_screeplot_binom.png")
+
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/Simons_screeplot_binom.png]]
+
+ca change rien mdr kikou lol bravo keurcien.
 
 ***** TODO Variogram
 :LOGBOOK:
 - State "TODO"       from              [2017-10-05 Jeu 23:05]
 :END:
+
+#+NAME: code:Simons_variogram
+#+CAPTION: Dépend de [[code:Simons_format]]
+#+begin_src R 
+  library(tess3r)
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  Article2.env <- MaTheseR.params$Article2.env
+
+
+  ## data
+  G <- readRDS("./Data/ThesisDataset/Simons/G_pruned.rds")
+  p <- 10000
+  G.subsampled <- G[,sample.int(ncol(G), p)]
+  dim(G.subsampled)
+  indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df.rds")
+  coord <- indiv.df[,c("Longitude", "Latitude")] %>% as.matrix()
+
+  ## expr
+  expr <- list()
+  start.time <- Sys.time()
+  expr$vario.gen <- CalculateEmpiricalGenSemivariogram(G.subsampled, 2,  coord)
+  end.time <- Sys.time()
+  expr$time <- end.time - start.time
+
+  save_expr(expr)
+
+
+  ## plot vario
+  variogram.pl <- ggplot(expr$vario.gen, aes(x = h, y = semi.variance, size = size)) +
+    geom_point(shape = 1) +
+    geom_vline(xintercept = 1.5, colour = "red") +
+    labs(y = "Variogramme",
+         x = "\\'Echelle g\\'eographique\n$\\sigma$ ($100$ km)") +
+    theme_gray(base_size = 12) +
+    scale_size_continuous(range = c(1,3)) +
+    guides(size = guide_legend(title = "Bin size", nrow = 5)) +
+    MaTheseR.params$gtheme +
+    theme(legend.position = c(0.6,0.4)) +
+    scale_shape_discrete(solid = FALSE)
+#+end_src
+
 ***** TODO TESS3 cross validation
 :LOGBOOK:
 - State "TODO"       from              [2017-10-05 Jeu 23:05]
 :END:
+
+#+NAME: code:Simons_tess3_CV
+#+CAPTION: Dépend de [[code:Simons_format]]
+#+begin_src R 
+  library(tess3r)
+
+  ## make W
+  indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df.rds")
+  coord <- indiv.df[,c("Longitude", "Latitude")] %>% as.matrix()
+
+  ## Xbin
+  G <- readRDS("./Data/ThesisDataset/Simons/G_pruned.rds")
+  n <- nrow(G)
+  p <- ncol(G)
+  d <- 3
+  XBin <- matrix(0.0, n, 3 * p)
+  X2XBin(G, 2, XBin)
+  rm(G)
+
+  # run tess3
+  tess3.obj <- tess3(X = NULL,
+                     XBin = XBin,
+                     coord = coord,
+                     K = 1:20,
+                     ploidy = 2,
+                     lambda = 1.0,
+                     rep = 5,
+                     W = NULL,
+                     method = "MCPA",
+                     max.iteration = 200,
+                     tolerance = 1e-05,
+                     openMP.core.num = 16,
+                     Q.init = NULL,
+                     mask = 0.05,
+                     keep = "best",
+                     copy = FALSE,
+                     algo.copy = TRUE)
+#+end_src
+
 ***** TODO TESS3
 :LOGBOOK:
 - State "TODO"       from              [2017-10-05 Jeu 23:05]
