@@ -519,20 +519,20 @@ Table [[table:tess3_etat_art]]
 #+ATTR_LATEX: :align lp{3cm}lx{6cm}p{6cm} :float sideways
 #+NAME: table:tess3_etat_art
 #+CAPTION: *Méthodes d'estimation de coéficients d'ascendance non spatial et spatial.* La méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
-| Méthode       | Modèle                                         | Spatiale | Algorithme                                       | Référence                                   |
-|---------------+------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
-| STUCTURE      | bayésien                                       | non      | MCMC                                             | citet:Pritchard2000,Falush1567              |
-| FRAPPE        | vraisemblance                                  | non      | EM                                               | citet:Tang_2005                             |
-| ADMIXTURE     | vraisemblance                                  | non      | optimisation quasi-Newton alterné                | citet:alexander2009admixture,Alexander_2011 |
-| fastStructure | bayésien                                       | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
-| sNMF          | factorisation de matricielles sous contraintes | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
-| PSIKO         | PCA                                            | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
-| TESS          | bayésien                                       | oui      | MCMC                                             | citet:CHEN_2007                             |
-| BAPS          | bayésien                                       | oui      | optimisation stochastique                        | citet:Corander2008                          |
-| GENELAND      | bayésien                                       | oui      | MCMC                                             | citet:phdGuedj                              |
-| conStruct     | bayésien                                       | oui      | MCMC                                             | citet:Bradburd189688                        |
-| TESS3-AQP     | factorisation de matricielles sous contraintes | oui      | optimisation quadratique alterné                 |                                             |
-| TESS3-APLS    | factorisation de matricielles sous contraintes | oui      | moindres carré alterné projeté                   |                                             |
+| Méthode       | Modèle                                              | Spatiale | Algorithme                                       | Référence                                   |
+|---------------+-----------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
+| STUCTURE      | bayésien                                            | non      | MCMC                                             | citet:Pritchard2000,Falush1567              |
+| FRAPPE        | vraisemblance                                       | non      | EM                                               | citet:Tang_2005                             |
+| ADMIXTURE     | vraisemblance                                       | non      | optimisation quasi-Newton alterné                | citet:alexander2009admixture,Alexander_2011 |
+| fastStructure | bayésien                                            | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
+| sNMF          | factorisation matricielle parcimonieuse             | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
+| PSIKO         | PCA                                                 | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
+| TESS          | bayésien                                            | oui      | MCMC                                             | citet:CHEN_2007                             |
+| BAPS          | bayésien                                            | oui      | optimisation stochastique                        | citet:Corander2008                          |
+| GENELAND      | bayésien                                            | oui      | MCMC                                             | citet:phdGuedj                              |
+| conStruct     | bayésien                                            | oui      | MCMC                                             | citet:Bradburd189688                        |
+| TESS3-AQP     | factorisation matricielle régularisé sur graphe     | oui      | optimisation quadratique alterné                 |                                             |
+| TESS3-APLS    | factorisation matricielle régularisé sur graphe     | oui      | moindres carré alterné projeté                   |                                             |
 
 **** Scripts                                                    :noexport:
 ***** DONE Africain Européen et Afro américain 
@@ -795,6 +795,13 @@ prendre en compte dans l'étude d'association.
 [[file:Figures/conf_factor.png]]
 
 *** Simulation numérique d'une association avec facteurs de confusion
+:LOGBOOK:
+- Note taken on [2017-10-07 Sam 00:05] \\
+  J'ai juste mis test de Student/Fisher quand on utilisait direct les variables
+  latentes. C'est pas faux car test de Student/Fisher ca veux juste dire que ca
+  repose sur les loi de distribution de Student/Fisher. EN l'occurence c'est pas
+  tout a fait vrai
+:END:
 <<sec:simu_ex>>
 
 Dans cette partie nous proposons de montrer l'intérêt de prendre en
@@ -810,6 +817,7 @@ soient non nulles. Enfin, la matrice des variables expliquées $\Y$ est calculé
 telle que
 \begin{equation} 
 \Y = \U \V^{T} + \X \B^{T} + \E. 
+\label{eq:model0}
 \end{equation} 
 Cette simulation correspond à une situation où $1 \%$ des colonnes de $\Y$ sont
 associées avec $\X$. La variable latente est un facteur de confusion pour cette
@@ -891,32 +899,30 @@ utilisent les modèles mixtes pour corriger les test d'hypothèse pour les sourc
 de variation indésirable citep:Kang_2008,Zhou_2014,Loh194944. Récemment, de
 nombreuses méthodes ont été proposées pour permettre d'estimer dans un même
 modèle les effets des variables latentes et les effets des variables étudiées
-pour l'association.
-La plupart de ces méthodes reposent sur l'équation 
-
-Les modèle reposant sur l'équation on recu plusieurs nom dans la litérature :
-Latent Fator Mixed Models (LFMM) citep:frichot13_testin_assoc_between_loci_envir,
-regression-based latent models citep:agarwal09_regres, factor-augmented
-regression model cite:gerard2017empirical, surrogate variable analysis
-cite:article_Leek_Storey_2007. 
-
-
-
-Nous résumons les méthodes reposant sur des dérrivé du modèle d'écrit par l'equation
-dans le tableau.
+pour l'association. La plupart de ces méthodes reposent sur l'équation
+eqref:eq:model0 que nous avons utilisé dans la partie précédente. Ces modèles
+ont recu plusieurs nom dans la littérature : Latent Fator Mixed Models (LFMM)
+citep:frichot13_testin_assoc_between_loci_envir, regression-based latent models
+(RLFM) citep:agarwal09_regres, factor-augmented regression model
+cite:gerard2017empirical, surrogate variable analysis (SVA)
+cite:article_Leek_Storey_2007. Nous résumons les méthodes reposant sur des
+modèles construit à partir des dérivé de l'équation eqref:eq:model0 dans le
+tableau.
 
 #+ATTR_LATEX: :align llp{3cm}l
-#+CAPTION: *Méthodes de correction des étude d'association reposant sur le modèle LFMM d'écrit par l'équation* 
+#+CAPTION: *Méthodes reposant sur l'équation ref:eq:model0 pour la correction des facteurs de confusion dans les études d'association.* Les méthodes ridgeLFMM et LassoLFMM sont présenté dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont plus détaillées dans la section [[sec:similar_method]].
 #+NAME: table:lfmm_etat_art
-| Méthode              | Modèle | Algorithme | Référence       |
-|----------------------+--------+------------+-----------------|
-| sva-twostep          |        |            |                 |
-| sva-irw              | dd     |            | cite:GUEDJ_2011 |
-| famt                 |        |            |                 |
-| cate                 |        |            |                 |
-| lea-lfmm             |        |            |                 |
-|                      |        |            |                 |
-| MOUTHWASH / BACKWASH |        |            |                 |
+| Méthode              | Modèle                                                | Algorithme                                                          | Test d'hypothèse                                                      | Référence                                       |
+|----------------------+-------------------------------------------------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+-------------------------------------------------|
+| sva-twostep          | PCA et régression linéaire                            | moindres carrés ordinaire et SVD                                    | test de Fisher                                                        | citet:article_Leek_Storey_2007                  |
+| sva-irw              | weighted-PCA et régression linéaire                   | moindres carrés ordinaires et weighted-SVD                          | test de Fisher                                                        | citet:article_Leek_Storey_2008                  |
+| RLFM                 | bayésien                                              | Monte-Carlo EM                                                      | pas de test                                                           | citet:agarwal09_regres                          |
+| famt                 | vraisemblance                                         | EM                                                                  | test de Student                                                       | citet:friguet09_factor_model_approac_to_multip  |
+| LFMM                 | bayésien                                              | MCMC                                                                | test de wald, estimation de la variance par bootstrap bayésien        | citet:frichot13_testin_assoc_between_loci_envir |
+| cate                 | analyse factorielle et régression linéaire            | EM ou SVD et moindres carrés généralisé                             | test basé sur la distribution asymptotique de l'estimateur des effets | citet:wang2015confounder                        |
+| ridgeLFMM            | factorisation matricielle avec régularisation $L_{2}$ | SVD et moindres carrés régularisé en norme $L_{2}$                  | test de Student                                                       |                                                 |
+| lassoLFMM            | factorisation matricielle avec régularisation $L_{1}$ | soft-thresholded SVD et moindres carrés régularisé en norme $L_{1}$ | test de Student                                                       |                                                 |
+| MOUTHWASH / BACKWASH | régression linéaire et analyse factorielle            | moindres carrés ordinaire et EM ou descente par coordonnées         | adaptive shrinkage (ASH) citep:stephens16_false_discov_rates          | citet:gerard2017empirical                       |
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
@@ -1033,7 +1039,7 @@ La thèse a données lieu aux travaux et réalialisation suitant : (les livrable
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
 :header-args: :cache no :eval no-export :results output :exports none :session *krakR* :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
-:alt_title: Inférence des coefficients de métissage
+:alt_title: Inférence spatiale des coefficients de métissage
 :END:
 :LOGBOOK:
 - State "TODO"       from              [2017-07-20 Thu 17:49]
@@ -1640,7 +1646,7 @@ matrices.
 ** Autres méthodes d'estimation des coefficients de métissage comparées :noexport:
 *** TESS 
 *** sNMF
-** Données simulées et réelles
+** Expérimentations : données simulées et réelles
 *** Données simulées
 **** Simulations à partir de données réelle
 Des sous-échantillons provenant du jeu de données réelles d'/Arabidopsis
@@ -5777,7 +5783,7 @@ matrice des effets $\B$ est calculée comme le résidu de cette régression. La
 régression robuste permet d'enlever de l'estimation de $\bm{\alpha}$ les effets
 atypiques qui correspondent aux colonnes de $\Y$ associés à $\X$ que l'on
 cherche. Nous avons utilisé le package R cate fourni par ses auteurs.
-** Données simulées et réelles
+** Expérimentations : données simulées et réelles
 *** Données simulées à partir de données réelles
 :LOGBOOK:
 - Note taken on [2017-08-03 jeu. 16:10] \\
@@ -16909,7 +16915,7 @@ La question de l'EM a pas trop lieu d'etre, il faut une vraisemblance pour un EM
 
 Ca maximise la vraisemblance. Je comprends que c'est venu remplacer le MCMC des
 modèle probabiliste.
-
+**** C'est quoi un Monte Carlo EM ?
 **** Un MCMC c'est quoi ?
 [[https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo][Markov chain Monte Carlo]]
 Ca echantillone une loi.
@@ -16922,3 +16928,5 @@ Exemple d'algo MCMC :
 
 **** Empirical bayes c'est quoi ?
 [[https://en.wikipedia.org/wiki/Empirical_Bayes_method][Empirical Bayes method]]
+C'est plutot une un modèle :D
+Un modèle je dirais, l'algo ca peut être n'importe quoi genre EM etc
