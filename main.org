@@ -365,6 +365,9 @@ $
 #+END_EXPORT
 
 *** Estimation de la structure génétique des populations
+:LOGBOOK:
+CLOCK: [2017-10-06 ven. 13:01]--[2017-10-06 ven. 13:26] =>  0:25
+:END:
 
 Une étape très importante en génétique des populations est l'inférence d'une
 représentation synthétique de la structure de populations à partir des données
@@ -498,15 +501,38 @@ l'inférence repose sur des méthodes d'échantillonnage de la loi a posteriori 
 coefficients d'ascendance citep:Pritchard2000. D'autres méthodes visant à rendre
 plus rapide l'inférence des matrices d'ascendance minimisent la fonction
 log-vraisemblance des paramètres d'ascendance génétique
-citep:Tang_2005,Alexander_2011,Raj_2014. Des méthodes très rapides ne reposant
+citep:Tang_2005,alexander2009admixture, ou bien utilise des méthodes d'inférence
+variationnelle bayésiennes citep:Raj_2014. Des méthodes très rapides ne reposant
 pas sur une modélisation probabiliste ont aussi été proposées pour passer à
 l'échelle des grands jeux de données modernes citep:Frichot_2014,Popescu_2014.
-Par ailleurs, de nombreuses méthodes utilisent l'information spatial
+Par ailleurs, de nombreuses méthodes utilisent l'information spatiale
 individuelle afin d'améliorer l'estimation de l'ascendance génétique et de
 localiser les clusters génétiques dans l'espace. Des méthodes ont incorporé
 l'information géographique au modèle bayésien de =structure=
-citep:CHEN_2007,Corander2008. Cependant, ces méthodes bayésiennes ne passent pas à
-l'échelle des grands jeux de données modernes.
+citep:CHEN_2007,Corander2008,GUEDJ_2011. Cependant, les méthodes bayésiennes
+repose sur de nombreuse hypothèses et passe plus difficilement à l'échelle des
+grands jeux de données. Aucune méthode non basée sur un modèle probabiliste n'a
+été proposé pour l'inférence spatiale des coefficients d'ascendance. Nous
+résumons les méthodes d'inférence des coéficients d'ascendance génétique dans la
+Table [[table:tess3_etat_art]]
+
+#+ATTR_LATEX: :align lp{3cm}lp{3cm} p{4cm} :float sideways
+#+NAME: table:tess3_etat_art
+#+CAPTION: *Méthodes d'estimation de coéficients d'ascendance non spatial et spatial.* La méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
+| Méthode       | Modèle                                         | Spatiale | Algorithme                                       | Référence                                   |
+|---------------+------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
+| STUCTURE      | bayésien                                       | non      | MCMC                                             | citet:Pritchard2000,Falush1567              |
+| FRAPPE        | vraisemblance                                  | non      | EM                                               | citet:Tang_2005                             |
+| ADMIXTURE     | vraisemblance                                  | non      | optimisation quasi-Newton alterné                | citet:alexander2009admixture,Alexander_2011 |
+| fastStructure | bayésien                                       | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
+| sNMF          | factorisation de matricielles sous contraintes | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
+| PSIKO         | PCA                                            | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
+| TESS          | bayésien                                       | oui      | MCMC                                             | citet:CHEN_2007                             |
+| BAPS          | bayésien                                       | oui      | optimisation stochastique                        | citet:Corander2008                          |
+| GENELAND      | bayésien                                       | oui      | MCMC                                             | citet:phdGuedj                              |
+| conStruct     | bayésien                                       | oui      | MCMC                                             | citet:Bradburd189688                        |
+| TESS3-AQP     | factorisation de matricielles sous contraintes | oui      | optimisation quadratique alterné                 |                                             |
+| TESS3-APLS    | factorisation de matricielles sous contraintes | oui      | moindres carré alterné projeté                   |                                             |
 
 **** Scripts                                                    :noexport:
 ***** DONE Africain Européen et Afro américain 
@@ -865,8 +891,32 @@ utilisent les modèles mixtes pour corriger les test d'hypothèse pour les sourc
 de variation indésirable citep:Kang_2008,Zhou_2014,Loh194944. Récemment, de
 nombreuses méthodes ont été proposées pour permettre d'estimer dans un même
 modèle les effets des variables latentes et les effets des variables étudiées
-pour l'association
-citep:frichot13_testin_assoc_between_loci_envir,article_Leek_Storey_2007,gerard2017unifying,gerard2017empirical.
+pour l'association.
+La plupart de ces méthodes reposent sur l'équation 
+
+Les modèle reposant sur l'équation on recu plusieurs nom dans la litérature :
+Latent Fator Mixed Models (LFMM) citep:frichot13_testin_assoc_between_loci_envir,
+regression-based latent models citep:agarwal09_regres, factor-augmented
+regression model cite:gerard2017empirical, surrogate variable analysis
+cite:article_Leek_Storey_2007. 
+
+
+
+Nous résumons les méthodes reposant sur des dérrivé du modèle d'écrit par l'equation
+dans le tableau.
+
+#+ATTR_LATEX: :align llp{3cm}l
+#+CAPTION: *Méthodes de correction des étude d'association reposant sur le modèle LFMM d'écrit par l'équation* 
+#+NAME: table:lfmm_etat_art
+| Méthode              | Modèle | Algorithme | Référence       |
+|----------------------+--------+------------+-----------------|
+| sva-twostep          |        |            |                 |
+| sva-irw              | dd     |            | cite:GUEDJ_2011 |
+| famt                 |        |            |                 |
+| cate                 |        |            |                 |
+| lea-lfmm             |        |            |                 |
+|                      |        |            |                 |
+| MOUTHWASH / BACKWASH |        |            |                 |
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
@@ -895,22 +945,83 @@ permettrait de mieux comprendre les spécificités de chaque méthode.
 
 ** Objectifs de la thèse
 
-La génétique produit beaucoup de données et de en plus vite grâce aux
-technologies de séquençage toujours plus efficace. Cette affluence de données
-pose de nouveaux problèmes aux statisticiens. L'objectif de cette thèse de
-doctorat est d'améliorer les outils statistiques qui permettent aux biologistes
-de répondre à des questions concrètes sur le vivant. Dans cette thèse nous nous
-sommes intéressé à deux problématiques en analyse de données génétiques :
-l'estimation de la structure génétique de population et les études
-d'associations. L'accent a été mis sur la complexité des algorithmes développées
-afin qu'ils soient applicables aux données génétiques modernes. De plus,
-l'importance a été placé aussi bien sur le développement mathématique des
-méthodes que sur leurs implémentations informatiques. Afin que nos méthodes
-statistiques soient utilisables par la communauté scientifique, il a été
-important de rendre accessible des implémentations informatiques efficaces des
-nouvelles méthodes statistiques.
+La génétique produit beaucoup de données grâce aux technologies de séquençage
+toujours plus efficace. Cette affluence de données pose de nouveaux problèmes
+aux statisticiens. L'objectif de cette thèse de doctorat est d'améliorer les
+outils statistiques qui permettent aux biologistes de répondre à des questions
+concrètes sur le vivant. Dans cette thèse nous nous sommes intéressé à deux
+problématiques en analyse de données génétiques : l'estimation de la structure
+génétique de population et les études d'associations. L'accent a été mis sur la
+complexité des algorithmes développées afin qu'ils soient applicables aux
+données génétiques modernes. De plus, l'importance a été placé aussi bien sur le
+développement mathématique des méthodes que sur leurs implémentations
+informatiques. Afin que nos méthodes statistiques soient utilisables par la
+communauté scientifique, il a été important de rendre accessible des
+implémentations informatiques efficaces des nouvelles méthodes statistiques.
 
 ** Résumé des résultats principaux
+
+Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes reposant
+sur des problèmes de factorisation de matrice. Nos algorithmes ont été
+implémenté dans deux packages R : =tess3r=
+(https://bcm-uga.github.io/TESS3_encho_sen/) et =lfmm=
+(https://github.com/bcm-uga/lfmm). Le package =tess3r= contient les algorithmes
+AQP et APLS d'inférence de l'ascendance génétique en incluent l'information
+spatiale. Le package =lfmm= contient les algorithme lassoLFMM et ridgeLFMM
+d'estimation des facteurs de confusion pour corriger les étude d'association.
+
+*** =tess3r=
+
+Dans le package =tess3r=, nous avons développé des algorithme d'estimation
+rapide des coéficients de métissage à partir de données génétique et
+géographique. Les algorithmes repose sur un problème de factorisation de la
+matrice génétique. Les termes de la factorisation sont les coéficients de
+métissage et les fréquences d'allèles dans les clusters génétiques. L'information
+spatiale est ajouté au moyen d'une régularisation sur la matrice des coéficients
+de métissage. La régularisation spatiale permet d'ajouter l'hypothèse que des
+individu proche ont plus de chance de partager des ancestre communs que des
+individus éloignés. Afin d'estimer les matrices d'ascendance nous avons proposé
+deux algorithmes que nous avons apelé AQP et APLS. Les deux algorithmes
+diffèrent dans les approximations qu'ils font pour diminuer la complexité
+algorithmique. Plus précisément, l'algorithme AQP alterne des résolutions de
+problèmes d'optimisation quadratique. Alors que l'algorithme APLS lève les
+contraintes des problèmes d'optimisation quadratique afin de les transformer en
+problèmes des moindres carrés régularisé par une norme $L_{2}$. La complexité de
+l'algorithme APLS augmente linéairement avec le nombre d'individus dans
+l'échantillon. En outre, nous avons mis en place un test de détection de la
+sélection reposant sur les estimations spatiales des matrices d'ascendance.
+
+En utilisant des simulations coalescantes, nous montrons que les deux
+algorithmiques AQP et APLS retournes des résultats avec la même précision
+statistique. Toujours sur des simulations de coalescant nous avons montré que
+nos algorithmes reproduise les même erreur statistique que le logiciel =TESS=
+2.3 CITER. Le logiciel =TESS= 2.3 permmet egalement l'estimation des coéficient
+de métissage a partir de données génétiques et géographique mais en utilisant un
+modèle bayésien. Sur les simulations que nous avons considéré nos algorithmes
+était 10 à 100 fois plus rapide que le logiciel =TESS= 2.3.
+
+Pour mesurer le bénéfice de l'utilisation d'algorithmes spatiaux, nous avons
+comparé les erreurs statistiques observées pour les algorithmes spatiaux avec
+celles observées pour un algorithme non spatial =snmf= CITER. Dans nos
+expériences numériques les erreurs des méthodes spatiales sont inférieures à
+celles observées avec des méthodes non spatiales, et les algorithmes spatiaux
+ont permis de détecter une structure de population plus subtile. 
+
+Enfin, nous avons illustrer l'utilisation de notre package R sur millier de
+génotypes /A.thaliana/, chacun incluant plus de 210k SNP. Notre méthode a permis
+d'exiber la structure de population de l'espece /A.thaliana/ en Europe. Par
+ailleurs, nous avons appliqué les tests de neutralité pour effectuer un balayage
+du génome pour la sélection dans des écotypes européens de l'espèce végétale
+/A.thaliana/. Le scan du génome a confirmé la preuve de la sélection des gènes
+liés à la floraison /CIP4.1/, /FRI/ et /DOG1/ différenciant la Fenno-Scandinavie
+du nord-ouest de l'Europe citep:Horton_2012.
+
+
+*** =lfmm=
+
+
+
+*** Publications
 
 résumé les résultats (démo, algo, résultat numérique) (mettre quelques ref ex th
 2 de ......).
@@ -1668,7 +1779,35 @@ APLS appliqué avec ces paramètres par défaut aux résultats du programme =snm
 qui n'utilise pas l'informations géographiques.
 
 *** Application au Simons Genome Diversity Project               :noexport:
+
+TODO la carte : 
+
+#+NAME: code:Simons_indiv_toprint
+#+CAPTION: Dépend de [[code:Simons_indiv2]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/geas_climatic_gradient_plot.rds")
+
+  ThesisRpackage::Plots_export_pdf(pl = pl,
+                                        basename.output = "eas_climatic_gradient",
+                                        env = MaTheseR.params,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
+                                        width = 1 * MaTheseR.params$textwidthinch)
+#+end_src
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics{./OUTPUT/Rplots/eas_climatic_gradient.pdf}
+\caption{Gradient climatique $\X$ utilisé pour l'association génotype-environement.}
+\label{fig:eas_gradient}
+\end{figure}
+#+END_EXPORT
 **** Scripts
+:LOGBOOK:
+CLOCK: [2017-10-06 ven. 10:30]--[2017-10-06 ven. 10:55] =>  0:25
+:END:
 ***** CANCELLED Wrong way 
 CLOSED: [2017-09-28 jeu. 09:32]
 :LOGBOOK:
@@ -2003,6 +2142,13 @@ structure latente par lfmm. Ceux qui dérive trop de l'équilibre HW peuvent etr
 du bruit ou sous un sélection forte donc il faut pas les avoir pour calculer la
 structure latente.
 
+#+NAME: code:Simons_rm
+#+CAPTION: netoyage pour relancer
+#+begin_src shell
+  rm -f Simons.chr*_CQ*
+  rm -f Simons_allchr*
+#+end_src
+
 On enleve tous les chrm avec des données manquantes 
 
 #+NAME: code:Simons_QC2
@@ -2010,11 +2156,11 @@ On enleve tous les chrm avec des données manquantes
 #+begin_src shell
   cd /home/cayek/Projects/Thesis/MaThese/Data/Simons/Samples
 
-  for file in Simons.chr*.bed
+  for file in Simons.chr[1-9].bed Simons.chr[1-2][0-9].bed
   do
       basefile=`basename $file .bed`
       echo "===== $basefile ====="
-      plink --bfile $basefile --threads 16 --maf 0.01 --mind 0.05 --geno 0.00 --snps-only --autosome --make-bed --out "$basefile"_CQ
+      plink --bfile $basefile --threads 16 --maf 0.01 --mind 0.05 --geno 0.0 --snps-only --autosome --make-bed --out "$basefile"_CQ
   done
 
 
@@ -2032,7 +2178,7 @@ CLOSED: [2017-10-05 jeu. 10:19]
 #+begin_src shell
   cd /home/cayek/Projects/Thesis/MaThese/Data/Simons/Samples
 
-  for file in Simons.chr*_CQ.bed
+  for file in Simons.chr[1-9]_CQ.bed Simons.chr[1-2][0-9]_CQ.bed
   do
       basefile=`basename $file .bed`
       echo "===== $basefile ====="
@@ -2042,8 +2188,10 @@ CLOSED: [2017-10-05 jeu. 10:19]
 
 
 #+end_src
-***** TODO Matrice pruned in R
+***** DONE Matrice pruned in R
+CLOSED: [2017-10-06 ven. 10:25]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-06 ven. 10:25]
 - State "TODO"       from              [2017-10-05 jeu. 10:19]
 :END:
 
@@ -2051,9 +2199,15 @@ CLOSED: [2017-10-05 jeu. 10:19]
 #+CAPTION: Dépend de [[code:Simons_pruning]]
 #+begin_src shell
   ls *CQ_pruned.bed > all.beds.txt
+  wc -l all.beds.txt
   sed -i 's/\.bed//g' all.beds.txt
   plink --merge-list all.beds.txt --make-bed --out Simons_allchrm_CQ_pruned
 
+  ## I do not know why
+  plink --bfile Simons_allchrm_CQ_pruned --missing
+
+  ## remove missing, not all chrm for all people
+  plink --bfile Simons_allchrm_CQ_pruned --threads 16 --maf 0.01 --geno 0.0 --snps-only --autosome --make-bed --out Simons_allchrm_CQ_pruned_noNA
 #+end_src
 
 #+RESULTS:
@@ -2092,7 +2246,7 @@ un millon de SNPs ...
 #+begin_src R 
   library(bigsnpr)
   setwd("~/Projects/Thesis/MaThese/Data/Simons/Samples/")
-  bedfile <- "Simons_allchrm_CQ_pruned.bed"
+  bedfile <- "Simons_allchrm_CQ_pruned_noNA.bed"
 
   snp_readBed(bedfile, "G_pruned", backingpath = "bigsnpr")
 
@@ -2107,15 +2261,94 @@ un millon de SNPs ...
   rm(G.r)
   gc()
 
-  ## test to read
-  G <- readRDS("G_pruned.rds")
+#+end_src
+***** DONE Information indiv
+CLOSED: [2017-10-06 ven. 10:42]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-06 ven. 10:42]
+- State "TODO"       from              [2017-10-06 ven. 10:27]
+:END:
+
+#+NAME: code:Simons_indiv2
+#+CAPTION: Dépend de [[code:Simons_ddl]] [[code:Simons_matrix]]
+#+begin_src R 
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  gtheme <- MaTheseR.params$gtheme
+
+  indiv.df <- data.table::fread("./Data/Simons/SGDP_metadata.279public.21signedLetter.samples.txt",
+                                data.table=FALSE) %>% as_tibble()
+  G <- readRDS("./Data/Simons/Samples/G_pruned.rds")
+
+
+  ## keep only indiv in G
+  indiv.df <- indiv.df %>% dplyr::filter(SGDP_ID %in% row.names(G))
+  dim(indiv.df)
+
+  saveRDS(indiv.df, "./Data/ThesisDataset/Simons/indiv.df")
+
+  ## plot
+  library(ggmap)
+
+  mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
+
+  pl <- ggplot(indiv.df, aes(x = Longitude, y = Latitude, text = Country, color = Region)) +
+    mapWorld + 
+    geom_point() +
+    gtheme +
+    theme(legend.position='bottom')
+  pl
+  save_plot_png(pl, "Simons_indiv.png")
+  save_expr(pl, "Simons_indiv_toprint.rds")
+
+  ## plotly
+  library(plotly)
+  ggplotly(pl)
+#+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/Simons_indiv.png]]
+
+***** DONE Formatage des données prunned
+CLOSED: [2017-10-06 ven. 10:50]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-06 ven. 10:50]
+- State "TODO"       from              [2017-10-06 ven. 10:26]
+:END:
+
+#+NAME: code:Simons_format
+#+CAPTION: Dépend de [[code:Simons_matrix]]
+#+begin_src R 
+
+  G <- readRDS("./Data/Simons/Samples/G_pruned.rds")
 
   ## NA
   anyNA(G)
+  nas <- apply(G, 2, anyNA)
+  mean(is.na(G))
 
-  ## scaling
+  ## minor allele
+  m <- function(c) {
+    p <- mean(c) / 2; min(p, 1-p)
+  }
+  mafs <- apply(G, 2, m)
+  min(mafs)
+  max(mafs)
+
+  ## save genotype amtrix
+  saveRDS(G, "./Data/ThesisDataset/Simons/G_pruned.rds")
+
+  ## scaling for lfmm and pca
   G.scaled <- scale(G)
-  saveRDS(G.scaled, "G_pruned_scaled.rds")
+  saveRDS(G.scaled, "./Data/ThesisDataset/Simons/G_pruned_scaled.rds")
+
+  ## scaling binomial for lfmm and pca, cf keurcien
+  f <- function(c) {
+    m <- mean(c)
+    (c - m) / sqrt(m * (1 - m / 2))
+  }
+  G.scaled.binom <- apply(G, 2, f)
+  saveRDS(G.scaled, "./Data/ThesisDataset/Simons/G_pruned_scaled_binom.rds")
 #+end_src
 
 ** Résultats
@@ -4264,17 +4497,19 @@ CLOSED: [2017-09-11 lun. 19:44]
 
 *** Application au Simons Genome Diversity Project               :noexport:
 **** Scripts                                                    :noexport:
-***** RUNNING PCA
+***** DONE PCA
+CLOSED: [2017-10-06 ven. 10:18]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-10-06 ven. 10:18]
 - State "RUNNING"    from              [2017-10-05 Jeu 23:04]
 :END:
 #+NAME: code:Simons_pca
 #+CAPTION: Dépend de [[code:Simons_matrix]]
-#+begin_src R 
+#+begin_src R
   library(MaTheseR)
   library(RSpectra)
 
-  G <- readRDS("~/Projects/Thesis/Data/Simons/Samples/G_pruned_scaled.rds")
+  G <- readRDS("~/Projects/Thesis/Data/ThesisDataset/Simons/G_pruned_scaled.rds")
 
   expr <- list()
 
@@ -4284,7 +4519,25 @@ CLOSED: [2017-09-11 lun. 19:44]
   expr$time <- end.time - start.time
 
   save_expr(expr, "Simons_pca.rds")
+
 #+end_src
+
+#+NAME: code:Simons_pca_plot
+#+CAPTION: Dépend de [[code:Simons_pca]]
+#+begin_src R 
+  library(MaTheseR)
+
+  expr <- readRDS("./OUTPUT/Expr/Simons_pca.rds")
+  indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df")
+
+  ## screeplot
+  vp <- expr$pca.res$d
+  pl <- qplot(x = seq_along(vp), y = vp)
+
+
+  ## pcs
+#+end_src
+
 ***** TODO Variogram
 :LOGBOOK:
 - State "TODO"       from              [2017-10-05 Jeu 23:05]
@@ -4320,8 +4573,8 @@ d'informations géographiques et génétiques. Sur la base des problèmes de
 moindres carrés, les nouveaux algorithmes combinent des approches de
 factorisation matricielle et de statistiques spatiales pour fournir des
 estimations précises des coefficients de métissage individuels et des fréquences
-d'allèle dans les clusters génétiques. Les deux méthodes partagent de nombreuses
-similitudes, mais elles diffèrent dans les approximations qu'elles font pour
+d'allèle dans les clusters génétiques. Les deux algorithmes partagent de nombreuses
+similitudes, mais ils diffèrent dans les approximations qu'ils font pour
 diminuer la complexité algorithmique. Plus précisément, l'algorithme AQP alterne
 des résolutions de problèmes d'optimisation quadratique alors que l'algorithme
 APLS lève les contraintes des problèmes d'optimisation afin de les transformer
@@ -16524,3 +16777,26 @@ On ne s'arrête pas au même endroit !!!!
 **** Les gamètes :D
 par humain il y a 2 ^ 23 gamète possibles car on 23 paire de chromosomes.
 **** Pk pas un EM ?
+Ce qu'on fait c'est pas un peut des EM mais pas dans un cadre probabiliste ? 
+
+Nous on a changé de paradigme ! plus dans un cadre probabiliste.
+
+La question de l'EM a pas trop lieu d'etre, il faut une vraisemblance pour un EM.
+**** Un EM c'est quoi ?
+[[https://fr.wikipedia.org/wiki/Algorithme_esp%25C3%25A9rance-maximisation][Algorithme espérance-maximisation]]
+
+Ca maximise la vraisemblance. Je comprends que c'est venu remplacer le MCMC des
+modèle probabiliste.
+
+**** Un MCMC c'est quoi ?
+[[https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo][Markov chain Monte Carlo]]
+Ca echantillone une loi.
+
+Exemple d'algo MCMC : 
+- Gibs sampler
+
+**** L'inference variationnel bayesienne c'est quoi ?
+[[https://en.wikipedia.org/wiki/Variational_Bayesian_methods][Variational Bayesian methods]]
+
+**** Empirical bayes c'est quoi ?
+[[https://en.wikipedia.org/wiki/Empirical_Bayes_method][Empirical Bayes method]]
