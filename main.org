@@ -3815,7 +3815,7 @@ homogènes.
 \includegraphics{./OUTPUT/Rplots/tess3_AT_map.pdf}
 \caption{{\bf {\it A. thaliana} coefficients de métissage}. Estimation des
   coefficients de métissage calculée par l'algorithme APLS avec $K = 6$ clusters
-  génétiques et $\sigma = 1.5$ pour le paramètre d'échelle géographiques. A)
+  génétiques et $\sigma = 1.5$ pour le paramètre d'échelle géographique. A)
   Carte géographique des coefficients de métissage. B) Barplot des coefficients
   de métissage.}
 \label{fig:tess3:at:map}
@@ -3864,7 +3864,7 @@ Bonferonni).
 \includegraphics{./OUTPUT/Rplots/tess3_AT_manhattanplot.png}
 \caption{{\bf Détection de locus sous adaptation locale sur des écotypes
     européennes de \bf {\it A. thaliana}}. Manhattan plot de
-  $-\log(p\text{-value})$. Les \pvalues int été calculées à partir de la
+  $-\log(p\text{-value})$. Les \pvalues ont été calculées à partir de la
   structure de la population estimée par l'algorithme APLS avec $K = 6$ clusters
   génétiques et $ \sigma = 1,5 $ pour le paramètre d'échelle géographique.}
 \label{fig:tess3:at:manhattanplot}
