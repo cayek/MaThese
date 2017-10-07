@@ -700,20 +700,22 @@ probabiliste n'a été proposé pour l'inférence spatiale des coefficients
 d'ascendance. Nous résumons les méthodes d'inférence des coefficients
 d'ascendance génétique dans la Table [[table:tess3_etat_art]]
 
-#+ATTR_LATEX: :align lp{3cm}lx{6cm}p{6cm} :float sideways
+#+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
+#+ATTR_LATEX: :align lp{5cm}lp{5.5cm}p{5.5cm} :float sideways
 #+NAME: table:tess3_etat_art
 #+CAPTION: *Méthodes d'estimation de coéficients d'ascendance non spatial et spatial.* La méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
+|---------------+-----------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
 | Méthode       | Modèle                                              | Spatiale | Algorithme                                       | Référence                                   |
 |---------------+-----------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
 | STUCTURE      | bayésien                                            | non      | MCMC                                             | citet:Pritchard2000,Falush1567              |
 | FRAPPE        | vraisemblance                                       | non      | EM                                               | citet:Tang_2005                             |
+| TESS          | bayésien                                            | oui      | MCMC                                             | citet:CHEN_2007                             |
+| GENELAND      | bayésien                                            | oui      | MCMC                                             | citet:phdGuedj                              |
+| BAPS          | bayésien                                            | oui      | optimisation stochastique                        | citet:Corander2008                          |
 | ADMIXTURE     | vraisemblance                                       | non      | optimisation quasi-Newton alterné                | citet:alexander2009admixture,Alexander_2011 |
 | fastStructure | bayésien                                            | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
-| sNMF          | factorisation matricielle parcimonieuse             | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
 | PSIKO         | PCA                                                 | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
-| TESS          | bayésien                                            | oui      | MCMC                                             | citet:CHEN_2007                             |
-| BAPS          | bayésien                                            | oui      | optimisation stochastique                        | citet:Corander2008                          |
-| GENELAND      | bayésien                                            | oui      | MCMC                                             | citet:phdGuedj                              |
+| sNMF          | factorisation matricielle parcimonieuse             | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
 | conStruct     | bayésien                                            | oui      | MCMC                                             | citet:Bradburd189688                        |
 | TESS3-AQP     | factorisation matricielle régularisé sur graphe     | oui      | optimisation quadratique alterné                 |                                             |
 | TESS3-APLS    | factorisation matricielle régularisé sur graphe     | oui      | moindres carré alterné projeté                   |                                             |
@@ -916,7 +918,7 @@ cite:article_Leek_Storey_2007. Nous résumons les méthodes reposant sur des
 modèles construit à partir des dérivé de l'équation eqref:eq:model0 dans le
 tableau.
 
-#+ATTR_LATEX: :align llp{3cm}l
+#+ATTR_LATEX: :align lllll :float sideways
 #+CAPTION: *Méthodes reposant sur l'équation ref:eq:model0 pour la correction des facteurs de confusion dans les études d'association.* Les méthodes ridgeLFMM et LassoLFMM sont présentées dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont présentées plus en détailles dans la section [[sec:similar_method]].
 #+NAME: table:lfmm_etat_art
 | Méthode              | Modèle                                                | Algorithme                                                          | Test d'hypothèse                                                      | Référence                                       |
@@ -999,14 +1001,17 @@ individus proches ont plus de chance de partager des ancêtres communs, que des
 individus éloignés. Afin d'estimer les matrices d'ascendance, nous avons proposé
 deux algorithmes appelé AQP et APLS. Nos algorithmes diffèrent dans les
 approximations qu'ils font pour diminuer la complexité algorithmique. Plus
-précisément, l'algorithme AQP alterne des résolutions de problèmes
-d'optimisation quadratique. Alors que l'algorithme APLS lève les contraintes des
-problèmes d'optimisation quadratique, afin de les transformer en problèmes des
-moindres carrés régularisé par une norme $L_{2}$. Ainsi, la complexité de
-l'algorithme APLS augmente linéairement avec le nombre d'individus dans
-l'échantillon. De plus, nous avons mis en place un test de détection de
-l'adaptation locale. La statistique de test est calculé à partir des estimations
-spatiales des matrices d'ascendance génétique.
+précisément, nous avons d'une part l'algorithme AQP qui alterne des résolutions
+de problèmes d'optimisation quadratique. Le corollaire 2 établi par
+citet:Grippo_2000 permet de montrer la convergeance de l'algorithme AQP vers un
+minimum local de la fonction objectif définie par le problème factorisation
+matricielle. Nous avons d'autre part, l'algorithme APLS pour lequel nous levons
+les contraintes des problèmes d'optimisation quadratique. Cela permet de
+transformer d'alterner des problèmes des moindres carrés régularisé par une
+norme $L_{2}$. Ainsi, la complexité de l'algorithme APLS augmente linéairement
+avec le nombre d'individus dans l'échantillon. De plus, nous avons mis en place
+un test de détection de l'adaptation locale. La statistique de test est calculé
+à partir des estimations spatiales des matrices d'ascendance génétique.
 
 En utilisant des simulations de coalescantes, nous montrons que les deux
 algorithmiques AQP et APLS retournes des résultats avec la même précision
@@ -1058,9 +1063,10 @@ pour la régularisation $L_{1}$. Pour l'agorithme ridgeLFMM, nous utilons la
 formule du point de minimum global de la fonction objectif des moindres carrés
 régularisé en norme $L_{2}$. Nous apportons la démonstration de cette formule.
 Pour l'algorithme lassoLFMM, nous proposons un algorithme alterné de descente
-par blocs de coordonnées. Nous apportons égualement une preuve de la
-convergeance de l'algorithme lassoLFMM vers un minimum global de sa fonction
-objectif. 
+par blocs de coordonnées. Les travaux de citet:Tseng_2001 permettent de
+démontrer la congergence de l'algorithme lassoLFMM vers un minimum global de sa
+fonction objectif. Cependant, nous apportons une preuve adapté aux résultats de
+convergeance de notre algorithme.
 
 Pour évaluer la capacité de nos méthodes a corriger les étude d'assocaition pour
 les facteurs de confusions, nous réalisé des simulations a partir d'un jeux de
@@ -1074,7 +1080,13 @@ simulation. De plus, les tests d'hypothèses statistique obtenus avec nos métho
 sont correctement calibré. 
 
 Enfin, nous avons illustré l'utilisation de nos méthode sur des études
-d'assocaition faire a partir de données réelles. Sur les données réelles 
+d'assocaition faire a partir de données réelles. Sur les données réelles, nous
+montrons que nos méthodes permettent de retrouver les associations découvert par
+d'autres études. De plus, sur dans les études réelles nous observons que malgré
+les resemblance conceptuelle entre les méthodes, les assocaitions découvertes
+faite par les méthodes peuvent largement varier. Cela met en avant la nécésité
+d'utiliser plusieurs méthodes dans les études d'association ainsi que d'etre
+prudent dans les interprétations.
 *** Publications
 
 résumé les résultats (démo, algo, résultat numérique) (mettre quelques ref ex th
