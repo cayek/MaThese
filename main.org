@@ -495,45 +495,6 @@ démographique des individus afro-américains citep:tishkoff2009genetic.
 #+END_EXPORT
 
 
-Il existe de nombreuses méthodes pour estimer les coefficients d'ascendance à
-partir de données génétiques. Le modèle du logiciel =structure= est bayésien et
-l'inférence repose sur des méthodes d'échantillonnage de la loi a posteriori des
-coefficients d'ascendance citep:Pritchard2000. D'autres méthodes visant à rendre
-plus rapide l'inférence des matrices d'ascendance, minimisent la fonction
-log-vraisemblance des paramètres d'ascendance génétique
-citep:Tang_2005,alexander2009admixture; ou bien elles utilisent des méthodes
-d'inférence variationnelle bayésiennes citep:Raj_2014. Des méthodes très
-rapides, ne reposant pas sur une modélisation probabiliste, ont aussi été
-proposées pour passer à l'échelle des grands jeux de données modernes
-citep:Frichot_2014,Popescu_2014. Par ailleurs, de nombreuses méthodes utilisent
-l'information spatiale individuelle afin d'améliorer l'estimation de
-l'ascendance génétique et de localiser les clusters génétiques dans l'espace.
-Des méthodes ont ajouter l'information géographique au modèle bayésien de
-=structure= citep:CHEN_2007,Corander2008,GUEDJ_2011. Cependant, les méthodes
-bayésiennes repose sur de nombreuse hypothèses et passe plus difficilement à
-l'échelle des grands jeux de données. Aucune méthode non basée sur un modèle
-probabiliste n'a été proposé pour l'inférence spatiale des coefficients
-d'ascendance. Nous résumons les méthodes d'inférence des coefficients
-d'ascendance génétique dans la Table [[table:tess3_etat_art]]
-
-#+ATTR_LATEX: :align lp{3cm}lx{6cm}p{6cm} :float sideways
-#+NAME: table:tess3_etat_art
-#+CAPTION: *Méthodes d'estimation de coéficients d'ascendance non spatial et spatial.* La méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
-| Méthode       | Modèle                                              | Spatiale | Algorithme                                       | Référence                                   |
-|---------------+-----------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
-| STUCTURE      | bayésien                                            | non      | MCMC                                             | citet:Pritchard2000,Falush1567              |
-| FRAPPE        | vraisemblance                                       | non      | EM                                               | citet:Tang_2005                             |
-| ADMIXTURE     | vraisemblance                                       | non      | optimisation quasi-Newton alterné                | citet:alexander2009admixture,Alexander_2011 |
-| fastStructure | bayésien                                            | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
-| sNMF          | factorisation matricielle parcimonieuse             | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
-| PSIKO         | PCA                                                 | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
-| TESS          | bayésien                                            | oui      | MCMC                                             | citet:CHEN_2007                             |
-| BAPS          | bayésien                                            | oui      | optimisation stochastique                        | citet:Corander2008                          |
-| GENELAND      | bayésien                                            | oui      | MCMC                                             | citet:phdGuedj                              |
-| conStruct     | bayésien                                            | oui      | MCMC                                             | citet:Bradburd189688                        |
-| TESS3-AQP     | factorisation matricielle régularisé sur graphe     | oui      | optimisation quadratique alterné                 |                                             |
-| TESS3-APLS    | factorisation matricielle régularisé sur graphe     | oui      | moindres carré alterné projeté                   |                                             |
-
 **** Scripts                                                    :noexport:
 ***** DONE Africain Européen et Afro américain 
 CLOSED: [2017-09-14 jeu. 11:38]
@@ -715,6 +676,48 @@ Tuto pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
 [[./OUTPUT/Rplots/tess3_intro_pca.png]]
 [[./OUTPUT/Rplots/tess3_intro_freq.png]]
 [[./OUTPUT/Rplots/tess3_intro_barplot.png]]
+
+*** Méthodes d'estimation de la structure génétique des populations
+
+Il existe de nombreuses méthodes pour estimer les coefficients d'ascendance à
+partir de données génétiques. Le modèle du logiciel =structure= est bayésien et
+l'inférence repose sur des méthodes d'échantillonnage de la loi a posteriori des
+coefficients d'ascendance citep:Pritchard2000. D'autres méthodes visant à rendre
+plus rapide l'inférence des matrices d'ascendance, minimisent la fonction
+log-vraisemblance des paramètres d'ascendance génétique
+citep:Tang_2005,alexander2009admixture; ou bien elles utilisent des méthodes
+d'inférence variationnelle bayésiennes citep:Raj_2014. Des méthodes très
+rapides, ne reposant pas sur une modélisation probabiliste, ont aussi été
+proposées pour passer à l'échelle des grands jeux de données modernes
+citep:Frichot_2014,Popescu_2014. Par ailleurs, de nombreuses méthodes utilisent
+l'information spatiale individuelle afin d'améliorer l'estimation de
+l'ascendance génétique et de localiser les clusters génétiques dans l'espace.
+Des méthodes ont ajouter l'information géographique au modèle bayésien de
+=structure= citep:CHEN_2007,Corander2008,GUEDJ_2011. Cependant, les méthodes
+bayésiennes repose sur de nombreuse hypothèses et passe plus difficilement à
+l'échelle des grands jeux de données. Aucune méthode non basée sur un modèle
+probabiliste n'a été proposé pour l'inférence spatiale des coefficients
+d'ascendance. Nous résumons les méthodes d'inférence des coefficients
+d'ascendance génétique dans la Table [[table:tess3_etat_art]]
+
+#+ATTR_LATEX: :align lp{3cm}lx{6cm}p{6cm} :float sideways
+#+NAME: table:tess3_etat_art
+#+CAPTION: *Méthodes d'estimation de coéficients d'ascendance non spatial et spatial.* La méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
+| Méthode       | Modèle                                              | Spatiale | Algorithme                                       | Référence                                   |
+|---------------+-----------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
+| STUCTURE      | bayésien                                            | non      | MCMC                                             | citet:Pritchard2000,Falush1567              |
+| FRAPPE        | vraisemblance                                       | non      | EM                                               | citet:Tang_2005                             |
+| ADMIXTURE     | vraisemblance                                       | non      | optimisation quasi-Newton alterné                | citet:alexander2009admixture,Alexander_2011 |
+| fastStructure | bayésien                                            | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
+| sNMF          | factorisation matricielle parcimonieuse             | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
+| PSIKO         | PCA                                                 | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
+| TESS          | bayésien                                            | oui      | MCMC                                             | citet:CHEN_2007                             |
+| BAPS          | bayésien                                            | oui      | optimisation stochastique                        | citet:Corander2008                          |
+| GENELAND      | bayésien                                            | oui      | MCMC                                             | citet:phdGuedj                              |
+| conStruct     | bayésien                                            | oui      | MCMC                                             | citet:Bradburd189688                        |
+| TESS3-AQP     | factorisation matricielle régularisé sur graphe     | oui      | optimisation quadratique alterné                 |                                             |
+| TESS3-APLS    | factorisation matricielle régularisé sur graphe     | oui      | moindres carré alterné projeté                   |                                             |
+
 ** Tests d'association
 :LOGBOOK:
 - Note taken on [2017-09-18 lun. 16:54] \\
@@ -887,12 +890,14 @@ latente; sans celle-ci on détecte presque la moitié des colonnes de $\Y$ comme
 \begin{figure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/simu_intro.pdf}
-\caption{Histogramme des \pvalues du test de nullité des coefficients de la
-  régression sans et avec le facteur de confusion.}
+\caption{{\bf Test de nullité des coefficients de la régression sans et avec le
+    facteur de confusion.} Les données ont été simulées avec une variable
+  latentes $\matr{U}$ corrélée avec la variable $\X$. }
 \label{fig:simu_intro}
 \end{figure}
 #+END_EXPORT
 
+*** Méthodes de corrections des facteurs de confusion pour les études d'association
 Prendre en compte les facteurs latents est un problème important des études
 d'association. Certaines méthodes utilisent l'analyse en composantes principales
 pour estimer les facteurs de confusion et les intégrer aux tests d'hypothèses
@@ -912,7 +917,7 @@ modèles construit à partir des dérivé de l'équation eqref:eq:model0 dans le
 tableau.
 
 #+ATTR_LATEX: :align llp{3cm}l
-#+CAPTION: *Méthodes reposant sur l'équation ref:eq:model0 pour la correction des facteurs de confusion dans les études d'association.* Les méthodes ridgeLFMM et LassoLFMM sont présenté dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont plus détaillées dans la section [[sec:similar_method]].
+#+CAPTION: *Méthodes reposant sur l'équation ref:eq:model0 pour la correction des facteurs de confusion dans les études d'association.* Les méthodes ridgeLFMM et LassoLFMM sont présentées dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont présentées plus en détailles dans la section [[sec:similar_method]].
 #+NAME: table:lfmm_etat_art
 | Méthode              | Modèle                                                | Algorithme                                                          | Test d'hypothèse                                                      | Référence                                       |
 |----------------------+-------------------------------------------------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+-------------------------------------------------|
@@ -971,53 +976,57 @@ implémentations informatiques efficaces des nouvelles méthodes statistiques.
 
 Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes reposant
 sur des problèmes de factorisation de matrice. Nos algorithmes ont été
-implémenté dans deux packages R : =tess3r=
+implémentés dans deux packages R : =tess3r=
 (https://bcm-uga.github.io/TESS3_encho_sen/) et =lfmm=
 (https://github.com/bcm-uga/lfmm). Le package =tess3r= contient les algorithmes
-AQP et APLS d'inférence de l'ascendance génétique en incluent l'information
-spatiale. Le package =lfmm= contient les algorithme lassoLFMM et ridgeLFMM
-d'estimation des facteurs de confusion pour corriger les étude d'association.
+AQP et APLS d'inférence de l'ascendance génétique en incluant l'information
+spatiale. Le package =lfmm= contient les algorithmes lassoLFMM et ridgeLFMM
+d'estimation des facteurs de confusion pour corriger les études d'association.
+Nos algorithmes ont en commun qu'ils reposes sur des problèmes de factorisation
+matricielle.
 
 *** =tess3r=
 
-Dans le package =tess3r=, nous avons développé des algorithme d'estimation
-rapide des coéficients de métissage à partir de données génétique et
-géographique. Les algorithmes repose sur un problème de factorisation de la
-matrice génétique. Les termes de la factorisation sont les coéficients de
-métissage et les fréquences d'allèles dans les clusters génétiques. L'information
-spatiale est ajouté au moyen d'une régularisation sur la matrice des coéficients
-de métissage. La régularisation spatiale permet d'ajouter l'hypothèse que des
-individu proche ont plus de chance de partager des ancestre communs que des
-individus éloignés. Afin d'estimer les matrices d'ascendance nous avons proposé
-deux algorithmes que nous avons apelé AQP et APLS. Les deux algorithmes
-diffèrent dans les approximations qu'ils font pour diminuer la complexité
-algorithmique. Plus précisément, l'algorithme AQP alterne des résolutions de
-problèmes d'optimisation quadratique. Alors que l'algorithme APLS lève les
-contraintes des problèmes d'optimisation quadratique afin de les transformer en
-problèmes des moindres carrés régularisé par une norme $L_{2}$. La complexité de
+Dans le package =tess3r=, nous avons développé des algorithmes d'estimation
+rapide des coéficients de métissage à partir de données génétiques et
+géographiques. Les algorithmes reposent sur un problème de factorisation de la
+matrice génétique. L'objectif est de factoriser la matrice génétique en le
+produit d'une matrice des coefficients de métissage et une matrice des
+fréquences d'allèle dans les clusters génétiques. L'information spatiale est
+ajouté au moyen d'une régularisation sur la matrice des coefficients de
+métissage. La régularisation spatiale permet d'ajouter l'hypothèse que des
+individus proches ont plus de chance de partager des ancêtres communs, que des
+individus éloignés. Afin d'estimer les matrices d'ascendance, nous avons proposé
+deux algorithmes appelé AQP et APLS. Nos algorithmes diffèrent dans les
+approximations qu'ils font pour diminuer la complexité algorithmique. Plus
+précisément, l'algorithme AQP alterne des résolutions de problèmes
+d'optimisation quadratique. Alors que l'algorithme APLS lève les contraintes des
+problèmes d'optimisation quadratique, afin de les transformer en problèmes des
+moindres carrés régularisé par une norme $L_{2}$. Ainsi, la complexité de
 l'algorithme APLS augmente linéairement avec le nombre d'individus dans
-l'échantillon. En outre, nous avons mis en place un test de détection de la
-sélection reposant sur les estimations spatiales des matrices d'ascendance.
+l'échantillon. De plus, nous avons mis en place un test de détection de
+l'adaptation locale. La statistique de test est calculé à partir des estimations
+spatiales des matrices d'ascendance génétique.
 
-En utilisant des simulations coalescantes, nous montrons que les deux
+En utilisant des simulations de coalescantes, nous montrons que les deux
 algorithmiques AQP et APLS retournes des résultats avec la même précision
-statistique. Toujours sur des simulations de coalescant nous avons montré que
-nos algorithmes reproduise les même erreur statistique que le logiciel =TESS=
-2.3 CITER. Le logiciel =TESS= 2.3 permmet egalement l'estimation des coéficient
-de métissage a partir de données génétiques et géographique mais en utilisant un
-modèle bayésien. Sur les simulations que nous avons considéré nos algorithmes
-était 10 à 100 fois plus rapide que le logiciel =TESS= 2.3.
+statistique. Toujours sur des simulations de coalescants, nous avons montré que
+nos algorithmes reproduisent les mêmes erreurs statistiques que le logiciel
+=TESS= 2.3 cite:CHEN_2007. Le logiciel =TESS= 2.3 permet également l'estimation
+des coéficient de métissage à partir de données génétiques et géographiques mais
+en utilisant un modèle bayésien. Sur les simulations que nous avons considérées,
+nos algorithmes étaient 10 à 100 fois plus rapides que le logiciel =TESS= 2.3.
 
 Pour mesurer le bénéfice de l'utilisation d'algorithmes spatiaux, nous avons
 comparé les erreurs statistiques observées pour les algorithmes spatiaux avec
-celles observées pour un algorithme non spatial =snmf= CITER. Dans nos
-expériences numériques les erreurs des méthodes spatiales sont inférieures à
-celles observées avec des méthodes non spatiales, et les algorithmes spatiaux
-ont permis de détecter une structure de population plus subtile. 
+celles observées pour un algorithme non spatial =snmf= cite:Frichot_2014. Dans
+nos expériences numériques, les erreurs des méthodes spatiales sont inférieures
+à celles observées avec des méthodes non spatiales. De plus, les algorithmes
+spatiaux ont permis de détecter une structure de population plus subtile.
 
-Enfin, nous avons illustrer l'utilisation de notre package R sur millier de
+Enfin, nous avons illustré l'utilisation de notre package R sur un millier de
 génotypes /A.thaliana/, chacun incluant plus de 210k SNP. Notre méthode a permis
-d'exiber la structure de population de l'espece /A.thaliana/ en Europe. Par
+d'exiber la structure de population de l'espèce /A.thaliana/ en Europe. Par
 ailleurs, nous avons appliqué les tests de neutralité pour effectuer un balayage
 du génome pour la sélection dans des écotypes européens de l'espèce végétale
 /A.thaliana/. Le scan du génome a confirmé la preuve de la sélection des gènes
