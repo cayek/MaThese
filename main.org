@@ -116,42 +116,11 @@
 
 ** python
 
-* Résumés courts
-
-TODO
-
-*Résumé*  
-
-*Mots-clés*
-
-*Summary*  
-
-*Keyword*  
-
-* Résumé de la thèse abord
-
-TODO
-
-# Les analyses de données génétiques se sont démocratisé en biologie grâce aux
-# dernières techniques de sequencage de l'ADN. Afin de traiter des données
-# génétique de plus en plus complexe et volumineux il est nécessaire de développer
-# des méthodes statistiques appropriées.
-
-# *Objectif* L'objectif de cette thèse de doctorat est d'améliorer les outils
-# statistiques qui permettent aux biologistes de répondre à des questions
-# concrètes sur le vivant. Dans cette thèse nous nous sommes intéressé à deux
-# problématiques en analyse de données génétiques : l'estimation de la structure
-# génétique de population et les études d'associations. 
-# *Méthode*  
-
-# Nous avons développé des méthodes reposant sur de la factorisation de matrice.
-# Nous avons développer un premier modèle permettant d'estimer l'ascendance
-# génétique 
-# permettant d'estimer 
-# *Résultats*
-# *Conclusion*
-
 * Remerciements
+* Publications
+
+TODO
+
 #+BEGIN_EXPORT latex
 \mainmatter
 #+END_EXPORT
@@ -319,7 +288,11 @@ récentes améliorations en séquençage de l'ADN ont permis d'acquérir les gé
 de nombreuses espèces différentes. Dans le cadre de cette thèse nous nous sommes
 intéressés seulement aux données dîtes de SNPs (single-nucleotide polymorphism),
 qui sont les polymorphismes génétiques d'un seul nucléotide (Figure
-ref:fig:SNP). Les SNPs représentent $90 \%$ de l'ensemble des variations
+ref:fig:SNP). De plus, nous supposons que l'on peut seulement observé deux
+allèles par SNP. Cette hypothèse n'est pas réductrice car la probabilité qu'une
+mutation survienne deux fois à la même position est très faible, et les
+mutations sont des évènements rares pour les espèces considérées dans cette
+thèse[fn:mutation]. Les SNPs représentent $90 \%$ de l'ensemble des variations
 génétiques humaines, et des SNPs avec une fréquence allélique supérieure à $1
 \%$ sont présents dans le génome humain, en moyenne tous les cent à trois cents
 nucléotides. Nous appelons locus une position sur l'ADN; nous parlons ainsi du
@@ -364,6 +337,8 @@ $
 \end{figure}
 #+END_EXPORT
 
+[fn:mutation] Le taux de mutation chez l'Humain est environ $0.5
+10^{-9}$
 *** Estimation de la structure génétique des populations
 :LOGBOOK:
 CLOCK: [2017-10-06 ven. 13:01]--[2017-10-06 ven. 13:26] =>  0:25
@@ -783,6 +758,20 @@ confusion pour l'étude d'association entre les matrices $\Y$ et $\X$. Les
 variables latentes sont potentiellement corrélées à $\X$; il faut donc les
 prendre en compte dans l'étude d'association.
 
+https://tex.stackexchange.com/questions/159127/drawing-simple-graph-pattern-with-tikz
+#+BEGIN_EXPORT latex
+\begin{tikzpicture}
+    \node[main node] (1) {$\Y$};
+    \node[main node] (2) [below left = 2.3cm and 1.5cm of 1]  {$\U$};
+    \node[main node] (3) [below right = 2.3cm and 1.5cm of 1] {$\X$};
+
+    \path[draw,thick]
+    (1) edge node {} (2)
+    (3) edge node {} (1);
+    \end{scope}
+\end{tikzpicture}
+#+END_EXPORT
+
 #+NAME: code:conf_factor
 #+BEGIN_SRC dot :file Figures/conf_factor.png :exports results :eval no-export
   graph {
@@ -899,14 +888,15 @@ latente; sans celle-ci on détecte presque la moitié des colonnes de $\Y$ comme
 \end{figure}
 #+END_EXPORT
 
-*** Méthodes de corrections des facteurs de confusion pour les études d'association
+*** Méthodes de correction des facteurs de confusion pour les études d'association
+
 Prendre en compte les facteurs latents est un problème important des études
 d'association. Certaines méthodes utilisent l'analyse en composantes principales
-pour estimer les facteurs de confusion et les intégrer aux tests d'hypothèses
-statistiques citep:Rahmani_2016,Price_2006. D'autres méthodes utilisent les
-modèles mixtes afin de corriger les tests d'hypothèse pour les sources de
-variation indésirable citep:Kang_2008,Zhou_2014,Loh194944. Récemment, de
-nombreuses méthodes ont été proposées pour permettre d'estimer dans un même
+pour estimer les facteurs de confusion et les intégrer aux tests de
+significativité statistiques citep:Rahmani_2016,Price_2006. D'autres méthodes
+utilisent les modèles mixtes afin de corriger les tests d'hypothèse pour les
+sources de variation indésirable citep:Kang_2008,Zhou_2014,Loh194944. Récemment,
+de nombreuses méthodes ont été proposées pour permettre d'estimer dans un même
 modèle les effets des variables latentes et les effets des variables étudiées
 pour l'association. La plupart de ces méthodes reposent sur l'équation
 eqref:eq:model0 que nous avons utilisé dans la partie précédente. Ces modèles
@@ -918,20 +908,22 @@ cite:article_Leek_Storey_2007. Nous résumons les méthodes reposant sur des
 modèles construit à partir des dérivé de l'équation eqref:eq:model0 dans le
 tableau.
 
-#+ATTR_LATEX: :align lllll :float sideways
+#+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
+#+ATTR_LATEX: :align lp{3cm}p{3cm}p{3cm}p{3cm} :float sideways
 #+CAPTION: *Méthodes reposant sur l'équation ref:eq:model0 pour la correction des facteurs de confusion dans les études d'association.* Les méthodes ridgeLFMM et LassoLFMM sont présentées dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont présentées plus en détailles dans la section [[sec:similar_method]].
 #+NAME: table:lfmm_etat_art
-| Méthode              | Modèle                                                | Algorithme                                                          | Test d'hypothèse                                                      | Référence                                       |
-|----------------------+-------------------------------------------------------+---------------------------------------------------------------------+-----------------------------------------------------------------------+-------------------------------------------------|
-| sva-twostep          | PCA et régression linéaire                            | moindres carrés ordinaire et SVD                                    | test de Fisher                                                        | citet:article_Leek_Storey_2007                  |
-| sva-irw              | weighted-PCA et régression linéaire                   | moindres carrés ordinaires et weighted-SVD                          | test de Fisher                                                        | citet:article_Leek_Storey_2008                  |
-| RLFM                 | bayésien                                              | Monte-Carlo EM                                                      | pas de test                                                           | citet:agarwal09_regres                          |
-| famt                 | vraisemblance                                         | EM                                                                  | test de Student                                                       | citet:friguet09_factor_model_approac_to_multip  |
-| LFMM                 | bayésien                                              | MCMC                                                                | test de wald, estimation de la variance par bootstrap bayésien        | citet:frichot13_testin_assoc_between_loci_envir |
-| cate                 | analyse factorielle et régression linéaire            | EM ou SVD et moindres carrés généralisé                             | test basé sur la distribution asymptotique de l'estimateur des effets | citet:wang2015confounder                        |
-| ridgeLFMM            | factorisation matricielle avec régularisation $L_{2}$ | SVD et moindres carrés régularisé en norme $L_{2}$                  | test de Student                                                       |                                                 |
-| lassoLFMM            | factorisation matricielle avec régularisation $L_{1}$ | soft-thresholded SVD et moindres carrés régularisé en norme $L_{1}$ | test de Student                                                       |                                                 |
-| MOUTHWASH / BACKWASH | régression linéaire et analyse factorielle            | moindres carrés ordinaire et EM ou descente par coordonnées         | adaptive shrinkage (ASH) citep:stephens16_false_discov_rates          | citet:gerard2017empirical                       |
+|----------------------+-------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------------------+-------------------------------------------------|
+| Méthode              | Modèle                                                | Algorithme                                                          | Test d'hypothèse                                                                | Référence                                       |
+|----------------------+-------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------------------+-------------------------------------------------|
+| sva-twostep          | PCA et régression linéaire                            | moindres carrés ordinaire et SVD                                    | test de Fisher                                                                  | citet:article_Leek_Storey_2007                  |
+| sva-irw              | weighted-PCA et régression linéaire                   | moindres carrés ordinaires et weighted-SVD                          | test de Fisher                                                                  | citet:article_Leek_Storey_2008                  |
+| RLFM                 | bayésien                                              | Monte-Carlo EM                                                      | pas de test                                                                     | citet:agarwal09_regres                          |
+| famt                 | vraisemblance                                         | EM                                                                  | test de Student                                                                 | citet:friguet09_factor_model_approac_to_multip  |
+| LFMM                 | bayésien                                              | MCMC                                                                | test de wald, estimation de la variance par bootstrap bayésien                  | citet:frichot13_testin_assoc_between_loci_envir |
+| cate                 | analyse factorielle et régression linéaire            | EM ou SVD et moindres carrés généralisé                             | test basé sur la distribution asymptotique de l'estimateur des effets d'intérêt | citet:wang2015confounder                        |
+| ridgeLFMM            | factorisation matricielle avec régularisation $L_{2}$ | SVD et moindres carrés régularisé en norme $L_{2}$                  | test de Student                                                                 |                                                 |
+| lassoLFMM            | factorisation matricielle avec régularisation $L_{1}$ | soft-thresholded SVD et moindres carrés régularisé en norme $L_{1}$ | test de Student                                                                 |                                                 |
+| MOUTHWASH / BACKWASH | régression linéaire et analyse factorielle            | moindres carrés ordinaire et EM ou descente par coordonnées         | adaptive shrinkage (ASH) citep:stephens16_false_discov_rates                    | citet:gerard2017empirical                       |
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
@@ -977,15 +969,13 @@ implémentations informatiques efficaces des nouvelles méthodes statistiques.
 ** Résumé des résultats principaux
 
 Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes reposant
-sur des problèmes de factorisation de matrice. Nos algorithmes ont été
+sur des problèmes de factorisation matricielle. Nos algorithmes ont été
 implémentés dans deux packages R : =tess3r=
 (https://bcm-uga.github.io/TESS3_encho_sen/) et =lfmm=
 (https://github.com/bcm-uga/lfmm). Le package =tess3r= contient les algorithmes
 AQP et APLS d'inférence de l'ascendance génétique en incluant l'information
 spatiale. Le package =lfmm= contient les algorithmes lassoLFMM et ridgeLFMM
 d'estimation des facteurs de confusion pour corriger les études d'association.
-Nos algorithmes ont en commun qu'ils reposes sur des problèmes de factorisation
-matricielle.
 
 *** =tess3r=
 
@@ -993,34 +983,35 @@ Dans le package =tess3r=, nous avons développé des algorithmes d'estimation
 rapide des coéficients de métissage à partir de données génétiques et
 géographiques. Les algorithmes reposent sur un problème de factorisation de la
 matrice génétique. L'objectif est de factoriser la matrice génétique en le
-produit d'une matrice des coefficients de métissage et une matrice des
-fréquences d'allèle dans les clusters génétiques. L'information spatiale est
-ajouté au moyen d'une régularisation sur la matrice des coefficients de
-métissage. La régularisation spatiale permet d'ajouter l'hypothèse que des
-individus proches ont plus de chance de partager des ancêtres communs, que des
-individus éloignés. Afin d'estimer les matrices d'ascendance, nous avons proposé
-deux algorithmes appelé AQP et APLS. Nos algorithmes diffèrent dans les
-approximations qu'ils font pour diminuer la complexité algorithmique. Plus
-précisément, nous avons d'une part l'algorithme AQP qui alterne des résolutions
-de problèmes d'optimisation quadratique. Le corollaire 2 établi par
-citet:Grippo_2000 permet de montrer la convergeance de l'algorithme AQP vers un
-minimum local de la fonction objectif définie par le problème factorisation
-matricielle. Nous avons d'autre part, l'algorithme APLS pour lequel nous levons
-les contraintes des problèmes d'optimisation quadratique. Cela permet de
-transformer d'alterner des problèmes des moindres carrés régularisé par une
-norme $L_{2}$. Ainsi, la complexité de l'algorithme APLS augmente linéairement
-avec le nombre d'individus dans l'échantillon. De plus, nous avons mis en place
-un test de détection de l'adaptation locale. La statistique de test est calculé
-à partir des estimations spatiales des matrices d'ascendance génétique.
+produit d'une matrice des coefficients d'ascendance et une matrice des
+fréquences d'allèle dans les clusters génétiques. Pour inférer les matrices
+d'ascendance nous avons utilisé une approximation des moindres carrés.
+L'information spatiale est ajoutée à la fonction objectif au moyen d'une
+régularisation sur la matrice des coefficients de métissage. La régularisation
+spatiale permet d'ajouter l'hypothèse que des individus proches ont plus de
+chance de partager des ancêtres communs, que des individus éloignés. Afin
+d'estimer les matrices d'ascendance, nous avons proposé deux algorithmes appelé
+AQP et APLS. Nos algorithmes diffèrent dans les approximations qu'ils font pour
+diminuer la complexité algorithmique. Plus précisément, nous avons d'une part
+l'algorithme AQP qui alterne des résolutions de problèmes d'optimisation
+quadratique. Le corollaire 2 établi par citet:Grippo_2000 permet de montrer la
+convergence de l'algorithme AQP vers un minimum local de la fonction objectif.
+Nous avons d'autre part, l'algorithme APLS pour lequel nous avons supprimé les
+contraintes des problèmes d'optimisation quadratique. Cela permet d'alterner des
+problèmes des moindres carrés régularisé par une norme $L_{2}$. Ainsi, la
+complexité de l'algorithme APLS augmente linéairement avec le nombre d'individus
+dans l'échantillon. De plus, nous avons mis en place un test de détection de
+l'adaptation locale. La statistique de test est calculé à partir des estimations
+spatiales des matrices d'ascendance génétique.
 
-En utilisant des simulations de coalescantes, nous montrons que les deux
+En utilisant des simulations de coalescants, nous avons montré que les deux
 algorithmiques AQP et APLS retournes des résultats avec la même précision
 statistique. Toujours sur des simulations de coalescants, nous avons montré que
 nos algorithmes reproduisent les mêmes erreurs statistiques que le logiciel
 =TESS= 2.3 cite:CHEN_2007. Le logiciel =TESS= 2.3 permet également l'estimation
 des coéficient de métissage à partir de données génétiques et géographiques mais
-en utilisant un modèle bayésien. Sur les simulations que nous avons considérées,
-nos algorithmes étaient 10 à 100 fois plus rapides que le logiciel =TESS= 2.3.
+en utilisant un modèle bayésien. Sur ces simulations, nos algorithmes étaient 10
+à 100 fois plus rapides que le logiciel =TESS= 2.3.
 
 Pour mesurer le bénéfice de l'utilisation d'algorithmes spatiaux, nous avons
 comparé les erreurs statistiques observées pour les algorithmes spatiaux avec
@@ -1038,7 +1029,6 @@ du génome pour la sélection dans des écotypes européens de l'espèce végét
 liés à la floraison /CIP4.1/, /FRI/ et /DOG1/ différenciant la Fenno-Scandinavie
 du nord-ouest de l'Europe citep:Horton_2012.
 
-
 *** =lfmm=
 :LOGBOOK:
 - Note taken on [2017-10-07 sam. 15:47] \\
@@ -1048,53 +1038,47 @@ du nord-ouest de l'Europe citep:Horton_2012.
 
 Dans le package =lfmm=, nous avons développé des algorithmes qui permettent
 d'estimer les variables latentes afin de corriger les études d'association pour
-les sources de variations indésirable. Nous appelons ces variables latentes les
-facteurs de confusions pour l'étude. Pour cela, nous construisons une fonction
-objectif à partir l'égalité eqref:eq:model0 du modèle de régression avec facteur
-latent, qui décompose en la matrice des variables étudié en la somme de deux
-termes : l'effet des variables latentes et l'effet des variables d'intérêt pour
-l'étude. L'attache aux données de la fonction objectif est construite à partir
-de l'approximation des moindres carrés de l'égalité eqref:eq:model0. Nous
-montrons que le terme d'attache au données seul ne permet de définir des
-estimateurs de manière univoque pour notre problème. Ainsi, nous proposons
+les facteurs de confusion. Nous avons proposé une fonction objectif à partir
+l'égalité eqref:eq:model0 du modèle de régression avec facteur latent. Le modèle
+consiste à décomposer la matrice des variables étudiées en la somme de deux
+termes : l'effet des variables latentes et l'effet des variables d'intérêts pour
+l'étude. L'attache aux données de la fonction objectif a été construite à partir
+de l'approximation des moindres carrés de l'égalité eqref:eq:model0. Nous avons
+montré que le terme d'attache au données seul ne permet pas de définir des
+estimateurs de manière univoque pour notre problème. Ainsi, nous avons proposé
 d'ajouter un terme de régularisation portant sur les effets d'intérêts. Nous
-appelons nos méthodes ridgeLFMM, pour la régularisation $L_{2}$ et lassoLFMM,
-pour la régularisation $L_{1}$. Pour l'agorithme ridgeLFMM, nous utilons la
-formule du point de minimum global de la fonction objectif des moindres carrés
-régularisé en norme $L_{2}$. Nous apportons la démonstration de cette formule.
-Pour l'algorithme lassoLFMM, nous proposons un algorithme alterné de descente
-par blocs de coordonnées. Les travaux de citet:Tseng_2001 permettent de
-démontrer la congergence de l'algorithme lassoLFMM vers un minimum global de sa
-fonction objectif. Cependant, nous apportons une preuve adapté aux résultats de
-convergeance de notre algorithme.
+avons appelé nos méthodes ridgeLFMM, pour la régularisation $L_{2}$ et
+lassoLFMM, pour la régularisation $L_{1}$. L'algorithme ridgeLFMM utilise la
+formule du minimum global de la fonction objectif des moindres carrés régularisé
+en norme $L_{2}$. Nous avons apporté la démonstration de cette formule. Pour
+l'algorithme lassoLFMM, nous avons proposé une méthode alternée de descente par
+blocs de coordonnées. Les travaux de citet:Tseng_2001 permettent de démontrer la
+congergence de l'algorithme lassoLFMM vers le minimum global de sa fonction
+objectif. Cependant, nous avons proposé une preuve adapté au résultat de
+convergence de notre algorithme.
 
-Pour évaluer la capacité de nos méthodes a corriger les étude d'assocaition pour
-les facteurs de confusions, nous réalisé des simulations a partir d'un jeux de
-données réelle issu de génotypes humains. Nous avons ajouté à la comparaisons
-une méthode qui ne prend pas en compte les facteurs. Ainsi que des les méthodes
-de la litératures: cate, sva-irw et sva-twostep. Nous avons égualement considéré
-la méthode calculant les facteus latents à l'aide de l'ACP. Ces simulations nous
-ont permit de montrer que nos méthode ridgeLFMM et lassoLFMM ont la même
-puissance que la méthode oracle qui connaire les variables latentes de la
-simulation. De plus, les tests d'hypothèses statistique obtenus avec nos méthodes
-sont correctement calibré. 
+Pour évaluer la capacité de nos méthodes à corriger les études d'association
+pour les facteurs de confusions, nous avons réalisé des simulations à partir
+d'un jeux de données réelle de génotypes humains. Nous avons ajouté à la
+comparaisons une méthode de référence qui ne prend pas en compte les facteurs.
+Nous avons aussi comparé les méthodes de la littératures reposant le même modèle
+de régression avec facteur latent que nos méthodes : cate, sva-irw et
+sva-twostep. Nous avons également considéré la méthode calculant les facteurs
+latents à l'aide de l'ACP. Ces simulations nous ont permit de montrer que nos
+méthode ridgeLFMM et lassoLFMM ont la même puissance que la méthode oracle qui
+connaire les variables latentes de la simulation. De plus, les statistiques
+\pvalues obtenus avec nos méthodes sont correctement calibrées. Nous avons
+observé que la méthode cate obtenait des performances comparable à celles de nos
+méthodes sur toutes les simulations considérées.
 
-Enfin, nous avons illustré l'utilisation de nos méthode sur des études
-d'assocaition faire a partir de données réelles. Sur les données réelles, nous
-montrons que nos méthodes permettent de retrouver les associations découvert par
-d'autres études. De plus, sur dans les études réelles nous observons que malgré
-les resemblance conceptuelle entre les méthodes, les assocaitions découvertes
-faite par les méthodes peuvent largement varier. Cela met en avant la nécésité
-d'utiliser plusieurs méthodes dans les études d'association ainsi que d'etre
-prudent dans les interprétations.
-*** Publications
-
-résumé les résultats (démo, algo, résultat numérique) (mettre quelques ref ex th
-2 de ......).
-
-La thèse a données lieu aux travaux et réalialisation suitant : (les livrables)
-- lfmm tess3r
-- listes de publications
+Enfin, nous avons illustré l'utilisation de nos méthodes sur des études
+d'association pour des données réelles. Sur les données réelles, nous montrons
+que nos méthodes permettent de retrouver les associations découvert par d'autres
+études. De plus, dans ces études nous observons que malgré les ressemblances
+conceptuelles entre les méthodes, les associations découvertes par les méthodes
+peuvent varier largement. Cela met en avant la nécessité d'utiliser plusieurs
+méthodes dans les études d'association, ainsi que d'être prudent dans les
+interprétations.
 
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
@@ -1282,14 +1266,15 @@ géographique.
 Nous considérons une matrice de génotype, $\Y$, enregistrant des données de $n$
 individus à $p$ locus polymorphes pour une espèce ayant une ploïdie de $d$,
 c'est-à-dire qui possède un génome composé de $d$ exemplaires de chaque
-chromosome. Pour les SNPs autosomiques dans un organisme diploïde, le génotype
-au locus $\ell$ est un nombre entier, 0, 1 ou 2, correspondant au nombre
-d'allèles de référence observé à ce locus. Dans nos algorithmes nous utilisons
-des formes disjonctives introduites par citet:Frichot_2014 pour coder les
-génotypes. Par exemple pour un organisme diploïde, le nombre d'allèles observés
-à chaque locus $,0,1,2$ est encodé comme $100$, $010$ et $001$. Pour les
-organismes $d$-ploïde, il existe $(d + 1)$ génotypes possibles à chaque
-locus, et chaque valeur est encodée sous une forme disjonctive unique.
+chromosome. Pour les SNPs autosomiques[fn:autosomique] dans un organisme
+diploïde, le génotype au locus $\ell$ est un nombre entier, 0, 1 ou 2,
+correspondant au nombre d'allèles de référence observé à ce locus. Dans nos
+algorithmes nous utilisons des formes disjonctives introduites par
+citet:Frichot_2014 pour coder les génotypes. Par exemple pour un organisme
+diploïde, le nombre d'allèles observés à chaque locus $,0,1,2$ est encodé comme
+$100$, $010$ et $001$. Pour les organismes \dploide, il existe $(d + 1)$
+génotypes possibles à chaque locus, et chaque valeur est encodée sous une forme
+disjonctive unique.
 
 En utilisant la même approche que citet:Frichot_2014, si l'on suppose qu'il y a
 $K$ clusters génétiques, nous cherchons à décomposer la matrice $\Y$ en une
@@ -1319,6 +1304,11 @@ décrites par les équations eqref:eq:QConst et eqref:eq:GConst
 citep:lee1999learning,Cichocki2009. Dans la suite, nous utiliserons les notations
 $\DQ$ et $\DG$ pour représenter les ensembles formés à partir des contraintes
 sur les matrices $\Q$ et $\mathbf{G}$.
+
+[fn:autosomique] Les SNPs autosomiques sont les SNPs des chromosomes autosomes
+ou homologue. Les chromosomes autosomes sont formés de paires dont les membres
+ont la même forme, mais diffèrent des autres paires dans une cellule diploïde.
+Chez l'humain, on compte 22 paires de chromosomes homologues.
 *** Information géographique
 L'information géographique est introduite dans le problème de factorisation de
 matrice en utilisant des poids entre les individus. Les poids sont utilisés pour
@@ -16892,6 +16882,7 @@ génétiques. Ainsi que comment les erreurs de mesure peuvent influencer les
 
 #+BEGIN_EXPORT latex
 \printbibliography
+
 \backmatter
 #+END_EXPORT
 ** Perspective pour les études d'association sur des données génétiques :noexport:
@@ -16926,7 +16917,16 @@ provoque un déséquilibre de liaison entre les SNPs voisins. Avant
 
 Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que la redaction...
 
-* Publications
+* Résumés courts
+
+
+*Résumé*  
+
+*Mots-clés*
+
+*Summary*  
+
+*Keyword*  
 
 * Soutenance                                                       :noexport:
 :LOGBOOK:
