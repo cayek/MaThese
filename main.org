@@ -2163,11 +2163,13 @@ structure latente.
 #+NAME: code:Simons_rm
 #+CAPTION: netoyage pour relancer
 #+begin_src shell
+  cd /home/cayek/Projects/Thesis/MaThese/Data/Simons/Samples
   rm -f Simons.chr*_CQ*
   rm -f Simons_allchr*
 #+end_src
 
-On enleve tous les chrm avec des données manquantes 
+On enleve tous les chrm avec des données manquantes. En faite SI je filtre la
+derive de l'equilibre d'hardy weinberg car je vais lancer tess3r dessus.
 
 #+NAME: code:Simons_QC2
 #+CAPTION: Dépend de [[code:Simons_fusion2]]
@@ -2178,7 +2180,7 @@ On enleve tous les chrm avec des données manquantes
   do
       basefile=`basename $file .bed`
       echo "===== $basefile ====="
-      plink --bfile $basefile --threads 16 --maf 0.01 --mind 0.05 --geno 0.0 --snps-only --autosome --make-bed --out "$basefile"_CQ
+      plink --bfile $basefile --threads 16 --maf 0.05 --mind 0.05 --geno 0.0 --hwe 1e-10 --snps-only --autosome --make-bed --out "$basefile"_CQ
   done
 
 
@@ -2232,32 +2234,40 @@ CLOSED: [2017-10-06 ven. 10:25]
 #+begin_example
   PLINK v1.90b4.3 64-bit (9 May 2017)            www.cog-genomics.org/plink/1.9/
   (C) 2005-2017 Shaun Purcell, Christopher Chang   GNU General Public License v3
-  Logging to Simons_allchrm_CQ_pruned.log.
+  Logging to Simons_allchrm_CQ_pruned_noNA.log.
   Options in effect:
+    --autosome
+    --bfile Simons_allchrm_CQ_pruned
+    --geno 0.0
+    --maf 0.01
     --make-bed
-    --merge-list all.beds.txt
-    --out Simons_allchrm_CQ_pruned
+    --out Simons_allchrm_CQ_pruned_noNA
+    --snps-only
+    --threads 16
 
   193793 MB RAM detected; reserving 96896 MB for main workspace.
-  Performing single-pass merge (279 people, 1075292 variants).
-  Merged fileset written to Simons_allchrm_CQ_pruned-merge.bed +
-  Simons_allchrm_CQ_pruned-merge.bim + Simons_allchrm_CQ_pruned-merge.fam .
-  1075292 variants loaded from .bim file.
+  246596 variants loaded from .bim file.
   279 people (0 males, 0 females, 279 ambiguous) loaded from .fam.
-  Ambiguous sex IDs written to Simons_allchrm_CQ_pruned.nosex .
+  Ambiguous sex IDs written to Simons_allchrm_CQ_pruned_noNA.nosex .
   Using 1 thread (no multithreaded calculations invoked).
   Before main variant filters, 279 founders and 0 nonfounders present.
   Calculating allele frequencies... done.
-  Total genotyping rate is 0.991087.
-  1075292 variants and 279 people pass filters and QC.
+  Total genotyping rate is 0.992306.
+  64905 variants removed due to missing genotype data (--geno).
+  0 variants removed due to minor allele threshold(s)
+  (--maf/--max-maf/--mac/--max-mac).
+  181691 variants and 279 people pass filters and QC.
   Note: No phenotypes present.
-  --make-bed to Simons_allchrm_CQ_pruned.bed + Simons_allchrm_CQ_pruned.bim +
-  Simons_allchrm_CQ_pruned.fam ... done.
+  --make-bed to Simons_allchrm_CQ_pruned_noNA.bed +
+  Simons_allchrm_CQ_pruned_noNA.bim + Simons_allchrm_CQ_pruned_noNA.fam ... done.
 #+end_example
 
-un millon de SNPs ...
+pour activer le conda env et sup bigsnpr old data
 
-=source activate MaThese= pour activer le conda env
+#+BEGIN_SRC shell
+source activate MaThese
+rm -rf bigsnpr/
+#+END_SRC
 
 #+NAME: code:Simons_matrix
 #+CAPTION: Dépend de [[code:Simons_fusion]]
@@ -2363,11 +2373,11 @@ CLOSED: [2017-10-06 ven. 10:50]
   max(mafs)
 
   ## save genotype amtrix
-  saveRDS(G, "./Data/ThesisDataset/Simons/G_pruned.rds")
+  saveRDS(G, "./Data/ThesisDataset/Simons/tess3_G_pruned.rds")
 
   ## scaling for lfmm and pca
   G.scaled <- scale(G)
-  saveRDS(G.scaled, "./Data/ThesisDataset/Simons/G_pruned_scaled.rds")
+  saveRDS(G.scaled, "./Data/ThesisDataset/Simons/tess3_G_pruned_scaled.rds")
 
   ## scaling binomial for lfmm and pca, cf keurcien
   f <- function(c) {
@@ -2376,7 +2386,7 @@ CLOSED: [2017-10-06 ven. 10:50]
   }
   G.scaled.binom <- apply(G, 2, f)
   dim(G.scaled.binom)
-  saveRDS(G.scaled.binom, "./Data/ThesisDataset/Simons/G_pruned_scaled_binom.rds")
+  saveRDS(G.scaled.binom, "./Data/ThesisDataset/Simons/tess3_G_pruned_scaled_binom.rds")
 #+end_src
 
 ** Résultats
@@ -4527,8 +4537,10 @@ CLOSED: [2017-09-11 lun. 19:44]
 
 *** Application au Simons Genome Diversity Project               :noexport:
 **** Scripts                                                    :noexport:
-***** TODO PCA
+***** RUNNING PCA
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-10-07 Sat 13:46]
+- State "TODO"       from "TODO"       [2017-10-07 Sat 13:46]
 - State "TODO"       from "DONE"       [2017-10-06 ven. 18:32]
 - State "DONE"       from "RUNNING"    [2017-10-06 ven. 10:18]
 - State "RUNNING"    from              [2017-10-05 Jeu 23:04]
@@ -4539,7 +4551,7 @@ CLOSED: [2017-09-11 lun. 19:44]
   library(MaTheseR)
   library(RSpectra)
 
-  G <- readRDS("~/Projects/Thesis/Data/ThesisDataset/Simons/G_pruned_scaled.rds")
+  G <- readRDS("~/Projects/Thesis/Data/ThesisDataset/Simons/tess3_G_pruned_scaled.rds")
 
   expr <- list()
 
@@ -4548,12 +4560,12 @@ CLOSED: [2017-09-11 lun. 19:44]
   end.time <- Sys.time()
   expr$time <- end.time - start.time
 
-  save_expr(expr, "Simons_pca.rds")
+  save_expr(expr, "tess3_Simons_pca.rds")
 
 
   ## plot
-  expr <- readRDS("./OUTPUT/Expr/Simons_pca.rds")
-  indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df")
+  expr <- readRDS("./OUTPUT/Expr/tess3_Simons_pca.rds")
+  indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df.rds")
 
   ## screeplot
   vp <- expr$pca.res$d
@@ -4599,8 +4611,9 @@ Avec le scaling de keurcien
 
 ca change rien mdr kikou lol bravo keurcien.
 
-***** TODO Variogram
+***** RUNNING Variogram
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-10-07 Sat 13:50]
 - State "TODO"       from              [2017-10-05 Jeu 23:05]
 :END:
 
@@ -4614,21 +4627,18 @@ ca change rien mdr kikou lol bravo keurcien.
 
 
   ## data
-  G <- readRDS("./Data/ThesisDataset/Simons/G_pruned.rds")
-  p <- 10000
-  G.subsampled <- G[,sample.int(ncol(G), p)]
-  dim(G.subsampled)
+  G <- readRDS("./Data/ThesisDataset/Simons/tess3_G_pruned.rds")
   indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df.rds")
   coord <- indiv.df[,c("Longitude", "Latitude")] %>% as.matrix()
 
   ## expr
   expr <- list()
   start.time <- Sys.time()
-  expr$vario.gen <- CalculateEmpiricalGenSemivariogram(G.subsampled, 2,  coord)
+  expr$vario.gen <- CalculateEmpiricalGenSemivariogram(G, 2,  coord)
   end.time <- Sys.time()
   expr$time <- end.time - start.time
 
-  save_expr(expr)
+  save_expr(expr, "tess3_vario_simons.rds")
 
 
   ## plot vario
@@ -4645,8 +4655,9 @@ ca change rien mdr kikou lol bravo keurcien.
     scale_shape_discrete(solid = FALSE)
 #+end_src
 
-***** TODO TESS3 cross validation
+***** RUNNING TESS3 cross validation
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-10-07 Sat 13:51]
 - State "TODO"       from              [2017-10-05 Jeu 23:05]
 :END:
 
@@ -4660,7 +4671,7 @@ ca change rien mdr kikou lol bravo keurcien.
   coord <- indiv.df[,c("Longitude", "Latitude")] %>% as.matrix()
 
   ## Xbin
-  G <- readRDS("./Data/ThesisDataset/Simons/G_pruned.rds")
+  G <- readRDS("./Data/ThesisDataset/Simons/tess3_G_pruned.rds")
   n <- nrow(G)
   p <- ncol(G)
   d <- 3
@@ -4668,24 +4679,30 @@ ca change rien mdr kikou lol bravo keurcien.
   X2XBin(G, 2, XBin)
   rm(G)
 
-  # run tess3
-  tess3.obj <- tess3(X = NULL,
-                     XBin = XBin,
-                     coord = coord,
-                     K = 1:20,
-                     ploidy = 2,
-                     lambda = 1.0,
-                     rep = 5,
-                     W = NULL,
-                     method = "MCPA",
-                     max.iteration = 200,
-                     tolerance = 1e-05,
-                     openMP.core.num = 16,
-                     Q.init = NULL,
-                     mask = 0.05,
-                     keep = "best",
-                     copy = FALSE,
-                     algo.copy = TRUE)
+  ## run tess3
+  expr <- list()
+  start.time <- Sys.time()
+  expr$tess3.obj <- tess3(X = NULL,
+                          XProba = XBin,
+                          coord = coord,
+                          K = 1:20,
+                          ploidy = 2,
+                          lambda = 1.0,
+                          rep = 5,
+                          W = NULL,
+                          method = "projected.ls",
+                          max.iteration = 200,
+                          tolerance = 1e-05,
+                          openMP.core.num = 16,
+                          Q.init = NULL,
+                          mask = 0.05,
+                          keep = "best",
+                          algo.copy = TRUE)
+  end.time <- Sys.time()
+  expr$time <- end.time - start.time
+
+
+  save_expr(expr, "simons_tess3_CV.rds")
 #+end_src
 
 ***** TODO TESS3
