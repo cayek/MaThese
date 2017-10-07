@@ -1035,9 +1035,46 @@ du nord-ouest de l'Europe citep:Horton_2012.
 
 
 *** =lfmm=
+:LOGBOOK:
+- Note taken on [2017-10-07 sam. 15:47] \\
+  de manière univoque : je veux dire par les estimateur définis n'ont pas tous
+  le même sens pour notre problème.
+:END:
 
+Dans le package =lfmm=, nous avons développé des algorithmes qui permettent
+d'estimer les variables latentes afin de corriger les études d'association pour
+les sources de variations indésirable. Nous appelons ces variables latentes les
+facteurs de confusions pour l'étude. Pour cela, nous construisons une fonction
+objectif à partir l'égalité eqref:eq:model0 du modèle de régression avec facteur
+latent, qui décompose en la matrice des variables étudié en la somme de deux
+termes : l'effet des variables latentes et l'effet des variables d'intérêt pour
+l'étude. L'attache aux données de la fonction objectif est construite à partir
+de l'approximation des moindres carrés de l'égalité eqref:eq:model0. Nous
+montrons que le terme d'attache au données seul ne permet de définir des
+estimateurs de manière univoque pour notre problème. Ainsi, nous proposons
+d'ajouter un terme de régularisation portant sur les effets d'intérêts. Nous
+appelons nos méthodes ridgeLFMM, pour la régularisation $L_{2}$ et lassoLFMM,
+pour la régularisation $L_{1}$. Pour l'agorithme ridgeLFMM, nous utilons la
+formule du point de minimum global de la fonction objectif des moindres carrés
+régularisé en norme $L_{2}$. Nous apportons la démonstration de cette formule.
+Pour l'algorithme lassoLFMM, nous proposons un algorithme alterné de descente
+par blocs de coordonnées. Nous apportons égualement une preuve de la
+convergeance de l'algorithme lassoLFMM vers un minimum global de sa fonction
+objectif. 
 
+Pour évaluer la capacité de nos méthodes a corriger les étude d'assocaition pour
+les facteurs de confusions, nous réalisé des simulations a partir d'un jeux de
+données réelle issu de génotypes humains. Nous avons ajouté à la comparaisons
+une méthode qui ne prend pas en compte les facteurs. Ainsi que des les méthodes
+de la litératures: cate, sva-irw et sva-twostep. Nous avons égualement considéré
+la méthode calculant les facteus latents à l'aide de l'ACP. Ces simulations nous
+ont permit de montrer que nos méthode ridgeLFMM et lassoLFMM ont la même
+puissance que la méthode oracle qui connaire les variables latentes de la
+simulation. De plus, les tests d'hypothèses statistique obtenus avec nos méthodes
+sont correctement calibré. 
 
+Enfin, nous avons illustré l'utilisation de nos méthode sur des études
+d'assocaition faire a partir de données réelles. Sur les données réelles 
 *** Publications
 
 résumé les résultats (démo, algo, résultat numérique) (mettre quelques ref ex th
@@ -2323,6 +2360,13 @@ CLOSED: [2017-10-06 ven. 10:42]
   mean(indiv.df$SGDP_ID %in% row.names(G) )
 
   saveRDS(indiv.df, "./Data/ThesisDataset/Simons/indiv.df.rds")
+
+  ## coordinate
+  indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df.rds")
+  coord <- indiv.df[match(indiv.df$SGDP_ID, rownames(G)),c("Longitude", "Latitude")] %>% as.matrix()
+  rownames(coord) <- rownames(G)
+  saveRDS(coord, "./Data/ThesisDataset/Simons/coord.rds")
+
 
   ## plot
   library(ggmap)
@@ -4618,7 +4662,7 @@ ca change rien mdr kikou lol bravo keurcien.
 :END:
 
 #+NAME: code:Simons_variogram
-#+CAPTION: Dépend de [[code:Simons_format]]
+#+CAPTION: Dépend de [[code:Simons_format]] [[code:Simons_indiv2]]
 #+begin_src R 
   library(tess3r)
   library(MaTheseR)
@@ -4628,8 +4672,7 @@ ca change rien mdr kikou lol bravo keurcien.
 
   ## data
   G <- readRDS("./Data/ThesisDataset/Simons/tess3_G_pruned.rds")
-  indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df.rds")
-  coord <- indiv.df[,c("Longitude", "Latitude")] %>% as.matrix()
+  coord <- readRDS("./Data/ThesisDataset/Simons/coord.rds")
 
   ## expr
   expr <- list()
@@ -4642,9 +4685,11 @@ ca change rien mdr kikou lol bravo keurcien.
 
 
   ## plot vario
+  expr <- readRDS("./OUTPUT/Expr/tess3_vario_simons.rds")
+
   variogram.pl <- ggplot(expr$vario.gen, aes(x = h, y = semi.variance, size = size)) +
     geom_point(shape = 1) +
-    geom_vline(xintercept = 1.5, colour = "red") +
+    geom_vline(xintercept = 20, colour = "red") +
     labs(y = "Variogramme",
          x = "\\'Echelle g\\'eographique\n$\\sigma$ ($100$ km)") +
     theme_gray(base_size = 12) +
@@ -4653,7 +4698,18 @@ ca change rien mdr kikou lol bravo keurcien.
     MaTheseR.params$gtheme +
     theme(legend.position = c(0.6,0.4)) +
     scale_shape_discrete(solid = FALSE)
+  variogram.pl
+  save_plot_png(variogram.pl, "Simons_vario.png")
+
+  variogram.pl +
+    xlim(c(0,75)) +
+    ylim(c(0.29,0.2950)) +
+    geom_smooth() 
+
 #+end_src
+
+#+RESULTS:
+[[./OUTPUT/Rplots/Simons_vario.png]]
 
 ***** RUNNING TESS3 cross validation
 :LOGBOOK:
@@ -4662,12 +4718,11 @@ ca change rien mdr kikou lol bravo keurcien.
 :END:
 
 #+NAME: code:Simons_tess3_CV
-#+CAPTION: Dépend de [[code:Simons_format]]
+#+CAPTION: Dépend de [[code:Simons_format]] [[code:Simons_indiv2]]
 #+begin_src R 
   library(tess3r)
 
-  ## make W
-  indiv.df <- readRDS("./Data/ThesisDataset/Simons/indiv.df.rds")
+  ## make coord
   coord <- indiv.df[,c("Longitude", "Latitude")] %>% as.matrix()
 
   ## Xbin
@@ -4789,13 +4844,13 @@ nous sommes amené à tester les corrélations entre un grand nombre de variable
 Dans certaines de ces études, des sources de variation indésirable telles que la
 structure de population ou bien les conditions expérimentales peuvent sévèrement
 biaiser les résultats des tests. Une méthode communément utilisée consiste à
-modéliser les sources de variation indésirable a l'aide de variables latentes.
+modéliser les sources de variation indésirable à l'aide de variables latentes.
 Dans ce chapitre, nous introduisons deux nouveaux algorithmes qui permettent
 d'estimer les variables latentes afin de corriger les études d'association pour
 les sources de variations indésirable. Nous appelons ces variables latentes les
-facteurs de confusions pour l'étude. Nos algorithmes reposent sur une
-décomposition de la matrice des variables étudiés en une matrice des effets
-latents et une matrice des effets des variables d'intérêt pour l'étude. Nos deux
+facteurs de confusions pour l'étude d'association. Nos algorithmes reposent sur
+une décomposition de la matrice des variables étudiés en une matrice des effets
+latents, et une matrice des effets des variables d'intérêt pour l'étude. Nos deux
 algorithmes reposent sur des régularisations sur les effets d'intérêt
 différentes. L'un utilise une régularisons en norme $L_{2}$, tandis que l'autre
 utilise un régularisation en norme $L_{1}$. Pour chaque algorithme, nous
@@ -5706,7 +5761,7 @@ régularisation $L_{2}$. L'algorithme lassoLFMM prend la proportion de lignes no
 nulles dans la matrice des effets $\B$. Enfin les deux algorithmes retournent
 les estimations pour les paramètres de LFMM ainsi qu'une \pvalue pour le test
 d'association de chaque colonne de $\Y$ avec $\X$.
-** Autres méthodes de correction pour les facteurs de confusion
+** Comparaisons avec d'autres méthodes de correction pour les facteurs de confusion
 <<sec:similar_method>>
 
 Dans cette section nous présentons d'autres méthodes pour les études
