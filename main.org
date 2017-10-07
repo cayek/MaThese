@@ -4849,33 +4849,33 @@ que quelques minutes à l'aide d'un seul CPU.
 
 ** Résumé
 
-Les études d'associations sont massivement utilisées en biologie. Elles
+Les études d'association sont massivement utilisées en biologie. Elles
 permettent par exemple de découvrir les causes génétiques d'une maladie ou bien
 les gènes impliqués dans un processus d'adaptation au climat. Lors de ces études
-nous sommes amené à tester les corrélations entre un grand nombre de variables.
-Dans certaines de ces études, des sources de variation indésirable telles que la
-structure de population ou bien les conditions expérimentales peuvent sévèrement
-biaiser les résultats des tests. Une méthode communément utilisée consiste à
-modéliser les sources de variation indésirable à l'aide de variables latentes.
-Dans ce chapitre, nous introduisons deux nouveaux algorithmes qui permettent
-d'estimer les variables latentes afin de corriger les études d'association pour
-les sources de variations indésirable. Nous appelons ces variables latentes les
-facteurs de confusions pour l'étude d'association. Nos algorithmes reposent sur
-une décomposition de la matrice des variables étudiés en une matrice des effets
-latents, et une matrice des effets des variables d'intérêt pour l'étude. Nos deux
-algorithmes reposent sur des régularisations sur les effets d'intérêt
-différentes. L'un utilise une régularisons en norme $L_{2}$, tandis que l'autre
-utilise un régularisation en norme $L_{1}$. Pour chaque algorithme, nous
-démontrons leur convergence vers le minimum de leur fonction objectif
-respective. Nous montrons sur des simulations numériques que nos algorithmes
-reproduisent les performances d'autres algorithmes de correction des études
-d'association. Nous montrons enfin que nos algorithmes permettent de reproduire
-des résultats d'une étude d'associations entre des génomes et la maladie
-\celiac, ainsi qu'une étude d'association entre des niveaux de méthylation de
-l'ADN et la polyarthrite rhumatoïde. Nous présentons enfin des résultats trouvés
-par nos algorithmes sur un exemple d'étude d'association entre des génotypes et
-un gradient climatique. Nos algorithmes sont implémentés dans le package R,
-=lfmm=.
+nous sommes amenées à tester les corrélations entre un grand nombre de
+variables. Dans certaines de ces études, des sources de variation indésirable,
+telles que la structure de populations, ou bien les conditions expérimentales,
+peuvent sévèrement biaiser les résultats des tests. Une méthode communément
+utilisée consiste à modéliser les sources de variation indésirable à l'aide de
+variables latentes. Dans ce chapitre, nous introduisons deux nouveaux
+algorithmes qui permettent d'estimer les variables latentes afin de corriger les
+études d'association pour les sources de variation indésirable. Nous appelons
+ces variables latentes les facteurs de confusion pour l'étude d'association.
+Nos algorithmes reposent sur une décomposition de la matrice des variables
+étudiées en une matrice des effets latents, et une matrice des effets des
+variables d'intérêt pour l'étude. Nos deux algorithmes reposent sur des
+régularisations sur les effets d'intérêt différentes. L'un utilise une
+régularisation en norme $L_{2}$, tandis que l'autre utilise un régularisation en
+norme $L_{1}$. Pour chaque algorithme, nous démontrons leur convergence vers le
+minimum de leur fonction objectif respective. Nous montrons sur des simulations
+numériques que nos algorithmes reproduisent les performances d'autres
+algorithmes de correction des études d'association. Nous montrons enfin que nos
+algorithmes permettent de reproduire des résultats d'une étude d'association
+entre des génomes et la maladie \celiac, ainsi qu'une étude d'association entre
+des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde. Nous
+présentons enfin des résultats trouvés par nos algorithmes sur un exemple
+d'étude d'association entre des génotypes et un gradient climatique. Nos
+algorithmes sont implémentés dans le package R, =lfmm=.
 
 ** Introduction
 <<sec:lfmm_intro>> 
@@ -4900,11 +4900,11 @@ environnements, traitements médicaux, phénotypes ou maladies citep:Slonim_2002
 D'autres exemples d'études d'association incluent des études d'association
 génétique-environnement (GEAS) dans lesquelles des locus sont testés pour leurs
 corrélations avec des gradients écologiques afin de détecter des signatures de
-sélection naturelle citep:rellstab15_pract_guide_to_envir_assoc. En un court
-laps de temps, les études d'association ont permis des progrès considérables
-dans l'identification des variants génétiques qui confèrent une susceptibilité
-aux maladies ainsi qu'une compréhension plus approfondie de l'évolution des
-génomes en réponse à la sélection naturelle.
+sélection naturelle citep:rellstab15_pract_guide_to_envir_assoc. En peu de
+temps, les études d'association ont permis des progrès considérables dans
+l'identification des variants génétiques, qui confèrent une susceptibilité aux
+maladies, ainsi qu'une compréhension plus approfondie de l'évolution des génomes
+en réponse à la sélection naturelle.
 
 *** Méthodes de correction pour les facteurs latents
 :LOGBOOK:
@@ -4945,11 +4945,11 @@ d'association pour les facteurs de confusion.
 Une première approche consiste à estimer les variables latentes en faisant une
 analyse factorielle de $\Y$. On fait l'analyse factorielle a priori et sans
 prendre en compte la variable $\X$. Les variables latentes sont ensuite ajoutées
-au modèle de régression à coté des autres variables explicatives de sorte que
+au modèle de régression avec les autres variables explicatives de sorte que
 \begin{equation}
-\Y_{j} = \X b_{j} + \bar{\U} \V_{j}^{T} + \E_{j}
+\Y_{j} = \X b_{j} + \bar{\matr{U}} \V_{j}^{T} + \E_{j}
 \end{equation}
-où $\bare{\U}$ est la matrice des variables latents calculée a priori et
+où $\bare{\matr{U}}$ est la matrice des variables latentes calculée a priori et
 $\V_{j}$ la matrice des effets des variables latentes sur $\Y_{j}$. Par exemple,
 les méthodes EIGENSTRAT et Refactor calculent les variables latentes à l'aide de
 l'analyse en composantes principales (ACP) de la matrice $\Y$
@@ -4964,7 +4964,7 @@ régression
 où $\matr{\Gamma}_{j}$ est la matrice des effets aléatoires à estimer. Dans les
 modèles mixtes, on suppose de plus que la matrice de covariance de l'effet
 aléatoire est connue. La matrice de covariance doit correspondre à la variance
-du facteur de confusion, elle est en général calculée à partir de $\Y$. Les
+du facteur de confusion; elle est en général calculée à partir de $\Y$. Les
 modèles mixtes ont été largement utilisés pour les GWAS
 citep:Kang_2008,Zhou_2014. Dans le cas des GWAS, l'effet aléatoire permet
 d'expliquer la variation de $\Y_{j}$ qui est due à la structure de population.
@@ -4975,24 +4975,27 @@ Nous introduisons maintenant les modèles mixtes à facteurs latents. Pour de te
 modèles, l'équation de régression peut s'écrire comme ceci :
 \begin{equation}
 \label{eq:glfmm}
-\Y = \X \B^{T} + \U \V^{T} + \E,
+\Y = \X \B^{T} + \matr{U} \V^{T} + \E,
 \end{equation}
-Dans cette équation $\U$ est la matrice des variables latentes et $\V$ est la
+Dans cette équation $\matr{U}$ est la matrice des variables latentes et $\V$ est la
 matrice des effets des facteurs latents. La différence majeure de LFMM avec les
-autres modèles est qu'on ne suppose rien a priori sur les facteurs de confusion.
+autres modèles est que l'on ne suppose rien a priori sur les facteurs de
+confusion.
+NON revoir ici 
+
 Dans les modèles dont nous avons parlés précédemment, on estime a priori les
-variables latentes ou leur matrice de covariance. Dans LFMM l'estimation des
-variables latentes $\U$ et des effets de la variable explicative $\B$ ce font en
-même temps. Les matrice $\U$ et $\V$ permettent d'apprendre les variations
-systématiques observées dans la matrice $\Y$ tandis que la matrice des effets
-$\B$ permet d'apprendre l'effet de $\X$ sur certaines colonnes de $\Y$. Il
-existe différentes méthodes pour estimer les paramètres de LFMM. On distingue
-d'abord des approches qui reposent sur des algorithmes de Monte-Carlo
+variables latentes ou leurs matrices de covariance. Dans LFMM l'estimation des
+variables latentes $\matr{U}$ et des effets de la variable explicative $\B$ se
+font en même temps. Les matrices $\matr{U}$ et $\V$ permettent d'apprendre les
+variations systématiques observées dans la matrice $\Y$ tandis que la matrice
+des effets $\B$ permet d'apprendre l'effet de $\X$ sur certaines colonnes de
+$\Y$. Il existe différentes méthodes pour estimer les paramètres de LFMM. On
+distingue d'abord des approches qui reposent sur des algorithmes de Monte-Carlo
 citep:frichot13_testin_assoc_between_loci_envir,carvalho08_high_dimen_spars_factor_model.
 Ces approches reposent sur une modélisation bayésienne de LFMM qui permet
 d'échantillonner les lois a posteriori des paramètres. L'avantage des méthodes
 MCMC est qu'elles permettent d'estimer la variance du paramètre $\B$ grâce au
-bootstrap bayésien citep:rubin1981bayesian; et de faire un test de
+bootstrap bayésien citep:rubin1981bayesian, et de faire un test de
 significativité statistique. Certaines approches reposent sur des algorithmes EM
 (Expectation Maximisation)
 citep:friguet09_factor_model_approac_to_multip,agarwal09_regres,zhou16_spars_multiv_factor_analy_regres.
@@ -5000,14 +5003,14 @@ Ces approches sont souvent plus rapides que les méthodes utilisant des
 algorithmes de Monte-Carlo. Enfin, d'autres approches reposent sur une
 estimation des variables latentes à partir d'une transformation de $\Y$
 citep:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007. Cette
-transformation a pour but de séparer la variation de $\Y$ expliquée par les
-variables latentes de celle expliquée par $\X$. Parmi les méthodes reposant sur
-une transformation des données, on distingue des autres les méthodes dites à
-contrôles négatifs qui supposent connu un sous ensemble de colonnes de $\Y$ qui
-ne sont pas associées avec $\X$. Les méthodes à contrôles négatifs utilisent les
+transformation a pour but de séparer la variation de $\Y$, expliquée par les
+variables latentes, de celle expliquée par $\X$. Parmi les méthodes reposant sur
+une transformation des données, on distingue des autres les méthodes dîtes à
+contrôle négatif qui supposent connu un sous ensemble de colonnes de $\Y$ qui
+ne sont pas associées avec $\X$. Les méthodes à contrôle négatif utilisent les
 variables dîtes nulles pour estimer les variables latentes. L'estimation des
 variables latentes pour corriger les études d'association est un problème très
-vaste et aucune méthode ne s'est imposée comme étant le méthode référence.
+vaste et aucune méthode ne s'est imposée comme étant la méthode référence.
 *** Source de confusion                                          :noexport:
 :LOGBOOK:
 - Note taken on [2017-08-04 ven. 11:39] \\
@@ -5030,10 +5033,10 @@ nature observatoire de l'étude.
 *** Plan du chapitre
 Nous proposons dans ce chapitre, deux algorithmes d'estimation rapide et
 efficace des paramètres du modèle LFMM. Nos deux algorithmes d'estimation
-consistent à isoler la variation de $\Y$ expliquée par les variables latentes de
-celle expliquée par les variables explicatives $\X$. Les méthodes que nous
-présentons sont comparables aux méthodes sva citep:article_Leek_Storey_2007; et
-cate citep:wang2015confounder; qui procède d'une façon très similaire. Nous
+consistent à isoler la variation de $\Y$, expliquée par les variables latentes,
+de celle expliquée par les variables explicatives $\X$. Les méthodes que nous
+présentons sont comparables aux méthodes sva citep:article_Leek_Storey_2007 et
+cate citep:wang2015confounder, qui procèdent d'une façon très similaire. Nous
 décrivons plus en détail les méthodes cate et sva dans la partie
 [[sec:similar_method]]. Chacun des algorithmes que nous présentons découle de
 l'optimisation d'une fonction objectif. Nous montrons que nos algorithmes
@@ -5044,7 +5047,8 @@ simulations numériques ainsi que pour des exemples de GWAS, EWAS et GEAS.
 ** Nouvelles méthodes de correction pour les facteurs de confusion
 *** Modèle mixte à facteurs latents
 <<sec:model>>
-Dans cette partie nous introduisons les notations du modèle mixtes à facteurs
+
+Dans cette partie nous introduisons les notations du modèle mixte à facteurs
 latents que nous utilisons pour corriger les tests d'association : 
 \begin{equation}
 \label{eq:model}
@@ -5056,22 +5060,22 @@ exemple, la matrice $\Y$ peut contenir des SNPs, des niveaux de méthylation ou
 bien des niveaux d'expression génique. Nous appelons la matrice $\Y$ la matrice
 des variable expliquées. La matrice $\X$, de taille $\Xrow \times \Xcol$,
 regroupe toutes les variables explicatives. Ainsi les colonnes de $\X$ sont les
-variables d'intérêt pour l'association, c'est à dire les variables pour
+variables d'intérêt pour l'association, c'est-à-dire les variables pour
 lesquelles on souhaite trouver les associations avec $\Y$. Les colonnes de $\X$
 peuvent être par exemple un phénotype, comme une maladie, ou un gradient
 environnemental, comme la température d'un habitat. La matrice des effets de
 $\X$ sur $\Y$ de taille $\Ycol \times \Xcol$ est notée $\B$. Si l'on suppose
-qu'il y a $K$ variables latentes, la matrice $\U$ est la matrice des $\K$
+qu'il y a $K$ variables latentes, la matrice $\matr{U}$ est la matrice des $\K$
 variables latentes et la matrice $\V$ représente les effets des variables latents
-sur $\Y$. Les matrices $\V$ et $\U$ sont respectivement la matrice des effets
-latents appelée aussi matrice des axes factorielles, de taille $\Ycol\times\Ucol$,
+sur $\Y$. Les matrices $\V$ et $\matr{U}$ sont respectivement la matrice des effets
+latents (appelée aussi matrice des axes factoriels), de taille $\Ycol\times\Ucol$,
 et la matrice des variables latentes, de taille $\Urow \times \K$. Enfin la
 matrice $\E$ est la matrice d'erreur résiduelle, de taille $\Yrow\times\Ycol$.
 
-Dans un premier temps, nous remarquons que les matrices $\U$ et $\V$ ne sont pas
-définies de façon unique. En effet, comme ces deux matrices sont
-multipliées entre elles dans l'équation eqref:eq:model, les matrices $\U$ et
-$\V$ sont définies à une matrice inversible près 
+Dans un premier temps, nous remarquons que les matrices $\matr{U}$ et $\V$ ne
+sont pas définies de façon unique. En effet, comme ces deux matrices sont
+multipliées entre elles dans l'équation eqref:eq:model, les matrices $\matr{U}$
+et $\V$ sont définies à une matrice inversible près
 \begin{equation}
 \U \V^{T} = \U \matr{R} \matr{R}^{-1} \V^{T}
 \end{equation}
@@ -5079,12 +5083,12 @@ où $\matr{R}$ est une matrice inversible de taille $\K \times \K$. Nous
 considérons donc la matrice
 \begin{equation}
 \label{eq:W}
-\W = \U \V^{T} 
+\W = \matr{U} \V^{T} 
 \end{equation}
 et nous appelons la matrice $\W$ la matrice latente. Si l'on suppose qu'il y a $\K$
-variables latentes linéairement indépendantes, cela est équivalent à faire
+variables latentes linéairement indépendantes, cela équivaut à faire
 l'hypothèse que la matrice latente $\W$ est de rang $\K$. Dans la suite nous
-considérons $\U$ et $\V$ comme étant les matrices uniques obtenues grâce à
+considérons $\matr{U}$ et $\V$ comme étant les matrices uniques obtenues grâce à
 l'analyse en composantes principales de la matrice latente $\W$.
 
 *** Estimateur des moindres carrés régularisée en norme $L_{2}$
@@ -5100,7 +5104,7 @@ l'analyse en composantes principales de la matrice latente $\W$.
 
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
 modèle défini par l'équation eqref:eq:model. L'algorithme d'estimation est fondé
-sur un problème des moindres carrées régularisé en norme $L_{2}$. Nous montrons
+sur un problème des moindres carrés régularisé en norme $L_{2}$. Nous montrons
 que cet algorithme calcule un minimum global du problème d'optimisation des
 moindres carrés régularisé en norme $L_{2}$.
 
@@ -5164,15 +5168,15 @@ Notons que l'estimation de la matrice latente $\hat{\U} \hat{\V}^{T}$ dans
 l'équation eqref:eq:RidgeLfmmEstomatorW fait intervenir la matrice de changement
 de base $\matr{Q}$. Les $\Xcol$ premiers axes de la base canonique transformée
 par $\Q$ forment une base orthonormale de l'espace vectoriel engendré par les
-variable explicatives $\X$. La matrice diagonale $\D$ a pour effet de ramener
+variables explicatives $\X$. La matrice diagonale $\D$ a pour effet de ramener
 vers zéro la composante qui appartient à l'espace engendré par $\X$. Si
 $\lambRidge$ tend vers zéro, multiplier $\Y$ par $\D \matr{Q}^{T}$ revient à
-prendre le résidu d'une régression linéaire de $\Y$ par $\X$, on enlève alors
+prendre le résidu d'une régression linéaire de $\Y$ par $\X$; on enlève alors
 toute la part de variance expliquée par $\X$. À la limite, $\D$ n'est plus
 inversible. Si $\lambRidge$ est très grand, $\D$ tend vers la matrice identité.
 Dans ce cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en
 composantes principales de la matrice des variables expliquées $\Y$. Nous
-expliquons dans la partie [[sec:hyperparametre]] plus en détail comment choisir
+expliquons plus en détail dans la section [[sec:hyperparametre]] comment choisir
 l'hyperparamètre $\lambRidge$.
 
 Les estimateurs des paramètres régularisés en norme $L_{2}$ sont justifiés par le
@@ -5181,22 +5185,22 @@ théorème suivant.
 <<ridge_theorem>> 
 Pour $\lambRidge$ strictement supérieur à zéro, les
 estimateurs des paramètres de LFMM régularisés en norme $L_{2}$, définis par
-eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, définit un minimum
-global de la fonction objectif $\Lridge$.
+eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, définissent un
+minimum global de la fonction objectif $\Lridge$.
 #+END_theorem
 
 #+BEGIN_proof
 On veut trouver $\hat{\U} \in \RR^{\Urow \times \Ucol}$, $\hat{\V} \in
 \RR^{\Vrow \times \Vcol}$ et $\hat{\B} \in \RR^{\Brow \times \Bcol}$
 correspondant à un minimum global de la fonction $\Lridge$. Commençons par
-remarquer que la fonction $\Lridge$ est convexe en la variable $\B$ , on peut
+remarquer que la fonction $\Lridge$ est convexe en la variable $\B$; on peut
 donc trouver le point de minimum global en annulant la dérivée de $\Lridge$ par
 rapport à $\B$. Cela conduit à l'équation suivante
 \begin{equation}
 \hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V^{T}).
 \end{equation}
 Il s'agit de l'estimateur ridge du modèle de la régression linéaire de $\Y - \U
-\V^{T}$ par $\X$, en supposant que $\U$ et $\V$ sont connues.
+\V^{T}$ par $\X$, en supposant que $\matr{U}$ et $\V$ sont connues.
 
 Il faut maintenant minimiser la fonction
 \begin{align*}
@@ -5206,11 +5210,11 @@ Considérons la décomposition en valeurs singulières de $\X$ telle que
 \begin{equation*}
 \X = \matr{Q} \matr{\Sigma} \matr{R}^{T},
 \end{equation*}
-où $\matr{Q}$ une matrice unitaire de taille $\Xrow \times \Xrow$, $\matr{R}$
-une matrice unitaire de taille $\Xcol \times \Xcol$ et $\matr{\Sigma}$ une
-matrice de taille $\Xrow \times \Xcol$ contenant les valeurs singulières $\left
-\{ \sigma_{j} \left \}_{j = 1..\Xcol}$. L'écriture de $\mathcal{L}^{'}$ se
-simplifie comme ceci
+où $\matr{Q}$ est une matrice unitaire de taille $\Xrow \times \Xrow$,
+$\matr{R}$ une matrice unitaire de taille $\Xcol \times \Xcol$ et
+$\matr{\Sigma}$ une matrice de taille $\Xrow \times \Xcol$ contenant les valeurs
+singulières $\left \{ \sigma_{j} \left \}_{j = 1..\Xcol}$. L'écriture de
+$\mathcal{L}^{'}$ se simplifie comme ceci
 \begin{equation*}
 \mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\D^{2} \matr{Q}^{T} (\Y - \U \V^{T})}^{2}_{F} + 
 \frac{1}{2} \lambRidge \norm{\matr{C}_{\lambRidge} \matr{Q}^{T} (\Y - \U \V^{T})}_{F}^{2}
@@ -5230,14 +5234,14 @@ contenant les termes
 1, ..., 1 \right\}.
 \end{equation*}
 Les matrices $\D$ et $\matr{C}_{\lambRidge}$ étant diagonales, il est possible
-par le calcule de montrer que
+par le calcul de montrer que
 \begin{align*}
 \mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\sqrt{(\D^{2} + 
 \matr{C}_{\lambRidge}^{2})} \matr{Q}^{T} (\Y - \U \V^{T})}_{F}^{2} \\ 
 & = \frac{1}{2} \norm{ \D \matr{Q}^{T} (\Y - \U \V^{T})}_{F}^{2}
 \end{align*}
-Enfin, optimiser la fonction objectif $\mathcal{L}^{'}$ est équivalent au
-problème de trouver la meilleure approximation de rang $\K$ de la matrice
+Enfin, optimiser la fonction objectif $\mathcal{L}^{'}$ équivaut au problème de
+trouver la meilleure approximation de rang $\K$ de la matrice
 \begin{equation*}
 \D \matr{Q}^{T} \Y,
 \end{equation*}
@@ -5262,8 +5266,8 @@ algorithme calcule un minimum global du problème d'optimisation des moindres
 carrés régularisé.
 
 **** Fonction objectif 
-Afin d’estimer les paramètres $\U$, $\V$ et $\B$ de LFMM, nous définissons la
-fonction objectif de type lasso suivante
+Afin d’estimer les paramètres $\matr{U}$, $\V$ et $\B$ de LFMM, nous définissons
+la fonction objectif de type lasso suivante
 \begin{equation}
 \label{eq:optim_lasso_reg}
 \LfmmLlasso,
@@ -5272,12 +5276,12 @@ où $\W$ est la matrice latente définie en eqref:eq:W, $\norm{\B}_{1}$ la norme
 $L_1$ de $\B$ et $\norm{\W}_{*}$ la norme nucléaire de la matrice $\W$, définie
 comme la somme de ses valeurs singulières. Le choix de la norme $L_{1}$ est
 motivé par le fait que l'on s'attend à ce que seulement une certaine proportion
-des colonnes de $\Y$ soit associée à $\X$. Autrement dit seule certaines lignes
+des colonnes de $\Y$ soit associée à $\X$. Autrement dit seules certaines lignes
 de la matrice des effets $\B$ doivent être non nulles. La régularisation $L_{1}$
 est connue pour produire des estimateurs parcimonieux de $\B$
 citep:Tibshirani_1996. La fonction $\Llasso$ fait aussi intervenir une
 régularisation sur la matrice latente $\W$. Nous ajoutons la régularisation en
-norme nucléaire afin de lever la contrainte de rang sur $\W$ empechant de
+norme nucléaire afin de lever la contrainte de rang sur $\W$ empêchant de
 définir un problème d'optimisation convexe. Avec le terme de régularisation sur
 $\W$, la fonction $\Llasso$ devient convexe. En outre, les pénalisations sur la
 norme nucléaire sont utilisées pour pénaliser le rang
@@ -5307,8 +5311,8 @@ Nous alternons ensuite les deux étapes suivantes :
    \mathcal{L}_{\mathrm{lasso}}^{''}(\W) = \frac{1}{2} ||(\Y - \X \hat{\B}_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}.
    \end{equation}
 Ces deux étapes sont répétées jusqu'à ce que l'algorithme converge ou bien que
-$t$ atteint le nombre maximum d'itérations fixé à l'avance. Nous allons
-maintenant expliquer plus en détail les deux étapes de l'algorithme décrit
+$t$ atteigne le nombre maximum d'itérations fixé à l'avance. Nous allons
+maintenant expliquer plus en détail les deux étapes de l'algorithme décrites
 ci-dessus.
 
 La première étape de l'algorithme consiste à faire une régression linéaire
@@ -5351,7 +5355,7 @@ la matrice résiduelle :
 \begin{equation}
 \matr{E}^{2}_{t} = \matr{M} \matr{S} \matr{N}^{T},
 \end{equation}
-où $\matr{M}$ une matrice unitaire de taille $\Yrow \times \Yrow$, $\matr{N}$
+où $\matr{M}$ est une matrice unitaire de taille $\Yrow \times \Yrow$, $\matr{N}$
 une matrice unitaire de taille $\Ycol \times \Ycol$ et $\matr{S}$ une matrice de
 taille $\Yrow \times \Ycol$ contenant les valeurs singulières $\left \{ s_{j}
 \left \}_{j = 1..\Yrow}$. On a alors 
@@ -5370,7 +5374,7 @@ L'algorithme de descente par blocs de coordonnées ne converge pas en général
 vers un point minimum quand la fonction objectif n'est pas continûment
 différentiable, comme c'est le cas pour la fonction $\Llasso$. On peut trouver
 dans la littérature des résultats généraux sur les algorithmes par blocs de
-coordonnées dans des cas ou la fonction objectif n'est pas différentiable
+coordonnées dans des cas où la fonction objectif n'est pas différentiable
 citep:Tseng_2001. Cependant, les théorèmes démontrés par citet:Tseng_2001
 dépassent largement le cadre de la convergence de l'algorithme d'estimation
 $L_{1}$ présenté ici et compliquent l'extraction des résultats intéressants.
@@ -5389,9 +5393,9 @@ x_{i}^{k+1} \in \mathrm{arg} \min_{\zeta \in X_{i}} f(x_{1}^{k}, ...,x_{i-1}^{k}
 i = 1,...,m.
 \end{equation}
 En nous inspirant des résultats présentés par citet:Tseng_2001 et de la
-proposition 2.7.1 de citet:Bertsekas_1997 qui démontre la convergence de
-l'algorithme de descente par bloc de coordonnées dans le cas où la fonction
-objectif est différentiable, nous pouvons énoncer le théorème suivant :
+proposition 2.7.1 de citet:Bertsekas_1997 (ce démontrant la convergence de
+l'algorithme de descente par blocs de coordonnées dans le cas où la fonction
+objectif est différentiable), nous pouvons énoncer le théorème suivant :
 #+BEGIN_theorem 
 Si $f$ est une fonction continue de $A$ dans $\RR$, convexe et telle que
 \begin{equation}
@@ -5405,9 +5409,9 @@ point limite de $\{x^{k}\}$ est un point de minimum global de $f$.
 #+BEGIN_proof 
 On note
 \begin{equation*}
-\bar{x} = (\bar{x}_{1}, ..., \bar{x}_{m})
+\bar{x} = (\bar{x}_{1}, ..., \bar{x}_{m}),
 \end{equation*}
-un point limite de $\{x^{k}\}$ la suite générée par eqref:eq:blokAlgo, $\bar{x}$
+un point limite de $\{x^{k}\}$, la suite générée par eqref:eq:blokAlgo; $\bar{x}$
 est bien dans $A$ le domaine de définition de $f$ car cet ensemble est fermé.
 Comme $g$ est convexe et différentiable on a pour tout $x \in A$
 \begin{align}
@@ -5431,8 +5435,8 @@ f(\bar{x}) \leq f(\bar{x}_{1}, ...,x_{i},..., \bar{x}_{m}), ~ \forall x_{i} \in
 A_{i}.
 \end{equation}
 Pour chaque variable $x_{i}$, on peut donc dire que zéro appartient à l'ensemble
-des sous-dérivées par rapport la variable $x_{i}$ de $f$ en $\bar{x}_{i}$. On
-peut alors dire qu'il existe une sous-dérivé $r_{i}$ telle quelle que 
+des sous-dérivées par rapport à la variable $x_{i}$ de $f$ en $\bar{x}_{i}$. On
+peut alors dire qu'il existe une sous-dérivée $r_{i}$ telle que
 \begin{equation}
 \nabla_{i} g(\bar{x}) + r_{i} = 0.
 \end{equation}
