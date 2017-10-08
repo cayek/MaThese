@@ -337,8 +337,8 @@ $
 \end{figure}
 #+END_EXPORT
 
-[fn:mutation] Le taux de mutation chez l'Humain est environ $0.5
-10^{-9}$
+[fn:mutation] Le taux de mutation chez l'Humain est environ $0.5 \times
+10^{-9}$.
 *** Estimation de la structure génétique des populations
 :LOGBOOK:
 CLOCK: [2017-10-06 ven. 13:01]--[2017-10-06 ven. 13:26] =>  0:25
@@ -424,10 +424,10 @@ combinaison de morceaux de génomes provenant de $K$ clusters génétiques, auss
 appelé populations ancestrales. Dans le cadre de ce modèle, nous pouvons écrire
 \begin{equation}
 \label{eq:structure}
-\Pr(\Y_{i,\ell} = j) = \sum_{k = 1}^{K} \G_{(d + 1)\ell + j, k} \Q_{i,k},
+\Pr(\Y_{i,\ell} = j) = \sum_{k = 1}^{K} \matr{G}_{(d + 1)\ell + j, k} \Q_{i,k},
 \end{equation}
 où $\Pr(\Y_{i,j} = d)$ est la probabilité d'observer l'allèle $j$ au locus
-$\ell$ chez l'individu $i$. Le terme $\G_{(d + 1)\ell + j, k}$ représente la
+$\ell$ chez l'individu $i$. Le terme $\matr{G}_{(d + 1)\ell + j, k}$ représente la
 fréquence d'apparition de l'allèle $j$ au locus $\ell$ dans le cluster génétique
 $k$. Le terme $Q_{i,k}$ (appelé coefficient de métissage ou d'ascendance) est la
 proportion de gènes de l'individu $i$ provenant de la population $k$. Les
@@ -676,7 +676,7 @@ d'ascendance. Nous résumons les méthodes d'inférence des coefficients
 d'ascendance génétique dans la Table [[table:tess3_etat_art]]
 
 #+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
-#+ATTR_LATEX: :align lp{5cm}lp{5.5cm}p{5.5cm} :float sideways
+#+ATTR_LATEX: :align l|p{5cm}lp{5.5cm}|p{5.5cm} :float sideways
 #+NAME: table:tess3_etat_art
 #+CAPTION: *Méthodes d'estimation de coéficients d'ascendance non spatial et spatial.* La méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
 |---------------+-----------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
@@ -691,9 +691,9 @@ d'ascendance génétique dans la Table [[table:tess3_etat_art]]
 | fastStructure | bayésien                                            | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
 | PSIKO         | PCA                                                 | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
 | sNMF          | factorisation matricielle parcimonieuse             | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
-| conStruct     | bayésien                                            | oui      | MCMC                                             | citet:Bradburd189688                        |
 | TESS3-AQP     | factorisation matricielle régularisé sur graphe     | oui      | optimisation quadratique alterné                 |                                             |
 | TESS3-APLS    | factorisation matricielle régularisé sur graphe     | oui      | moindres carré alterné projeté                   |                                             |
+| conStruct     | bayésien                                            | oui      | MCMC                                             | citet:Bradburd189688                        |
 
 ** Tests d'association
 :LOGBOOK:
@@ -758,20 +758,6 @@ confusion pour l'étude d'association entre les matrices $\Y$ et $\X$. Les
 variables latentes sont potentiellement corrélées à $\X$; il faut donc les
 prendre en compte dans l'étude d'association.
 
-https://tex.stackexchange.com/questions/159127/drawing-simple-graph-pattern-with-tikz
-#+BEGIN_EXPORT latex
-\begin{tikzpicture}
-    \node[main node] (1) {$\Y$};
-    \node[main node] (2) [below left = 2.3cm and 1.5cm of 1]  {$\U$};
-    \node[main node] (3) [below right = 2.3cm and 1.5cm of 1] {$\X$};
-
-    \path[draw,thick]
-    (1) edge node {} (2)
-    (3) edge node {} (1);
-    \end{scope}
-\end{tikzpicture}
-#+END_EXPORT
-
 #+NAME: code:conf_factor
 #+BEGIN_SRC dot :file Figures/conf_factor.png :exports results :eval no-export
   graph {
@@ -784,7 +770,7 @@ https://tex.stackexchange.com/questions/159127/drawing-simple-graph-pattern-with
 #+END_SRC
 
 #+NAME: graph:conf_factor
-#+CAPTION: *Graphe de corrélation entre la variable $\Y$, la variable $\X$ et le facteur de confusion $\U$.* Dans cette situation si on ne prend pas en compte la variable $\matr{U}$ dans l'étude d'association alors $\X$ et $\Y$ apparaîtront comme étant associées.
+#+CAPTION: *Graphe de corrélation entre la variable $\Y$, la variable $\X$ et le facteur de confusion $\matr{U}$.* Dans cette situation si on ne prend pas en compte la variable $\matr{U}$ dans l'étude d'association alors $\X$ et $\Y$ apparaîtront comme étant associées.
 #+ATTR_LATEX: :width 5cm
 #+RESULTS: code:conf_factor
 [[file:Figures/conf_factor.png]]
@@ -811,7 +797,7 @@ de $\X$ sur $\Y$, notée $\B$, est simulée de sorte que $1 \%$ de ses lignes
 soient non nulles. Enfin, la matrice des variables expliquées, $\Y$, est calculée
 telle que
 \begin{equation} 
-\Y = \U \V^{T} + \X \B^{T} + \E. 
+\Y = \matr{U} \V^{T} + \X \B^{T} + \E. 
 \label{eq:model0}
 \end{equation} 
 Cette simulation correspond à une situation où $1 \%$ des colonnes de $\Y$ sont
@@ -901,7 +887,7 @@ modèle les effets des variables latentes et les effets des variables étudiées
 pour l'association. La plupart de ces méthodes reposent sur l'équation
 eqref:eq:model0 que nous avons utilisé dans la partie précédente. Ces modèles
 ont recu plusieurs nom dans la littérature : Latent Fator Mixed Models (LFMM)
-citep:frichot13_testin_assoc_between_loci_envir, regression-based latent models
+citep:Frichot_2013, regression-based latent models
 (RLFM) citep:agarwal09_regres, factor-augmented regression model
 cite:gerard2017empirical, surrogate variable analysis (SVA)
 cite:article_Leek_Storey_2007. Nous résumons les méthodes reposant sur des
@@ -909,21 +895,22 @@ modèles construit à partir des dérivé de l'équation eqref:eq:model0 dans le
 tableau.
 
 #+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
-#+ATTR_LATEX: :align lp{3cm}p{3cm}p{3cm}p{3cm} :float sideways
+#+ATTR_LATEX: :align p{3cm}|p{4cm}p{4cm}p{5cm}|p{4cm} :float sideways
 #+CAPTION: *Méthodes reposant sur l'équation ref:eq:model0 pour la correction des facteurs de confusion dans les études d'association.* Les méthodes ridgeLFMM et LassoLFMM sont présentées dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont présentées plus en détailles dans la section [[sec:similar_method]].
 #+NAME: table:lfmm_etat_art
 |----------------------+-------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------------------+-------------------------------------------------|
 | Méthode              | Modèle                                                | Algorithme                                                          | Test d'hypothèse                                                                | Référence                                       |
 |----------------------+-------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------------------+-------------------------------------------------|
 | sva-twostep          | PCA et régression linéaire                            | moindres carrés ordinaire et SVD                                    | test de Fisher                                                                  | citet:article_Leek_Storey_2007                  |
-| sva-irw              | weighted-PCA et régression linéaire                   | moindres carrés ordinaires et weighted-SVD                          | test de Fisher                                                                  | citet:article_Leek_Storey_2008                  |
+| sva-irw              | weighted-PCA et régression linéaire                   | moindres carrés ordinaire et weighted-SVD                          | test de Fisher                                                                  | citet:article_Leek_Storey_2008                  |
 | RLFM                 | bayésien                                              | Monte-Carlo EM                                                      | pas de test                                                                     | citet:agarwal09_regres                          |
 | famt                 | vraisemblance                                         | EM                                                                  | test de Student                                                                 | citet:friguet09_factor_model_approac_to_multip  |
-| LFMM                 | bayésien                                              | MCMC                                                                | test de wald, estimation de la variance par bootstrap bayésien                  | citet:frichot13_testin_assoc_between_loci_envir |
+| LFMM                 | bayésien                                              | MCMC                                                                | test de wald, estimation de la variance par bootstrap bayésien                  | citet:Frichot_2013 |
 | cate                 | analyse factorielle et régression linéaire            | EM ou SVD et moindres carrés généralisé                             | test basé sur la distribution asymptotique de l'estimateur des effets d'intérêt | citet:wang2015confounder                        |
 | ridgeLFMM            | factorisation matricielle avec régularisation $L_{2}$ | SVD et moindres carrés régularisé en norme $L_{2}$                  | test de Student                                                                 |                                                 |
 | lassoLFMM            | factorisation matricielle avec régularisation $L_{1}$ | soft-thresholded SVD et moindres carrés régularisé en norme $L_{1}$ | test de Student                                                                 |                                                 |
 | MOUTHWASH / BACKWASH | régression linéaire et analyse factorielle            | moindres carrés ordinaire et EM ou descente par coordonnées         | adaptive shrinkage (ASH) citep:stephens16_false_discov_rates                    | citet:gerard2017empirical                       |
+#+LATEX:\rowcolors{2}{}{}
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
 :LOGBOOK:
@@ -949,7 +936,7 @@ référence. Dans le contexte actuel il est nécessaire de développer des
 méthodes rapides et utilisables sur les données massives. Par ailleurs, une
 comparaison des méthodes de correction pour les facteurs de confusion
 permettrait de mieux comprendre les spécificités de chaque méthode.
-
+** Contexte de la thèse
 ** Objectifs de la thèse
 
 La génétique produit beaucoup de données grâce aux technologies de séquençage
@@ -1039,23 +1026,24 @@ du nord-ouest de l'Europe citep:Horton_2012.
 Dans le package =lfmm=, nous avons développé des algorithmes qui permettent
 d'estimer les variables latentes afin de corriger les études d'association pour
 les facteurs de confusion. Nous avons proposé une fonction objectif à partir
-l'égalité eqref:eq:model0 du modèle de régression avec facteur latent. Le modèle
-consiste à décomposer la matrice des variables étudiées en la somme de deux
-termes : l'effet des variables latentes et l'effet des variables d'intérêts pour
-l'étude. L'attache aux données de la fonction objectif a été construite à partir
-de l'approximation des moindres carrés de l'égalité eqref:eq:model0. Nous avons
-montré que le terme d'attache au données seul ne permet pas de définir des
-estimateurs de manière univoque pour notre problème. Ainsi, nous avons proposé
-d'ajouter un terme de régularisation portant sur les effets d'intérêts. Nous
-avons appelé nos méthodes ridgeLFMM, pour la régularisation $L_{2}$ et
-lassoLFMM, pour la régularisation $L_{1}$. L'algorithme ridgeLFMM utilise la
-formule du minimum global de la fonction objectif des moindres carrés régularisé
-en norme $L_{2}$. Nous avons apporté la démonstration de cette formule. Pour
-l'algorithme lassoLFMM, nous avons proposé une méthode alternée de descente par
-blocs de coordonnées. Les travaux de citet:Tseng_2001 permettent de démontrer la
-congergence de l'algorithme lassoLFMM vers le minimum global de sa fonction
-objectif. Cependant, nous avons proposé une preuve adapté au résultat de
-convergence de notre algorithme.
+l'égalité eqref:eq:model0 du modèle mixte à facteurs latents. Le modèle consiste
+à expliquer les variations de la matrice des variables étudiées par la somme de
+deux effets : l'effet des variables latentes et l'effet des variables
+explicatives (aussi appelées covariables). L'attache aux données de la fonction
+objectif a été construite à partir de l'approximation des moindres carrés de
+l'égalité eqref:eq:model0. Nous avons montré que le terme d'attache au données
+seul ne permet pas de définir des estimateurs de manière univoque pour notre
+problème. Ainsi, nous avons proposé d'ajouter un terme de régularisation portant
+sur les effets des variables explicatives. Nous avons appelé nos méthodes
+ridgeLFMM, pour la régularisation $L_{2}$ et lassoLFMM, pour la régularisation
+$L_{1}$. L'algorithme ridgeLFMM utilise la formule du minimum global de la
+fonction objectif des moindres carrés régularisé en norme $L_{2}$. Nous avons
+apporté la démonstration de cette formule. Pour l'algorithme lassoLFMM, nous
+avons proposé une méthode alternée de descente par blocs de coordonnées. Les
+travaux de citet:Tseng_2001 permettent de démontrer la congergence de
+l'algorithme lassoLFMM vers le minimum global de sa fonction objectif.
+Cependant, nous avons proposé une preuve adapté au résultat de convergence de
+notre algorithme.
 
 Pour évaluer la capacité de nos méthodes à corriger les études d'association
 pour les facteurs de confusions, nous avons réalisé des simulations à partir
@@ -1264,7 +1252,7 @@ géographique.
 *** Matrices d'ascendance génétique
 
 Nous considérons une matrice de génotype, $\Y$, enregistrant des données de $n$
-individus à $p$ locus polymorphes pour une espèce ayant une ploïdie de $d$,
+individus à $p$ loci polymorphes pour une espèce ayant une ploïdie de $d$,
 c'est-à-dire qui possède un génome composé de $d$ exemplaires de chaque
 chromosome. Pour les SNPs autosomiques[fn:autosomique] dans un organisme
 diploïde, le génotype au locus $\ell$ est un nombre entier, 0, 1 ou 2,
@@ -1543,7 +1531,7 @@ Après cette opération nous projetons la matrice des données $\Y$ sur la base 
 vecteurs propres de la façon suivante
 \begin{equation}
 \label{eq:3}
-\mathcal{P}(\Y) = \U \Y,
+\mathcal{P}(\Y) = \matr{U} \Y,
 \end{equation}
 et, pour chaque individu, nous calculons 
 \begin{equation}
@@ -1553,7 +1541,7 @@ q_i^\star = \arg \min \| \mathcal{P}(\Y)_i - \mathbf{G} q \|^{2}_{2} + \alpha \l
 où $\mathcal{P}(\Y)_{i}$ est la ligne d'indice $i$ de la matrice des données
 projetées, et $\lambda_{i}$ désigne la valeur propre d'indice $i$ de
 $\Laplacienne$. Les solutions, $q_{i}^{\star}$, sont concaténées en une matrice,
-$\Q^{\star}$, puis la matrice $\Q$ est calculée par la projection de $\U
+$\Q^{\star}$, puis la matrice $\Q$ est calculée par la projection de $\matr{U}
 \Q^{\star}$ sur le polyèdre $\DQ$. La complexité de la deuxième étape de APLS
 croît linéairement avec $n$, le nombre d'individus. Alors que la propriété
 théorique de convergence de l'algorithme AQP est perdu pour l'algorithme APLS,
@@ -1620,24 +1608,24 @@ Ensuite, l'erreur de prédiction est calculée en utilisant l'erreur quadratique
 moyenne (RMSE, Root Square Mean Error) entre le génotype prédit et le génotype
 réellement observé.
 
-*** Statistique de différenciation des clusters génétiques pour détecter les locus sous adaptation locale
+*** Statistique de différenciation des clusters génétiques pour détecter les loci sous adaptation locale
 
 Les méthodes d'estimation de la structure génétique des populations arrivent à
 détecter des clusters génétiques grâce aux pressions évolutives (décrites dans
 la partie [[intro_genet]]) qui provoquent la différenciation des distributions
 alléliques entre les différents clusters génétiques. À l'origine de cette
 différenciation il y a la migration, la dérive génétique et l'adaptation à
-l'environnement. Les locus qui ne sont pas impliqués dans un processus
+l'environnement. Les loci qui ne sont pas impliqués dans un processus
 d'adaptation à l'environnement sont dits neutres. Nous faisons l'hypothèse
-qu'une large majorité des locus observés sont neutres. La migration et la dérive
+qu'une large majorité des loci observés sont neutres. La migration et la dérive
 génétique influencent de la même façon les distributions alléliques de tous les
-locus neutres, induisant ainsi une différenciation typique entre les différents
+loci neutres, induisant ainsi une différenciation typique entre les différents
 clusters génétiques identifiés par les méthodes d'estimation de la structure.
-Les locus impliqués dans l'adaptation locale peuvent être identifiés en
-cherchant les locus pour lesquels on observe une différenciation anormale entre
+Les loci impliqués dans l'adaptation locale peuvent être identifiés en
+cherchant les loci pour lesquels on observe une différenciation anormale entre
 les clusters génétiques citep:Lewontin175. Nous proposons de calculer une
 statistique de différenciation entre les fréquences génomiques dans les clusters
-génétiques inférées par nos algorithmes pour détecter les locus sous adaptation
+génétiques inférées par nos algorithmes pour détecter les loci sous adaptation
 à l'environnement.
 
 En supposant qu'il y à $K$ clusters génétiques, les matrices $\Q$ et $\mathbf{G}$
@@ -1741,10 +1729,10 @@ simulant des séquences d'ADN avec une taille de population efficace de $N_0 =
 génération a été réglé sur $r = 0,25 \times 10^{-8}$; et le paramètre $m$ a été
 choisi pour obtenir des niveaux neutres de $F_{\rm ST}$ compris entre des
 valeurs de $0.005$ et $0.10$. Le nombre de nucléotides pour chaque séquence
-d'ADN a varié entre 10k et 300k pour obtenir un nombre de locus polymorphes
+d'ADN a varié entre 10k et 300k pour obtenir un nombre de loci polymorphes
 compris entre 1k et 200k après avoir filtré les SNPs ayant une fréquence
 d'allèle mineure inférieure à 5 $\%$. Pour créer des SNPs avec des valeurs de
-$F_{\rm ST}$ atypiques par rapport au $F_{\rm ST}$ des locus neutres, des
+$F_{\rm ST}$ atypiques par rapport au $F_{\rm ST}$ des loci neutres, des
 segments chromosomiques ancestraux supplémentaires ont été générés en simulant
 des séquences d'ADN avec un taux de migration $m_s$ inférieur à $m$. Les
 simulations ont permis de reproduire pour les SNPs sous adaptation locale les
@@ -1807,7 +1795,7 @@ de l'intensité de la sélection ($m/m_s$).
 <<simu_At>>
 
 Nous avons utilisé l'algorithme APLS pour étudier la structure de population
-spatiale et pour détecter les locus sous adaptation locale en considérant 214k
+spatiale et pour détecter les loci sous adaptation locale en considérant 214k
 SNPs à partir de 1 095 écotypes européens des espèces végétales /A.thaliana/
 citep:Horton_2012. Le critère de validation croisée a été utilisé pour évaluer
 le nombre de clusters génétiques dans l'échantillon, et nous avons utilisé le
@@ -2450,9 +2438,9 @@ populations sources simulées par =ms=. Pour la matrice $\mathbf{G}$, la matrice
 de référence, notée ($\mathbf{G}_0$), est calculée à partir des fréquences
 empiriques des génotypes des deux populations sources. Les erreurs quadratiques
 moyennes (RMSE) pour les estimations des matrices $\Q$ et $\mathbf{G}$ diminue à
-mesure que la taille de l'échantillon et le nombre de locus augmentent (Figure
+mesure que la taille de l'échantillon et le nombre de loci augmentent (Figure
 ref:fig:tess3:comp). Pour tous les algorithmes, les erreurs statistiques sont
-généralement faibles lorsque le nombre de locus est supérieur à 10k. Ces
+généralement faibles lorsque le nombre de loci est supérieur à 10k. Ces
 résultats permettent de prouver que les deux algorithmes produisent des
 estimations équivalentes des matrices $\Q_0$ et $\mathbf{G}_0$. Les résultats
 permettent également de vérifier que l'algorithme APLS converge vers les mêmes
@@ -2481,7 +2469,7 @@ converger vers un minimum de la fonction objectif $\LS$.
     estimations des matrices $\Q$ et $\mathbf{G}$}. Simulations de génotype métissé
   spatialement. A-B) Erreur statistique des estimations de APLS et AQP en
   fonction du nombre d'individu $n$ ($p \sim 10^4$). C-D) Erreur statistique des
-  estimations de APLS et AQP en fonction du nombre de locus $p$ ($n = 200$)}
+  estimations de APLS et AQP en fonction du nombre de loci $p$ ($n = 200$)}
 \label{fig:tess3:comp}
 \end{figure}
 #+END_EXPORT
@@ -2491,16 +2479,16 @@ Nous avons sous-échantillonné un grand jeu de données de SNPs d'écotypes de
 d'exécution des algorithmes AQP et APLS. Dans ces expériences, nous utilisons
 les méthodes avec $6$ clusters génétiques et avons répliqué 5 fois chaque
 simulation. Pour un nombre d'individus allant de 500 à 600 et un nombre de 50k
-locus, l'algorithme APLS nécessite plus d'itérations (25 itérations) que
+loci, l'algorithme APLS nécessite plus d'itérations (25 itérations) que
 l'algorithme AQP (20 itérations) pour converger vers sa solution (Figure
-ref:fig:tess3:vitesse). Pour un nombre de locus allant de 10k à 200k et 150
+ref:fig:tess3:vitesse). Pour un nombre de loci allant de 10k à 200k et 150
 individus, nous observons des résultats similaires. Pour 50k SNPs, les temps
 d'exécution sont significativement plus bas pour l'algorithme APLS que pour
 l'algorithme AQP. Pour 50k SNPs et 600 individus, cela prend en moyenne 1,0 min
 pour l'algorithme APLS et 100 min pour l'algorithme AQP pour calculer leurs
 résultats. Pour 100k SNPs et 150 individus, il faut en moyenne 0,6 min (9,0 min)
 pour l'algorithme APLS (AQP) pour calculer leurs résultats. Pour le spectre de
-valeurs du nombre d'individus et de locus considéré, l'implémentation de
+valeurs du nombre d'individus et de loci considéré, l'implémentation de
 l'algorithme APLS est environ 2 à 100 fois plus rapide que celle de
 l'algorithme AQP.
 
@@ -2656,7 +2644,7 @@ CLOSED: [2017-09-15 ven. 11:09]
                       width = (max(L) - min(L)) * 0.00002 )) +
     geom_line() +
     geom_point(size = 2) +
-    xlab("Nombre de locus $\\times 1000$") +
+    xlab("Nombre de loci $\\times 1000$") +
     ylab("RMSE") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none") +
@@ -2668,7 +2656,7 @@ CLOSED: [2017-09-15 ven. 11:09]
                       width = (max(L) - min(L)) * 0.00002 )) +
     geom_line() +
     geom_point(size = 2) +
-    xlab("Nombre de locus $\\times 1000$") +
+    xlab("Nombre de loci $\\times 1000$") +
     ylab("") +
     MaTheseR.params$gtheme +
     Article2.env$scale.linetype +
@@ -2685,7 +2673,7 @@ CLOSED: [2017-09-15 ven. 11:09]
 
 #+RESULTS: code:tess3:comparison:plot
 [[./OUTPUT/Rplots/tess3_APLS_AQP_rmse_comp.png]]
-: Measuring dimensions of:  Nombre de locus $\times 1000$ ($p$)
+: Measuring dimensions of:  Nombre de loci $\times 1000$ ($p$)
 
 ***** DONE Expérience vitesse
 CLOSED: [2017-09-11 lun. 12:21]
@@ -2817,7 +2805,7 @@ CLOSED: [2017-09-11 lun. 12:21]
                       width = (max(L) - min(L)) * 0.02 / 1000)) +
     theme_bw() +
     scale_y_log10() +
-    xlab("Nombre de locus $\\times 1000$") +
+    xlab("Nombre de loci $\\times 1000$") +
     ylab("") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none") +
@@ -2856,7 +2844,7 @@ Expr save in ./OUTPUT/Expr/tess3_vitesse_plot.rds
 Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
 un modèle spatial de mélange pour évaluer les capacités de l'algorithme APLS à
 reproduire les estimations obtenues avec le logiciel =TESS= 2.3. Nous avons
-simulé deux clusters génétiques de 100 échantillons de 2000 locus pour différent
+simulé deux clusters génétiques de 100 échantillons de 2000 loci pour différent
 niveau de différenciation moyen $F_{\rm ST}$. Cela a permis de créer des jeux de
 données pour lesquels il est plus ou moins difficile d'estimer la structure de
 population. Les erreurs statistiques, mesurées par RMSE, pour l'estimation des
@@ -2936,16 +2924,16 @@ l'algorithme non spatial (Figure ref:fig:tess3:comp:rmse:snmf).
 \end{figure}
 #+END_EXPORT
 
-Sur les simulations avec des locus sous adaptation locale, nous avons utilisé
+Sur les simulations avec des loci sous adaptation locale, nous avons utilisé
 l'aire sous la courbe de précision-rappel (AUC) pour quantifier les performances
-des tests de détection des locus sélectionnés reposant sur les estimations des
+des tests de détection des loci sélectionnés reposant sur les estimations des
 matrices d'ascendance génétique, $\Q$ et $\mathbf{G}$. De plus, nous avons
 calculé les AUC pour des tests de neutralité basés sur le calcul de la $\Fst$ à
 partir des génotypes des populations sources avant le mélange. Comme ils
 représentent les valeurs maximales atteignables, les AUC basés sur les génotypes
 des populations sources sont toujours plus élevés que ceux obtenus pour des
 tests basés sur des estimations des matrices d'ascendance. Pour toutes les
-valeurs de l'intensité de sélection (le rapport des taux de migration aux locus
+valeurs de l'intensité de sélection (le rapport des taux de migration aux loci
 neutres et adaptatifs), les AUC sont plus élevées pour les méthodes spatiales
 que pour les méthodes non spatiales (Figure ref:fig:tess3:auc). Pour les
 intensités de sélection élevées, les performances des tests fondés sur les
@@ -3454,12 +3442,12 @@ estimations de la matrice $\Q$ fournies par APLS, relativement à celle obtenue
 par la méthode non spatiale sNMF. Pour de faibles niveaux d'incertitude dans les
 coordonnées spatiales, les erreurs statistiques des estimations APLS sont
 inférieures à celles de sNMF (Figure ref:fig:tess3:noise). Pour les simulations
-avec $n = 500$ individus et $p = 10^{5}$ locus, un rapport de signal sur bruit
+avec $n = 500$ individus et $p = 10^{5}$ loci, un rapport de signal sur bruit
 important augmente les erreurs statistiques dans les estimations de la matrice
 $\Q$ de l'algorithme APLS. Pour un rapport signal sur bruit plus petit, les RMSE
 sont généralement inférieurs pour l'algorithme APLS que pour la méthode sans
 coordonnées spatiales. Pour les simulations avec $n = 50$ individus et $p =
-10^4$ locus, les estimations APLS étaient plus précises que les estimations non
+10^4$ loci, les estimations APLS étaient plus précises que les estimations non
 spatiales. Ce résultat inattendu s'explique par des différences algorithmiques
 subtiles dans les programmes testés. Dans une large mesure, les estimations de
 l'algorithme APLS sont robustes à l'incertitude dans les mesures spatiales. Des
@@ -3888,7 +3876,7 @@ homogènes.
 #+END_EXPORT
 
 Les tests basés sur la statistique $\Fst$ ont été appliqués à l'ensemble de 214k
-SNP pour détecter les locus sous sélection naturelle dans le génome de l'espèce
+SNP pour détecter les loci sous sélection naturelle dans le génome de l'espèce
 /A.thaliana/. /A. thaliana/ se trouve dans une large variété d'habitats, et
 l'adaptation locale à l'environnement est reconnue comme étant une pression
 importante qui façonne la diversité génétique dans l'espace
@@ -3927,7 +3915,7 @@ Bonferonni).
 \begin{sidewaysfigure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_AT_manhattanplot.png}
-\caption{{\bf Détection de locus sous adaptation locale sur des écotypes
+\caption{{\bf Détection de loci sous adaptation locale sur des écotypes
     européennes de \bf {\it A. thaliana}}. Manhattan plot de
   $-\log(p\text{-value})$. Les \pvalues ont été calculées à partir de la
   structure de la population estimée par l'algorithme APLS avec $K = 6$ clusters
@@ -5081,7 +5069,7 @@ observées avec des méthodes non spatiales, et les algorithmes spatiaux ont
 permis de détecter une structure de population plus subtile. En outre, nous
 avons mis en place un test de détection de la sélection reposant sur les
 estimations spatiales des matrices $\Q$ et $\mathbf{G}$ citep:Martins_2016; et
-nous avons observé que les tests rejettent la neutralité des locus avec plus de
+nous avons observé que les tests rejettent la neutralité des loci avec plus de
 précision que ceux fondés sur des approches non spatiales. Ainsi, l'information
 spatiale a contribué à améliorer la détection des signatures de balayage
 sélectif survenant dans des populations sources avant les événements de mélange.
@@ -5099,7 +5087,7 @@ approches non spatiales. Dans cette étude, nous avons présenté un cadre
 conceptuelle permettant de développer des méthodes rapides d'estimation de
 l'ascendance spatiale. Ces méthodes rapides sont implémentées dans le package
 =tess3r= qui propose une pipeline intégrée pour l'estimation et la visualisation
-de la structure génétique de population et pour la recherche de locus
+de la structure génétique de population et pour la recherche de loci
 responsables de l'adaptation locale. La complexité algorithmique de nos
 algorithmes permet à leurs utilisateurs d'analyser des échantillons comprenant
 des centaines à des milliers d'individus. Par exemple, l'analyse de plus d'un
@@ -5116,31 +5104,32 @@ que quelques minutes à l'aide d'un seul CPU.
 
 Les études d'association sont massivement utilisées en biologie. Elles
 permettent par exemple de découvrir les causes génétiques d'une maladie ou bien
-les gènes impliqués dans un processus d'adaptation au climat. Lors de ces études
-nous sommes amenées à tester les corrélations entre un grand nombre de
-variables. Dans certaines de ces études, des sources de variation indésirable,
-telles que la structure de populations, ou bien les conditions expérimentales,
-peuvent sévèrement biaiser les résultats des tests. Une méthode communément
-utilisée consiste à modéliser les sources de variation indésirable à l'aide de
-variables latentes. Dans ce chapitre, nous introduisons deux nouveaux
+les gènes impliqués dans un processus d'adaptation au climat. Lors de ces
+études, nous sommes amenés à tester les corrélations entre un grand nombre de
+variables, comme par exemple des SNPs, et une variable d'intérêt, comme par
+exemple une maladie. Dans certaines de ces études, des sources de variation
+indésirable, telles que la structure de populations, ou bien les conditions
+expérimentales, peuvent sévèrement biaiser les résultats des tests. Une méthode
+communément utilisée consiste à modéliser les sources de variation indésirable à
+l'aide de variables latentes. Dans ce chapitre, nous introduisons deux nouveaux
 algorithmes qui permettent d'estimer les variables latentes afin de corriger les
 études d'association pour les sources de variation indésirable. Nous appelons
 ces variables latentes les facteurs de confusion pour l'étude d'association.
-Nos algorithmes reposent sur une décomposition de la matrice des variables
-étudiées en une matrice des effets latents, et une matrice des effets des
-variables d'intérêt pour l'étude. Nos deux algorithmes reposent sur des
-régularisations sur les effets d'intérêt différentes. L'un utilise une
-régularisation en norme $L_{2}$, tandis que l'autre utilise un régularisation en
-norme $L_{1}$. Pour chaque algorithme, nous démontrons leur convergence vers le
-minimum de leur fonction objectif respective. Nous montrons sur des simulations
-numériques que nos algorithmes reproduisent les performances d'autres
-algorithmes de correction des études d'association. Nous montrons enfin que nos
-algorithmes permettent de reproduire des résultats d'une étude d'association
-entre des génomes et la maladie \celiac, ainsi qu'une étude d'association entre
-des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde. Nous
-présentons enfin des résultats trouvés par nos algorithmes sur un exemple
-d'étude d'association entre des génotypes et un gradient climatique. Nos
-algorithmes sont implémentés dans le package R, =lfmm=.
+Nous utilisons l'approche classique qui consiste à ajouter un terme factoriel au
+modèle de régression des variables étudiées par des variables d'intérêts. Nos
+deux algorithmes reposent sur différentes régularisations portant sur les effets
+d'intérêt. Le premier algorithme utilise une régularisation en norme $L_{2}$,
+tandis que le second utilise un régularisation en norme $L_{1}$. Pour chaque
+algorithme, nous démontrons leur convergence vers le minimum de leur fonction
+objectif respective. Nous montrons sur des simulations numériques que nos
+algorithmes reproduisent les performances d'autres algorithmes de correction
+pour les études d'association. Nous montrons enfin que nos algorithmes
+permettent de reproduire des résultats d'une étude d'association entre des
+variants génétiques humain et la maladie \celiac, ainsi qu'une étude
+d'association entre des niveaux de méthylation de l'ADN et la polyarthrite
+rhumatoïde. Nous présentons enfin des résultats trouvés par nos algorithmes sur
+un exemple d'étude d'association entre des génotypes et un gradient climatique.
+Nos algorithmes sont implémentés dans le package R, =lfmm=.
 
 ** Introduction
 <<sec:lfmm_intro>> 
@@ -5155,7 +5144,7 @@ significatives entre les marqueurs et le phénotype. Par exemple, les études
 d'association à l'échelle du génome (GWAS genome-wide association studies) se
 concentrent sur des polymorphismes à un seul nucléotide (SNP pour
 single-nucleotide polymorphism) en examinant des variants génétiques chez
-différents individus citep:Balding_2006. Les GWAS ont été étendus à des études
+différents individus citep:Balding_2006. Les GWAS ont été étendues à des études
 d'association à l'échelle de l'épigénome (EWAS epigenome-wide association
 studies) qui mesurent les niveaux de méthylation de l'ADN chez différents
 individus pour des associations entre la variation épigénétique et des
@@ -5163,7 +5152,7 @@ phénotypes citep:Rakyan_2011. Des approches similaires ont été appliquées à
 caractérisation de la variation observée dans l'ARN par rapport à différents
 environnements, traitements médicaux, phénotypes ou maladies citep:Slonim_2002.
 D'autres exemples d'études d'association incluent des études d'association
-génétique-environnement (GEAS) dans lesquelles des locus sont testés pour leurs
+génétique-environnement (GEAS) dans lesquelles des loci sont testés pour leurs
 corrélations avec des gradients écologiques afin de détecter des signatures de
 sélection naturelle citep:rellstab15_pract_guide_to_envir_assoc. En peu de
 temps, les études d'association ont permis des progrès considérables dans
@@ -5185,10 +5174,10 @@ que nous pouvons formaliser de la façon suivante
 \Y_{j} = \X b_{j} + \E_{j}
 \end{equation}
 où $\Y_{j}$ est la matrice des observations de la variable d'indice $j$ pour
-$\Yrow$ individus. Le coefficient $b_{j}$ représente l'effet de la variable $\X$
-sur $\Y_{j}$. La matrice $\E_{j}$ est la matrice de l'erreur résiduelle. Il
-arrive parfois que l'on fasse la régression dans l'autre sens, la régression
-s'écrit alors
+$\Yrow$ individus, typiquement constituée de variants génétiques. Le
+coefficient $b_{j}$ représente l'effet de la variable $\X$ sur $\Y_{j}$. La
+matrice $\E_{j}$ est la matrice de l'erreur résiduelle. Il arrive parfois que
+l'on fasse la régression dans l'autre sens, la régression s'écrit alors
 \begin{equation}
 \label{eq:statRegRevers}
 \X = \Y_{j} a_{j} + \E^{'}_{j},
@@ -5196,13 +5185,12 @@ s'écrit alors
 où $\a_{j}$ représente l'effet de $\Y_{j}$ sur $\X$. Dans la suite nous
 discutons de régression uniquement dans le sens de l'équation eqref:eq:statReg.
 L'objectif est de trouver les coefficients $b_{j}$ qui sont significativement
-différents de zéro. Dans ce cas nous disons que $\Y_{j}$ est associée à $\X$.
+différents de zéro. Dans ce cas, nous disons que $\Y_{j}$ est associée à $\X$.
 Comme nous l'avons évoqué dans la partie précédente, avec cette approche il est
 possible qu'une ou plusieurs variables latentes soient corrélées à la fois à
 $\Y$ et à $\X$. Dans ce cas, si nous ne considérons pas les variables latentes
 comme variables explicatives de la régression, nous détectons un grand nombre de
-variables $\Y_{j}$ significativement corrélées à $\X$, comme nous l'avons
-illustré par une simulation numérique dans la partie précédente. Nous allons
+variables $\Y_{j}$ significativement corrélées à $\X$. Nous allons
 maintenant présenter différentes approches de correction des études
 d'association pour les facteurs de confusion.
 
@@ -5210,7 +5198,8 @@ d'association pour les facteurs de confusion.
 Une première approche consiste à estimer les variables latentes en faisant une
 analyse factorielle de $\Y$. On fait l'analyse factorielle a priori et sans
 prendre en compte la variable $\X$. Les variables latentes sont ensuite ajoutées
-au modèle de régression avec les autres variables explicatives de sorte que
+au modèle de régression avec les autres variables explicatives, de sorte que
+nous avons
 \begin{equation}
 \Y_{j} = \X b_{j} + \bar{\matr{U}} \V_{j}^{T} + \E_{j}
 \end{equation}
@@ -5224,17 +5213,20 @@ Une autre approche de correction pour les facteurs de confusion est le modèle
 mixte. Dans un tel modèle, on ajoute un effet aléatoire au modèle de la
 régression
 \begin{equation}
-\Y_{j} = \X \B^{T} + \matr{\Gamma}_{j} + \E_{j},
+\label{eq:mixemodel}
+\Y_{j} = \X \B^{T} + \matr{Z} \matr{\Gamma}_{j} + \E_{j},
 \end{equation}
-où $\matr{\Gamma}_{j}$ est la matrice des effets aléatoires à estimer. Dans les
+où $\matr{Z}$ est une matrice fixée à l'avance ("design matrix" en anglais) et
+$\matr{\Gamma}_{j}$ est la matrice des effets aléatoires à estimer. Dans les
 modèles mixtes, on suppose de plus que la matrice de covariance de l'effet
 aléatoire est connue. La matrice de covariance doit correspondre à la variance
 du facteur de confusion; elle est en général calculée à partir de $\Y$. Les
 modèles mixtes ont été largement utilisés pour les GWAS
-citep:Kang_2008,Zhou_2014. Dans le cas des GWAS, l'effet aléatoire permet
-d'expliquer la variation de $\Y_{j}$ qui est due à la structure de population.
-Dans ce cas, la matrice de covariance est estimée a priori sur les données
-génétiques.
+citep:Kang_2008,Zhou_2014. Dans les GWAS, les rôles de $\Y_{j}$ (un variant
+génétique) et $\X$ (un phénotype) sont inversés dans l'équation
+eqref:eq:mixemodel; et l'effet aléatoire permet d'expliquer la variation de
+$\Y_{j}$ qui est due à la structure de population. Dans ce cas, la matrice de
+covariance est estimée a priori à partir les données génétiques.
 **** Les modèles mixtes à facteurs latents (LFMM latent factor mixed model)
 Nous introduisons maintenant les modèles mixtes à facteurs latents. Pour de tels
 modèles, l'équation de régression peut s'écrire comme ceci :
@@ -5242,27 +5234,22 @@ modèles, l'équation de régression peut s'écrire comme ceci :
 \label{eq:glfmm}
 \Y = \X \B^{T} + \matr{U} \V^{T} + \E,
 \end{equation}
-Dans cette équation $\matr{U}$ est la matrice des variables latentes et $\V$ est la
-matrice des effets des facteurs latents. La différence majeure de LFMM avec les
-autres modèles est que l'on ne suppose rien a priori sur les facteurs de
-confusion.
-NON revoir ici 
-
-Dans les modèles dont nous avons parlés précédemment, on estime a priori les
-variables latentes ou leurs matrices de covariance. Dans LFMM l'estimation des
-variables latentes $\matr{U}$ et des effets de la variable explicative $\B$ se
-font en même temps. Les matrices $\matr{U}$ et $\V$ permettent d'apprendre les
-variations systématiques observées dans la matrice $\Y$ tandis que la matrice
-des effets $\B$ permet d'apprendre l'effet de $\X$ sur certaines colonnes de
-$\Y$. Il existe différentes méthodes pour estimer les paramètres de LFMM. On
-distingue d'abord des approches qui reposent sur des algorithmes de Monte-Carlo
-citep:frichot13_testin_assoc_between_loci_envir,carvalho08_high_dimen_spars_factor_model.
-Ces approches reposent sur une modélisation bayésienne de LFMM qui permet
-d'échantillonner les lois a posteriori des paramètres. L'avantage des méthodes
-MCMC est qu'elles permettent d'estimer la variance du paramètre $\B$ grâce au
-bootstrap bayésien citep:rubin1981bayesian, et de faire un test de
-significativité statistique. Certaines approches reposent sur des algorithmes EM
-(Expectation Maximisation)
+Dans cette équation $\matr{U}$ est la matrice des variables latentes et $\V$ est
+la matrice des effets des facteurs latents. La différence majeure entre LFMM et
+les autres modèles est que l'on ne suppose rien a priori sur les facteurs de
+confusion. Dans LFMM, l'estimation des variables latentes $\matr{U}$ et des
+effets de la variable explicative $\B$ se font en même temps. Les matrices
+$\matr{U}$ et $\V$ permettent d'apprendre les variations systématiques observées
+dans la matrice $\Y$ tandis que la matrice des effets $\B$ permet d'apprendre
+l'effet de $\X$ sur les colonnes de $\Y$. Il existe différentes méthodes pour
+estimer les paramètres de LFMM. On distingue d'abord des approches qui reposent
+sur des algorithmes de Monte-Carlo
+citep:Frichot_2013,carvalho08_high_dimen_spars_factor_model. Ces approches
+reposent sur une modélisation bayésienne qui permet d'échantillonner les lois a
+posteriori des paramètres. L'avantage des méthodes MCMC est qu'elles permettent
+d'estimer la variance du paramètre $\B$ grâce au bootstrap bayésien
+citep:rubin1981bayesian, et de faire un test de significativité statistique.
+Certaines approches reposent sur des algorithmes EM (Expectation Maximisation)
 citep:friguet09_factor_model_approac_to_multip,agarwal09_regres,zhou16_spars_multiv_factor_analy_regres.
 Ces approches sont souvent plus rapides que les méthodes utilisant des
 algorithmes de Monte-Carlo. Enfin, d'autres approches reposent sur une
@@ -5271,8 +5258,8 @@ citep:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007. Cette
 transformation a pour but de séparer la variation de $\Y$, expliquée par les
 variables latentes, de celle expliquée par $\X$. Parmi les méthodes reposant sur
 une transformation des données, on distingue des autres les méthodes dîtes à
-contrôle négatif qui supposent connu un sous ensemble de colonnes de $\Y$ qui
-ne sont pas associées avec $\X$. Les méthodes à contrôle négatif utilisent les
+contrôle négatif qui supposent connu un sous-ensemble de colonnes de $\Y$ qui ne
+sont pas associées avec $\X$. Les méthodes à contrôle négatif utilisent les
 variables dîtes nulles pour estimer les variables latentes. L'estimation des
 variables latentes pour corriger les études d'association est un problème très
 vaste et aucune méthode ne s'est imposée comme étant la méthode référence.
@@ -5296,7 +5283,7 @@ latents peuvent être confondus avec les variables explicatives en raison de la
 nature observatoire de l'étude.
 
 *** Plan du chapitre
-Nous proposons dans ce chapitre, deux algorithmes d'estimation rapide et
+Nous proposons, dans ce chapitre, deux algorithmes d'estimation rapide et
 efficace des paramètres du modèle LFMM. Nos deux algorithmes d'estimation
 consistent à isoler la variation de $\Y$, expliquée par les variables latentes,
 de celle expliquée par les variables explicatives $\X$. Les méthodes que nous
@@ -5313,36 +5300,37 @@ simulations numériques ainsi que pour des exemples de GWAS, EWAS et GEAS.
 *** Modèle mixte à facteurs latents
 <<sec:model>>
 
-Dans cette partie nous introduisons les notations du modèle mixte à facteurs
+Dans cette partie, nous introduisons les notations du modèle mixte à facteurs
 latents que nous utilisons pour corriger les tests d'association : 
 \begin{equation}
 \label{eq:model}
-\Y = \X \B^T + \U \V^T + \E.
+\Y = \X \B^T + \matr{U} \V^T + \E.
 \end{equation}
 Dans cette équation, $\Y$ est la matrice de taille $\Yrow \times \Ycol$ qui
 rassemble les observations de $\Ycol$ variables pour $\Yrow$ individus. Par
 exemple, la matrice $\Y$ peut contenir des SNPs, des niveaux de méthylation ou
 bien des niveaux d'expression génique. Nous appelons la matrice $\Y$ la matrice
 des variable expliquées. La matrice $\X$, de taille $\Xrow \times \Xcol$,
-regroupe toutes les variables explicatives. Ainsi les colonnes de $\X$ sont les
-variables d'intérêt pour l'association, c'est-à-dire les variables pour
-lesquelles on souhaite trouver les associations avec $\Y$. Les colonnes de $\X$
-peuvent être par exemple un phénotype, comme une maladie, ou un gradient
-environnemental, comme la température d'un habitat. La matrice des effets de
-$\X$ sur $\Y$ de taille $\Ycol \times \Xcol$ est notée $\B$. Si l'on suppose
-qu'il y a $K$ variables latentes, la matrice $\matr{U}$ est la matrice des $\K$
-variables latentes et la matrice $\V$ représente les effets des variables latents
-sur $\Y$. Les matrices $\V$ et $\matr{U}$ sont respectivement la matrice des effets
-latents (appelée aussi matrice des axes factoriels), de taille $\Ycol\times\Ucol$,
-et la matrice des variables latentes, de taille $\Urow \times \K$. Enfin la
-matrice $\E$ est la matrice d'erreur résiduelle, de taille $\Yrow\times\Ycol$.
+regroupe toutes les variables explicatives. Les variables explicatives ne sont
+pas obligatoirement toutes des variables d'intérêt pour l'étude d'association;
+des variables explicatives supplémentaires peuvent être ajoutées pour améliorer
+le modèle. Les variables explicatives peuvent être par exemple un phénotype,
+comme une maladie, ou un gradient environnemental, comme la température d'un
+habitat. La matrice des effets de $\X$ sur $\Y$ de taille $\Ycol \times \Xcol$
+est notée $\B$. Si l'on suppose qu'il y a $K$ variables latentes, la matrice
+$\matr{U}$ est la matrice des $\K$ variables latentes et la matrice $\V$
+représente les effets des variables latents sur $\Y$. Les matrices $\V$ et
+$\matr{U}$ sont respectivement la matrice des effets latents (appelée aussi
+matrice des axes factoriels), de taille $\Ycol\times\Ucol$, et la matrice des
+variables latentes, de taille $\Urow \times \K$. Enfin la matrice $\E$ est la
+matrice d'erreur résiduelle, de taille $\Yrow\times\Ycol$.
 
 Dans un premier temps, nous remarquons que les matrices $\matr{U}$ et $\V$ ne
 sont pas définies de façon unique. En effet, comme ces deux matrices sont
 multipliées entre elles dans l'équation eqref:eq:model, les matrices $\matr{U}$
 et $\V$ sont définies à une matrice inversible près
 \begin{equation}
-\U \V^{T} = \U \matr{R} \matr{R}^{-1} \V^{T}
+\matr{U} \V^{T} = \matr{U} \matr{R} \matr{R}^{-1} \V^{T}
 \end{equation}
 où $\matr{R}$ est une matrice inversible de taille $\K \times \K$. Nous
 considérons donc la matrice
@@ -5352,11 +5340,11 @@ considérons donc la matrice
 \end{equation}
 et nous appelons la matrice $\W$ la matrice latente. Si l'on suppose qu'il y a $\K$
 variables latentes linéairement indépendantes, cela équivaut à faire
-l'hypothèse que la matrice latente $\W$ est de rang $\K$. Dans la suite nous
+l'hypothèse que la matrice latente $\W$ est de rang $\K$. Dans la suite, nous
 considérons $\matr{U}$ et $\V$ comme étant les matrices uniques obtenues grâce à
 l'analyse en composantes principales de la matrice latente $\W$.
 
-*** Estimateur des moindres carrés régularisée en norme $L_{2}$
+*** Estimateur des moindres carrés régularisé en norme $L_{2}$
 <<sec:estimator_L2>>
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 16:21] \\
@@ -5375,7 +5363,7 @@ moindres carrés régularisé en norme $L_{2}$.
 
 **** Fonction objectif 
 
-Afin d'estimer les paramètres $\U$, $\V$ et $\B$ de LFMM, nous définissons la
+Afin d'estimer les paramètres $\matr{U}$, $\V$ et $\B$ de LFMM, nous définissons la
 fonction objectif de type ridge suivante
 \begin{equation}
 \label{eq:optim_ridge_reg}
@@ -5388,13 +5376,10 @@ explicative $\X$, le terme d'attache aux données correspond à la fonction
 objectif de l'analyse en composantes principales. Le deuxième terme de la
 fonction $\Lridge$ est le terme de régularisation. Ce terme est indispensable
 pour séparer les variations de $\Y$ expliquées par les variables latentes de
-celles expliquées par les variables explicatives. En effet, si
-\begin{equation*}
-\lambRidge = 0, 
-\end{equation*}
+celles expliquées par les variables explicatives. En effet, si $\lambRidge = 0$
 alors, pour toute matrice $\matr{P}$, de taille $\Xcol \times \Ycol$, nous avons
 \begin{equation*}
-\Lridge(\U - \X \matr{P}, \V^{T}, \B + \V \matr{P}^T}) = \Lridge(\U, \V^{T}, \B).
+\Lridge(\matr{U} - \X \matr{P}, \V^{T}, \B + \V \matr{P}^T}) = \Lridge(\matr{U}, \V^{T}, \B).
 \end{equation*}
 Nous voyons que les points du minimum de la fonction objectif ne sont pas définis de
 manière univoque pour notre problème quand le paramètre de régularisation est
@@ -5413,9 +5398,9 @@ matrice de taille $\Xrow \times \Xcol$ contenant les valeurs singulières $\left
 la façon suivante
 \begin{align}
 \label{eq:RidgeLfmmEstomatorW}
-\hat{\U} \hat{\V}^{T} & =  \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
+\hat{\matr{U}} \hat{\V}^{T} & =  \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
 \label{eq:RidgeLfmmEstomatorB}
-\hat{\B}^{T} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}^{T}),
+\hat{\B}^{T} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\matr{U}} \hat{\V}^{T}),
 \end{align}
 où $\svd_{\K}(\matr{A})$ est la meilleure approximation de rang $\K$ de la
 matrice $\matr{A}$, donnée par la décomposition en valeurs singulières et
@@ -5429,7 +5414,7 @@ diagonaux suivants
 1, ..., 1 \right\}.
 \end{equation*}
 
-Notons que l'estimation de la matrice latente $\hat{\U} \hat{\V}^{T}$ dans
+Notons que l'estimation de la matrice latente $\hat{\matr{U}} \hat{\V}^{T}$ dans
 l'équation eqref:eq:RidgeLfmmEstomatorW fait intervenir la matrice de changement
 de base $\matr{Q}$. Les $\Xcol$ premiers axes de la base canonique transformée
 par $\Q$ forment une base orthonormale de l'espace vectoriel engendré par les
@@ -5439,7 +5424,7 @@ $\lambRidge$ tend vers zéro, multiplier $\Y$ par $\D \matr{Q}^{T}$ revient à
 prendre le résidu d'une régression linéaire de $\Y$ par $\X$; on enlève alors
 toute la part de variance expliquée par $\X$. À la limite, $\D$ n'est plus
 inversible. Si $\lambRidge$ est très grand, $\D$ tend vers la matrice identité.
-Dans ce cas, le calcul de $\hat{\U} \hat{\V}$ revient à faire une analyse en
+Dans ce cas, le calcul de $\hat{\matr{U}} \hat{\V}$ revient à faire une analyse en
 composantes principales de la matrice des variables expliquées $\Y$. Nous
 expliquons plus en détail dans la section [[sec:hyperparametre]] comment choisir
 l'hyperparamètre $\lambRidge$.
@@ -5455,21 +5440,21 @@ minimum global de la fonction objectif $\Lridge$.
 #+END_theorem
 
 #+BEGIN_proof
-On veut trouver $\hat{\U} \in \RR^{\Urow \times \Ucol}$, $\hat{\V} \in
+On veut trouver $\hat{\matr{U}} \in \RR^{\Urow \times \Ucol}$, $\hat{\V} \in
 \RR^{\Vrow \times \Vcol}$ et $\hat{\B} \in \RR^{\Brow \times \Bcol}$
 correspondant à un minimum global de la fonction $\Lridge$. Commençons par
 remarquer que la fonction $\Lridge$ est convexe en la variable $\B$; on peut
 donc trouver le point de minimum global en annulant la dérivée de $\Lridge$ par
 rapport à $\B$. Cela conduit à l'équation suivante
 \begin{equation}
-\hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{\Bcol})^{-1} \X^{T} (\Y - \U \V^{T}).
+\hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{\Bcol})^{-1} \X^{T} (\Y - \matr{U} \V^{T}).
 \end{equation}
-Il s'agit de l'estimateur ridge du modèle de la régression linéaire de $\Y - \U
+Il s'agit de l'estimateur ridge du modèle de la régression linéaire de $\Y - \matr{U}
 \V^{T}$ par $\X$, en supposant que $\matr{U}$ et $\V$ sont connues.
 
 Il faut maintenant minimiser la fonction
 \begin{align*}
-\mathcal{L}^{'}(\U, \V) & = \Lridge(\U, \V, \hat{\B}).
+\mathcal{L}^{'}(\matr{U}, \V) & = \Lridge(\matr{U}, \V, \hat{\B}).
 \end{align*}
 Considérons la décomposition en valeurs singulières de $\X$ telle que 
 \begin{equation*}
@@ -5481,8 +5466,8 @@ $\matr{\Sigma}$ une matrice de taille $\Xrow \times \Xcol$ contenant les valeurs
 singulières $\left \{ \sigma_{j} \left \}_{j = 1..\Xcol}$. L'écriture de
 $\mathcal{L}^{'}$ se simplifie comme ceci
 \begin{equation*}
-\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\D^{2} \matr{Q}^{T} (\Y - \U \V^{T})}^{2}_{F} + 
-\frac{1}{2} \lambRidge \norm{\matr{C}_{\lambRidge} \matr{Q}^{T} (\Y - \U \V^{T})}_{F}^{2}
+\mathcal{L}^{'}(\matr{U}, \V) & = \frac{1}{2} \norm{\D^{2} \matr{Q}^{T} (\Y - \matr{U} \V^{T})}^{2}_{F} + 
+\frac{1}{2} \lambRidge \norm{\matr{C}_{\lambRidge} \matr{Q}^{T} (\Y - \matr{U} \V^{T})}_{F}^{2}
 \end{equation*}
 où $\matr{C}_{\lambRidge}$ est une matrice de taille $\Xcol \times \Xrow$
 remplie de zéro sauf sur la première diagonale qui contient les valeurs
@@ -5501,9 +5486,9 @@ contenant les termes
 Les matrices $\D$ et $\matr{C}_{\lambRidge}$ étant diagonales, il est possible
 par le calcul de montrer que
 \begin{align*}
-\mathcal{L}^{'}(\U, \V) & = \frac{1}{2} \norm{\sqrt{(\D^{2} + 
-\matr{C}_{\lambRidge}^{2})} \matr{Q}^{T} (\Y - \U \V^{T})}_{F}^{2} \\ 
-& = \frac{1}{2} \norm{ \D \matr{Q}^{T} (\Y - \U \V^{T})}_{F}^{2}
+\mathcal{L}^{'}(\matr{U}, \V) & = \frac{1}{2} \norm{\sqrt{(\D^{2} + 
+\matr{C}_{\lambRidge}^{2})} \matr{Q}^{T} (\Y - \matr{U} \V^{T})}_{F}^{2} \\ 
+& = \frac{1}{2} \norm{ \D \matr{Q}^{T} (\Y - \matr{U} \V^{T})}_{F}^{2}
 \end{align*}
 Enfin, optimiser la fonction objectif $\mathcal{L}^{'}$ équivaut au problème de
 trouver la meilleure approximation de rang $\K$ de la matrice
@@ -5513,12 +5498,12 @@ trouver la meilleure approximation de rang $\K$ de la matrice
 qui est obtenue en tronquant la SVD pour ne garder que les $\K$ valeurs
 singulières les plus grandes citep:Eckart_1936. Nous avons bien montré que
 \begin{align*}
-&\hat{\U} \hat{\V}^{T} = \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
-&\hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\U} \hat{\V}^{T})
+&\hat{\matr{U}} \hat{\V}^{T} = \matr{Q} \D^{-1} \svd_{\K}( \D \matr{Q}^{T} \Y ) \\
+&\hat{\B}^{T} = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\matr{U}} \hat{\V}^{T})
 \end{align*}
 est un point de minimum global de $\Lridge$.
 #+END_proof
-*** Estimateur des moindres carrés régularisée en norme $L_{1}$  
+*** Estimateur des moindres carrés régularisé en norme $L_{1}$  
 <<sec:estimator_L1>>
 :LOGBOOK:
 - Note taken on [2017-06-29 jeu. 14:47] \\
@@ -5538,20 +5523,23 @@ la fonction objectif de type lasso suivante
 \LfmmLlasso,
 \end{equation}
 où $\W$ est la matrice latente définie en eqref:eq:W, $\norm{\B}_{1}$ la norme
-$L_1$ de $\B$ et $\norm{\W}_{*}$ la norme nucléaire de la matrice $\W$, définie
-comme la somme de ses valeurs singulières. Le choix de la norme $L_{1}$ est
-motivé par le fait que l'on s'attend à ce que seulement une certaine proportion
-des colonnes de $\Y$ soit associée à $\X$. Autrement dit seules certaines lignes
-de la matrice des effets $\B$ doivent être non nulles. La régularisation $L_{1}$
-est connue pour produire des estimateurs parcimonieux de $\B$
-citep:Tibshirani_1996. La fonction $\Llasso$ fait aussi intervenir une
-régularisation sur la matrice latente $\W$. Nous ajoutons la régularisation en
-norme nucléaire afin de lever la contrainte de rang sur $\W$ empêchant de
-définir un problème d'optimisation convexe. Avec le terme de régularisation sur
-$\W$, la fonction $\Llasso$ devient convexe. En outre, les pénalisations sur la
-norme nucléaire sont utilisées pour pénaliser le rang
-citep:article_Mishra_Meyer_Bach_Sepulchre_2011. Ainsi, la régularisation en norme
-nucléaire contraint le rang de $\W$ et donc le nombre de variables latentes.
+$L_1$ de $\B$, $\lambLasso$ le paramètre de régularisation $L_{1}$,
+$\norm{\W}_{*}$ la norme nucléaire de la matrice $\W$, définie comme la somme
+de ses valeurs singulières, et $\gamma$ le paramètre de régularisation de la
+norme nucléaire. Le choix de la norme $L_{1}$ est motivé par le fait que l'on
+s'attend à ce que seulement une certaine proportion des colonnes de $\Y$ soit
+associée à $\X$. Autrement dit, seules certaines lignes de la matrice des effets
+$\B$ doivent être non nulles. La régularisation $L_{1}$ est connue pour
+produire des estimateurs parcimonieux de $\B$ citep:Tibshirani_1996. La
+fonction $\Llasso$ fait aussi intervenir une régularisation sur la matrice
+latente $\W$. Nous ajoutons la régularisation en norme nucléaire afin de lever
+la contrainte de rang sur $\W$ empêchant de définir un problème d'optimisation
+convexe. Avec le terme de régularisation sur $\W$, la fonction $\Llasso$
+devient convexe. En outre, les pénalisations sur la norme nucléaire sont
+utilisées pour pénaliser le rang
+citep:article_Mishra_Meyer_Bach_Sepulchre_2011. Ainsi, la régularisation en
+norme nucléaire contraint le rang de $\W$ et donc le nombre de variables
+latentes.
 
 **** Algorithme de minimisation de la fonction objectif $\Llasso$
 <<sec:lasso_algo>>
@@ -5587,10 +5575,11 @@ régularisée en norme $L_{1}$ de la matrice résiduelle
 \end{equation}
 par les variables explicatives $\X$. Il existe plusieurs algorithmes pour
 estimer les paramètres de cette régression. Nous utilisons l'algorithme de
-descente par coordonnées citep:Friedman_2007. Dans le cas présent, on s'intéresse
-plus particulièrement à l'estimation des variables latentes, qui permettront
-ensuite de faire le test d'association (voir la partie [[sec:hypothese]]). Nous
-supposons donc que les variables explicatives $\X$ ont été transformées de sorte que
+descente par coordonnées de citet:Friedman_2007. Dans le cas présent, on
+s'intéresse plus particulièrement à l'estimation des variables latentes, qui
+permettront ensuite de faire le test d'association (voir la partie
+[[sec:hypothese]]). Nous supposons donc que les variables explicatives $\X$ ont été
+transformées de sorte que
 \begin{equation}
 \X^{T} \X = \Id_{d}.
 \end{equation}
@@ -5720,16 +5709,21 @@ modèle LFMM converge vers un point de minimum global de $\Llasso$.
 *** Complexité des algorithmes
 Dans cette partie nous abordons la complexité des algorithmes présentés dans les
 sections précédentes. On peut distinguer deux grandes étapes dans ces
-algorithmes. La première est le calcul de la décomposition tronquée en valeurs
-singulières : calcul de la matrice latente défini par l'équation
-eqref:eq:RidgeLfmmEstomatorW pour l'estimation $L_{2}$ et la résolution du
-problème d'optimisation de la fonction $\mathcal{L}_{\mathrm{lasso}}^{'}$
-définie par eqref:eq:lasso2 pour l'estimation $L_{1}$. La seconde est le calcul
+algorithmes. La première étape est le calcul de la décomposition en
+valeurs singulières, c'est-à-dire : 
+- le calcul de la matrice latente défini par l'équation
+  eqref:eq:RidgeLfmmEstomatorW pour l'estimation $L_{2}$,
+- la résolution du problème d'optimisation de la fonction
+  $\mathcal{L}_{\mathrm{lasso}}^{'}$ définie par eqref:eq:lasso2 pour
+  l'estimation $L_{1}$.
+La seconde étape est le calcul
 de la projection orthogonale sur l'espace engendré par les variables
-explicatives $\X$ : calcul de la matrice des effets définie par l'équation
-eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$ et la résolution du
-problème d'optimisation de la fonction $\mathcal{L}_{\mathrm{lasso}}^{''}$
-définie par eqref:eq:lasso1 pour l'estimation $L_{1}$.
+explicatives $\X$, c'est-à-dire : 
+- le calcul de la matrice des effets définie par l'équation
+  eqref:eq:RidgeLfmmEstomatorB pour l'estimation $L_{2}$,
+- la résolution du problème d'optimisation de la fonction
+  $\mathcal{L}_{\mathrm{lasso}}^{''}$ définie par eqref:eq:lasso1 pour
+  l'estimation $L_{1}$.
 
 D'après citet:Halko_2011, le calcul des $K$ composantes dominantes de la
 décomposition en valeurs singulières demande $O(\Yrow \Ycol \K)$ opérations.
@@ -5793,24 +5787,24 @@ $\D$ utilisée dans l'estimation $L_{2}$ (voir la section [[sec:estimator_L2]]).
 cela on projette $\Y$ sur l'espace orthogonal à $\X$ en prenant $\lambRidge = 0$.
 On a alors
 \begin{equation}
- \matr{D}_{0} \Q^{T} \Y = \matr{D}_{0} \Q^{T}\U \V^{T} + \matr{D}_{0} \Q^{T} \E.
+ \matr{D}_{0} \Q^{T} \Y = \matr{D}_{0} \Q^{T}\matr{U} \V^{T} + \matr{D}_{0} \Q^{T} \E.
 \end{equation}
 On peut ainsi utiliser les méthodes d'estimation du nombre $\K$ de variables
-latentes sur la matrice $\matr{D}_{0} \Q^{T} \Y$. Si il n'y a pas de variable
-explicative $\X$, les fonctions objectif des deux algorithmes d'estimations
-$L_1$ et $L_2$ correspondent à la fonction objectif de l'analyse en composantes
-principales (ACP). Nous utilisons donc les méthodes d'estimation du nombre de
-composantes dans l'ACP pour $\matr{D}_{0} \Q^{T} \Y$. Il existe de nombreuses
-approches pour déterminer le nombre de composantes principales de l'ACP, très
-bien expliquées par citet:jolliffe1986principal. On peut grouper les approches
-en trois catégories. La première catégorie regroupe les approches subjectives
-comme l'utilisation du scree plot (le graphe des valeurs singulières de la
-matrice des données). La seconde catégorie comprend les approches basées sur une
-modélisation de la distribution des données observées, comme par exemple la
-méthode présentée par citet:choi2014selecting. La dernière catégorie est formée
-des approches basées sur la validation croisée, comme celle que nous détaillons
-plus loin. Aucune méthode ne s'est imposée comme la référence, et il est
-préférable d'en utiliser plusieurs. Pour les expériences que nous avons
+latentes sur la matrice $\matr{D}_{0} \Q^{T} \Y$. Si on enlève les variables
+explicatives du modèle, les fonctions objectif des deux algorithmes
+d'estimations $L_1$ et $L_2$ correspondent à la fonction objectif de l'analyse
+en composantes principales (ACP). Nous utilisons donc les méthodes d'estimation
+du nombre de composantes dans l'ACP pour $\matr{D}_{0} \Q^{T} \Y$. Il existe de
+nombreuses approches pour déterminer le nombre de composantes principales de
+l'ACP, très bien expliquées par citet:jolliffe1986principal. On peut grouper les
+approches en trois catégories. La première catégorie regroupe les approches
+subjectives comme l'utilisation du scree plot (le graphe des valeurs singulières
+de la matrice des données). La seconde catégorie comprend les approches basées
+sur une modélisation de la distribution des données observées, comme par exemple
+la méthode présentée par citet:choi2014selecting. La dernière catégorie est
+formée des approches basées sur la validation croisée, comme celle que nous
+détaillons plus loin. Aucune méthode ne s'est imposée comme la référence, et il
+est préférable d'en utiliser plusieurs. Pour les expériences que nous avons
 réalisées sur des données réelles, le choix du nombre de variables latentes $\K$
 du modèle LFMM a été fait à partir du scree plot de l'ACP de la matrice
 $\matr{D}_{0} \Q^{T} \Y$. Nous avons aussi utilisé l'algorithme de validation
@@ -5826,27 +5820,24 @@ croisée que nous présentons dans la section [[sec:CV]].
 :END:
 
 Le paramètre de régularisation $L_{2}$ ($\lambRidge$) intervient dans le calcul
-de l'estimation de la matrice latente décrit dans la partie [[sec:estimator_L2]]. 
-
-TODO : mettre equation ici 
-
-Ce
-paramètre de régularisation intervient dans la matrice diagonale $\D$. Lorsque
-le paramètre de régularisation $L_{2}$ tend vers zéro, les variables $\Y$ et
-$\X$ sont linéairement décorrélées. Ainsi la matrice $\D$ permet de réduire la
-corrélation entre les variables expliquées $\Y$ et les variables explicatives
-$\X$ afin de pouvoir estimer les variables latentes $\U$. Lorsque le paramètre
-$\lambRidge$ tend vers l'infini, la matrice $\D$ tend vers la matrice identité.
-L'estimation des variables latentes est alors calculée par l'ACP de la matrice
-$\Y$, sans prendre en compte la variable $\X$. Lorsque $\lambRidge$ est trop
-grand, on risque d'expliquer par les variables latentes une partie de la
-variance de $\Y$, qui devrait être expliquée par $\X$, et donc manquer certaines
-associations. Le choix du paramètre de régularisation $\lambRidge$ est une
-affaire de dosage, il ne doit être ni trop grand ni trop petit. Nous avons
-remarqué dans les expériences que de petites valeurs donnent de meilleurs
-résultats dans de nombreux cas.
+de l'estimation de la matrice latente décrit par l'équation
+ref:eq:RidgeLfmmEstomatorW. Ce paramètre de régularisation intervient dans la
+matrice diagonale $\D$. Lorsque le paramètre de régularisation $L_{2}$ tend vers
+zéro, les variables $\Y$ et $\X$ sont linéairement décorrélées. Ainsi la matrice
+$\D$ permet de réduire la corrélation entre les variables expliquées $\Y$ et les
+variables explicatives $\X$ afin de pouvoir estimer les variables latentes
+$\matr{U}$. Lorsque le paramètre $\lambRidge$ tend vers l'infini, la matrice
+$\D$ tend vers la matrice identité. L'estimation des variables latentes est
+alors calculée par l'ACP de la matrice $\Y$, sans prendre en compte la variable
+$\X$. Lorsque $\lambRidge$ est trop grand, on risque d'expliquer par les
+variables latentes une partie de la variance de $\Y$, qui devrait être expliquée
+par $\X$, et donc manquer certaines associations. Le choix du paramètre de
+régularisation $\lambRidge$ est une affaire de dosage, il ne doit être ni trop
+grand ni trop petit. Nous avons remarqué dans les expériences que de petites
+valeurs donnent de meilleurs résultats dans de nombreux cas.
 
 **** Paramètre de régularisation $L_{1}$
+
 Le paramètre de régularisation $L_{1}$ ($\lambLasso$) a un impact sur le nombre
 de lignes nulles dans la matrice des effets $\B$. La proportion de lignes non
 nulles dans la matrice $\B$ correspond à la proportion de colonnes de $\Y$
@@ -5876,6 +5867,7 @@ Nous stoppons l'algorithme si la proportion de lignes non nulles souhaitée est
 dépassée.
 
 **** Paramètre de régularisation de la norme nucléaire
+
 Le paramètre de régularisation de la norme nucléaire ($\gamma$) dans
 l'algorithme d'estimation $L_{1}$ a une influence sur le rang de la matrice
 latente $\W$. Il est préférable de choisir le rang de cette matrice,
@@ -5889,7 +5881,7 @@ notées $(\sigma_1, ..., \sigma_{\Yrow})$. Ensuite, nous calculons
 \end{equation}
 Nous avons remarqué dans les expériences que ce choix du paramètre de
 régularisation $\gamma$ a toujours fait converger l'algorithme d'estimation
-$L_{1}$ vers une estimation de la matrice latente $\hat{\W}$ qui est de rang $\K$.
+$L_{1}$ vers une estimation de la matrice latente $\hat{\W}$ de rang $\K$.
 
 **** Validation croisée
 :LOGBOOK:
@@ -5907,12 +5899,12 @@ ensuite l'erreur de prédiction à l'aide des données de test. Pour que la
 validation croisée fonctionne, il est très important que les données de test ne
 soient pas utilisées pour estimer les paramètres du modèle. Dans le cas des
 modèles à facteurs latents en général, les données d'apprentissage ne permettent
-toutefois pas de calculer les variables latentes pour les données de test (la
-matrice $\matr{U}$ dans LFMM). Le plus simple est de séparer les variables des données
-de test. Nous utilisons ensuite une partie des variables des données de test
-pour estimer les variables latentes et l'autre partie pour calculer l'erreur de
-prédiction citep:Bro_2008. Nous présentons maintenant plus formellement notre
-procédure de validation croisée.
+toutefois pas de calculer les variables latentes pour les données de test. Le
+plus simple est de séparer les variables des données de test. Nous utilisons
+ensuite une partie des variables des données de test pour estimer les variables
+latentes et l'autre partie pour calculer l'erreur de prédiction citep:Bro_2008.
+Nous présentons maintenant plus formellement notre procédure de validation
+croisée.
 
 Nous commençons par séparer les données en une partie d'entraînement et une
 partie de test; c'est-à-dire que nous séparons les matrices des variables
@@ -5953,25 +5945,19 @@ n'ont pas été utilisées pour estimer les paramètres du modèle.
   la recalibration par mad + median
 :END:
 
-TODO : changer en test de significativité ?
-
-Jusqu'ici, nous avons seulement abordé l'estimation des paramètres de LFMM.
-Cependant, l'objectif initial est de trouver la liste des colonnes de la matrice
-$\Y$ associées aux variables $\X$ tout en prenant en compte les variables
-latentes. Nous présentons dans cette partie un test d'hypothèse de nullité de
-l'effet de la matrice $\X$ sur la matrice $\Y$, corrigé pour les variables
-latentes. Une approche simple consiste à considérer l'estimation des variables
-latentes $\hat{\matr{U}}$ comme les vraies valeurs de $\matr{U}$. Nous utilisons
-ensuite les variables latentes $\hat{\matr{U}}$ comme des variables explicatives
-dans le modèle. 
-
-TODO: voir papier de stephens debut
-
-C'est une méthode très courante dans les études d'association qui a montré de
-très bons résultats quand il y suffisamment d'individus
+Jusqu'ici, nous avons abordé l'estimation des variables latentes et des effets.
+Cependant, l'objectif initial est de trouver les variables expliquées associées
+aux variables explicatives, tout en prenant en compte les variables latentes.
+Nous présentons dans cette partie un test d'hypothèse de nullité de l'effet,
+corrigé pour les variables latentes. Une approche simple consiste à considérer
+l'estimation des variables latentes $\hat{\matr{U}}$ comme les vraies valeurs de
+$\matr{U}$. Nous utilisons ensuite les variables latentes $\hat{\matr{U}}$ comme
+des variables explicatives dans le modèle. C'est une méthode très courante dans
+les études d'association qui a montré de très bons résultats quand il y
+suffisamment d'individus
 citep:gerard2017unifying,Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016.
 Nous avons choisi de réaliser un test d'hypothèse qui repose sur la régression
-linéaire car cela correspond au modèle LFMM quand on suppose que $\matr{U}$ est
+linéaire car cela correspond au modèle LFMM si on suppose que $\matr{U}$ est
 connue. Les estimations des variables latentes peuvent être traitées comme
 variables explicatives dans n'importe quel modèle statistique. On pourrait par
 exemple envisager d'utiliser un modèle de régression linéaire généralisée. Afin
@@ -5987,22 +5973,23 @@ matrice $\hat{\W}$. La matrice $\hat{\W}$ est estimée grâce aux algorithmes
 d'estimation $L_{1}$ ou $L_{2}$ de la matrice latente de LFMM que nous avons
 présentés précédemment.
 
-**** Calcul de la statistique de test
+**** Calcul de la statistique de test et des \pvalues
+
 Pour chaque variable expliquée $\Y_{j}$, nous avons défini le modèle de
 régression linéaire suivant
 \begin{equation}
 \Y_{j} =  \hat{\matr{U}} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{E_{j}},
 \end{equation}
-où la matrice $\hat{\U}$ est l'estimation de la matrice des variables latentes
-du modèle LFMM. On suppose que l'erreur $\matr{E}_{j}$ est gaussienne de moyenne
-nulle. On veut tester l'hypothèse de nullité du coefficient de régression
-$\beta_{j}$. Sous ces hypothèses on peut calculer, pour chaque variable
-expliquée $\Y_{j}$, une statistique de test $z_{j}$, assimilable à un \zscore.
-Sous l'hypothèse nulle, la statistique de test suit la loi de Student à $\Yrow -
-\K - 1$ degrés de liberté. On peut donc calculer une \pvalue pour chaque
-variable expliquée $\Y_{j}$. Le détail du calcul de la statistique de test est
-très classique. Par exemple, il est donné dans la section 3.2 du livre de
-citet:Hastie_2009.
+où la matrice $\hat{\matr{U}}$ est l'estimation de la matrice des variables
+latentes du modèle LFMM. Nous supposons que l'erreur $\matr{E}_{j}$ est
+gaussienne de moyenne nulle. Nous voulons tester l'hypothèse de nullité du
+coefficient de régression $\beta_{j}$. Sous ces hypothèses, nous pouvons
+calculer pour chaque variable expliquée $\Y_{j}$ une statistique de test
+$z_{j}$, assimilable à un \zscore. Sous l'hypothèse nulle, la statistique de
+test suit la loi de Student à $\Yrow - \K - 1$ degrés de liberté. On peut donc
+calculer une \pvalue pour chaque variable expliquée $\Y_{j}$. Le détail du
+calcul de la statistique de test est très classique. Par exemple, il est donné
+dans la section 3.2 du livre de citet:Hastie_2009.
 
 **** Calibration des \pvalues
 <<sec:calibration>> 
@@ -6010,19 +5997,14 @@ citet:Hastie_2009.
 Il arrive parfois que la statistique de test ne suive pas la distribution
 théorique sous l'hypothèse nulle. On dit dans ce cas que le test est mal
 calibré. citet:Efron_2004 propose des exemples de situations qui peuvent aboutir
-à des tests mal calibrés. Dans les exemples que nous présentons ici, on s'attend
-à ce que la majoritée des variables expliquées $\Y_{j}$ ne soit pas associées
-à la variable $\X$. Ainsi une majorité des statistiques de test sont
-distribuées selon l'hypothèse nulle. 
-
-TODO relir donc les pvalue sont uniforme
-
-Pour la calibration, nous utilisons
-l'approche choisie par citet:Sun_2012, qui consiste à calculer la médiane et la
-déviation absolue à la médiane (MAD pour median absolute déviation) directement
-sur les $z$ statistiques. En effet, la médiane donne une estimation robuste de
-la moyenne et le MAD de l'écart-type. On a alors une nouvelle statistique de
-test
+à des tests mal calibrés. Dans les études que nous présentons ici, on s'attend à
+ce que la majorité des variables expliquées ne soit pas associées à la variable
+d'intérêt. Ainsi une majorité des statistiques de test sont distribuées selon
+l'hypothèse nulle. Cela nous permet d'utiliser l'approche choisie par
+citet:Sun_2012, qui consiste à calculer la médiane et la déviation absolue à la
+médiane (MAD pour median absolute déviation) directement sur les statistiques de
+tests $z$. En effet, la médiane donne une estimation robuste de la moyenne et le
+MAD de l'écart-type. On a alors une nouvelle statistique de test
 \begin{equation}
 \tilde{z_{j}} = \frac{z_{j} - \med(z_{1}, ..., z_{\Ycol})}{
 \mad(z_{1}, ..., z_{\Ycol})}.
@@ -6067,16 +6049,16 @@ sont comparées aux méthodes lassoLFMM et ridgeLFMM dans la section suivante.
 Dans lassoLFMM et ridgeLFMM, les tests d'hypothèse utilisés pour détecter les
 associations reposent sur un modèle de régression linéaire de $\Y$ par $\X$ et
 sur l'estimation des facteurs latents $\bar{\matr{U}}$. Il est donc naturel de
-comparer nos algorithmes à la méthode reposant sur la régression linaire de $\Y$
-par $\X$. Dans ce cas, aucun facteur latent n'est pris en compte dans l'étude
-d'association. D'autre part, nous comparons nos tests à une méthode qui repose
-sur une estimation des variables latentes par l'ACP. Dans ce cas, il s'agit de
-faire une régression de $\Y$ par $\X$ et $\bar{\U)}$. La matrice $\bar{\U)}$ est
-définie comme la matrice des scores sur les $\K$ premières composantes
-principales. Un principe similaire est utilisé dans la méthode EIGENSTRAT
-citep:Price_2006. Les deux méthodes, reposant sur la régression linéaire avec et
-sans les scores de l'ACP, ont été implémentées en langage R et nous les appelons
-respectivement lm et PCAlm.
+comparer nos algorithmes à la méthode reposant sur la régression linéaire de
+$\Y$ par $\X$. Dans ce cas, aucun facteur latent n'est pris en compte dans
+l'étude d'association. D'autre part, nous comparons nos tests à une méthode qui
+repose sur une estimation des variables latentes par l'ACP. Dans ce cas, il
+s'agit de faire une régression de $\Y$ par $\X$ et $\bar{\matr{U})}$. La matrice
+$\bar{\matr{U})}$ est définie comme la matrice des scores sur les $\K$ premières
+composantes principales. Un principe similaire est utilisé dans la méthode
+EIGENSTRAT citep:Price_2006. Les deux méthodes, reposant sur la régression
+linéaire avec et sans les scores de l'ACP, ont été implémentées en langage R et
+nous les appelons respectivement lm et PCAlm.
 
 *** COMMENT emma citep:Kang_2008
 :LOGBOOK:
@@ -6092,33 +6074,24 @@ respectivement lm et PCAlm.
 Il existe deux versions de SVA : sva-two-step citep:article_Leek_Storey_2007 et
 sva-irw citep:article_Leek_Storey_2008. La méthode sva-two-step se découpe en
 deux étapes : une étape d'estimation de la matrice des axes factoriels $\V$ et
-une étape d'estimation de la matrice des variables latentes $\U$. Lors de la
+une étape d'estimation de la matrice des variables latentes $\matr{U}$. Lors de la
 première étape la méthode sva-two-step estime les axes factoriels en faisant une
 ACP de la matrice résiduelle de la régression linaire de $\Y$ par $\X$. En
 utilisant les notations de la section [[sec:estimator_L2]], cela correspond à faire
 l'ACP de $\matr{D}_{(\lambRidge = 0)} \Q^{T} \Y$. Ensuite la méthode
 sva-two-step détermine un sous-ensemble de colonnes de la matrice $\Y$ qui sont
 les moins corrélées avec la variable $\X$. Le sous-ensemble de colonnes est
-utilisé pour estimer la matrice des variables latentes $\U$. 
-
-TODO : revoir ici  clarifier
-Cette procédure
-peut facilement échouer car une faible corrélation avec la variable $\X$
-n'implique pas qu'il n'y ai pas d'association avec celle-ci. En effet une faible
-corrélation sans prendre en compte les facteurs latents peut devenir une forte
-corrélation quand ils sont pris en prend en compte.
+utilisé pour estimer la matrice des variables latentes $\matr{U}$. 
 
 La deuxième version de SVA est itérative. Plutôt que d'estimer les variables
-latentes sur un sous- ensemble de colonnes de la matrice $\Y$, la méthode
-sva-irw attribue un poids à chacune d'entre elles. Sachant les variables
-latentes calculées à l'itération précédente, on calcule la probabilité que
-l'effet de la variable $\X$ sur chaque colonne de $\Y$ soit nul. Ensuite les
-probabilités sont utilisées pour attribuer un poids à chaque colonne de $\Y$ et
-une nouvelle estimation des variables latentes est calculée à l'aide d'une ACP
-qui prend en compte ces poids. La méthode itère ces deux étapes un nombre de
-fois choisi par l'utilisateur. Le désavantage de cette procédure est que l'on ne
-sait pas vers quoi elle converge ni si elle converge. Nous avons utilisé le
-package R sva fourni par ses auteurs.
+latentes sur un sous-ensemble de colonnes de la matrice $\Y$, la méthode sva-irw
+attribue un poids à chacune d'entre elles. Sachant les variables latentes
+calculées à l'itération précédente, on calcule la probabilité que l'effet de la
+variable $\X$ sur chaque colonne de $\Y$ soit nul. Ensuite les probabilités sont
+utilisées pour attribuer un poids à chaque colonne de $\Y$ et une nouvelle
+estimation des variables latentes est calculée à l'aide d'une ACP qui prend en
+compte ces poids. La méthode itère ces deux étapes un nombre de fois choisi par
+l'utilisateur. Nous avons utilisé le package R sva fourni par les auteurs.
 
 *** "High dimensional factor analysis and confounder adjusted testing and estimation" (CATE) citep:wang2015confounder
 
@@ -6142,36 +6115,37 @@ sva et cate calculent la même matrice des axes factoriels. Cette matrice
 correspond à celle estimée par ridgeLFMM dans le cas où $\lambRidge$ vaut zéro.
 La méthode cate diffère de sva dans sa façon de calculer les variables latentes
 et les effets de $\X$ sur $\Y$. Les auteurs de cate ont modélisé explicitement
-la corrélation entre les variables explicatives $\X$ et les variables latentes
-$\U$
+la corrélation entre les variables explicatives et les variables latentes tel
+que
 \begin{equation}
 \label{eq:cateU}
-\U = \X \bm{\alpha}^{T} + \matr{Z}
+\matr{U} = \X \bm{\alpha}^{T} + \matr{Z}
 \end{equation}
 où $\bm{\alpha}$ est la matrice des effets de la variable $\X$ sur les variables
-latentes $\U$ et $\matr{Z}$ est une matrice de bruit indépendant de $\X$. La
-matrice $\matr{Z}$ est estimée en même temps que la matrice des axes factoriels,
-grâce à l'ACP de la projection de $\Y$ sur l'orthogonal de $\X$. Pour estimer la
-matrice $\bm{\alpha}$, la méthode cate fait une régression linéaire robuste de
-la première ligne de la matrice $\Y$ transformée. La matrice $\Y$ est transformée
-dans la base où le premier axe est colinéaire à $\X$ par la matrice des axes
-factoriels $\V$ déjà estimée. 
-
-TODO revoir la phrase précédente et celle d'après
-
-Pour le comprendre, en injectant eqref:eq:cateU dans l'équation de LFMM
-eqref:eq:model, on peut écrire la matrice des coefficients de la régression
-linéaire de $\Y$ par $\X$, notée $\bm{\tau}$, comme ceci
+latentes $\matr{U}$ et $\matr{Z}$ est une matrice de bruit indépendant de $\X$.
+La matrice $\matr{Z}$ est estimée en même temps que la matrice des axes
+factoriels, grâce à l'ACP de la projection de $\Y$ sur l'orthogonal de $\X$.
+Pour estimer les effets corrigés pour les facteurs de confusion la méthode cate
+considère la régression linéaire de $\Y$ par $\X$ tel que
+\begin{equation}
+\label{eq:4}
+\Y = \X \bm{\tau}^{T}  + \E,
+\end{equation}
+où $\E$ est une matrice de bruit résiduel et $bm{\tau}$ est la matrice des
+effets de $\X$ sur $\Y$ non corrigés pour les facteurs de confusion. Afin de
+calculer les effets corrigé, la méthode cate utilise une régression linéaire
+robuste des effets non corrigés par les axes factorielles. Pour le comprendre,
+en injectant eqref:eq:cateU dans l'équation eqref:eq:model, on peut écrire les
+effets de $\X$ sur $\Y$ non corrigé comme ceci
 \begin{equation}
 \bm{\tau} = \B + \V \bm{\alpha}^{T},
 \end{equation}
-où $\B$ est la matrice des effets dans l'équation eqref:eq:model. La méthode
-cate estime $\bm{\alpha}$ en faisant une régression linéaire robuste de
-$\bm{\tau}$ par l'estimation de la matrice des axes factoriels $\V$. Enfin, la
-matrice des effets $\B$ est calculée comme le résidu de cette régression. La
-régression robuste permet d'enlever de l'estimation de $\bm{\alpha}$ les effets
-atypiques qui correspondent aux colonnes de $\Y$ associées à $\X$. Nous avons
-utilisé le package R cate fourni par ses auteurs.
+où $\B$ est la matrice des effets corrigés dans l'équation eqref:eq:model.
+Enfin, la matrice des effets corrigés $\B$ est calculée comme le résidu de la
+régression linéaire robuste. La régression robuste permet d'enlever de
+l'estimation de $\bm{\alpha}$ les effets atypiques qui correspondent aux
+colonnes de $\Y$ associées à $\X$. Nous avons utilisé le package R cate fourni
+par les auteurs.
 
 ** Expérimentations : données simulées et réelles
 *** Données simulées à partir de données réelles
@@ -6187,26 +6161,43 @@ les données simulées, nous réalisons une analyse en composantes principales d
 la matrice $\Y$, et ne gardons que les $\K$ premières composantes en fonction
 du nombre de facteurs de confusion que nous souhaitons simuler. Nous avons alors
 \begin{equation}
-\Y = \U \V^{T} + \E
+\Y = \matr{U} \V^{T} + \E
 \end{equation}
-où $\V$ est la matrice des $\K$ premiers axes principaux et $\U$ est la matrice
-des scores calculés par l'ACP. La matrice $\E$ est une matrice d'erreur
+où $\V$ est la matrice des $\K$ premiers axes principaux et $\matr{U}$ est la
+matrice des scores calculés par l'ACP. La matrice $\E$ est une matrice d'erreur
 résiduelle. Nous simulons ensuite la variable explicative, $\X^{'}$, ainsi que
-$\K$ variables latentes, $\U^{'}$. Pour ce faire, les matrices $\U^{'}$ et
-$\X^{'}$ sont simulées à l'aide de la loi normale multidimensionnelle. La
-matrice de covariance de la loi normale est choisie de sorte que $\X^{'}$ et
-$\U^{'}$ soient corrélées à un certain niveau. La valeur de corrélation linéaire
-de la variable $\X^{'}$ avec chaque variable latente, est tirée selon une loi
-uniforme entre $-1$ et $1$. Ensuite, afin de régler l'intensité de la
+$\K$ variables latentes, $\matr{U}^{'}$. Pour ce faire, les matrices
+$\matr{U}^{'}$ et $\X^{'}$ sont simulées à l'aide de la loi normale
+multidimensionnelle tel que
+\begin{equation*}
+\left[ \matr{U} \X \right] \sim \mathcal{N}(0, \matr{S}).
+\end{equation*}
+La matrice de covariance de la loi normale est choisie de sorte que $\X^{'}$ et
+$\matr{U}^{'}$ soient corrélées. Les coefficients de corrélation linéaire, notée
+$c_{k}$, de la variable $\X^{'}$ avec variable latente $\matr{U}_{k}$, est tirée selon
+une loi uniforme entre $-1$ et $1$. Ensuite, afin de régler l'intensité de la
 corrélation entre les variables latentes et la variable explicative, nous
-multiplions chaque coefficient de corrélation par un coefficient que l'on note
-$\rho$. De plus, nous utilisons la matrice de covariance des scores de l'ACP
-pour simuler la matrice $\U^{'}$. Enfin nous simulons une matrice des effets
-$\B^{'}$, de sorte qu'une proportion fixée des lignes de $\B^{'}$ soit non nulle
-et tirée selon une loi normale. La nouvelle matrice des variables expliquées est
-simulée de la façon suivante
+multiplions les coefficients de corrélation par une valeur que l'on note $\rho$.
+La matrice de corrélation s'écrit
+\begin{equation*}
+\matr{S} = 
+\begin{bmatrix}
+s_{1} & 0 & \cdots & \rho c_{1} \\
+0 & \ddots & 0 & \vdots \\
+\vdots & 0 & s_{K} & \rho c_{K} \\
+\rho c_{1} & \cdots & \rho c_{K} & 1 \\
+\end{bmatrix},
+\end{equation*}
+où $s_{k}$ désigne la variance de $\matr{U}_{k}$. Cette simulation permet de
+produire des variables latentes de même variance que celles de l'ACP et une variable
+explicative corrélée aux variables latentes.
+
+Enfin nous simulons une matrice des effets $\B^{'}$, de sorte
+qu'une proportion fixée des lignes de $\B^{'}$ soit non nulle et tirée selon une
+loi normale. La nouvelle matrice des variables expliquées est simulée de la
+façon suivante
 \begin{equation}
-\Y^{'} = \U^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
+\Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
 \end{equation}
 Nous avons ainsi généré des données pour lesquelles nous connaissons les colonnes
 de $\Y^{'}$ associées avec la variable $\X^{'}$. Elles correspondent aux lignes non
@@ -6214,16 +6205,16 @@ nulles de la matrice $\B^{'}$.
 
 Le jeu de données réelles que nous avons choisi pour réaliser les simulations
 est issu de la base de données 1000Genome que nous présentons dans la partie
-[[sec:GEAS]]. Nous avons gardé seulement les chromosomes 1 et 2. Cela permet de
-simuler une matrice de 52211 variables expliquées pour 1758 individus. Nous avons
-choisi de simuler 5 variables latentes. Le coefficient d'intensité de la
-corrélation entre les variables latentes et la variable explicative prend une
-fourchette de valeurs entre $0.1$ et $1$. Cela a permis de simuler des jeux de
-données plus ou moins difficiles pour l'inférence des facteurs de confusion. Nous
-avons de plus choisi une proportion des variables expliquées associées avec la
-variable explicative, entre $1\%$ et $20\%$. Pour chaque paramètre de simulation
-nous avons simulé $5$ jeux de données, ce qui donne un total de 125 jeux de
-données.
+[[sec:GEAS]] cite:1000Genome_2015. Nous avons gardé seulement les chromosomes 1
+et 2. Cela permet de simuler une matrice de 52211 variables expliquées pour 1758
+individus. Nous avons choisi de simuler 5 variables latentes. Le coefficient
+d'intensité de la corrélation entre les variables latentes et la variable
+explicative prend une fourchette de valeurs entre $0.1$ et $1$. Cela a permis de
+simuler des jeux de données plus ou moins difficiles pour l'inférence des
+facteurs de confusion. Nous avons de plus choisi une proportion des variables
+expliquées associées avec la variable explicative, entre $1\%$ et $20\%$. Pour
+chaque paramètre de simulation, nous avons simulé $5$ jeux de données, ce qui
+donne un total de 125 jeux de données.
 
 Nous avons considéré une méthode oracle qui fait le test d'association entre
 $\Y$ et $\X$ en connaissant les variables latentes de la simulation. La méthode
@@ -6232,32 +6223,26 @@ la matrice des variables latentes de la simulation. Ainsi la méthode oracle
 devrait donner les meilleurs résultats.
 
 *** Mesure de comparaison des performances
+
 Pour évaluer la capacité des méthodes à séparer les vrais associations des
 fausses association nous avons utilisé l'aire sous la courbe précision-rappel
-noté AUC. La précision est le nombre de vrai
-positif détecté par une méthode divisé par le nombre total de positif. 
-
-TODO voir wiki pedia
-
-revoir cette parti
-
-La précision est le
-complément à 1 du taux de fausse découverte. Le rappel est le nombre de vraies
-associations retrouvées dans la liste divisé par le nombre total des vraies
-associations. Le rappel est parfois appelé puissance en statistique. Une méthode
-permettant de séparer parfaitement les vraies associations des fausse
-associations donne un AUC de 1.
+noté AUC. La précision est le nombre de vrai positif détecté par une méthode
+divisé par le nombre total de candidats. La précision est le complément à 1 du
+taux de fausse découverte. Le rappel est le nombre de vraies associations
+détectées divisé par le nombre total des vraies associations. Le rappel est
+parfois appelé puissance en statistique. Une méthode permettant de séparer
+parfaitement les vraies associations des fausse associations donne un AUC de 1.
 
 Afin d'évaluer la calibration des \pvalues renvoyées par les méthodes nous
-calculons le facteurs d'inflation des $\pvalues des fausses associations. Le
-facteur d'inflation est calculé comme la médiane des \zscores au carré divisée
-par le quantile à $50 \%$ de la lois du $\chi^{2}$ à un degré de liberté
-citep:Devlin_1999. Si les \pvalues des fausse associations sont réparties
-uniformément alors le facteur d'inflation vaut 1. Une méthode qui renvoie des
-\pvalues correctement calibrées permet de calculer une liste de candidats avec
-un taux de fausses découvertes moyen contrôlé. Pour cela on peut par exemple
-utiliser l'algorithme de Benjamini-Hoshberg de citet:benjamini1995controlling ou
-bien la \qvalue de citet:Storey_2011.
+calculons le facteur d'inflation des \pvalues attribuées aux variables vraiment
+non associées. Le facteur d'inflation est calculé comme la médiane des \zscores
+au carré divisée par le quantile à $50 \%$ de la loi du $\chi^{2}$ à un degré de
+liberté citep:Devlin_1999. Si les \pvalues des variables vraiment non associées
+sont réparties uniformément alors le facteur d'inflation vaut 1. Une méthode qui
+renvoie des \pvalues correctement calibrées permet de calculer une liste de
+candidats avec un taux de fausses découvertes moyen contrôlé. Pour cela on peut
+par exemple utiliser l'algorithme de Benjamini-Hoshberg de
+citet:benjamini1995controlling ou bien la \qvalue de citet:Storey_2011.
 
 *** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
 
@@ -7042,13 +7027,13 @@ faible fréquence, de la même façon que l'étude GWAS (voir section [[sec:gwas
 Nous avons enlevé les populations afro-américaine et africaine des Caraïbes pour
 ne garder que les individus vivant dans leur environnement depuis plusieurs
 générations. Après cette étape de filtrage il reste 1409 individus et 5397214
-locus. Enfin, de la même façon que pour l'étude GWAS nous avons identifié un
-sous ensemble de 296948 SNPs grâce au LD pruning. Nous avons utilisé ce sous
-ensemble de locus pour calculer les variables latentes avec les méthodes PCAlm,
-cate, lassoLFMM et ridgeLFMM. Nous avons calculé ensuite des \pvalues pour
-chacun des 5397214 locus et pour chacune des méthodes. Les candidats retournés
-par les méthodes a été étudiée grâce au logiciel VEP (Variant Effect Predictor).
-Le logiciel VEP permet d'annoter l'effet d'un polymorphisme sur l'expression des
+loci. Enfin, de la même façon que pour l'étude GWAS nous avons identifié un sous
+ensemble de 296948 SNPs grâce au LD pruning. Nous avons utilisé ce sous-ensemble
+de loci pour calculer les variables latentes avec les méthodes PCAlm, cate,
+lassoLFMM et ridgeLFMM. Nous avons calculé ensuite des \pvalues pour chacun des
+5397214 loci et pour chacune des méthodes. Les candidats retournés par les
+méthodes a été étudiée grâce au logiciel VEP (Variant Effect Predictor). Le
+logiciel VEP permet d'annoter l'effet d'un polymorphisme sur l'expression des
 gènes citep:McLaren_2016. Les annotations retournées par VEP sont classées en
 catégories d'importance: LOW, MODERATE et HIGH. Nous avons réalisé un test exact
 de Fisher afin d'étudier la sur-représentation de chacune des catégories
@@ -10964,6 +10949,7 @@ immunitaire (Table ref:table:ewas).
 \end{figure}
 #+END_EXPORT
 
+#+LATEX: \rowcolors{2}{gray!25}{white}
 #+NAME: code:ewas_table_print
 #+CAPTION: Dépend de [[code:ewas_table]]
 #+begin_src R :results output latex :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
@@ -13007,6 +12993,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
 \end{figure}
 #+END_EXPORT
 
+#+LATEX: \rowcolors{2}{gray!25}{white}
 #+NAME: code:gwas_table_print
 #+CAPTION: Dépend de [[code:gwas_table]]
 #+begin_src R :results output latex :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
@@ -15190,6 +15177,8 @@ catalog n'est détecté par les méthodes lm et PCAlm.
 \end{figure}
 #+END_EXPORT
 
+
+#+LATEX: \rowcolors{2}{gray!25}{white}
 #+NAME: code:geas_table_print
 #+CAPTION: Dépend de [[code:geas_table]]
 #+begin_src R :results output latex :exports results :session *R* :dir ~/Projects/Thesis/MaThese/

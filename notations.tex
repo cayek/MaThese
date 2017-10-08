@@ -29,7 +29,6 @@
 
 %% lattent factor model
 \newcommand{\K}{K} %% number of latent factor
-\newcommand{\U}{\matr{U}} %% factor score matrix/ records latent variables
 \newcommand{\Ucol}{\K} %% U col dim
 \newcommand{\Urow}{\Yrow} %% U row dim
 \newcommand{\V}{\matr{V}} %% factor loading matrix
@@ -54,11 +53,11 @@
 
 %% lfmm equation
 \newcommand{\LfmmLridge}{%
-\Lridge(\U, \V, \B) =  \frac{1}{2} \norm{\Y - \U \V^{T} - \X \B^T}_{F}^2 +
+\Lridge(\matr{U}, \V, \B) =  \frac{1}{2} \norm{\Y - \matr{U} \V^{T} - \X \B^T}_{F}^2 +
 \frac{\lambRidge}{2} \norm{\B}^{2}_{2}%
 }
 \newcommand{\LfmmL}{%
-\Lnoreg(\U, \V, \B) =  \frac{1}{2} \norm{\Y - \U \V^T - \X \B^T}_{F}^2 %
+\Lnoreg(\matr{U}, \V, \B) =  \frac{1}{2} \norm{\Y - \matr{U} \V^T - \X \B^T}_{F}^2 %
 }
 \newcommand{\LfmmLlasso}{%
 \Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 +
@@ -74,6 +73,5 @@
 \newcommand{\W}{\matr{W}} %% matrice de poid
 \newcommand{\Laplacienne}{\matr{\Gamma}} %% matrice de poid
 \newcommand{\LS}{\mathcal{L}} %% optimim function de tess3
-\newcommand{\U}{\matr{U}} %% eigen vectors de la laplacienne
 \newcommand{\LapVp}{\matr{\Delta}} %% eigen values de la laplacienne
 \newcommand{\Fst}{F_{\rm ST}} %% Fst
