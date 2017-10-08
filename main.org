@@ -10956,7 +10956,7 @@ système immunitaire (Table ref:table:ewas).
   ewas.table %>%
     xtable(align = "lllllcccc",
            digits = -2, type = "latex",
-           caption = "{\\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \\pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\cite{Zou_2014, Rahmani_2016}",
+           caption = "{\\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \\pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\citep{Zou_2014, Rahmani_2016}",
            label = "table:ewas") %>%
     print(include.rownames=FALSE,
           sanitize.text.function=identity,
@@ -10967,7 +10967,7 @@ système immunitaire (Table ref:table:ewas).
 #+RESULTS: code:ewas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Mon Oct  2 14:18:21 2017
+% Sun Oct  8 20:25:36 2017
 \begin{sidewaystable}[ht]
 \centering
 \begin{tabular}{llllcccc}
@@ -10995,7 +10995,7 @@ ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\
   cg05874806 & 2 & 102350276 & MAP4K4 & 1.1e-06 & 1.1e-06 & 4.7e-07 & 5.6e-07 \\ 
    \hline
 \end{tabular}
-\caption{{\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \cite{Zou_2014, Rahmani_2016}} 
+\caption{{\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \citep{Zou_2014, Rahmani_2016}} 
 \label{table:ewas}
 \end{sidewaystable}
 #+END_EXPORT
@@ -13007,7 +13007,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
     xtable(align = "lllp{2.5cm}p{2.8cm}ccp{4cm}",
     type = "latex",
     label = "table:gwas_table",
-    caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les SNPs qui sont référencés dans la base de données GWAS catalog.") %>%
+    caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les SNPs référencés dans la base de données GWAS catalog.") %>%
     print(include.rownames=FALSE,
           sanitize.colnames.function=identity,
           sanitize.text.function=identity,
@@ -13021,7 +13021,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
 #+RESULTS: code:gwas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Sun Oct  8 20:02:06 2017
+% Sun Oct  8 20:26:11 2017
 \begin{sidewaystable}[ht]
 \centering
 \begingroup\fontsize{8pt}{8pt}
@@ -13052,7 +13052,7 @@ Chr & Snp & LD block (Mb) & Odds ratio [$95\%$ IC] & \pvalue & \qvalue & Gènes 
    \hline
 \end{tabular}
 \endgroup
-\caption{{\bf 20 premiers groupes de SNPs associés avec la maladie \coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les SNPs qui sont référencés dans la base de données GWAS catalog.} 
+\caption{{\bf 20 premiers groupes de SNPs associés avec la maladie \coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les SNPs référencés dans la base de données GWAS catalog.} 
 \label{table:gwas_table}
 \end{sidewaystable}
 #+END_EXPORT
