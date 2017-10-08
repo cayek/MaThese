@@ -5854,7 +5854,7 @@ petite valeur du paramètre de régularisation $\lambLasso$ tel que le vecteur
 \end{equation}
 vaut zéro. La matrice $\hat{\B}_{t = 1}$ est le résultat de la première étape de
 l'algorithme d'estimation des moindres carrés régularisée en norme $L_{1}$ (cf
-section TODO). La valeur de $\lambLasso$ correspondante est notée
+section [[sec:lasso_algo]]). La valeur de $\lambLasso$ correspondante est notée
 $\lambLasso^{\mathrm{max}}$. Ensuite, nous construisons une suite de $m$ valeurs
 de $\lambLasso$ décroissant selon une échelle logarithmique depuis
 $\lambLasso^{\mathrm{max}}$ jusqu'à
@@ -6267,14 +6267,14 @@ réalisées par citet:Rahmani_2016,Zou_2014; études qui prennent en compte
 explicitement les facteurs de confusion connus (type cellulaire, genre,
 consommation de tabac et âge).
 
-De la même façon que dans citep:Zou_2014 nous avons filtré les sites avec un
+De la même façon que citet:Zou_2014, nous avons filtré les sites avec un
 niveau de méthylation moyen constitutif, c'est-à-dire inférieur à 0.2 ou
 supérieur à 0.8. De plus, nous avons centré et divisé par l'écart-type les
 données de méthylation. Nous avons ensuite appliqué les méthodes cate, lm, PCAlm,
 sva-irw, sva-two-step, lassoLFMM et ridgeLFMM afin de trouver les sites de
 méthylation de l'ADN associés à la polyarthrite. 
 
-Enfin pour chaque méthode nous avons calculé la liste obtenue lorsque l'on contrôle
+Enfin pour chaque méthode, nous avons calculé la liste obtenue lorsque l'on contrôle
 le taux de fausse découverte (FDR) à $1 \%$. Les algorithmes de contrôle du FDR
 nécessitent que les \pvalues soient correctement calibrées. Pour cela nous avons
 calibrées les \pvalues grâce à la méthode présentée dans la partie
@@ -6284,39 +6284,39 @@ citep:Storey_2011.
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
 <<sec:gwas>> 
 
-La maladie \celiac TODO_espace est une maladie auto-immune ayant une prévalence
-de près de $1 \%$ dans la population générale citep:Gujral_2012. Bien que les
-mécanismes d'apparition de cette maladie ne soient pas compris, des études
-montrent de fortes associations avec certains gènes citep:dubois2010multiple,
-laissant envisager des causes génétiques à la maladie. Comme la maladie \celiac
-est très étudiée, faire une étude d'association de celle-ci avec des données
+La maladie c\oe{}liaque est une maladie auto-immune ayant une prévalence de près
+de $1 \%$ dans la population générale citep:Gujral_2012. Bien que les mécanismes
+d'apparition de cette maladie ne soient pas compris, des études montrent de
+fortes associations avec certains gènes citep:dubois2010multiple, laissant
+envisager des causes génétiques à la maladie. Comme la maladie c\oe{}liaque est
+très étudiée, faire une étude d'association de celle-ci avec des données
 génomiques constitue un bon test pour les méthodes de correction des facteurs de
 confusion. Nous pourrons en effet comparer nos résultats à ceux des nombreuses
 autres GWAS de la maladie \celiac. Pour cela, nous avons utilisé la base de
 données GWAS catalog pour récupérer les SNPs ayant été identifiés dans d'autres
-études comme étant associés avec la maladie \celiac. Par ailleurs, nous savons
-que la stratification des individus en populations peut être un facteur de
-confusion dans les GWAS. Une pratique commune consiste à corriger les GWAS en
-utilisant les scores de l'ACP des données génétiques citep:Price_2006. Nous
-proposons ici de faire une étude d'association entre la maladie \celiac et des
-données génétiques présentées dans citep:dubois2010multiple. Ces données
-comportent 281122 SNPs pour 15155 individus, 10659 individus sains et 4496
-atteints de la maladie \celiac.
+études comme étant associés avec la maladie c\oe{}liaque citep:MacArthur_2016.
+Par ailleurs, nous savons que la stratification des individus en populations
+peut être un facteur de confusion dans les GWAS. Une pratique commune consiste à
+corriger les GWAS en utilisant les scores de l'ACP des données génétiques
+citep:Price_2006. Nous proposons ici de faire une étude d'association entre la
+maladie \celiac et des données génétiques présentées dans
+citep:dubois2010multiple. Ces données comportent 281122 SNPs pour 15155
+individus, 10659 témoins et 4496 cas.
 
-Avant d'appliquer les méthodes d'étude d'association, nous avons filtré les
-données génétiques afin de garder seulement les SNPs ayant le variant le moins
-fréquent présent dans au moins $5\%$ des observations. Nous avons de plus filtré
-les individus trop apparentés. Pour cela, nous avons mesuré la probabilité
-qu'une séquence de SNPs, prise chez deux individus différents, soit identique.
-Si la probabilité est supérieure à $0.08$, nous n'avons gardé qu'un des deux
-individus. Par ailleurs, il est connu que les SNPs sont corrélés le long du
-génome par liaison génétique (LD, linkage disequilibrium). Nous avons donc
-filtré les SNPs très corrélés entre eux. Cette étape est identifiée dans la
-littérature comme l'étape de "LD pruning". Pour chaque SNP nous n'avons gardé
-que le SNP de variance maximum sur une fenêtre de 100 SNPs, et cela sur les SNPs
-ayant un coefficient de corrélation linéaire au carré qui est supérieur à $0.2$.
-Cette procédure de prunning nous a permis d'identifier un sous ensemble de 80275
-SNPs. Les opérations de filtrage ont été effectuées à l'aide du logiciel plink
+Avant l'étude d'association, nous avons filtré les données génétiques afin de
+garder seulement les SNPs ayant le variant le moins fréquent présent dans au
+moins $5\%$ des observations. Nous avons de plus filtré les individus trop
+apparentés. Pour cela, nous avons mesuré la probabilité qu'une séquence de SNPs,
+prise chez deux individus différents, soit identique. Si la probabilité est
+supérieure à $0.08$, nous n'avons gardé qu'un des deux individus. Par ailleurs,
+il est connu que les SNPs sont corrélés le long du génome par liaison génétique
+(LD, linkage disequilibrium). Nous avons donc filtré les SNPs très corrélés
+entre eux. Cette étape est identifiée dans la littérature comme l'étape de "LD
+pruning". Pour chaque SNP nous n'avons gardé que le SNP de variance maximum sur
+une fenêtre de 100 SNPs, et cela sur les SNPs ayant un coefficient de
+corrélation linéaire au carré qui est supérieur à $0.2$. Cette procédure de
+prunning nous a permis d'identifier un sous-ensemble de 80275 SNPs. Les
+opérations de filtrage ont été effectuées à l'aide du logiciel plink
 citep:Purcell_2007. Enfin nous avons utilisé le logiciel beagle pour imputer les
 données manquantes de la matrice de SNPs citep:Browning_2016.
 
@@ -6329,7 +6329,8 @@ en utilisant l'estimation des variables latentes calculées sur le sous-ensemble
 de 80275 SNPs. Les 281122 SNPs ont finalement été groupés par voisinage de SNPs
 corrélés. Cette étape a été réalisée à l'aide de l'algorithme de clumping du
 logiciel plink. La \pvalue attribuée au groupe est la plus faible \pvalue du
-groupe. Le contrôle du FDR a été réalisé de la même façon que dans l'étude EWAS.
+groupe. Comme dans l'étude EWAS, le contrôle du FDR a été réalisé à l'aide du
+package R =qvalue=.
 
 **** Scripts                                                    :noexport:
 ***** DONE Téléchargement des données
@@ -7027,18 +7028,18 @@ faible fréquence, de la même façon que l'étude GWAS (voir section [[sec:gwas
 Nous avons enlevé les populations afro-américaine et africaine des Caraïbes pour
 ne garder que les individus vivant dans leur environnement depuis plusieurs
 générations. Après cette étape de filtrage il reste 1409 individus et 5397214
-loci. Enfin, de la même façon que pour l'étude GWAS nous avons identifié un sous
-ensemble de 296948 SNPs grâce au LD pruning. Nous avons utilisé ce sous-ensemble
-de loci pour calculer les variables latentes avec les méthodes PCAlm, cate,
-lassoLFMM et ridgeLFMM. Nous avons calculé ensuite des \pvalues pour chacun des
-5397214 loci et pour chacune des méthodes. Les candidats retournés par les
-méthodes a été étudiée grâce au logiciel VEP (Variant Effect Predictor). Le
-logiciel VEP permet d'annoter l'effet d'un polymorphisme sur l'expression des
-gènes citep:McLaren_2016. Les annotations retournées par VEP sont classées en
-catégories d'importance: LOW, MODERATE et HIGH. Nous avons réalisé un test exact
-de Fisher afin d'étudier la sur-représentation de chacune des catégories
-d'annotations. Nous avons enfin utilisé le package BiomaRt afin d'annoter les
-SNPs qui ont été associés à un phénotype dans d'autres études.
+loci. Enfin, de la même façon que pour l'étude GWAS, nous avons identifié un
+sous-ensemble de 296948 SNPs grâce au LD pruning. Nous avons utilisé ce
+sous-ensemble de loci pour calculer les variables latentes avec les méthodes
+PCAlm, cate, lassoLFMM et ridgeLFMM. Nous avons calculé ensuite des \pvalues
+pour chacun des 5397214 loci et pour chacune des méthodes. Les candidats
+retournés par les méthodes a été étudiée grâce au logiciel VEP (Variant Effect
+Predictor). Le logiciel VEP permet d'annoter l'effet d'un polymorphisme sur
+l'expression des gènes citep:McLaren_2016. Les annotations retournées par VEP
+sont classées en catégories d'importance: LOW, MODERATE et HIGH. Nous avons
+réalisé un test exact de Fisher afin d'étudier la sur-représentation de chacune
+des catégories d'importance. Nous avons enfin utilisé le package BiomaRt afin
+d'annoter les SNPs qui ont été associés à un phénotype dans d'autres études.
 
 
 Afin de calculer le gradient climatique utilisé pour l'étude d'association, nous
@@ -10306,37 +10307,36 @@ disposition par leurs auteurs respectifs.
 Sur les 125 jeux de données simulés, nous avons utilisé les méthodes lm, PCAlm,
 sva-irw, sva-two-step, cate, les deux méthodes présentées dans ce chapitre
 (lassoLFMM et ridgeLFMM) et la méthode oracle. Pour comparer les méthodes, nous
-avons calculé les facteurs d'inflation et les aires sur la courbe
+avons calculé les facteurs d'inflation et les aires sous la courbe
 précision-rappel (AUC). Les méthodes cate, lassoLFMM et ridgeLFMM ont des
-performances similaires à l'oracle sur toutes les simulations (Figure
-ref:fig:method_comp). Nous constatons toutefois une exception pour les
-simulations avec un paramètre de corrélation $\rho$ qui vaut 1. Sur les
-simulations avec une forte corrélation entre les variables latentes et la
-variable explicative, cate et ridgeLFMM renvoient des \pvalues avec un taux
-d'inflation moyen de $3.3$ alors que celui de lassoLFMM vaux $1.3$ et celui de
-l'oracle $1.0$ (Figure ref:fig:method_comp D). Nous constatons par ailleurs que
-les méthodes cate et ridgeLFMM donnent des résultats très similaires sur toutes
-les simulations. Les performances de la méthode lm sont sensibles au paramètre
-de corrélation $\rho$. Lorsque le paramètre de corrélation est faible, l'AUC de
-lm et le facteur d'inflation de lm sont proches de ceux de la méthode oracle
-($\rho = 0.1$, Figure ref:fig:method_comp B et D). Mais le facteur d'inflation
-de lm croît jusqu'à plus de 30 et l'AUC décroît jusqu'à la moitié de celui de la
-méthode oracle lorsqu'il y a une forte corrélation entre les variables latentes
-et la variable explicative ($\rho = 1$, Figure ref:fig:method_comp B et D). Les
-\pvalues de la méthode PCAlm sont toujours correctement calibrées puisque le
-facteur d'inflation est toujours autour de 1 (Figure ref:fig:method_comp C et
-D). Cependant l'écart de l'AUC de PCAlm avec l'AUC obtenu par la méthode oracle
-croît avec la proportion de vraies associations et le paramètre de corrélation
-$\rho$ (Figure ref:fig:method_comp A et B). Les méthodes sva-two-step et sva-irw
-renvoient des \pvalues correctement calibrées sauf quand le paramètre de
-corrélation $\rho$ vaut 0.8 et 1.0 (Figure ref:fig:method_comp C et D). L'AUC de
-sva-irw est toujours en dessous de l'AUC de la méthode oracle pour toutes les
-proportions de vraies associations dans les simulations (Figure
-ref:fig:method_comp A), et la différence entre l'AUC de sva-irw et l'AUC de la
-méthode oracle croît avec le paramètre de corrélation $\rho$ (Figure
-ref:fig:method_comp B). Nous observons également que l'AUC de sva-two-step est
-très légèrement en dessous de l'AUC de la méthode oracle pour toutes les
-proportions de vraies associations dans les simulations (Figure
+performances similaires à la méthode oracle sur toutes les simulations (Figure
+ref:fig:method_comp), sauf lorsque paramètre de corrélation $\rho$ vaut 1. En
+effet, sur les simulations avec une forte corrélation entre les variables
+latentes et la variable explicative, cate et ridgeLFMM renvoient des \pvalues
+avec un taux d'inflation moyen de $3.3$ alors que celui de lassoLFMM vaut $1.3$
+et celui de l'oracle $1.0$ (Figure ref:fig:method_comp D). Nous constatons par
+ailleurs que les méthodes cate et ridgeLFMM donnent des résultats très
+similaires sur toutes les simulations. Les performances de la méthode lm sont
+sensibles au paramètre de corrélation $\rho$. Lorsque le paramètre de
+corrélation est faible, l'AUC de lm et le facteur d'inflation de lm sont proches
+de ceux de la méthode oracle ($\rho = 0.1$, Figure ref:fig:method_comp B et D).
+Mais le facteur d'inflation de lm croît jusqu'à plus de 30 et l'AUC décroît
+jusqu'à la moitié de celui de la méthode oracle lorsqu'il y a une forte
+corrélation entre les variables latentes et la variable explicative ($\rho = 1$,
+Figure ref:fig:method_comp B et D). Les \pvalues de la méthode PCAlm sont
+toujours correctement calibrées puisque le facteur d'inflation est toujours
+autour de 1 (Figure ref:fig:method_comp C et D). Cependant l'écart de l'AUC de
+PCAlm avec l'AUC obtenu par la méthode oracle croît avec la proportion de vraies
+associations et le paramètre de corrélation $\rho$ (Figure ref:fig:method_comp A
+et B). Les méthodes sva-two-step et sva-irw renvoient des \pvalues correctement
+calibrées sauf quand le paramètre de corrélation $\rho$ vaut 0.8 et 1.0 (Figure
+ref:fig:method_comp C et D). L'AUC de sva-irw est toujours en dessous de l'AUC
+de la méthode oracle pour toutes les proportions de vraies associations dans les
+simulations (Figure ref:fig:method_comp A). La différence entre l'AUC de sva-irw
+et l'AUC de la méthode oracle croît avec le paramètre de corrélation $\rho$
+(Figure ref:fig:method_comp B). Nous observons également que l'AUC de
+sva-two-step est très légèrement en dessous de l'AUC de la méthode oracle pour
+toutes les proportions de vraies associations dans les simulations (Figure
 ref:fig:method_comp A) et, comme pour sva-irw, la différence de l'AUC de
 sva-two-step avec l'AUC de la méthode oracle croît avec le paramètre de
 corrélation $\rho$ mais plus faiblement que pour sva-irw (Figure
@@ -10821,8 +10821,7 @@ variables latentes (voir Figure ref:fig:ewas_params A et B). Pour $\K = 10$, les
 valeurs du paramètre de régularisation $L_{2}$ ($\lambRidge$) entre $10^{-10}$
 et $1.0$ donnent les mêmes valeurs moyennes d'erreur de prédiction (Figure
 ref:fig:ewas_params C). Nous avons choisi de prendre $\lambRidge = 10^{-5}$ pour
-ridgeLFMM.
-
+ridgeLFMM. 
 
 #+NAME: code:lfmm_ewas_param_print
 #+CAPTION: Dépend de [[code:ewas_screeplot_CV]]
@@ -10857,19 +10856,16 @@ ridgeLFMM.
 \end{figure}
 #+END_EXPORT
 
-La figure ref:fig:ewas_qqplot_top A montre la distribution observée des \pvalues
-pour chaque site de méthylation renvoyées par chaque méthode contre la
-distribution théorique sous l'hypothèse nulle. On constate une augmentation du
-nombre de petites \pvalues pour toutes les méthodes; cette augmentation est
-encore plus forte pour les méthodes lm et sva-irw. La figure
-ref:fig:ewas_qqplot_top B montre la proportion des candidats identifiés par
-citet:Zou_2014,Rahmani_2016 qui sont retrouvés dans les "top" listes de chaque
-méthode. Nous rappelons que les candidats identifiés par
+On constate une augmentation du nombre de petites \pvalues pour toutes les
+méthodes; cette augmentation est encore plus forte pour les méthodes lm et
+sva-irw. La figure ref:fig:ewas_qqplot_top B montre la proportion des candidats
+identifiés par citet:Zou_2014,Rahmani_2016 qui sont retrouvés dans les "top"
+listes de chaque méthode. Nous rappelons que les candidats identifiés par
 citet:Zou_2014,Rahmani_2016 sont au nombre de 5. Ils ont été identifiés en
 prenant en compte les facteurs de confusion tels que l'âge, le sexe et une
 estimation de la composition cellulaire. Les méthodes considérées dans notre
 analyse retrouvent les candidats de la littérature dans leurs 40 premiers rangs,
-sauf lm et sva_irw. Pour la méthode lm, il faut prendre le rang 11881 pour
+sauf lm et sva-irw. Pour la méthode lm, il faut prendre le rang 11881 pour
 trouver le premier candidat de citet:Zou_2014,Rahmani_2016, et le rang 138038
 pour tous les avoir. Pour la méthode sva-irw, les candidats de
 citet:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et
@@ -10898,7 +10894,7 @@ $87659$.
 \caption{{\bf Q-Q plot et rang pour l'étude d'association entre des sites de
     méthylation et la polyarthrite rhumatoïde (EWAS).} A) Diagramme quantile-quantile de
   l'inverse du logarithme en base 10 des \pvalues renvoyées par chaque méthode.
-  Les quantiles théoriques suivent la loi exponentielle. B) Proportion des
+  Les quantiles théoriques sont ceux de la loi exponentielle. B) Proportion des
   candidats proposés par \citet{Rahmani_2016,Zou_2014} retrouvés dans
   la top liste renvoyée par chaque méthode.}
 \label{fig:ewas_qqplot_top}
@@ -10906,13 +10902,13 @@ $87659$.
 #+END_EXPORT
 
 Nous avons écarté lm et sva-irw car ils renvoyaient des listes trop différentes
-des autres. Parmi les 19 candidats trouvés par toutes les méthodes lorsque nous
-contrôlons le FDR à $1 \%$, nous retrouvons les 5 candidats identifiés par
-citet:Zou_2014,Rahmani_2016 (Figure ref:fig:ewas_venn). Nous remarquons de plus
-que d'autres sites de méthylation situés dans des gènes sont détectés avant les
-5 candidats de la littérature. En particulier, nous trouvons des gènes situés
-dans le complexe de gènes HLA qui joue un rôle central dans le système
-immunitaire (Table ref:table:ewas).
+des autres méthodes. Parmi les 19 candidats trouvés par toutes les méthodes
+lorsque nous contrôlons le FDR à $1 \%$, nous retrouvons les 5 candidats
+identifiés par citet:Zou_2014,Rahmani_2016 (Figure ref:fig:ewas_venn). Nous
+remarquons de plus que d'autres sites de méthylation situés dans des gènes sont
+détectés avant les 5 candidats de la littérature. En particulier, nous trouvons
+des gènes situés dans le complexe de gènes HLA qui joue un rôle central dans le
+système immunitaire (Table ref:table:ewas).
 
 #+NAME: code:lfmm_ewas_venn_print
 #+CAPTION: Dépend de [[code:ewas_venn]]
@@ -10943,8 +10939,8 @@ immunitaire (Table ref:table:ewas).
 \centering
 \includegraphics[width=\textwidth]{./OUTPUT/Rplots/ewas_venn.png}
 \caption{{\bf Diagramme de Venn de l'étude d'association entre des sites de
-    méthylation et la polyarthrite rhumatoïde (EWAS).} Diagramme de Venn de la liste des
-  candidats controlés à un taux de fausses de découvertes de 1 \%.}
+    méthylation et la polyarthrite rhumatoïde (EWAS).} Diagramme de Venn des
+  listes controlées à un taux de fausses de découvertes de 1 \%.}
 \label{fig:ewas_venn}
 \end{figure}
 #+END_EXPORT
@@ -12854,17 +12850,17 @@ Voyons voir ce que dise les gène trouvé en plus :
 Le problème c'est que sur cette étude on se compare à d'autres étude faite avec
 plus d'info... Les autres éudes 
 
-*** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
+*** Étude d'association entre des données génétiques et la maladie c\oe{}liaque (GWAS)
 
-Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM et ridgeLFMM afin de
+Nous avons utilisé les méthodes cate, lm, PCAlm, lassoLFMM et ridgeLFMM afin de
 trouver les SNPs associés avec la maladie \celiac. Nous avons utilisé les
 méthodes avec 9 variables latentes (Figure ref:fig:gwas_params A et B). La
 validation croisée du paramètre $\lambRidge$ tend à sélectionner une forte
-valeur pour celui-ci (Figure ref:fig:gwas_params C); nous avons choisi $10^3$.
-La validation croisée présentée sur la Figure ref:fig:gwas_params C sélectionne
-une valeur plus grande que $10^3$. Nous avons choisi $10^3$ car, comme nous
-l'avons discuté dans la partie [[sec:paramL2]], $\lambRidge$ trop grand conduit la
-méthode ridgeLFMM à renvoyer les mêmes résultats que PCAlm.
+valeur pour celui-ci (Figure ref:fig:gwas_params C). La validation croisée
+présentée sur la Figure ref:fig:gwas_params C sélectionne une valeur plus grande
+que $10^3$. Nous avons choisi $10^3$ car, comme nous l'avons discuté dans la
+partie [[sec:paramL2]], $\lambRidge$ trop grand conduit la méthode ridgeLFMM à
+renvoyer les mêmes résultats que PCAlm.
 
 #+NAME: code:gwas_hyperparams_print
 #+CAPTION: Dépend de [[code:gwas_screeplot_CV]]
@@ -12901,9 +12897,9 @@ méthode ridgeLFMM à renvoyer les mêmes résultats que PCAlm.
 Les méthodes fournissent des \pvalues bien calibrées avec une forte inflation du
 nombre de petites \pvalues (Figure ref:fig:gwas_qqplot_top A). La méthode la
 plus libérale est lm, alors que ridgeLFMM et PCAlm sont les méthodes les plus
-conservatives. TODO Le chromosome 6 contient le complexe de gènes HLA. Ce
+conservatives. Le chromosome 6 contient le complexe de gènes HLA. Ce
 complexe de gènes joue un rôle important dans le système immunitaire et dans la
-maladie \celiac citep:dubois2010multiple. Nous avons séparé les SNPs candidats
+maladie c\oe{}liaque citep:dubois2010multiple. Nous avons séparé les SNPs candidats
 du GWAS catalog retrouvés sur le chromosome 6 des autre chromosomes. Les
 candidats du GWAS catalog sur le chromosome 6 sont retrouvé plutôt dans les
 listes retournées par les méthodes PCAlm et ridgeLFMM (Figure
@@ -12943,8 +12939,8 @@ lassoLFMM et cate qui retrouvent le plus vite les candidats du GWAS catalog
 \caption{{\bf Q-Q plot et rang pour l'étude d'association entre des génomes et
     la maldie c\oe{}liaque (GWAS).} A) Diagramme quantile-quantile de l'inverse
   du logarithme en base 10 des \pvalues renvoyées par chaque méthode. Les quantiles
-  théoriques suivent la loi exponentielle. B) Proportion des candidats du GWAS
-  catalog retrouvés dans la top liste revoyée par chaque méthode.}
+  théoriques sont ceux de la loi exponentielle. B) Proportion des candidats du GWAS
+  catalog retrouvés dans la top liste renvoyée par chaque méthode.}
 \label{fig:gwas_qqplot_top}
 \end{figure}
 #+END_EXPORT
@@ -12953,8 +12949,8 @@ Ce sont ridgeLFMM et PCAlm qui donnent les plus petites listes contrôlées avec
 754 candidats pour ridgeLFMM et 777 candidats pour PCAlm (Figure
 ref:fig:gwas_venn). Les méthodes cate et lm donnent les plus grandes listes avec
 le même nombre de 1319 candidats. Nous constatons que l'intersection des listes
-à FDR contrôlé de toutes les méthodes ne contient que $28\%$ des candidats du
-GWAS catalog. Dans les 20 premières zone détecté par lassoLFMM, en dehors du
+à FDR contrôlé de toutes les méthodes contient $28\%$ des candidats du GWAS
+catalog. Dans les 20 premières zones détectées par lassoLFMM, en dehors du
 chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS catalog
 (Table ref:table:gwas_table).
 
@@ -12987,7 +12983,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
 \centering
 \includegraphics[width=\textwidth]{./OUTPUT/Rplots/gwas_venn.png}
 \caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
-    la maladie c\oe{}liaque (GWAS).} Diagramme de Venn des listes controlés à
+    la maladie c\oe{}liaque (GWAS).} Diagramme de Venn des listes controlées à
   un taux de fausses de découvertes de $1 \%$ pour chaque méthode.}
 \label{fig:gwas_venn}
 \end{figure}
@@ -13011,7 +13007,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
     xtable(align = "lllp{2.5cm}p{2.8cm}ccp{4cm}",
     type = "latex",
     label = "table:gwas_table",
-    caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.") %>%
+    caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les SNPs qui sont référencés dans la base de données GWAS catalog.") %>%
     print(include.rownames=FALSE,
           sanitize.colnames.function=identity,
           sanitize.text.function=identity,
@@ -13025,7 +13021,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
 #+RESULTS: code:gwas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Mon Oct  2 14:29:57 2017
+% Sun Oct  8 20:02:06 2017
 \begin{sidewaystable}[ht]
 \centering
 \begingroup\fontsize{8pt}{8pt}
@@ -13056,7 +13052,7 @@ Chr & Snp & LD block (Mb) & Odds ratio [$95\%$ IC] & \pvalue & \qvalue & Gènes 
    \hline
 \end{tabular}
 \endgroup
-\caption{{\bf 20 premiers groupes de SNPs associés avec la maladie \coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les groupes de SNPs qui sont référencés dans la base de données GWAS catalog.} 
+\caption{{\bf 20 premiers groupes de SNPs associés avec la maladie \coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les SNPs qui sont référencés dans la base de données GWAS catalog.} 
 \label{table:gwas_table}
 \end{sidewaystable}
 #+END_EXPORT
@@ -15048,15 +15044,16 @@ Gènes nouveaux :
 *** Étude d'association entre des données génétiques et un gradient environnemental (GEAS)
 <<sec:GEAS>>
 
-Nous avons appliqué les méthodes cate, ridgeLFMM, lassoLFMM et PCAlm avec 9
+Nous avons utilisé les méthodes cate, ridgeLFMM, lassoLFMM et PCAlm avec 9
 variables latentes, afin de trouver les SNPs associés à un gradient climatique.
 Nous avons utilisé les méthodes avec 9 variables latentes (Figure
 ref:fig:eas_params A et B). Le screeplot et l'erreur de validation croisée
 conduisent à choisir 5 variables latentes, mais nous avons choisi un nombre
 légèrement plus élevé car les individus proviennent de 16 populations
-différentes. Pour $\K = 9$, la validation croisée du paramètre de régularisation
-$L_{2}$ est plus faible que pour $\lambRidge = 10^{-5}$. Nous avons choisi une
-proportion de lignes non nulles de la matrice $\B$ valant $1 \%$ pour lassoLFMM.
+différentes. Pour $\K = 9$, les valeurs du paramètre de régularisation $L_{2}$
+($\lambRidge$) entre $10^{-10}$ et $1.0$ donnent les mêmes valeurs moyennes
+d'erreur de prédiction (Figure ref:fig:eas_params C). Nous avons choisi de
+prendre $\lambRidge = 10^{-5}$ pour ridgeLFMM. 
 
 #+NAME: code:lfmm_geas_param_print
 #+CAPTION: Dépend de [[code:eas_screeplot_CV]]
@@ -15108,7 +15105,7 @@ candidats retournés par ces quatre méthodes donne 836 SNPs. Nous avons étudi�
 sur-représentation de chacun des degrés d'annotation de vep dans la sous-liste
 des 836 SNPs par rapport à la liste complète de SNPs. Nous constatons qu'il y a
 en proportion 22 fois plus d'annotation HIGH, 8 fois plus de MODERATE et $1.7$
-fois plus de LOW dans la les 836 SNPs que dans les 5397214 SNPs. Nous avons de
+fois plus de LOW dans les 836 SNPs que dans les 5397214 SNPs. Nous avons de
 plus testé si chaque rapport de proportion est significativement supérieur à 1 à
 l'aide d'un test exact de Fisher; les trois tests renvoient une \pvalue
 inférieure à $0.005$. Nous observons que dans l'union des candidats 21 SNPs sont
@@ -15171,7 +15168,7 @@ catalog n'est détecté par les méthodes lm et PCAlm.
 \centering
 \includegraphics[width=\textwidth]{./OUTPUT/Rplots/geas_venn.png}
 \caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
-    un gradient environnemental (GEAS).} Diagramme de Venn des listes controlés à
+    un gradient environnemental (GEAS).} Diagramme de Venn des listes controlées à
   un taux de fausses de découvertes de $1 \%$ pour chaque méthode.}
 \label{fig:geas_venn}
 \end{figure}
@@ -16830,24 +16827,23 @@ CLOSED: [2017-09-22 ven. 11:28]
 :END:
 
 Les études d'association sont largement utilisées en biologie pour trouver des
-liens de corrélation entre des variables biologiques. Nous nous sommes
-intéressés à la situation où des variables non observées expliquent une partie
-des variations des variables expliquées et sont corrélées aux variables
-explicatives. (TODO : revoir expliqué explicative) Nous avons proposé dans ce
-chapitre deux algorithmes, ridgeLFMM et lassoLFMM, pour corriger les études
-d'association à l'aide de facteurs latents. Nos méthodes reposent sur les
-solutions optimales de problèmes de moindres carrés régularisés. La méthode
-ridgeLFMM utilise une régularisation $L_{2}$ de la matrice des effets des
-variables expliquées sur la variable explicative TODO. La régularisation $L_{2}$
-permet de définir de façon unique la matrice des variables latentes. La méthode
-lassoLFMM utilise une régularisation $L_{1}$ sur la matrice des effets. La
-régularisation $L_{1}$ permet de choisir a priori la proportion de variables
-expliquées associées à la variable explicative. Les deux algorithmes
-d'estimation des facteurs de confusion que nous avons présentés reposent sur les
-deux mêmes étapes : on transforme la matrice des variables expliquées afin
-d'estimer les variables latentes, puis on estime les effets des variables
-explicatives sur les variables expliquées. L'algorithme ridgeLFMM fait une seule
-fois chaque étape, tandis que l'algorithme lassoLFMM les itère plusieurs fois.
+liens de corrélation entre des variables d'intérêt. Nous nous sommes intéressés
+à la situation où des variables non observées expliquent une partie des
+variations des variables expliquées et sont corrélées aux variables
+explicatives. Nous avons proposé dans ce chapitre deux algorithmes, ridgeLFMM et
+lassoLFMM, pour corriger les études d'association à l'aide de facteurs latents.
+Nos méthodes reposent sur les solutions optimales de problèmes de moindres
+carrés régularisés. La méthode ridgeLFMM utilise une régularisation $L_{2}$
+portant sur la matrice des effets. La régularisation $L_{2}$ permet de définir
+de façon unique la matrice des variables latentes. La méthode lassoLFMM utilise
+une régularisation $L_{1}$ portant sur la matrice des effets. La régularisation
+$L_{1}$ permet de choisir a priori la proportion de variables expliquées
+associées à la variable d'intérêt. Les deux algorithmes d'estimation des
+facteurs de confusion que nous avons présentés reposent sur les deux mêmes
+étapes : on transforme la matrice des variables expliquées afin d'estimer les
+variables latentes, puis on estime les effets des variables explicatives sur les
+variables expliquées. L'algorithme ridgeLFMM fait une seule fois chaque étape,
+tandis que l'algorithme lassoLFMM les itère plusieurs fois.
 
 Afin dévaluer l'intérêt d'estimer les facteurs latents dans les études
 d'association, nous avons considéré la méthode lm qui repose sur un modèle de
@@ -16872,11 +16868,11 @@ similaires à PCAlm sur les simulations numériques. La méthode sva-two-step do
 des résultats très similaires à PCAlm sur l'EWAS, alors que sva-two-step donne
 des résultats très atypiques comparés aux autres méthodes considérées pour
 l'EWAS. Avec les bons hyperparamètres, il est possible que sva-irw donne des
-résultats comparables aux autres méthodes. Cependant il n'y a aucun garantie sur
+résultats comparables aux autres méthodes. Cependant il n'y a aucune garantie sur
 la convergence de sva-irw; ce qui rend compliqué l'exploration pour trouver les
 bons paramètres de l'algorithme.
 
-Sur les jeux de données simulées nos algorithmes ont les mêmes performances que
+Sur les jeux de données simulées, nos algorithmes ont les mêmes performances que
 la méthode oracle qui connait les facteurs de confusion. Les \pvalues renvoyées
 par nos algorithmes sont bien calibrées sur les vrais jeux de données, et
 permettent de retrouver les candidats trouvés par d'autres études. Les
@@ -16886,19 +16882,19 @@ similaires pour nos critères d'évaluation, il existe tout de même des différ
 entre les listes de candidats renvoyées pas ces trois méthodes. Par ailleurs, il
 existe des techniques permettant de combiner les résultats venant de plusieurs
 méthodes pour tester l'association; ce qui permettrait d'augmenter la confiance que
-l'on a en les résultats d'une étude d'association. TODO cite manhanobis
+l'on a en les résultats d'une étude d'association. 
 
-Dans les études d'association sur des données réelles considérées ici, il n'y
-pas de vérité terrain. De plus, une méthode peut toujours donner de meilleurs
-résultats qu'une autre sur des simulations bien choisies citep:Wolpert_1997. Sur
-les données réelles nous avons constaté que les méthodes cate, lassoLFMM et
-ridgeLFMM retournent des \pvalues correctement calibrées qui permettent de
-calculer des listes pour des FDR controlé. Ces listes sont en général plus
-grandes que celles des autres méthodes. Nous avons implémenté nos algorithmes
-dans un package R. Ce qui permet aux utilisateurs de les combiner avec d'autres
-algorithmes d'association. Ces deux nouvelles méthodes s'ajoutent ainsi à
-l'arsenal des méthodes permettant de corriger les tests d'association
-statistique pour les facteurs de confusion.
+Dans les études d'association sur des données réelles, il n'y pas de vérité
+terrain. De plus, une méthode peut toujours donner de meilleurs résultats qu'une
+autre sur des simulations bien choisies citep:Wolpert_1997. Sur les données
+réelles nous avons constaté que les méthodes cate, lassoLFMM et ridgeLFMM
+retournent des \pvalues correctement calibrées qui permettent de calculer des
+listes pour des FDR controlé. Ces listes sont en général plus grandes que celles
+des autres méthodes. Nous avons implémenté nos algorithmes dans un package R. Ce
+qui permet aux utilisateurs de les combiner avec d'autres algorithmes
+d'association. Ces deux nouvelles méthodes s'ajoutent ainsi à l'arsenal des
+méthodes permettant de corriger les tests d'association statistique pour les
+facteurs de confusion.
 
 ** SANDBOX                                                        :noexport:
 :PROPERTIES:
@@ -17100,7 +17096,7 @@ toutes les données dans la mémoire vive de l'ordinateur permettrait aux
 utilisateurs ayant des capacités en mémoire vive modeste d'utiliser nos
 algorithmes sur des données massives.
 
-Enfin, pour rendre nos outils utilisables par le plus grand nombre il est très
+Enfin, pour rendre nos outils utilisables par le plus grand nombre, il est très
 important de communiquer sur ceux-ci. En particulier, il faut inciter les
 utilisateurs à poser des questions sur les plateformes d'échange du type Stack
 Exchange comme [[https://www.biostars.org/][biostars]] et [[https://stackoverflow.com/documentation/r/topics][stackoverflow]]. Ces plateformes permettent des
@@ -17128,7 +17124,7 @@ pas observé pour tous les échantillons. Ou bien qu'il y ait des erreurs dans l
 variables observées. Par exemple, il est fréquent que les données génétiques
 comportent des erreurs de séquençage. Des données génétiques de très mauvaise
 qualité sont par exemple les données génétiques prélevées sur des espèces qui
-se sont éteintes.
+se sont éteintes (ADN fossile).
 
 Les algorithmes que nous avons développés ont été pensés pour fonctionner sur
 des matrices de données complètes. Dans le cas des données génétiques,
@@ -17136,7 +17132,7 @@ l'imputation des valeurs manquantes a été très étudiée citep:Browning_2016.
 L'approche la plus simple est d'imputer les valeurs manquantes avant de
 considérer d'autres analyses (d'association ou d'inférence de la structure de
 population par exemple). Cette approche fonctionne très bien pour les espèces
-très étudiées comme l'Humain. Pour de telles espèces, on a accès à beaucoup de
+très étudiées comme l'humain. Pour de telles espèces, on a accès à beaucoup de
 génomes complets pouvant servir de référence pour l'imputation citep:Howie_2012.
 Pour des espèces anciennes ou simplement moins étudiées l'imputation est moins
 évidente.
@@ -17165,7 +17161,7 @@ pourrait être directement adaptable aux algorithmes APLS, AQP et lassoLFMM,
 ceux-ci étant des algorithmes itératifs. Nous perdons cependant les propriétés
 de convergence démontrées sur les algorithmes AQP et lassoLFMM.
 
-On attribue parfois un score sur la confiance des séquençages génétiques. Une
+On attribue parfois un score à la confiance des séquençages génétiques. Une
 méthode simple consiste à filtrer les observations ayant un score trop faible
 pour les traiter comme des données manquantes. Le problème est autrement plus
 complexe lorsque que nous ne sommes pas capables de détecter les erreurs de
