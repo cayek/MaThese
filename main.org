@@ -5445,8 +5445,8 @@ modèle LFMM converge vers un point de minimum global de $\Llasso$.
 *** Complexité des algorithmes
 Dans cette partie nous abordons la complexité des algorithmes présentés dans les
 sections précédentes. On peut distinguer deux grandes étapes dans ces
-algorithmes. La première est le calcul de la décomposition en valeurs
-singulières tronquée : calcul de la matrice latente défini par l'équation
+algorithmes. La première est le calcul de la décomposition tronquée en valeurs
+singulières : calcul de la matrice latente défini par l'équation
 eqref:eq:RidgeLfmmEstomatorW pour l'estimation $L_{2}$ et la résolution du
 problème d'optimisation de la fonction $\mathcal{L}_{\mathrm{lasso}}^{'}$
 définie par eqref:eq:lasso2 pour l'estimation $L_{1}$. La seconde est le calcul
@@ -5464,8 +5464,8 @@ citet:Halko_2011.
 
 La deuxième étape importante consiste en une projection du résidu de
 l'approximation de rang faible sur l'espace engendré par $\X$. Le nombre précis
-d'opération dépend des hypothèses qui sont faites sur la matrice $\X$. Dans
-l'algorithme d'estimation $L_{1}$ aucune inversion de matrice n'est nécessaire
+d'opérations dépend des hypothèses qui sont faites sur la matrice $\X$. Dans
+l'algorithme d'estimation $L_{1}$, aucune inversion de matrice n'est nécessaire
 pour le calcul de $\hat{\B}_{t}$. Mais dans les deux algorithmes, si on
 s'intéresse seulement au comportement asymptotique par rapport à $\Yrow$,
 $\Ycol$ et $\Ucol$, alors on peut majorer la complexité par $O(\Ycol \Yrow +
@@ -5484,7 +5484,7 @@ Les algorithmes d'estimation $L_{1}$ et $L_{2}$ ne nécessitent pas de dupliquer
 la matrice des variables expliquées $\Y$. En effet, $\Y$ est de taille $\Yrow
 \times \Ycol$ et donc la dupliquer pourrait poser des problèmes sur des
 ordinateurs ne possédant pas assez de RAM. Il est possible d'envisager de ne pas
-charger $\Y$ en RAM et d'accéder au données seulement quand cela est nécessaire.
+charger $\Y$ en RAM et d'accéder aux données seulement quand cela est nécessaire.
 
 *** Choix des hyperparamètres 
 <<sec:hyperparametre>>
@@ -5502,12 +5502,12 @@ charger $\Y$ en RAM et d'accéder au données seulement quand cela est nécessai
   l'arrache avant etc...
 :END:
 
-La sélections des hyperparamètres est un problème commun à de nombreuses
+La sélection des hyperparamètres est un problème commun à de nombreuses
 méthodes en analyse de données. Nous présentons plusieurs approches pratiques
 pour choisir les hyperparamètres qui interviennent dans les algorithmes que nous
 avons présentés ici. Nous commençons par présenter les différentes approches
 possibles pour choisir le nombre de variables latentes $K$. Nous présentons
-ensuite plusieurs heuristiques qui permettent d'aider le choix des paramètres de
+ensuite plusieurs heuristiques qui permettent d'aider au choix des paramètres de
 régularisation. Enfin nous présentons un algorithme de validation croisée adapté
 aux algorithmes que nous avons présentés.
 
@@ -5521,25 +5521,25 @@ On a alors
  \matr{D}_{0} \Q^{T} \Y = \matr{D}_{0} \Q^{T}\U \V^{T} + \matr{D}_{0} \Q^{T} \E.
 \end{equation}
 On peut ainsi utiliser les méthodes d'estimation du nombre $\K$ de variables
-latentes sur la matrice $\matr{D}_{0} \Q^{T} \Y$. Quand il n'y a plus de
-variable explicative $\X$ les fonctions objectifs des deux algorithmes
-d'estimations $L_1$ et $L_2$ présentés ici correspondent à la fonction objectif
-de l'analyse en composantes principales (ACP). Nous utilisons donc les méthodes
-d'estimation du nombre de composantes dans l'ACP pour $\matr{D}_{0} \Q^{T} \Y$.
-Il existe de nombreuses approches pour déterminer le nombre de composantes
-principales de l'ACP, très bien expliquées par citet:jolliffe1986principal. On
-peut grouper les approches en trois catégories. La première catégorie regroupe
-les approches subjectives comme l'utilisation du scree plot (le graphe des
-valeurs singulières de la matrice des données). La seconde catégorie comprend
-les approches basées sur une modélisation de la distribution des données
-observées, comme par exemple la méthode présentée par citet:choi2014selecting.
-La dernière catégorie est formée des approches basées sur la validation croisée,
-comme celle que nous détaillons plus loin. Aucune méthode ne s'est imposée comme
-la référence, et il est préférable d'en utiliser plusieurs. Pour les expériences
-que nous avons réalisées sur des données réelles, le choix du nombre de
-variables latentes $\K$ du modèle LFMM a été fait à partir du scree plot de
-l'ACP de la matrice $\matr{D}_{0} \Q^{T} \Y$. Nous avons aussi utilisé
-l'algorithme de validation croisée que nous présentons dans la section [[sec:CV]].
+latentes sur la matrice $\matr{D}_{0} \Q^{T} \Y$. Si il n'y a pas de variable
+explicative $\X$, les fonctions objectif des deux algorithmes d'estimations
+$L_1$ et $L_2$ correspondent à la fonction objectif de l'analyse en composantes
+principales (ACP). Nous utilisons donc les méthodes d'estimation du nombre de
+composantes dans l'ACP pour $\matr{D}_{0} \Q^{T} \Y$. Il existe de nombreuses
+approches pour déterminer le nombre de composantes principales de l'ACP, très
+bien expliquées par citet:jolliffe1986principal. On peut grouper les approches
+en trois catégories. La première catégorie regroupe les approches subjectives
+comme l'utilisation du scree plot (le graphe des valeurs singulières de la
+matrice des données). La seconde catégorie comprend les approches basées sur une
+modélisation de la distribution des données observées, comme par exemple la
+méthode présentée par citet:choi2014selecting. La dernière catégorie est formée
+des approches basées sur la validation croisée, comme celle que nous détaillons
+plus loin. Aucune méthode ne s'est imposée comme la référence, et il est
+préférable d'en utiliser plusieurs. Pour les expériences que nous avons
+réalisées sur des données réelles, le choix du nombre de variables latentes $\K$
+du modèle LFMM a été fait à partir du scree plot de l'ACP de la matrice
+$\matr{D}_{0} \Q^{T} \Y$. Nous avons aussi utilisé l'algorithme de validation
+croisée que nous présentons dans la section [[sec:CV]].
 
 **** Paramètre de régularisation $L_{2}$
 <<sec:paramL2>>
@@ -5551,26 +5551,30 @@ l'algorithme de validation croisée que nous présentons dans la section [[sec:C
 :END:
 
 Le paramètre de régularisation $L_{2}$ ($\lambRidge$) intervient dans le calcul
-de l'estimation de la matrice latente décrit dans la partie [[sec:estimator_L2]]. Ce
+de l'estimation de la matrice latente décrit dans la partie [[sec:estimator_L2]]. 
+
+TODO : mettre equation ici 
+
+Ce
 paramètre de régularisation intervient dans la matrice diagonale $\D$. Lorsque
 le paramètre de régularisation $L_{2}$ tend vers zéro, les variables $\Y$ et
 $\X$ sont linéairement décorrélées. Ainsi la matrice $\D$ permet de réduire la
-corrélation entre les variables expliquées $\Y$ et les variables explicative
+corrélation entre les variables expliquées $\Y$ et les variables explicatives
 $\X$ afin de pouvoir estimer les variables latentes $\U$. Lorsque le paramètre
 $\lambRidge$ tend vers l'infini, la matrice $\D$ tend vers la matrice identité.
-L'estimation des variables latentes est alors données par l'ACP de la matrice
-$\Y$, sans prendre en compte la variable $\X$. Ainsi lorsque $\lambRidge$ est
-trop grand, on risque d'expliquer par les variables latentes une partie de la
-variance de $\Y$ qui devrait être expliquée par $\X$ et manquer certaines
-associations. Ainsi le choix du paramètre de régularisation $\lambRidge$ est une
-affaire de dosage, il doit être ni trop grand ni trop petit. Nous avons remarqué
-dans les expériences que de petites valeurs donnes de meilleurs résultats dans
-de nombreux cas.
+L'estimation des variables latentes est alors calculée par l'ACP de la matrice
+$\Y$, sans prendre en compte la variable $\X$. Lorsque $\lambRidge$ est trop
+grand, on risque d'expliquer par les variables latentes une partie de la
+variance de $\Y$, qui devrait être expliquée par $\X$, et donc manquer certaines
+associations. Le choix du paramètre de régularisation $\lambRidge$ est une
+affaire de dosage, il ne doit être ni trop grand ni trop petit. Nous avons
+remarqué dans les expériences que de petites valeurs donnent de meilleurs
+résultats dans de nombreux cas.
 
 **** Paramètre de régularisation $L_{1}$
-Le paramètre de régularisation $L_{1}$ ($\lambLasso$) à un impact sur la le
-nombre de lignes nulles dans la matrice des effets $\B$. La proportion de lignes
-non nulles dans la matrice $\B$ correspond à la proportion de colonnes de $\Y$
+Le paramètre de régularisation $L_{1}$ ($\lambLasso$) a un impact sur le nombre
+de lignes nulles dans la matrice des effets $\B$. La proportion de lignes non
+nulles dans la matrice $\B$ correspond à la proportion de colonnes de $\Y$
 corrélées avec les variables explicatives $\X$. Quand on prend en compte les
 variables latentes plutôt que de choisir le paramètre de régularisation
 $\lambLasso$, il est équivalent de choisir la proportion de colonnes de $\Y$
@@ -5583,11 +5587,11 @@ petite valeur du paramètre de régularisation $\lambLasso$ tel que le vecteur
 \hat{\B}_{t = 1} = \sign(\bar{\B}_{t = 1}) (\bar{\B}_{t = 1} - \lambLasso)_{+}
 \end{equation}
 vaut zéro. La matrice $\hat{\B}_{t = 1}$ est le résultat de la première étape de
-l'algorithme d'estimation des moindres carrés régularisée en norme $L_{1}$
-présenté dans la partie [[sec:estimator_L1]]. La valeur de $\lambLasso$
-correspondante est notée $\lambLasso^{\mathrm{max}}$. Ensuite, nous construisons
-une suite de $m$ valeurs de $\lambLasso$ décroissant selon une échelle
-logarithmique depuis $\lambLasso^{\mathrm{max}}$ jusqu'à
+l'algorithme d'estimation des moindres carrés régularisée en norme $L_{1}$ (cf
+section TODO). La valeur de $\lambLasso$ correspondante est notée
+$\lambLasso^{\mathrm{max}}$. Ensuite, nous construisons une suite de $m$ valeurs
+de $\lambLasso$ décroissant selon une échelle logarithmique depuis
+$\lambLasso^{\mathrm{max}}$ jusqu'à
 \begin{equation}
 \lambLasso^{\mathrm{min}} = \epsilon \lambLasso^{\mathrm{max}}.
 \end{equation}
@@ -5621,39 +5625,39 @@ $L_{1}$ vers une estimation de la matrice latente $\hat{\W}$ qui est de rang $\K
 <<sec:CV>>
 
 La validation croisée est une méthode d'évaluation des hyperparamètres d'un
-modèle très utilisée en apprentissage statistique. Le principe est de séparer
+modèle, très utilisée en apprentissage statistique. Le principe est de séparer
 les données en une partie d'apprentissage et une partie de test. Les données
 d'apprentissage sont utilisées pour estimer les paramètres du modèle. On mesure
-ensuite l'erreur de prédiction à l'aide des données de tests. Pour que la
+ensuite l'erreur de prédiction à l'aide des données de test. Pour que la
 validation croisée fonctionne, il est très important que les données de test ne
 soient pas utilisées pour estimer les paramètres du modèle. Dans le cas des
 modèles à facteurs latents en général, les données d'apprentissage ne permettent
 toutefois pas de calculer les variables latentes pour les données de test (la
-matrice $\U$ dans LFMM). Le plus simple est de séparer les variables des données
+matrice $\matr{U}$ dans LFMM). Le plus simple est de séparer les variables des données
 de test. Nous utilisons ensuite une partie des variables des données de test
 pour estimer les variables latentes et l'autre partie pour calculer l'erreur de
 prédiction citep:Bro_2008. Nous présentons maintenant plus formellement notre
 procédure de validation croisée.
 
 Nous commençons par séparer les données en une partie d'entraînement et une
-partie de test, c'est a dire que nous séparons les matrices des variables
+partie de test; c'est-à-dire que nous séparons les matrices des variables
 expliquées $\Y$ et explicatives $\X$ en deux parties selon leurs lignes. Nous
 notons $I$ l'ensemble des indices des lignes choisies pour estimer l'erreur de
 prédiction. On estime à partir des données d'entraînement la matrice des axes
 factoriels que l'on note $\hat{\V}_{-I}$ et la matrice des effets que l'on note
 $\hat{\B}_{-I}$. Ensuite, nous séparons les observations des variables
-expliquées de test en deux partis afin d'estimer les variables latentes sur les
+expliquées de test en deux parties afin d'estimer les variables latentes sur les
 variables restantes. On notera $J$ l'ensemble des colonnes de la matrice des
-variable expliquées $\Y$ sélectionnées pour estimer la matrice des variables
+variables expliquées $\Y$ sélectionnées pour estimer la matrice des variables
 latentes. La matrice des variables latentes est estimée de la manière suivante
 \begin{equation}
-\hat{\U}_{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}_{-I}[J,])^{T}) \hat{\V}_{-I}[-J,]^{T},
+\hat{\matr{U}}_{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}_{-I}[J,])^{T}) \hat{\V}_{-I}[-J,]^{T},
 \end{equation}
 où l'opérateur crochet représente l'opérateur de sélection de lignes et colonnes
 d'une matrice. Enfin, on peut calculer l'erreur de prédiction comme ceci
 \begin{equation}
 \label{eq:2}
-\mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\U}^{-J} \hat{\V}_{-I}[J,]^{T} - \X[I, ] \hat{\B}_{-I}[J,]^{T} }_{F},
+\mathrm{err} = \frac{1}{|I| |J|} \norm{\Y[I, J] - \hat{\matr{U}}^{-J} \hat{\V}_{-I}[J,]^{T} - \X[I, ] \hat{\B}_{-I}[J,]^{T} }_{F},
 \end{equation}
 où $|I|$ est le nombre d'indices dans l'ensemble $I$. Cette procédure
 permet de mesurer une erreur sur des observations des variables expliquées qui
@@ -5674,19 +5678,25 @@ n'ont pas été utilisées pour estimer les paramètres du modèle.
   la recalibration par mad + median
 :END:
 
-Jusque ici, nous avons seulement abordé l'estimation des paramètres de LFMM.
+TODO : changer en test de significativité ?
+
+Jusqu'ici, nous avons seulement abordé l'estimation des paramètres de LFMM.
 Cependant, l'objectif initial est de trouver la liste des colonnes de la matrice
 $\Y$ associées aux variables $\X$ tout en prenant en compte les variables
 latentes. Nous présentons dans cette partie un test d'hypothèse de nullité de
-l'effet de la matrice $\X$ sur la matrice $\Y$ corrigé pour les variables
+l'effet de la matrice $\X$ sur la matrice $\Y$, corrigé pour les variables
 latentes. Une approche simple consiste à considérer l'estimation des variables
-latentes $\hat{\U}$ comme les vraies valeurs de $\U$ et de les utiliser comme
-variables explicatives dans le modèle. C'est une méthode très courante dans les
-études d'association qui a montré de très bons résultats quand il y suffisamment
-d'individus
+latentes $\hat{\matr{U}}$ comme les vraies valeurs de $\matr{U}$. Nous utilisons
+ensuite les variables latentes $\hat{\matr{U}}$ comme des variables explicatives
+dans le modèle. 
+
+TODO: voir papier de stephens debut
+
+C'est une méthode très courante dans les études d'association qui a montré de
+très bons résultats quand il y suffisamment d'individus
 citep:gerard2017unifying,Price_2006,Song_2015,article_Leek_Storey_2008,Rahmani_2016.
 Nous avons choisi de réaliser un test d'hypothèse qui repose sur la régression
-linéaire car cela correspond au modèle LFMM quand on suppose que $\U$ est
+linéaire car cela correspond au modèle LFMM quand on suppose que $\matr{U}$ est
 connue. Les estimations des variables latentes peuvent être traitées comme
 variables explicatives dans n'importe quel modèle statistique. On pourrait par
 exemple envisager d'utiliser un modèle de régression linéaire généralisée. Afin
@@ -5695,10 +5705,10 @@ n'y a qu'une seule variable explicative, c'est à dire que la dimension de la
 matrice $\B$, égale à $\Xcol$, vaut $1$. De plus, nous signalons qu'il est
 possible d'ajouter d'autres variables explicatives à la régression. Cela a un
 intérêt si l'on observe des variables qui sont des facteurs de confusion connus
-pour notre étude d'association, comme par exemple l'age et le genre des
+pour notre étude d'association, comme par exemple l'âge et le genre des
 individus. Nous rappelons que l'estimation de la matrice des $\K$ variables
-latentes $\hat{\U}$ est définie de façon unique grâce à l'ACP de la matrice
-$\hat{\W}$. La matrice $\hat{\W}$ est estimée grâces aux algorithmes
+latentes $\hat{\matr{U}}$ est définie de façon unique grâce à l'ACP de la
+matrice $\hat{\W}$. La matrice $\hat{\W}$ est estimée grâce aux algorithmes
 d'estimation $L_{1}$ ou $L_{2}$ de la matrice latente de LFMM que nous avons
 présentés précédemment.
 
@@ -5706,29 +5716,33 @@ présentés précédemment.
 Pour chaque variable expliquée $\Y_{j}$, nous avons défini le modèle de
 régression linéaire suivant
 \begin{equation}
-\Y_{j} =  \hat{\U} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{E_{j}},
+\Y_{j} =  \hat{\matr{U}} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{E_{j}},
 \end{equation}
 où la matrice $\hat{\U}$ est l'estimation de la matrice des variables latentes
 du modèle LFMM. On suppose que l'erreur $\matr{E}_{j}$ est gaussienne de moyenne
 nulle. On veut tester l'hypothèse de nullité du coefficient de régression
-$\beta_{j}$. Sous ces hypothèses on peut calculer pour chaque variable expliquée
-$\Y_{j}$ une statistique de test $z_{j}$, assimilable à un \zscore. Sous
-l'hypothèse nulle, la statistique de test suit la loi de Student à $\Yrow - \K -
-1$ degrés de liberté. On peut donc calculer une \pvalue pour chaque variable
-expliquée $\Y_{j}$. Le détail du calcul de la statistique de test est très
-classique. Par exemple, il est donné dans la section 3.2 du livre de
+$\beta_{j}$. Sous ces hypothèses on peut calculer, pour chaque variable
+expliquée $\Y_{j}$, une statistique de test $z_{j}$, assimilable à un \zscore.
+Sous l'hypothèse nulle, la statistique de test suit la loi de Student à $\Yrow -
+\K - 1$ degrés de liberté. On peut donc calculer une \pvalue pour chaque
+variable expliquée $\Y_{j}$. Le détail du calcul de la statistique de test est
+très classique. Par exemple, il est donné dans la section 3.2 du livre de
 citet:Hastie_2009.
 
-**** Calibration du test d'hypothèse
+**** Calibration des \pvalues
 <<sec:calibration>> 
 
 Il arrive parfois que la statistique de test ne suive pas la distribution
 théorique sous l'hypothèse nulle. On dit dans ce cas que le test est mal
 calibré. citet:Efron_2004 propose des exemples de situations qui peuvent aboutir
-à des tests mal calibrés. Dans les exemples que nous présentons ici ont s'attend
-à ce que la majorité des variables expliquées $\Y_{j}$ ne soit pas associées
-avec la variable $\X$. Ainsi une majorité des statistiques de test sont
-distribuées selon l'hypothèse nulle. Pour la calibration, nous utilisons
+à des tests mal calibrés. Dans les exemples que nous présentons ici, on s'attend
+à ce que la majoritée des variables expliquées $\Y_{j}$ ne soit pas associées
+à la variable $\X$. Ainsi une majorité des statistiques de test sont
+distribuées selon l'hypothèse nulle. 
+
+TODO relir donc les pvalue sont uniforme
+
+Pour la calibration, nous utilisons
 l'approche choisie par citet:Sun_2012, qui consiste à calculer la médiane et la
 déviation absolue à la médiane (MAD pour median absolute déviation) directement
 sur les $z$ statistiques. En effet, la médiane donne une estimation robuste de
@@ -5756,38 +5770,38 @@ d'association multiple....................
 
 *** Implémentation en R
 Les deux nouvelles méthodes de test d'association avec correction pour les
-facteurs de confusion que nous avons développées dans cette thèse ont été
+facteurs de confusion, que nous avons développées dans cette thèse, ont été
 implémentées dans le langage de programmation R. Nous les avons appelées
-respectivement lassoLFMM pour l'implémentation des estimateurs régularisées en
-norme $L_{1}$ et ridgeLFMM pour les estimateurs régularisées en norme $L_{2}$.
+respectivement lassoLFMM pour l'implémentation des estimateurs régularisés en
+norme $L_{1}$ et ridgeLFMM pour les estimateurs régularisés en norme $L_{2}$.
 Les algorithmes lassoLFMM et ridgeLFMM prennent en entrée la matrice $\X$ et la
-matrices $\Y$. Ils prennent également en entrée le nombre de variables latentes
-$\K$. L'algorithme ridgeLFMM prend une valeur pour $\lambRidge$, le paramètre de
-régularisation $L_{2}$. L'algorithme lassoLFMM prend la proportion de lignes non
-nulles dans la matrice des effets $\B$. Enfin les deux algorithmes retournent
-les estimations pour les paramètres de LFMM ainsi qu'une \pvalue pour le test
-d'association de chaque colonne de $\Y$ avec $\X$.
+matrice $\Y$. Ils prennent également en entrée le nombre de variables latentes
+$\K$. L'algorithme ridgeLFMM prend une valeur pour $\lambRidge$ (le paramètre de
+régularisation $L_{2}$). L'algorithme lassoLFMM prend la proportion de lignes
+non nulles dans la matrice des effets $\B$. Enfin les deux algorithmes
+retournent les estimations pour les paramètres de LFMM ainsi qu'une \pvalue pour
+le test d'association de chaque colonne de $\Y$ avec $\X$.
 ** Comparaisons avec d'autres méthodes de correction pour les facteurs de confusion
 <<sec:similar_method>>
 
 Dans cette section nous présentons d'autres méthodes pour les études
-d'association avec et sans correction pour les facteurs de confusion. Les
-méthodes que nous présentons dans cette section sont comparées aux méthodes
-lassoLFMM et ridgeLFMM dans la section suivante.
+d'association avec et sans correction pour les facteurs de confusion. Celles-ci
+sont comparées aux méthodes lassoLFMM et ridgeLFMM dans la section suivante.
 
 *** Régression linéaire simple et avec les scores de l'ACP
-Dans lassoLFMM et ridgeLFMM, les tests d'hypothèses utilisés pour détecter les
+Dans lassoLFMM et ridgeLFMM, les tests d'hypothèse utilisés pour détecter les
 associations reposent sur un modèle de régression linéaire de $\Y$ par $\X$ et
-sur l'estimation des facteurs latents $\bar{\U}$. Il est donc naturel de
-comparer nos algorithme à la méthode reposant sur la régression linaire de $\Y$
+sur l'estimation des facteurs latents $\bar{\matr{U}}$. Il est donc naturel de
+comparer nos algorithmes à la méthode reposant sur la régression linaire de $\Y$
 par $\X$. Dans ce cas, aucun facteur latent n'est pris en compte dans l'étude
 d'association. D'autre part, nous comparons nos tests à une méthode qui repose
 sur une estimation des variables latentes par l'ACP. Dans ce cas, il s'agit de
-faire une régression de $\Y$ par $\X$ et $\bar{\U)}$ définie comme la matrice
-des scores sur les $\K$ premières composantes principales. Un principe similaire
-est utilisé dans la méthode EIGENSTRAT citep:Price_2006. Les deux méthodes,
-reposant sur la régression linéaire avec et sans les score de l'ACP, ont été
-implémentées en langage R et nous les appelons respectivement lm et PCAlm.
+faire une régression de $\Y$ par $\X$ et $\bar{\U)}$. La matrice $\bar{\U)}$ est
+définie comme la matrice des scores sur les $\K$ premières composantes
+principales. Un principe similaire est utilisé dans la méthode EIGENSTRAT
+citep:Price_2006. Les deux méthodes, reposant sur la régression linéaire avec et
+sans les scores de l'ACP, ont été implémentées en langage R et nous les appelons
+respectivement lm et PCAlm.
 
 *** COMMENT emma citep:Kang_2008
 :LOGBOOK:
@@ -5800,33 +5814,36 @@ implémentées en langage R et nous les appelons respectivement lm et PCAlm.
   sva utilisé:[[file:Rpackage/R/ExpRmethod-sva.R::ExpRmouline.method_sva%20<-%20function(m,%20dat)%20{][sva function]]
 :END:
 
-Il existe deux versions de SVA : sva-two-step citep:article_Leek_Storey_2007; et
+Il existe deux versions de SVA : sva-two-step citep:article_Leek_Storey_2007 et
 sva-irw citep:article_Leek_Storey_2008. La méthode sva-two-step se découpe en
-deux étapes : une étape d'estimation de la matrice des axes factoriel $\V$ et
+deux étapes : une étape d'estimation de la matrice des axes factoriels $\V$ et
 une étape d'estimation de la matrice des variables latentes $\U$. Lors de la
-premières étape la méthode sva-two-step estime les axes factoriel en faisant une
-ACP de la matrice résiduel de la régression linaire de $\Y$ par $\X$. En
+première étape la méthode sva-two-step estime les axes factoriels en faisant une
+ACP de la matrice résiduelle de la régression linaire de $\Y$ par $\X$. En
 utilisant les notations de la section [[sec:estimator_L2]], cela correspond à faire
 l'ACP de $\matr{D}_{(\lambRidge = 0)} \Q^{T} \Y$. Ensuite la méthode
 sva-two-step détermine un sous-ensemble de colonnes de la matrice $\Y$ qui sont
-le moins corrélées avec la variable $\X$. Le sous-ensemble de colonnes est
-utilisé pour estimer la matrice des variables latentes $\U$. Cette procédure
+les moins corrélées avec la variable $\X$. Le sous-ensemble de colonnes est
+utilisé pour estimer la matrice des variables latentes $\U$. 
+
+TODO : revoir ici  clarifier
+Cette procédure
 peut facilement échouer car une faible corrélation avec la variable $\X$
-n'implique pas qu'il n'y a pas d'association celle-ci. En effet une faible
+n'implique pas qu'il n'y ai pas d'association avec celle-ci. En effet une faible
 corrélation sans prendre en compte les facteurs latents peut devenir une forte
-corrélation quand on les prend en compte.
+corrélation quand ils sont pris en prend en compte.
 
 La deuxième version de SVA est itérative. Plutôt que d'estimer les variables
 latentes sur un sous- ensemble de colonnes de la matrice $\Y$, la méthode
-sva-irw attribue un poids à chacune d'entre elles. On calcule la probabilité que
-l'effet de la variable $\X$ sur chaque colonne de $\Y$ soit nul sachant les
-variables latentes calculées à l'itération précédente. Ensuite les probabilités
-sont utilisées pour attribuer un poids à chaque colonne de $\Y$ et une nouvelle
-estimation des variables latentes est calculée à l'aide d'une ACP qui prend en
-compte ces poids. La méthode itère ces deux étapes un nombre de fois choisi par
-l'utilisateur. Le désavantage de cette procédure est qu'on ne sais pas vers quoi
-elle converge ni si elle converge. Nous avons utilisé le package R sva fourni
-par ses auteurs.
+sva-irw attribue un poids à chacune d'entre elles. Sachant les variables
+latentes calculées à l'itération précédente, on calcule la probabilité que
+l'effet de la variable $\X$ sur chaque colonne de $\Y$ soit nul. Ensuite les
+probabilités sont utilisées pour attribuer un poids à chaque colonne de $\Y$ et
+une nouvelle estimation des variables latentes est calculée à l'aide d'une ACP
+qui prend en compte ces poids. La méthode itère ces deux étapes un nombre de
+fois choisi par l'utilisateur. Le désavantage de cette procédure est que l'on ne
+sait pas vers quoi elle converge ni si elle converge. Nous avons utilisé le
+package R sva fourni par ses auteurs.
 
 *** "High dimensional factor analysis and confounder adjusted testing and estimation" (CATE) citep:wang2015confounder
 
@@ -5838,43 +5855,49 @@ facteurs latents. Pour effectuer la transformation, on applique une matrice de
 changement de base aux lignes de $\Y$ de sorte que le premier axe de la nouvelle
 base soit colinéaire à $\X$. Cette transformation permet d'avoir sur la première
 ligne de la matrice transformée les coefficients de la régression linéaire de
-$\Y$ par $\X$ et sur tout les autres lignes le projeté orthogonale de $\Y$ par
-rapport à $\X$ correspondant aux résidus de la régression. La méthode cate
-utilise le projeté orthogonal de $\Y$ par rapport à $\X$ pour calculer les axes
-factoriels. Cette première étape est comparable à l'étape de calcul de la
+$\Y$ par $\X$. Sur toutes les autres lignes nous avons le projeté orthogonal de
+$\Y$ par rapport à $\X$ qui correspond au résidu de la régression. La méthode
+cate utilise le projeté orthogonal de $\Y$ par rapport à $\X$ pour calculer les
+axes factoriels. Cette première étape est comparable à l'étape de calcul de la
 matrice $\V$ dans notre méthode ridgeLFMM (voir partie [[sec:estimator_L2]]). Dans
-ridgeLFMM, plutôt que d'enlever complétement les variations de $\Y$ expliquées
-par $\X$ nous la réduisons en fonction du paramètre de régularisation
-$\lambRidge$. Comme cela a été montré par citet:wang2015confounder sva et cate
-calcule la même matrice des axes factorielles. Cette matrice correspond à celle
-estimée par ridgeLFMM dans le cas où $\lambRidge$ vaut zéro. La méthode cate
-diffère de sva dans sa façon de calculer les variables latentes et les effets de
-$\X$ sur $\Y$. Les auteurs de cate ont modélisé explicitement la corrélation
-entre les variables explicatives $\X$ et les variables latentes $\U$
+ridgeLFMM, plutôt que d'enlever complètement les variations de $\Y$ expliquées
+par $\X$, nous les réduisons en fonction du paramètre de régularisation
+$\lambRidge$. Comme cela a été montré par citet:wang2015confounder, les méthodes
+sva et cate calculent la même matrice des axes factoriels. Cette matrice
+correspond à celle estimée par ridgeLFMM dans le cas où $\lambRidge$ vaut zéro.
+La méthode cate diffère de sva dans sa façon de calculer les variables latentes
+et les effets de $\X$ sur $\Y$. Les auteurs de cate ont modélisé explicitement
+la corrélation entre les variables explicatives $\X$ et les variables latentes
+$\U$
 \begin{equation}
 \label{eq:cateU}
 \U = \X \bm{\alpha}^{T} + \matr{Z}
 \end{equation}
 où $\bm{\alpha}$ est la matrice des effets de la variable $\X$ sur les variables
 latentes $\U$ et $\matr{Z}$ est une matrice de bruit indépendant de $\X$. La
-matrice $\matr{Z}$ est estimée en même temps la matrice des axe factoriel grâce
-à l'ACP de la projection de $\Y$ sur l'orthogonale de $\X$. Pour estimer la
-matrice $\bm{\alpha}$, la méthode cate fait une régression linaire robuste de la
-première ligne de la matrice $\Y$ transformée dans la base où le premier axe est
-colinéaire à $\X$ par la matrice des axes factoriels $\V$ déjà estimée. Pour le
-comprendre, en injectant eqref:eq:cateU dans l'équation de LFMM eqref:eq:model.
-On peut écrire alors la matrice des coefficients de la régression linéaire de
-$\Y$ par $\X$, notée $\bm{\tau}$, comme ceci
+matrice $\matr{Z}$ est estimée en même temps que la matrice des axes factoriels,
+grâce à l'ACP de la projection de $\Y$ sur l'orthogonal de $\X$. Pour estimer la
+matrice $\bm{\alpha}$, la méthode cate fait une régression linéaire robuste de
+la première ligne de la matrice $\Y$ transformée. La matrice $\Y$ est transformée
+dans la base où le premier axe est colinéaire à $\X$ par la matrice des axes
+factoriels $\V$ déjà estimée. 
+
+TODO revoir la phrase précédente et celle d'après
+
+Pour le comprendre, en injectant eqref:eq:cateU dans l'équation de LFMM
+eqref:eq:model, on peut écrire la matrice des coefficients de la régression
+linéaire de $\Y$ par $\X$, notée $\bm{\tau}$, comme ceci
 \begin{equation}
 \bm{\tau} = \B + \V \bm{\alpha}^{T},
 \end{equation}
 où $\B$ est la matrice des effets dans l'équation eqref:eq:model. La méthode
 cate estime $\bm{\alpha}$ en faisant une régression linéaire robuste de
-$\bm{\tau}$ par l'estimation de la matrice des axe factoriels $\V$. Enfin, la
+$\bm{\tau}$ par l'estimation de la matrice des axes factoriels $\V$. Enfin, la
 matrice des effets $\B$ est calculée comme le résidu de cette régression. La
 régression robuste permet d'enlever de l'estimation de $\bm{\alpha}$ les effets
-atypiques qui correspondent aux colonnes de $\Y$ associés à $\X$ que l'on
-cherche. Nous avons utilisé le package R cate fourni par ses auteurs.
+atypiques qui correspondent aux colonnes de $\Y$ associées à $\X$. Nous avons
+utilisé le package R cate fourni par ses auteurs.
+
 ** Expérimentations : données simulées et réelles
 *** Données simulées à partir de données réelles
 :LOGBOOK:
@@ -5883,30 +5906,30 @@ cherche. Nous avons utilisé le package R cate fourni par ses auteurs.
 :END:
 
 Nous avons simulé des données pour lesquelles nous connaissons les variables
-expliquées associées avec la variable explicative. Pour cela, nous utilisons une
+expliquées associées à la variable explicative. Pour cela, nous utilisons une
 matrice de variables expliquées $\Y$ d'un jeu de données réelles. Pour obtenir
-les données simulées nous réalisons une analyse en composantes principales de
-la matrice $\Y$ et ne gardons que les $\K$ premières composantes en fonction
+les données simulées, nous réalisons une analyse en composantes principales de
+la matrice $\Y$, et ne gardons que les $\K$ premières composantes en fonction
 du nombre de facteurs de confusion que nous souhaitons simuler. Nous avons alors
 \begin{equation}
 \Y = \U \V^{T} + \E
 \end{equation}
 où $\V$ est la matrice des $\K$ premiers axes principaux et $\U$ est la matrice
-scores calculés par l'ACP. La matrice $\E$ est une matrice d'erreur résiduelle.
-Nous simulons ensuite la variable d'intérêt pour l'association, $\X^{'}$, ainsi
-que $\K$ variables latentes, $\U^{'}$. Pour ce faire, les matrices $\U^{'}$ et
+des scores calculés par l'ACP. La matrice $\E$ est une matrice d'erreur
+résiduelle. Nous simulons ensuite la variable explicative, $\X^{'}$, ainsi que
+$\K$ variables latentes, $\U^{'}$. Pour ce faire, les matrices $\U^{'}$ et
 $\X^{'}$ sont simulées à l'aide de la loi normale multidimensionnelle. La
 matrice de covariance de la loi normale est choisie de sorte que $\X^{'}$ et
-$\U^{'}$ soient corrélé à un certain niveau. La valeur de corrélation linéaire
-de la variable $\X^{'}$ avec chaque variable latente est tirée selon une lois
-uniforme entre $-1$ et $1$. Ensuite afin de régler l'intensité de la corrélation
-entre les variables latentes et la variable explicative nous multiplions chaque
-coefficient de corrélation par un coefficient que l'on note $\rho$. En outre,
-nous utilisons la matrice de covariance des score de l'ACP $\U$ comme matrice de
-covariance pour simuler la matrice $\U^{'}$. Enfin nous simulons une matrice des
-effets $\B^{'}$ de sorte qu'une proportion fixée des lignes de $\B^{'}$ est non
-nulle et tirée selon une loi normale. La nouvelle matrice des variables
-expliquées est simulée de la façon suivante
+$\U^{'}$ soient corrélées à un certain niveau. La valeur de corrélation linéaire
+de la variable $\X^{'}$ avec chaque variable latente, est tirée selon une loi
+uniforme entre $-1$ et $1$. Ensuite, afin de régler l'intensité de la
+corrélation entre les variables latentes et la variable explicative, nous
+multiplions chaque coefficient de corrélation par un coefficient que l'on note
+$\rho$. De plus, nous utilisons la matrice de covariance des scores de l'ACP
+pour simuler la matrice $\U^{'}$. Enfin nous simulons une matrice des effets
+$\B^{'}$, de sorte qu'une proportion fixée des lignes de $\B^{'}$ soit non nulle
+et tirée selon une loi normale. La nouvelle matrice des variables expliquées est
+simulée de la façon suivante
 \begin{equation}
 \Y^{'} = \U^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
 \end{equation}
@@ -5915,16 +5938,16 @@ de $\Y^{'}$ associées avec la variable $\X^{'}$. Elles correspondent aux lignes
 nulles de la matrice $\B^{'}$. 
 
 Le jeu de données réelles que nous avons choisi pour réaliser les simulations
-est issu de la base données 1000Genome que nous présentons dans la partie
+est issu de la base de données 1000Genome que nous présentons dans la partie
 [[sec:GEAS]]. Nous avons gardé seulement les chromosomes 1 et 2. Cela permet de
-simuler une matrice de 52211 variable expliquées pour 1758 individus. Nous avons
+simuler une matrice de 52211 variables expliquées pour 1758 individus. Nous avons
 choisi de simuler 5 variables latentes. Le coefficient d'intensité de la
 corrélation entre les variables latentes et la variable explicative prend une
 fourchette de valeurs entre $0.1$ et $1$. Cela a permis de simuler des jeux de
-données plus ou moins difficile pour l'inférence des facteurs de confusion. Nous
+données plus ou moins difficiles pour l'inférence des facteurs de confusion. Nous
 avons de plus choisi une proportion des variables expliquées associées avec la
-variable explicative entre $1\%$ et $20\%$. Pour chaque paramètre de simulation
-nous avons simulé $5$ jeux de données ce qui donne un total de 125 jeux de
+variable explicative, entre $1\%$ et $20\%$. Pour chaque paramètre de simulation
+nous avons simulé $5$ jeux de données, ce qui donne un total de 125 jeux de
 données.
 
 Nous avons considéré une méthode oracle qui fait le test d'association entre
@@ -5935,14 +5958,20 @@ devrait donner les meilleurs résultats.
 
 *** Mesure de comparaison des performances
 Pour évaluer la capacité des méthodes à séparer les vrais associations des
-fausses association nous avons utiliser l'aire sous la courge précision-rappel
-noté AUC. Pour une liste de candidats pour l'association la précision est le
-nombre de vraies associations dans la liste divisé par la taille de la liste. La
-précision est le complément à 1 du taux de fausse découverte. Le rappel est le
-nombre de vraies associations retrouvées dans la liste divisé par le nombre
-total des vraies associations. Le rappel est parfois appelé puissance en
-statistique. Une méthode permettant de séparer parfaitement les vraies
-associations des fausse associations donne un AUC de 1.
+fausses association nous avons utilisé l'aire sous la courbe précision-rappel
+noté AUC. La précision est le nombre de vrai
+positif détecté par une méthode divisé par le nombre total de positif. 
+
+TODO voir wiki pedia
+
+revoir cette parti
+
+La précision est le
+complément à 1 du taux de fausse découverte. Le rappel est le nombre de vraies
+associations retrouvées dans la liste divisé par le nombre total des vraies
+associations. Le rappel est parfois appelé puissance en statistique. Une méthode
+permettant de séparer parfaitement les vraies associations des fausse
+associations donne un AUC de 1.
 
 Afin d'évaluer la calibration des \pvalues renvoyées par les méthodes nous
 calculons le facteurs d'inflation des $\pvalues des fausses associations. Le
@@ -5956,6 +5985,7 @@ utiliser l'algorithme de Benjamini-Hoshberg de citet:benjamini1995controlling ou
 bien la \qvalue de citet:Storey_2011.
 
 *** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+
 La polyarthrite rhumatoïde est une maladie auto-immune d'origine inconnue. Dans
 cette étude nous souhaitons étudier le rôle de la méthylation de l'ADN dans le
 développement de la polyarthrite rhumatoïde. La méthylation de l'ADN est un
@@ -5964,27 +5994,27 @@ méthylation peut changer l'activité de l'ADN et en particulier modifier sa
 transcription en protéine. Pour cette étude, nous nous intéressons au niveau de
 méthylation de $485 577$ sites de l'ADN chez 354 individus atteints de
 polyarthrite rhumatoïde et chez 335 individus sains citep:Liu_2013. Il est connu
-que la methylation de l'ADN dépend de l'âge, du genre et de la consommation de
-tabac de chaque individu. Nous savons aussi que le type de la cellule sur
-laquelle on prélève la mesure influence le niveau de méthylation. Tous ces
-facteurs peuvent être des facteurs de confusion pour l'étude d'association avec
-la maladie. Ils ont été pris en compte explicitement dans les études
-d'association qui ont été faites à partir des mêmes données que celles étudiées
-ici citep:Rahmani_2016,Zou_2014. Afin d'évaluer la capacité des méthodes
-à bien corriger les test d'association, nous ne prenons pas en compte
-les facteurs de confusion connus et nous comparons les résultats à ceux obtenus
-par les études citep:Rahmani_2016 et citep:Zou_2014 qui prennent en compte
+que la méthylation de l'ADN dépend de l'âge, du genre et de la consommation de
+tabac de chaque individu. Nous savons aussi que le type de cellule sur laquelle
+on prélève la mesure influence le niveau de méthylation. Tous ces facteurs
+peuvent être des facteurs de confusion pour l'étude d'association avec la
+maladie. Ils ont été pris en compte explicitement dans les études d'association
+qui ont été faites à partir des mêmes données que celles étudiées ici
+citep:Rahmani_2016,Zou_2014. Afin d'évaluer la capacité des méthodes à bien
+corriger les tests d'association, nous ne prenons pas en compte les facteurs de
+confusion connus et nous comparons les résultats à ceux obtenus par les études
+réalisées par citet:Rahmani_2016,Zou_2014; études qui prennent en compte
 explicitement les facteurs de confusion connus (type cellulaire, genre,
 consommation de tabac et âge).
 
 De la même façon que dans citep:Zou_2014 nous avons filtré les sites avec un
-niveau de methylation moyen constitutif, c'est-à-dire inférieur à 0.2 ou
+niveau de méthylation moyen constitutif, c'est-à-dire inférieur à 0.2 ou
 supérieur à 0.8. De plus, nous avons centré et divisé par l'écart-type les
 données de méthylation. Nous avons ensuite appliqué les méthodes cate, lm, PCAlm,
-sva-irw, sva-two-step, lassoLFMM, ridgeLFMM afin de trouver les sites de
+sva-irw, sva-two-step, lassoLFMM et ridgeLFMM afin de trouver les sites de
 méthylation de l'ADN associés à la polyarthrite. 
 
-Enfin pour chaque méthode nous avons calculé la liste obtenue quand on contrôle
+Enfin pour chaque méthode nous avons calculé la liste obtenue lorsque l'on contrôle
 le taux de fausse découverte (FDR) à $1 \%$. Les algorithmes de contrôle du FDR
 nécessitent que les \pvalues soient correctement calibrées. Pour cela nous avons
 calibrées les \pvalues grâce à la méthode présentée dans la partie
@@ -5994,55 +6024,52 @@ citep:Storey_2011.
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
 <<sec:gwas>> 
 
-La maladie \celiac est une maladie auto-immune ayant une prévalence de près de
-$1 \%$ dans la population générale citep:Gujral_2012. Bien que les mécanismes
-d'apparition de cette maladie ne sont pas comprise, des études montrent de
-fortes associations avec certains gènes citep:dubois2010multiple; laissant
-envisager des causes génétiques à la maladie. Comme la maladie \celiac est très
-étudiée, faire une étude d'association de celle-ci avec des données génomiques
-constitue un bon test pour les méthodes de correction pour les variables
-latentes. Nous pourrons en effet comparer nos résultats à ceux des nombreuses
+La maladie \celiac TODO_espace est une maladie auto-immune ayant une prévalence
+de près de $1 \%$ dans la population générale citep:Gujral_2012. Bien que les
+mécanismes d'apparition de cette maladie ne soient pas compris, des études
+montrent de fortes associations avec certains gènes citep:dubois2010multiple,
+laissant envisager des causes génétiques à la maladie. Comme la maladie \celiac
+est très étudiée, faire une étude d'association de celle-ci avec des données
+génomiques constitue un bon test pour les méthodes de correction des facteurs de
+confusion. Nous pourrons en effet comparer nos résultats à ceux des nombreuses
 autres GWAS de la maladie \celiac. Pour cela, nous avons utilisé la base de
 données GWAS catalog pour récupérer les SNPs ayant été identifiés dans d'autres
 études comme étant associés avec la maladie \celiac. Par ailleurs, nous savons
 que la stratification des individus en populations peut être un facteur de
-confusion dans les GWAS. Il est habituel de corriger les GWAS en utilisant les
-scores de l'ACP des données génétiques pour représenter la structure de
-population citep:Price_2006. Nous proposons ici de faire une étude d'association
-entre la maladie \celiac et des données génétique présentées dans
-citep:dubois2010multiple. Ces données comportent 281122 SNPs pour 15155
-individus, 10659 individus sains et 4496 atteints de la maladie \celiac.
+confusion dans les GWAS. Une pratique commune consiste à corriger les GWAS en
+utilisant les scores de l'ACP des données génétiques citep:Price_2006. Nous
+proposons ici de faire une étude d'association entre la maladie \celiac et des
+données génétiques présentées dans citep:dubois2010multiple. Ces données
+comportent 281122 SNPs pour 15155 individus, 10659 individus sains et 4496
+atteints de la maladie \celiac.
 
 Avant d'appliquer les méthodes d'étude d'association, nous avons filtré les
 données génétiques afin de garder seulement les SNPs ayant le variant le moins
 fréquent présent dans au moins $5\%$ des observations. Nous avons de plus filtré
 les individus trop apparentés. Pour cela, nous avons mesuré la probabilité
-qu'une séquence consécutive de SNPs prise chez deux individus différents soit
-identique. Si la probabilité est supérieure à $0.08$ nous avons gardé qu'un des
-deux individus. Par ailleurs, il est connu que les SNPs sont corrélés le long du
+qu'une séquence de SNPs, prise chez deux individus différents, soit identique.
+Si la probabilité est supérieure à $0.08$, nous n'avons gardé qu'un des deux
+individus. Par ailleurs, il est connu que les SNPs sont corrélés le long du
 génome par liaison génétique (LD, linkage disequilibrium). Nous avons donc
 filtré les SNPs très corrélés entre eux. Cette étape est identifiée dans la
 littérature comme l'étape de "LD pruning". Pour chaque SNP nous n'avons gardé
-que le SNP de variance maximum sur une fenêtre de 100 SNPs et cela sur les SNPs
+que le SNP de variance maximum sur une fenêtre de 100 SNPs, et cela sur les SNPs
 ayant un coefficient de corrélation linéaire au carré qui est supérieur à $0.2$.
 Cette procédure de prunning nous a permis d'identifier un sous ensemble de 80275
 SNPs. Les opérations de filtrage ont été effectuées à l'aide du logiciel plink
 citep:Purcell_2007. Enfin nous avons utilisé le logiciel beagle pour imputer les
 données manquantes de la matrice de SNPs citep:Browning_2016.
 
-Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM, ridgeLFMM dans le
-but de trouver les SNPs associés avec la maladie \celiac. Afin d'estimer les
-variables latentes pour corriger le test d'association entre les SNPs et la
-maladie \celiac, nous avons appliqué les méthodes sur le sous-ensemble de 80275
-SNPs identifiés par l'étape de pruning. Par la suite, nous avons effectué le
-test d'hypothèse présenté dans la partie [[sec:hypothese]] sur les 281122 SNPs en
-utilisant l'estimation des variables latentes calculées sur le sous ensemble de
-80275 SNPs. Les 281122 SNPs ont finalement été groupés par région de où les SNPs
-sont corrélé avec leur voisin. Cette étape a été réalisé à l'aide de
-l'algorithme de clumping du logiciel plink. L'algorithme de clumping groupe les
-SNPs en paquet par région où les SNPs sont corrélés entre eux. La \pvalue
-attribué au groupe la plus faible \pvalue des SNPs du groupe. Le contrôle du FDR
-a été réalisé de la même façon que dans l'étude EWAS.
+Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM et ridgeLFMM dans le
+but de trouver les SNPs associés à la maladie \celiac. Afin d'estimer les
+facteurs de confusion, nous avons appliqué les méthodes sur le sous-ensemble de
+80275 SNPs identifiés par l'étape de pruning. Par la suite, nous avons effectué
+le test d'hypothèse présenté dans la section [[sec:hypothese]] sur les 281122 SNPs,
+en utilisant l'estimation des variables latentes calculées sur le sous-ensemble
+de 80275 SNPs. Les 281122 SNPs ont finalement été groupés par voisinage de SNPs
+corrélés. Cette étape a été réalisée à l'aide de l'algorithme de clumping du
+logiciel plink. La \pvalue attribuée au groupe est la plus faible \pvalue du
+groupe. Le contrôle du FDR a été réalisé de la même façon que dans l'étude EWAS.
 
 **** Scripts                                                    :noexport:
 ***** DONE Téléchargement des données
@@ -6719,14 +6746,14 @@ GRCh38.
 *** Étude d'association entre des données génétiques et un gradient environnemental (GEAS)
 
 Depuis Darwin nous savons que les organismes vivants s'adaptent à leur
-environnement citep:Darwin. Ainsi les organismes les mieux adaptés à leur habitat
-ont plus de chance de survivre et de se reproduire. Si l'avantage adaptatif a
-des causes génétiques, c'est à dire qu'il existe une combinaison de gènes qui
-confère à l'organisme une fonction lui permettant d'être mieux adapté à son
-habitat, alors le patrimoine génétique qui confère l'avantage adaptatif est
-transmis aux futures générations. Nous pouvons chercher à détecter les
-signatures génétiques laissées par l'adaptation à l'environnement comme nous
-l'avons fait dans le chapitre précédent. 
+environnement citep:Darwin. Ainsi les organismes les mieux adaptés à leur
+habitat ont plus de chance de survivre et de se reproduire. Si l'avantage
+adaptatif a des causes génétiques, c'est-à-dire qu'il existe une combinaison de
+gènes qui confère à l'organisme une fonction lui permettant d'être mieux adapté
+à son habitat, alors le patrimoine génétique qui confère l'avantage adaptatif
+est transmis aux futures générations. Nous pouvons chercher à détecter les
+signatures génétiques laissées par l'adaptation à l'environnement, comme nous
+l'avons fait dans le chapitre précédent.
 
 Nous proposons maintenant de détecter les signatures de l'adaptation à
 l'environnement en faisant une étude d'association d'un gradient environnemental
@@ -6734,33 +6761,34 @@ avec des données génétiques. Pour cela nous avons récupéré les données
 génétiques du projet 1000Genome phase 3 citep:1000Genome_2015. Ces données
 regroupent $84.4$ millions de variants génétiques pour 2506 individus venant de
 26 populations différentes. Par ailleurs nous avons récupéré des données
-climatiques à partir de la base de données WorldClim 2.0 citep:fick17_world. Nous
-avons filtré les individus trop apparentés et les variants génétiques de faible
-fréquences de la même façon que l'étude GWAS (voir section [[sec:gwas]]). Nous avons
-enlevé les populations afro-américaine et africaine des caraïbes pour ne garder
-que les individus vivant dans leurs environnements depuis plusieurs générations.
-Après cette étape de filtrage il reste 1409 individus et 5397214 locus. Enfin,
-de la même façon que pour l'étude GWAS nous avons identifié un sous ensemble de
-296948 SNPs grâce au LD pruning. Nous avons utilisé ce sous ensemble de locus
-pour calculer les variables latentes avec les méthodes PCAlm, cate, lassoLFMM et
-ridgeLFMM. Nous avons calculé ensuite des \pvalues pour chacun des 5397214 locus
-et pour chacune des méthodes. La liste des candidats retournées par les méthodes
-a été étudiée grâce au logiciel VEP (Variant Effect Predictor). Le logiciel VEP
-permet d'annoter l'effet d'un polymorphisme sur l'expression des gènes
-citep:McLaren_2016. Les annotations retournés par VEP sont classées en catégorie
-d'importance: LOW, MODERATE et HIGH. Nous avons réalisé un test exact de Fisher
-afin d'étudier la sur-représentation de chacune des catégories d'annotations.
-Nous avons enfin utiliser le package BiomaRt afin d'annoter les SNPs qui ont été
-associés avec un phénotype dans d'autre étude.
+climatiques à partir de la base de données WorldClim 2.0 citep:fick17_world.
+Nous avons filtré les individus trop apparentés et les variants génétiques de
+faible fréquence, de la même façon que l'étude GWAS (voir section [[sec:gwas]]).
+Nous avons enlevé les populations afro-américaine et africaine des Caraïbes pour
+ne garder que les individus vivant dans leur environnement depuis plusieurs
+générations. Après cette étape de filtrage il reste 1409 individus et 5397214
+locus. Enfin, de la même façon que pour l'étude GWAS nous avons identifié un
+sous ensemble de 296948 SNPs grâce au LD pruning. Nous avons utilisé ce sous
+ensemble de locus pour calculer les variables latentes avec les méthodes PCAlm,
+cate, lassoLFMM et ridgeLFMM. Nous avons calculé ensuite des \pvalues pour
+chacun des 5397214 locus et pour chacune des méthodes. Les candidats retournés
+par les méthodes a été étudiée grâce au logiciel VEP (Variant Effect Predictor).
+Le logiciel VEP permet d'annoter l'effet d'un polymorphisme sur l'expression des
+gènes citep:McLaren_2016. Les annotations retournées par VEP sont classées en
+catégories d'importance: LOW, MODERATE et HIGH. Nous avons réalisé un test exact
+de Fisher afin d'étudier la sur-représentation de chacune des catégories
+d'annotations. Nous avons enfin utilisé le package BiomaRt afin d'annoter les
+SNPs qui ont été associés à un phénotype dans d'autres études.
 
 
-Afin de calculer le gradient climatique utilisé pour l'étude d'association nous
-avons attribué une position géographique à chaque individu en prenant la capital
-de son pays d'origine. Cela nous a permis de récupérer les données climatiques
-pour les positions géographique à partir de la base de données WorlClim. Pour
-définir une variable explicative, nous ne gardons que la première composante
-principale des variables de la base Wordclim. La Figure ref:fig:eas_gradient
-représente la valeur du gradient climatique pour chaque population.
+Afin de calculer le gradient climatique utilisé pour l'étude d'association, nous
+avons attribué une position géographique à chaque individu en prenant la
+capitale de son pays d'origine. Cela nous a permis de récupérer les données
+climatiques pour les positions géographiques à partir de la base de données
+WorlClim. Pour définir une variable explicative, nous n'avons gardé que la
+première composante principale des variables de la base Wordclim. La Figure
+ref:fig:eas_gradient représente la valeur du gradient climatique pour chaque
+population.
 
 #+NAME: code:geas:map
 #+CAPTION: Dépend de [[code:tess3:comparison:plot]]
@@ -6780,7 +6808,7 @@ représente la valeur du gradient climatique pour chaque population.
 \begin{figure}[!h]
 \centering
 \includegraphics{./OUTPUT/Rplots/eas_climatic_gradient.pdf}
-\caption{Gradient climatique $\X$ utilisé pour l'association génotype-environement.}
+\caption{Gradient climatique $\X$ utilisé pour l'association génotypes-environnement.}
 \label{fig:eas_gradient}
 \end{figure}
 #+END_EXPORT
@@ -10004,12 +10032,12 @@ Install it with: `devtools::install_github('hadley/ggplot2')`
 : [1] "/home/cayek/Projects/Thesis/MaThese"
 
 Dans cette partie, nous présentons les expériences numériques que nous avons
-réalisées pour évaluer la performance de nos algorithmes de correction des
+réalisées, pour évaluer la performance de nos algorithmes de correction des
 facteurs de confusion dans les études d'association. Les deux nouveaux
 algorithmes ont été implémentés dans le langage de programmation R et sont
 appelés respectivement ridgeLFMM pour l'estimation $L_{2}$ et lassoLFMM pour
 l'estimation $L_{1}$. Nos méthodes sont comparées aux méthodes présentées dans
-la partie [[sec:similar_method]]. Les méthodes de régression linéaires avec et sans
+la partie [[sec:similar_method]]. Les méthodes de régression linéaire avec et sans
 les scores de l'ACP ont été implémentées dans le langage R. Elles sont
 respectivement appelées lm et PCAlm. Pour les méthodes cate, sva-irw et
 sva-two-step, nous avons respectivement utilisé les implémentations R mises à
@@ -10017,40 +10045,42 @@ disposition par leurs auteurs respectifs.
 *** Comparaison des méthodes sur des données simulées
 Sur les 125 jeux de données simulés, nous avons utilisé les méthodes lm, PCAlm,
 sva-irw, sva-two-step, cate, les deux méthodes présentées dans ce chapitre
-lassoLFMM et ridgeLFMM, et la méthode oracle. Pour comparer les méthodes nous
-avons calculé les facteur d'inflation et aire sur la courbe précision-rappel.
-Les méthodes cate, lassoLFMM et ridgeLFMM ont des performances similaires à
-l'oracle sur toutes les simulations (Figure ref:fig:method_comp). Nous
-constatons toutefois une exception pour les simulations avec un paramètre de
-corrélation $\rho$ qui vaut 1. Sur les simulation avec une forte corrélation
-entre les variable latentes et la variable explicative cate et ridgeLFMM qui
-renvoie des \pvalues avec un taux d'inflation moyen de $3.3$ alors que celui de
-lassoLFMM vaux $1.3$ et celui de l'oracle $1.0$ (Figure ref:fig:method_comp D).
-Nous constatons par ailleurs que méthodes cate et ridgeLFMM donnent des
-résultats très similaires sur toutes les simulations. Les performances de la
-méthode lm sont sensible au paramètre de corrélation $\rho$. Lorsque le
-paramètre de corrélation est faible l'AUC de lm et le facteur d'inflation de lm
-est proche de ceux de l'oracle ($\rho = 0.1$, Figure ref:fig:method_comp B et
-D). Mais le facteur d'inflation de lm croit jusqu'à plus de 30 et l'AUC décroit
-jusqu'à la moitié de celui de l'oracle il y a une fort corrélation entre les
-variables latentes et explicative ($\rho = 1$, Figure ref:fig:method_comp B et
-D). Les \pvalues de la méthode PCAlm sont toujours correctement calibrées
-puisque le facteur d'inflation est toujours autour de 1 (Figure
-ref:fig:method_comp C et D). Cependant l'écart de l'AUC de PCAlm avec l'AUC
-obtenu par l'oracle croit avec la proportion de vrais associations et le
-paramètre de corrélation $\rho$ (Figure ref:fig:method_comp A et B). Les méthodes
-sva-two-step et sva-irw renvoient des \pvalues correctement calibrées sauf quand
-le paramètre de corrélation $\rho$ vaut 0.8 et 1.0 (Figure ref:fig:method_comp C
-et D). L'AUC de sva-irw est toujours en dessous de l'AUC de l'oracle pour toute
-les proportions de vrais associations dans les simulations (Figure
-ref:fig:method_comp A) et la différence de l'AUC de sva-irw avec de l'AUC de
-l'oracle croit avec le paramètre de corrélation $\rho$ (Figure
+(lassoLFMM et ridgeLFMM) et la méthode oracle. Pour comparer les méthodes, nous
+avons calculé les facteurs d'inflation et les aires sur la courbe
+précision-rappel (AUC). Les méthodes cate, lassoLFMM et ridgeLFMM ont des
+performances similaires à l'oracle sur toutes les simulations (Figure
+ref:fig:method_comp). Nous constatons toutefois une exception pour les
+simulations avec un paramètre de corrélation $\rho$ qui vaut 1. Sur les
+simulations avec une forte corrélation entre les variables latentes et la
+variable explicative, cate et ridgeLFMM renvoient des \pvalues avec un taux
+d'inflation moyen de $3.3$ alors que celui de lassoLFMM vaux $1.3$ et celui de
+l'oracle $1.0$ (Figure ref:fig:method_comp D). Nous constatons par ailleurs que
+les méthodes cate et ridgeLFMM donnent des résultats très similaires sur toutes
+les simulations. Les performances de la méthode lm sont sensibles au paramètre
+de corrélation $\rho$. Lorsque le paramètre de corrélation est faible, l'AUC de
+lm et le facteur d'inflation de lm sont proches de ceux de la méthode oracle
+($\rho = 0.1$, Figure ref:fig:method_comp B et D). Mais le facteur d'inflation
+de lm croît jusqu'à plus de 30 et l'AUC décroît jusqu'à la moitié de celui de la
+méthode oracle lorsqu'il y a une forte corrélation entre les variables latentes
+et la variable explicative ($\rho = 1$, Figure ref:fig:method_comp B et D). Les
+\pvalues de la méthode PCAlm sont toujours correctement calibrées puisque le
+facteur d'inflation est toujours autour de 1 (Figure ref:fig:method_comp C et
+D). Cependant l'écart de l'AUC de PCAlm avec l'AUC obtenu par la méthode oracle
+croît avec la proportion de vraies associations et le paramètre de corrélation
+$\rho$ (Figure ref:fig:method_comp A et B). Les méthodes sva-two-step et sva-irw
+renvoient des \pvalues correctement calibrées sauf quand le paramètre de
+corrélation $\rho$ vaut 0.8 et 1.0 (Figure ref:fig:method_comp C et D). L'AUC de
+sva-irw est toujours en dessous de l'AUC de la méthode oracle pour toutes les
+proportions de vraies associations dans les simulations (Figure
+ref:fig:method_comp A), et la différence entre l'AUC de sva-irw et l'AUC de la
+méthode oracle croît avec le paramètre de corrélation $\rho$ (Figure
 ref:fig:method_comp B). Nous observons également que l'AUC de sva-two-step est
-très légèrement en dessous de l'AUC de l'oracle pour toute les proportions de
-vrais asociations dans les simulations (Figure ref:fig:method_comp A) et comme
-pour sva-irw la différence de l'AUC de sva-two-step avec l'AUC de l'oracle
-croit avec le paramètre de corrélation $\rho$ mais plus faiblement que pour
-sva-irw (Figure ref:fig:method_comp B).
+très légèrement en dessous de l'AUC de la méthode oracle pour toutes les
+proportions de vraies associations dans les simulations (Figure
+ref:fig:method_comp A) et, comme pour sva-irw, la différence de l'AUC de
+sva-two-step avec l'AUC de la méthode oracle croît avec le paramètre de
+corrélation $\rho$ mais plus faiblement que pour sva-irw (Figure
+ref:fig:method_comp B).
 
 #+NAME: code:lfmm_comp_toprint
 #+CAPTION: Dépend de [[code:num_val_plot]]
@@ -10525,11 +10555,11 @@ CLOSED: [2017-08-10 jeu. 11:30]
 <<sec:ewas>> 
 
 Nous avons appliqué les méthodes cate, lm, PCAlm, sva-irw, sva-two-step,
-lassoLFMM, ridgeLFMM afin de trouver les sites de méthylation de l'ADN associés
-à la polyarthrite. Nous avons choisi $\K = 10$ pour le nombre de variables
-latentes (voir Figure ref:fig:ewas_params A et B). Pour $\K = 10$, les valeurs
-du paramètre de régularisation $L_{2}$ ($\lambRidge$) entre $10^{-10}$ et $1.0$
-donnent les mêmes valeurs moyennes d'erreur de prédiction (Figure
+lassoLFMM et ridgeLFMM afin de trouver les sites de méthylation de l'ADN
+associés à la polyarthrite. Nous avons choisi $\K = 10$ pour le nombre de
+variables latentes (voir Figure ref:fig:ewas_params A et B). Pour $\K = 10$, les
+valeurs du paramètre de régularisation $L_{2}$ ($\lambRidge$) entre $10^{-10}$
+et $1.0$ donnent les mêmes valeurs moyennes d'erreur de prédiction (Figure
 ref:fig:ewas_params C). Nous avons choisi de prendre $\lambRidge = 10^{-5}$ pour
 ridgeLFMM.
 
@@ -10569,19 +10599,21 @@ ridgeLFMM.
 
 La figure ref:fig:ewas_qqplot_top A montre la distribution observée des \pvalues
 pour chaque site de méthylation renvoyées par chaque méthode contre la
-distribution théorique sous l'hypothèse nulle. On constate une inflation du
-nombre de petites \pvalues pour toutes les méthodes. Il y a une forte inflation
-pour les méthodes lm et sva-irw. La figure ref:fig:ewas_qqplot_top B montre la
-proportion des candidats identifiés par citet:Zou_2014,Rahmani_2016 qui sont
-retrouvés dans les "top" listes de chaque méthode. Nous rappelons que les
-candidats identifiés par citet:Zou_2014,Rahmani_2016 sont au nombre de 5.
-Ils ont été identifiés en prenant en compte les facteurs de confusion tel que
-l'age, le sexe et une estimation de la composition cellulaire. Les méthodes
-considérées dans notre analyse retrouvent les candidats de la littérature dans
-leurs 40 premiers rangs, sauf lm et sva_irw. Pour la méthode lm, il faut prendre
-le rang 11881 pour trouver le premier candidat de citet:Zou_2014,Rahmani_2016 et
-le rang 138038 pour tous les avoir. Pour la méthode sva-irw, les candidats de
-citet:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et $87659$.
+distribution théorique sous l'hypothèse nulle. On constate une augmentation du
+nombre de petites \pvalues pour toutes les méthodes; cette augmentation est
+encore plus forte pour les méthodes lm et sva-irw. La figure
+ref:fig:ewas_qqplot_top B montre la proportion des candidats identifiés par
+citet:Zou_2014,Rahmani_2016 qui sont retrouvés dans les "top" listes de chaque
+méthode. Nous rappelons que les candidats identifiés par
+citet:Zou_2014,Rahmani_2016 sont au nombre de 5. Ils ont été identifiés en
+prenant en compte les facteurs de confusion tels que l'âge, le sexe et une
+estimation de la composition cellulaire. Les méthodes considérées dans notre
+analyse retrouvent les candidats de la littérature dans leurs 40 premiers rangs,
+sauf lm et sva_irw. Pour la méthode lm, il faut prendre le rang 11881 pour
+trouver le premier candidat de citet:Zou_2014,Rahmani_2016, et le rang 138038
+pour tous les avoir. Pour la méthode sva-irw, les candidats de
+citet:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et
+$87659$.
 
 #+NAME: code:lfmm_ewas_res_print
 #+CAPTION: Dépend de [[code:ewas_qqplot_top]]
@@ -10614,12 +10646,12 @@ citet:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et $876
 #+END_EXPORT
 
 Nous avons écarté lm et sva-irw car ils renvoyaient des listes trop différentes
-des autres. Parmi les 19 candidats trouvés par toutes les méthodes quand on
-contrôle de FDR à $1 \%$ on retrouve les 5 candidats identifiés par
-citet:Zou_2014,Rahmani_2016 (Figure ref:fig:ewas_venn). Nous remarquons
-de plus que d'autres sites de méthylation situés dans des gènes sont détectés
-avant les 5 candidats de la littérature. En particulier, nous trouvons des gènes
-situés dans le complexe de gènes HLA qui joue un rôle central dans le système
+des autres. Parmi les 19 candidats trouvés par toutes les méthodes lorsque nous
+contrôlons le FDR à $1 \%$, nous retrouvons les 5 candidats identifiés par
+citet:Zou_2014,Rahmani_2016 (Figure ref:fig:ewas_venn). Nous remarquons de plus
+que d'autres sites de méthylation situés dans des gènes sont détectés avant les
+5 candidats de la littérature. En particulier, nous trouvons des gènes situés
+dans le complexe de gènes HLA qui joue un rôle central dans le système
 immunitaire (Table ref:table:ewas).
 
 #+NAME: code:lfmm_ewas_venn_print
@@ -12563,11 +12595,11 @@ plus d'info... Les autres éudes
 
 *** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
 
-Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM, ridgeLFMM afin de
+Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM et ridgeLFMM afin de
 trouver les SNPs associés avec la maladie \celiac. Nous avons utilisé les
 méthodes avec 9 variables latentes (Figure ref:fig:gwas_params A et B). La
 validation croisée du paramètre $\lambRidge$ tend à sélectionner une forte
-valeur pour celui-ci (Figure ref:fig:gwas_params C), nous avons choisi $10^3$.
+valeur pour celui-ci (Figure ref:fig:gwas_params C); nous avons choisi $10^3$.
 La validation croisée présentée sur la Figure ref:fig:gwas_params C sélectionne
 une valeur plus grande que $10^3$. Nous avons choisi $10^3$ car, comme nous
 l'avons discuté dans la partie [[sec:paramL2]], $\lambRidge$ trop grand conduit la
@@ -12607,16 +12639,16 @@ méthode ridgeLFMM à renvoyer les mêmes résultats que PCAlm.
 
 Les méthodes fournissent des \pvalues bien calibrées avec une forte inflation du
 nombre de petites \pvalues (Figure ref:fig:gwas_qqplot_top A). La méthode la
-plus libérale est lm alors que ridgeLFMM et PCAlm est la méthode la plus
-conservative. Le chromosome 6 contient le complexe de gènes HLA. Ce complexe de
-gènes joue un rôle important dans le système immunitaire et dans la maladie
-\celiac citep:dubois2010multiple. Nous avons séparer les SNPs candidats du GWAS
-catalog retrouvés sur le chromosome 6 des autre chromosomes. Les candidats du
-GWAS catalog sur le chromosome 6 sont retrouvé plus tôt dans les listes
-retournées par les méthodes PCAlm et ridgeLFMM (Figure ref:fig:gwas_qqplot_top
-B). Sur les autres chromosomes ce sont les méthodes lassoLFMM et cate qui
-retrouve le plus vite les candidats du GWAS catalog (Figure
-ref:fig:gwas_qqplot_top B). Parmi
+plus libérale est lm, alors que ridgeLFMM et PCAlm sont les méthodes les plus
+conservatives. TODO Le chromosome 6 contient le complexe de gènes HLA. Ce
+complexe de gènes joue un rôle important dans le système immunitaire et dans la
+maladie \celiac citep:dubois2010multiple. Nous avons séparé les SNPs candidats
+du GWAS catalog retrouvés sur le chromosome 6 des autre chromosomes. Les
+candidats du GWAS catalog sur le chromosome 6 sont retrouvé plutôt dans les
+listes retournées par les méthodes PCAlm et ridgeLFMM (Figure
+ref:fig:gwas_qqplot_top B). Sur les autres chromosomes, ce sont les méthodes
+lassoLFMM et cate qui retrouvent le plus vite les candidats du GWAS catalog
+(Figure ref:fig:gwas_qqplot_top B). 
 
 #+NAME: code:gwas_qqplot_top_print
 #+CAPTION: Dépend de [[code:gwas_qqplot]]
@@ -12656,14 +12688,13 @@ ref:fig:gwas_qqplot_top B). Parmi
 \end{figure}
 #+END_EXPORT
 
-La Figure ref:fig:gwas_venn montre l'intersection des listes contrôlés à un FDR
-de $1\%$ entre les méthodes. Ce sont ridgeLFMM et PCAlm qui donnent les plus
-petites listes contrôlées avec 754 candidats pour ridgeLFMM et 777 candidats
-pour PCAlm. Les méthodes cate et lm donne la plus grande liste avec le même
-nombre de 1319 candidats. Nous constatons que l'intersection des listes à FDR
-contrôlé de toutes les méthodes ne contient que $28\%$ des candidats du GWAS
-catalog. Dans les 20 premières zone détecté par lassoLFMM, en dehors du
-chromosome 6, 6 zones ne contiennent pas de SNPs référencé dans le GWAS catalog
+Ce sont ridgeLFMM et PCAlm qui donnent les plus petites listes contrôlées avec
+754 candidats pour ridgeLFMM et 777 candidats pour PCAlm (Figure
+ref:fig:gwas_venn). Les méthodes cate et lm donnent les plus grandes listes avec
+le même nombre de 1319 candidats. Nous constatons que l'intersection des listes
+à FDR contrôlé de toutes les méthodes ne contient que $28\%$ des candidats du
+GWAS catalog. Dans les 20 premières zone détecté par lassoLFMM, en dehors du
+chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS catalog
 (Table ref:table:gwas_table).
 
 #+NAME: code:lfmm_gwas_venn_print
@@ -14756,14 +14787,14 @@ Gènes nouveaux :
 <<sec:GEAS>>
 
 Nous avons appliqué les méthodes cate, ridgeLFMM, lassoLFMM et PCAlm avec 9
-variables latentes afin de trouver les SNPs associés avec un gradient
-climatique. Nous avons utilisé les méthodes avec 9 variables latentes (Figure
+variables latentes, afin de trouver les SNPs associés à un gradient climatique.
+Nous avons utilisé les méthodes avec 9 variables latentes (Figure
 ref:fig:eas_params A et B). Le screeplot et l'erreur de validation croisée
-conduisent à choisir 5 variables latentes mais nous avons choisi un nombre
+conduisent à choisir 5 variables latentes, mais nous avons choisi un nombre
 légèrement plus élevé car les individus proviennent de 16 populations
-différentes. Pour $\K = 9$ , la validation croisée du paramètre de
-régularisation $L_{2}$ est plus faible pour $\lambRidge = 10^{-5}$. Nous avons
-choisi une proportion de lignes non nulles de $\B$ valant $1 \%$ pour lassoLFMM.
+différentes. Pour $\K = 9$, la validation croisée du paramètre de régularisation
+$L_{2}$ est plus faible que pour $\lambRidge = 10^{-5}$. Nous avons choisi une
+proportion de lignes non nulles de la matrice $\B$ valant $1 \%$ pour lassoLFMM.
 
 #+NAME: code:lfmm_geas_param_print
 #+CAPTION: Dépend de [[code:eas_screeplot_CV]]
@@ -14799,29 +14830,29 @@ choisi une proportion de lignes non nulles de $\B$ valant $1 \%$ pour lassoLFMM.
 #+END_EXPORT
 
 La figure ref:fig:geas_qqplot montre la distribution observée des \pvalues
-renvoyées par chaque méthode contre la distribution théorique sous l'hypothèse
+renvoyées par chaque méthode, contre la distribution théorique sous l'hypothèse
 nulle. Nous constatons une forte inflation pour les petites \pvalues de la
 méthode lm. Le MAD des \pvalues renvoyées par lm est de $8.7$. De plus nous
 remarquons que le diagramme quantile-quantile de lm forme une droite. Cela
-signifie que la calibration des \pvalues retourner par la méthode lm ne permet
+signifie que la calibration des \pvalues retournées par la méthode lm ne permet
 pas d'identifier des \pvalues atypiques et donc des candidats pour
 l'association. Par contre, on observe un excès \pvalues atypiques dans les
 \pvalues renvoyées par les autre méthodes. Pour les méthodes PCAlm, ridgeLFMM,
-lassoLFMM et cate nous avons calculé la liste des candidats quand on contrôle le
-FDR à $1 \%$. La méthode lm a été écartée pour les raisons que nous venons
-d'évoquer. La Figure ref:fig:gwas_venn montre l'intersection des listes de
-candidats contrôlés à un FDR de $1\%$ entre les méthodes. L'union des candidats
-retournés par ces quatre méthodes donne 836 SNPs. Nous avons étudié la
-sur-représentation de chacun de des degré d'annotation de vep dans la sous
-listes des 836 SNPs par rapport à la liste complète de SNPs. Nous constatons
-qu'il y a en proportion 22 fois plus d'annotation HIGH, 8 fois plus de MODERATE
-et $1.7$ fois plus de LOW dans la les 836 SNPs que dans les 5397214 SNPs. Nous
-avons de plus testé si chaque rapport de proportion est significativement
-supérieur à 1 à l'aide d'un test exacte de Fisher et les trois tests renvoie une
-\pvalue inférieure à $0.005$. Nous observons que dans l'union des candidats 21
-SNPs sont référencé dans le GWAS catalog pour être associés avec différent
-phénotype lié à l'environnement (Table ref:table:geas). Aucun SNP référencé
-dans le GWAS catalog n'est détecté par les méthodes lm et PCAlm.
+lassoLFMM et cate, nous avons calculé la liste des candidats lorsque nous
+contrôlons le FDR à $1 \%$. La méthode lm a été écartée pour les raisons que
+nous venons d'évoquer. La Figure ref:fig:gwas_venn montre l'intersection des
+listes de candidats contrôlés à un FDR de $1\%$ entre les méthodes. L'union des
+candidats retournés par ces quatre méthodes donne 836 SNPs. Nous avons étudié la
+sur-représentation de chacun des degrés d'annotation de vep dans la sous-liste
+des 836 SNPs par rapport à la liste complète de SNPs. Nous constatons qu'il y a
+en proportion 22 fois plus d'annotation HIGH, 8 fois plus de MODERATE et $1.7$
+fois plus de LOW dans la les 836 SNPs que dans les 5397214 SNPs. Nous avons de
+plus testé si chaque rapport de proportion est significativement supérieur à 1 à
+l'aide d'un test exact de Fisher; les trois tests renvoient une \pvalue
+inférieure à $0.005$. Nous observons que dans l'union des candidats 21 SNPs sont
+référencés dans le GWAS catalog pour être associés à différents phénotypes liés
+à l'environnement (Table ref:table:geas). Aucun SNP référencé dans le GWAS
+catalog n'est détecté par les méthodes lm et PCAlm.
 
 #+NAME: code:geas_qqplot_print
 #+CAPTION: Très long !!! Dépend de [[code:geas_qqplot]]
@@ -16535,27 +16566,27 @@ CLOSED: [2017-09-22 ven. 11:28]
 :END:
 
 Les études d'association sont largement utilisées en biologie pour trouver des
-liens de corrélation entre des variables biologiques. Nous nous sommes intéressé
-à la situation où des variables non observées expliquent une partie des
-variations des variables expliqué et sont corrélé aux variables explicatives.
-Nous avons proposé dans ce chapitre deux algorithmes, ridgeLFMM et lassoLFMM,
-pour corriger les études d'association à l'aide de facteurs latents. Nos
-méthodes reposent sur les solutions optimales de problèmes de moindres carré
-régularisés. La méthode ridgeLFMM utilise une régularisation $L_{2}$ de la
-matrice des effets des variables expliquées sur la variable explicative. La
-régularisation $L_{2}$ permet de définir de façons unique la matrice des
-variables latentes. La méthode lassoLFMM utilise une régularisation $L_{1}$ sur
-la matrice des effets. La régularisation $L_{1}$ permet de choisir a priori la
-proportion de variables expliquées associées avec la variable explicative. Les
-deux algorithmes d'estimation des facteurs de confusion que nous avons présentés
-reposent sur les deux mêmes étapes : on transformer la matrice des variables
-expliqué afin d'estimer les variables latentes puis on estimer les effets des
-variables explicatives sur les variables expliquées. L'algorithme ridgeLFMM fait
-une seul fois chaque étape tandis que l'algorithme lassoLFMM les itère plusieurs
-fois.
+liens de corrélation entre des variables biologiques. Nous nous sommes
+intéressés à la situation où des variables non observées expliquent une partie
+des variations des variables expliquées et sont corrélées aux variables
+explicatives. (TODO : revoir expliqué explicative) Nous avons proposé dans ce
+chapitre deux algorithmes, ridgeLFMM et lassoLFMM, pour corriger les études
+d'association à l'aide de facteurs latents. Nos méthodes reposent sur les
+solutions optimales de problèmes de moindres carrés régularisés. La méthode
+ridgeLFMM utilise une régularisation $L_{2}$ de la matrice des effets des
+variables expliquées sur la variable explicative TODO. La régularisation $L_{2}$
+permet de définir de façon unique la matrice des variables latentes. La méthode
+lassoLFMM utilise une régularisation $L_{1}$ sur la matrice des effets. La
+régularisation $L_{1}$ permet de choisir a priori la proportion de variables
+expliquées associées à la variable explicative. Les deux algorithmes
+d'estimation des facteurs de confusion que nous avons présentés reposent sur les
+deux mêmes étapes : on transforme la matrice des variables expliquées afin
+d'estimer les variables latentes, puis on estime les effets des variables
+explicatives sur les variables expliquées. L'algorithme ridgeLFMM fait une seule
+fois chaque étape, tandis que l'algorithme lassoLFMM les itère plusieurs fois.
 
 Afin dévaluer l'intérêt d'estimer les facteurs latents dans les études
-d'association nous avons considéré la méthode lm qui repose sur un modèle de
+d'association, nous avons considéré la méthode lm qui repose sur un modèle de
 régression de chaque variable expliquée par la variable explicative. Nous avons
 observé que les \pvalues retournées par lm sont mal calibrées en présence de
 facteurs de confusion. En outre, la méthode lm a montré moins de puissance pour
@@ -16565,44 +16596,45 @@ que leurs rangs.
 
 Nous avons considéré une méthode de correction pour les facteurs de confusion
 qui utilise les scores de l'ACP (PCAlm). Nous avons montré que la méthode PCAlm
-permet d'obtenir des \pvalues correctement calibrée sur les simulations et les
+permet d'obtenir des \pvalues correctement calibrées sur les simulations et les
 données réelles. Cependant nous avons observé sur les simulations que PCAlm
 retrouve moins bien les variables associées que les autres méthodes prenant en
 compte les variables latentes. De même, sur les données réelles la méthodes
-PCAlm propose moins de candidats passant ainsi à coté de certaines associations
+PCAlm propose moins de candidats, passant ainsi à côté de certaines associations
 potentielles.
 
 Les deux méthodes SVA comparées dans ce chapitre donnent des résultats
-similaires à PCAlm sur les simualtions numériques. La méthode sva-two-step donne
-des résultats très similaires à PCAlm sur l'EWAS alors que sva-two-step donne
-des résultats très atypique comparées aux autres méthodes considérées pour
-l'EWAS. Avec les bons hyper paramètres, il est possible que sva-irw donne des
-résultats comparables aux autres méthodes. Cependant il n'y a aucun garantit sur
-la convergence de sva-irw ce qui rend compliqué l'exploration pour trouver les
+similaires à PCAlm sur les simulations numériques. La méthode sva-two-step donne
+des résultats très similaires à PCAlm sur l'EWAS, alors que sva-two-step donne
+des résultats très atypiques comparés aux autres méthodes considérées pour
+l'EWAS. Avec les bons hyperparamètres, il est possible que sva-irw donne des
+résultats comparables aux autres méthodes. Cependant il n'y a aucun garantie sur
+la convergence de sva-irw; ce qui rend compliqué l'exploration pour trouver les
 bons paramètres de l'algorithme.
 
 Sur les jeux de données simulées nos algorithmes ont les mêmes performances que
-la méthode oracle qui connait les facteurs de confusion. Les \pvalues renvoyé
-par nos algorithmes sont bien calibrées sur les vrais jeux de données et
-permettent de retrouver les candidats trouvées par d'autres étude. Les
-performances globales de ces méthodes sont très comparable à la méthode cate.
-Bien que cate, ridgeLFMM et lassoLFMM ont des performances très similaires pour
-nos critères d'évaluation il existe tout de même des différences entre les
-listes de candidats renvoyés pas ces trois méthodes. Par ailleurs, il existe des
-techniques permettant de combiner les résultats venant de plusieurs méthodes
-pour tester l'association, cela permet de d'augmenter la confiance que l'on a en
-les résultats d'une étude d'association.
+la méthode oracle qui connait les facteurs de confusion. Les \pvalues renvoyées
+par nos algorithmes sont bien calibrées sur les vrais jeux de données, et
+permettent de retrouver les candidats trouvés par d'autres études. Les
+performances globales de ces méthodes sont très comparables à celles de la
+méthode cate. Bien que cate, ridgeLFMM et lassoLFMM aient des performances très
+similaires pour nos critères d'évaluation, il existe tout de même des différences
+entre les listes de candidats renvoyées pas ces trois méthodes. Par ailleurs, il
+existe des techniques permettant de combiner les résultats venant de plusieurs
+méthodes pour tester l'association; ce qui permettrait d'augmenter la confiance que
+l'on a en les résultats d'une étude d'association. TODO cite manhanobis
 
-Dans les études d'association sur des données réelles considérées ici il n'y pas
-de vérité terrain. De plus, une méthode peut toujours donner de meilleurs
-résultats qu'une autre sur des simulations bien choisis citep:Wolpert_1997. Sur
+Dans les études d'association sur des données réelles considérées ici, il n'y
+pas de vérité terrain. De plus, une méthode peut toujours donner de meilleurs
+résultats qu'une autre sur des simulations bien choisies citep:Wolpert_1997. Sur
 les données réelles nous avons constaté que les méthodes cate, lassoLFMM et
-ridgeLFMM retournent des \pvalues correctement calibré qui permette de calculer
-des listes de candidats pour l'association plus grandes que les autres méthodes.
-Nous avons implémenté nos algorithmes dans un package R. Cela permet aux
-utilisateurs de les utiliser avec d'autres algorithmes d'association. Ces deux
-nouvelles méthodes s'ajoutent ainsi à l'arsenal des méthodes permettant de
-corriger les tests d'association statistique pour les facteurs de confusion.
+ridgeLFMM retournent des \pvalues correctement calibrées qui permettent de
+calculer des listes pour des FDR controlé. Ces listes sont en général plus
+grandes que celles des autres méthodes. Nous avons implémenté nos algorithmes
+dans un package R. Ce qui permet aux utilisateurs de les combiner avec d'autres
+algorithmes d'association. Ces deux nouvelles méthodes s'ajoutent ainsi à
+l'arsenal des méthodes permettant de corriger les tests d'association
+statistique pour les facteurs de confusion.
 
 ** SANDBOX                                                        :noexport:
 :PROPERTIES:
@@ -16743,9 +16775,9 @@ Voir cahier le 7/08/2017
 
 Un grande partie de la biologie repose sur l'analyse des données provenant du
 monde qui nous entoure. Les techniques qui permettent d'acquérir les données
-évoluent, il est donc nécessaire que les méthodes pour les analyser évoluent
+évoluent; il est donc nécessaire que les méthodes pour les analyser évoluent
 également. Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes
-reposant sur des problèmes de factorisation de matrice. Pour certain algorithme
+reposant sur des problèmes de factorisation de matrice. Pour certains algorithmes
 nous avons prouvé leur convergence vers un point critique de leur fonction
 objectif. Nous avons démontré l'utilité de chacun de nos algorithmes sur des
 données réelles afin de répondre à des questions de la génétique moderne. Des
@@ -16776,13 +16808,13 @@ travaux.
   - etre actife quand on pose des questions
 :END:
 
-Le choix de d'implémentation des packages en R n'est pas anodin. La communauté R
+Le choix de l'implémentation des packages en R n'est pas anodin. La communauté R
 est très vivante et en particulier en analyse de données biologiques. Les
-packages que nous avons développés peuvent ainsi être intégré à des pipelines
+packages que nous avons développés peuvent ainsi être intégrés à des pipelines
 d'analyse de données biologiques faisant intervenir d'autre package R. Par
 ailleurs, le langage de programmation R est un langage "haut niveau" permettant
 une maintenance plus facile que sur des langages de programmation bas niveau tel
-que le langage C par exemple. Une perspective majeur de nos travaux est de
+que le langage C par exemple. Une perspective majeure de nos travaux est de
 maintenir nos packages en fonction des mises à jour du langage R, ou bien des
 rapports d'erreurs renvoyés par les utilisateurs. Un autre aspect important du
 développement des packages est la mise en place d'une documentation complète. Au
@@ -16791,14 +16823,14 @@ doit évoluer avec les retours des utilisateurs.
 
 Les packages =tess3r= et =lfmm= reposent sur des structures de données
 matricielles. Nous avons choisi d'utiliser la structure matricielle classique du
-langage R afin d'etre le plus général possible. Un question majeure pour les
+langage R afin d'être le plus général possible. Une question majeure pour les
 utilisateurs est de savoir comment charger les données en mémoire vive afin
 d'utiliser nos outils. Certains formats de fichier se sont imposés dans la
 communauté de la génétique, comme par exemple le format =.bed= du logiciel
-=plink=, ou le format =.vcf=. Ajouter une option permettant au utilisateurs de
-fournir directement un fichier formaté dans un format standard serait un réel
-avantage pour les utilisateurs. En outre, certains formats de fichier ont été
-pensés pour permette un accès rapide des données à la manière des algorithmes
+=plink=, ou le format =.vcf=. Ajouter une option permettant aux utilisateurs de
+fournir directement un fichier formaté dans un format standard, serait un réel
+avantage pour les utilisateurs. De plus, certains formats de fichier ont été
+pensés pour permettre un accès rapide des données à la manière des algorithmes
 onlines[fn:online]. C'est le cas par exemple du format =.bed=. Ne pas charger
 toutes les données dans la mémoire vive de l'ordinateur permettrait aux
 utilisateurs ayant des capacités en mémoire vive modeste d'utiliser nos
@@ -16808,8 +16840,8 @@ Enfin, pour rendre nos outils utilisables par le plus grand nombre il est très
 important de communiquer sur ceux-ci. En particulier, il faut inciter les
 utilisateurs à poser des questions sur les plateformes d'échange du type Stack
 Exchange comme [[https://www.biostars.org/][biostars]] et [[https://stackoverflow.com/documentation/r/topics][stackoverflow]]. Ces plateformes permettent des
-échanges avec les utilisateurs à la fois sur les aspects pratiques d'utilisation
-des packages mais aussi sur les aspects plus généralistes d'analyse de données.
+échanges avec les utilisateurs, à la fois sur les aspects pratiques d'utilisation
+des packages, mais aussi sur les aspects plus généralistes d'analyse de données.
 Ces échanges permettent de faire le lien entre statisticiens et biologistes et
 stimule la recherche de nouvelles méthodes statistiques.
 
@@ -16825,60 +16857,61 @@ doit prendre des décisions au fur et à mesure.
 :END:
 
 Les données réelles analysées lors de cette thèse peuvent être qualifiées de
-données "propre". Dit autrement, les données contiennent peu d'erreurs et peu de
-valeurs manquantes. Cependant, il est fréquent sur les grands jeux de données
-biologiques avec beaucoup variables qu'un certain nombre de variables ne soit
-pas observés pour tous les échantillons. Ou bien qu'il y ai des erreurs dans les
-variables observées. Par exemple, il et fréquent que les données génétiques
-comportent des erreurs de séquençage. Des données génétiques de très mauvaises
-qualités sont par exemple les données génétiques prélevées sur des espèces qui
+données "propres"; c'est-à-dire que les données contiennent peu d'erreurs et peu
+de valeurs manquantes. Cependant, il est fréquent sur les grands jeux de données
+biologiques avec beaucoup de variables, qu'un certain nombre de variables ne soit
+pas observé pour tous les échantillons. Ou bien qu'il y ait des erreurs dans les
+variables observées. Par exemple, il est fréquent que les données génétiques
+comportent des erreurs de séquençage. Des données génétiques de très mauvaise
+qualité sont par exemple les données génétiques prélevées sur des espèces qui
 se sont éteintes.
 
 Les algorithmes que nous avons développés ont été pensés pour fonctionner sur
-des matrices de données complètes. Dans le cas des données génétiques
-l'imputation des valeurs manquantes a été très étudiés citep:Browning_2016.
-Ainsi, l'approche la plus simple est d'imputer les valeurs manquantes avant de
-considérer d'autre analyse, d'association ou d'inférence de la structure de
-population par exemple. Cette approche fonctionne très bien pour les espèces
-très étudiées comme l'Humain. Pour de tel espèce, on a accès à beaucoup de
+des matrices de données complètes. Dans le cas des données génétiques,
+l'imputation des valeurs manquantes a été très étudiée citep:Browning_2016.
+L'approche la plus simple est d'imputer les valeurs manquantes avant de
+considérer d'autres analyses (d'association ou d'inférence de la structure de
+population par exemple). Cette approche fonctionne très bien pour les espèces
+très étudiées comme l'Humain. Pour de telles espèces, on a accès à beaucoup de
 génomes complets pouvant servir de référence pour l'imputation citep:Howie_2012.
-Pour des espèces anciennes ou simplement moins étudier l'imputation est moins
-évidentes.
+Pour des espèces anciennes ou simplement moins étudiées l'imputation est moins
+évidente.
 
-Les algorithmes que nous avons développé peuvent être découpé en une suite
-d'opération matricielle. Les opération matricielle n'étant pas défini avec des
-matrice incomplète il est nécessaire d'adapter les algorithmes pour qu'ils
-gèrent les valeurs manquantes. Nos algorithmes reposent sur des fonctions
-objectifs. Il donc est possible d'écrire les fonctions objectifs avec des
-matrices incomplète. Nous perdons cependant les structures matricielles des
-variables lors de l'optimisation de fonction objectif. Il faut alors envisager
-d'autres algorithmes d'optimisation que les algorithmes de descente par bloque
-de coordonnées utilisés dans nos méthodes. Une autre approche simple à
-implémenter consiste à imputer les données manquantes par leur moyenne ou une
-autre statistique. Quand il y a peu de données manquante, on s'attend a ce que
-cette méthode ne biaise pas trop l'inférence des facteurs dans les méthodes à
-facteurs comme l'ACP citep:josse2009gestion.
+Les algorithmes que nous avons développés peuvent être découpés en une suite
+d'opérations matricielles. Les opérations matricielles n'étant pas définies avec
+des matrices incomplètes, il est nécessaire d'adapter les algorithmes pour
+qu'ils gèrent les valeurs manquantes. Nos algorithmes reposent sur des fonctions
+objectif. Il est donc possible d'écrire les fonctions objectif avec des matrices
+incomplètes. Nous perdons cependant les structures matricielles des variables
+lors de l'optimisation des fonctions objectif. Il faut alors envisager d'autres
+algorithmes d'optimisation que les algorithmes de descente par blocs de
+coordonnées utilisés dans nos méthodes. Une autre approche simple à implémenter
+consiste à imputer les variables manquantes par leur moyenne ou une autre
+statistique. Quand il y a peu de données manquantes, on s'attend à ce que cette
+méthode ne biaise pas trop l'inférence des facteurs dans les méthodes à facteurs
+comme l'ACP citep:josse2009gestion.
 
 Une autre approche consiste à imputer au hasard une première fois les données
 manquantes. Puis dans le cadre d'un algorithme d'estimation itératif à chaque
 étape on utilise la valeur prédite par le modèle. Il s'agit de l'approche
-utilisé par l'algorithme SOFT-IMPUTE prévu pour fonctionner sur des matrices de
+utilisée par l'algorithme SOFT-IMPUTE prévu pour fonctionner sur des matrices de
 données très incomplètes
 citep:mazumder10_spect_regul_algor_learn_large_incom_matric. Cette approche
-pourrait être directement adaptable aux algorithmes APLS, AQP et lassoLFMM étant
-des algorithmes itératifs. Nous perdons cependant les propriétés de convergenceq
-démontré sur le algorithme AQP et lassoLFMM.
+pourrait être directement adaptable aux algorithmes APLS, AQP et lassoLFMM,
+ceux-ci étant des algorithmes itératifs. Nous perdons cependant les propriétés
+de convergence démontrées sur les algorithmes AQP et lassoLFMM.
 
 On attribue parfois un score sur la confiance des séquençages génétiques. Une
 méthode simple consiste à filtrer les observations ayant un score trop faible
 pour les traiter comme des données manquantes. Le problème est autrement plus
-complexe lorsque que nous ne somme pas capable de détecter les erreurs de mesure
-présentes dans les données biologiques. Nous avons évalué, dans le chapitre
-[[chap:tess3]], l'effet du bruit dans les données géographiques sur les résultats de
-nos algorithmes spatiaux d'estimation de l'ascendance. Cependant, nous pouvons
-nous interroger sur l'effets des valeurs aberrantes présentes dans les données
-génétiques. Ainsi que comment les erreurs de mesure peuvent influencer les
-études d'association faite à partir de notre package =lfmm=.
+complexe lorsque que nous ne sommes pas capables de détecter les erreurs de
+mesure présentes dans les données biologiques. Nous avons évalué, dans le
+chapitre [[chap:tess3]], l'effet du bruit dans les données géographiques sur les
+résultats de nos algorithmes spatiaux d'estimation de l'ascendance. Cependant,
+nous pouvons nous interroger sur l'effet des valeurs aberrantes présentes dans
+les données génétiques, ainsi que sur la façon dont les erreurs de mesure
+peuvent influencer les études d'association faites à partir de notre package
+=lfmm=.
 
 #+BEGIN_EXPORT latex
 \printbibliography
