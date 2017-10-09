@@ -3,10 +3,10 @@
 # -*- (load "./these-publish.el") -*-
 
 #+TITLE: Méthodes de factorisation matricielle pour la génomique des populations et les tests d'association
-#+AUTHOR:      Kevin Caye
+#+AUTHOR: Kévin CAYE
 #+LANGUAGE: fr
 #+STARTUP: overview indent inlineimages logdrawer
-#+OPTIONS: H:6 author:nil email:nil creator:nil timestamp:nil skip:nil toc:t ^:nil
+#+OPTIONS: H:6 email:nil creator:nil timestamp:nil skip:nil toc:t ^:nil
 #+TAGS: noexport(n) deprecated(d)
 #+EXPORT_SELECT_TAGS: export
 #+EXPORT_EXCLUDE_TAGS: noexport
@@ -31,8 +31,12 @@
 # #+END_QUOTE
 
 #+BEGIN_EXPORT latex
- \baselineskip 0.8cm
- \frontmatter
+% \begin{tabular}{ll}
+%   textwidth in pt: \the\textwidth \\
+%   textheight in pt: \the\textheight \\
+% \end{tabular}
+\baselineskip 0.6cm
+\frontmatter
 #+END_EXPORT
 
 * Workenv                                                          :noexport:
@@ -115,8 +119,44 @@
 - =47 : homo_sapiens_vep_89_GRCh38.tar.gz=
 
 ** python
-
 * Remerciements
+* Résumé court
+
+\noindent *Titre :* Méthodes de factorisation matricielle pour la génomique des
+populations et les tests d'association.
+
+\noindent *Résumé :* Nous présentons des méthodes statistiques reposant sur des problèmes
+de factorisation matricielle. Une première méthode permet l'inférence rapide de
+la structure de populations à partir de données génétiques en incluant
+l'information de proximité géographique. Une deuxième méthode permet de corriger
+les études d'association pour les facteurs de confusion. Nous présentons dans ce
+manuscrit les modèles, ainsi que les aspects théoriques des algorithmes
+d'inférence. De plus, nous comparons les performances de nos méthodes à ceux des
+méthodes existantes à l'aide de simulations numériques. Enfin, nous illustrons
+l'utilisations de nos méthodes sur des données biologiques réelles. Nos méthodes
+ont été implémentées et distribuées sous la forme de packages R : =tess3r= et
+=lfmm=.
+
+\noindent *Mots-clés :* optimisation, factorisation de matrices, structure génétique des
+populations, métissage, test d'association, facteurs de confusion, bio-informatique.
+
+#+LATEX: \vspace{1cm}
+
+\noindent *Title:* Matrix factorization methods for population genomics and association
+mapping.
+
+\noindent *Summary:* We present statistical methods based on matrix factorization
+problems. A first method allows efficient inference of population structure from
+genetic data and using geographic proximity information. A second method
+corrects the association studies for confounding factors. We present in this
+manuscript the statistical models, as well as the theoretical aspects of their
+inference algorithms. In addition, we compare our methods with existing methods
+on simulations; and we illustrate their uses on real biological data. Our
+methods have been implemented and distributed as R packages: =tess3r= and =lfmm=
+.
+
+\noindent *Keyword:* optimization, matrix factorization, genetic structure of populations,
+admixture, association mapping,  confounding factors, bioinformatics.
 * Publications
 
 TODO
@@ -208,9 +248,9 @@ développer des méthodes statistiques adaptées au traitement de données
 génétiques afin de répondre à deux problèmes : l'estimation de la structure
 génétique des populations à partir de données génétiques et géographiques, et
 l'estimation des facteurs de confusion pour corriger les tests d'association.
-Les méthodes statistiques développées lors de cette thèse reposent sur la
-factorisation matricielle. Nous allons maintenant introduire plus en détails les
-problématiques biologiques.
+Les méthodes statistiques développées lors de cette thèse reposent sur des
+problèmes de factorisation matricielle. Nous allons maintenant introduire plus
+en détails les problématiques biologiques.
 
 ** La génomique des populations
 :LOGBOOK:
@@ -943,17 +983,19 @@ permettrait de mieux comprendre les spécificités de chaque méthode.
   [[https://persyval-lab.org/fr/research/phd/m%25C3%25A9thodes-dapprentissage-statistique-pour-les-tests-dassociation-%25C3%25A9cologique][labex persyval]]
 :END:
 
-Les travaux de cette thèse ont été financé par le LabEx PERSYVAL-Lab et est
+Les travaux de cette thèse ont été financés par le LabEx PERSYVAL-Lab et est
 co-encadrée par Olivier François du laboratoire TIMC-IMAG et Olivier Michel du
-laboratoire GIPSA-lab. Les travaux on principalement été réalisé au sein de
-l'équipe BCM. L'équipe BCM du laboratoir TIMC-IMAG est spacialisé en ...
-
-parler de leur logiciel nanananan qui devellope des logiciel sur la génomic etc
-
-En effet, les données évoluant, il est nécéssaire de faire évoluer les logiciels
-d'annalyse. Ainsi, les logiciels développé dans cette thèse sont la suite
-logique de logiciels dévelopés dans l'équipe BCM : =TESS= 2.3
-citep:Durand_2009 et =LEA= citep:Frichot_2015. 
+laboratoire GIPSA-lab. Nos travaux ont principalement été réalisés au sein de
+l'équipe BCM (Biologie Computationnelle et Mathématique). L'équipe BCM du
+laboratoire TIMC-IMAG est spécialisée en étude de données génétiques et en
+développement de modèles mathématiques pour les systèmes biologiques complexes.
+Les méthodes présentées dans de cette thèse sont donc dans la ligné des méthodes
+développées au sein de l'équipe BCM. Ainsi, les logiciels que nous avons
+développés sont la suite logique des logiciels développés dans l'équipe BCM,
+qu'ils viennent compléter. Nous parlons en particulier de =TESS= 2.3, un
+logiciel d'inférence spatiale de la structure génétique des populations
+citep:Durand_2009; ainsi que de =LEA=, un package R proposant une suite de
+fonctions dédiées aux études d'association génomique citep:Frichot_2015.
 
 ** Objectifs de la thèse
 
@@ -973,14 +1015,14 @@ implémentations informatiques efficaces des nouvelles méthodes statistiques.
 
 ** Résumé des résultats principaux
 
-Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes reposant
-sur des problèmes de factorisation matricielle. Nos algorithmes ont été
-implémentés dans deux packages R : =tess3r=
-(https://bcm-uga.github.io/TESS3_encho_sen/) et =lfmm=
-(https://github.com/bcm-uga/lfmm). Le package =tess3r= contient les algorithmes
-AQP et APLS d'inférence de l'ascendance génétique en incluant l'information
-spatiale. Le package =lfmm= contient les algorithmes lassoLFMM et ridgeLFMM
-d'estimation des facteurs de confusion pour corriger les études d'association.
+Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes résolvant
+des problèmes de factorisation matricielle. Nos algorithmes ont été implémentés
+dans deux packages R : =tess3r= (https://bcm-uga.github.io/TESS3_encho_sen/) et
+=lfmm= (https://github.com/bcm-uga/lfmm). Le package =tess3r= contient les
+algorithmes AQP et APLS d'inférence de l'ascendance génétique en incluant
+l'information spatiale. Le package =lfmm= contient les algorithmes lassoLFMM et
+ridgeLFMM d'estimation des facteurs de confusion pour corriger les études
+d'association.
 
 *** =tess3r=
 
@@ -6299,7 +6341,7 @@ calibrées les \pvalues grâce à la méthode présentée dans la partie
 [[sec:calibration]]. Le contrôle du FDR a été réalisé à l'aide du package R =qvalue=
 citep:Storey_2011.
 
-*** Étude d'association entre des données génétiques et la maladie \celiac (GWAS)
+*** Étude d'association entre des données génétiques et la maladie c\oe{}liaque (GWAS)
 <<sec:gwas>> 
 
 La maladie c\oe{}liaque est une maladie auto-immune ayant une prévalence de près
@@ -15597,6 +15639,37 @@ CLOSED: [2017-08-31 jeu. 08:34]
   save_expr(res.df, "eas_all_df.rds")
 
 #+end_src
+****** TODO Que donne les axes factoriels ?
+:LOGBOOK:
+- State "TODO"       from              [2017-10-09 lun. 16:04]
+:END:
+#+NAME: code:gea_eas
+#+CAPTION: Dépend de [[code:eas_expr]]
+#+begin_src R 
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  ## get res
+  rownames.Y <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.rownames.rds")
+  expr <- readRDS("./OUTPUT/Expr/Eas_U_ridgeLFMM_409192b1e7bfbf4affc37da98f3ea0bd.rds")
+  str(expr)
+
+  ## get indiv information
+  indiv.df <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df.rds")
+
+  ## test
+  mean(rownames.Y == indiv.df$sample)
+
+  ## plot
+  U.df <- as_tibble(expr$U)
+  colnames(U.df) <- paste0("PC",1:9)
+  U.df <- U.df %>% cbind(indiv.df) %>% as_tibble()
+  pl <- ggplot(U.df, aes(x = PC6, PC7, color = pop)) +
+    geom_point() +
+    xlab("Variable latente $K = 6$") +
+    ylab("Variable latente $K = 7$") 
+  save_plot_png(pl, "GEAS_PC67.png")
+#+end_src
 
 ****** DONE compute qvalue
 CLOSED: [2017-08-21 lun. 17:57]
@@ -17054,14 +17127,14 @@ Voir cahier le 7/08/2017
 Un grande partie de la biologie repose sur l'analyse des données provenant du
 monde qui nous entoure. Les techniques qui permettent d'acquérir les données
 évoluent; il est donc nécessaire que les méthodes pour les analyser évoluent
-également. Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes
-reposant sur des problèmes de factorisation de matrice. Pour certains algorithmes
-nous avons prouvé leur convergence vers un point critique de leur fonction
-objectif. Nous avons démontré l'utilité de chacun de nos algorithmes sur des
-données réelles afin de répondre à des questions de la génétique moderne. Des
-implémentations efficaces de nos algorithmes sont disponibles dans deux packages
-R : =tess3r= et =lfmm=. Nous proposons maintenant différentes perspectives de nos
-travaux.
+également. Dans le cadre de cette thèse, nous avons proposé plusieurs
+algorithmes résolvant des problèmes de factorisation de matrice. Pour certains
+algorithmes nous avons prouvé leur convergence vers un point critique de leur
+fonction objectif. Nous avons démontré l'utilité de chacun de nos algorithmes
+sur des données réelles afin de répondre à des questions de la génétique
+moderne. Des implémentations efficaces de nos algorithmes sont disponibles dans
+deux packages R : =tess3r= et =lfmm=. Nous proposons maintenant différentes
+perspectives de nos travaux.
 
 # Le package tess3r proposent des algorithmes qui permette de calculé une
 # représentation synthétique des données génétique appelé rendant compte de la
@@ -17200,16 +17273,16 @@ peuvent influencer les études d'association faites à partir de notre package
 :END:
 
 Dans cette thèse, nous avons développé deux logiciels d'analyse de données
-rependant à des problèmes spécifique de la biologie. Ces logiciels répondent à
+répondant à des problèmes spécifiques de la biologie. Ces logiciels répondent à
 l'évolution des données utilisées en biologie. Ainsi, nos travaux s'inscrivent
 dans une logique de coévolution des méthodes statistiques et des techniques
 d'acquisition de données. Les perspectives ouvertes par cette thèse sont
 multiples. D'une part, nos travaux ouvrent des perspectives de développements
-méthodologiques et logicielles, afin d'ajouter des fonctionnalités à nos
-packages en fonction des retours des utilisateurs. D'autre part, nos algorithmes
-reposent sur des techniques de factorisation matricielle. Ainsi, nos travaux
-ouvrent des perspectives sur l'utilisation de la factorisation matricielle à
-d'autres problèmes d'analyse de données.
+méthodologiques et logiciels, afin d'ajouter des fonctionnalités à nos packages
+en fonction des retours des utilisateurs. D'autre part, nos algorithmes
+résolvent des problèmes de factorisation matricielle. Ainsi, nos travaux ouvrent
+des perspectives sur l'utilisation de la factorisation matricielle dans d'autres
+problèmes d'analyse de données.
 
 
 
@@ -17249,27 +17322,6 @@ chromosomes. Le mode de transmition des chromosomes des parents au enfant
 provoque un déséquilibre de liaison entre les SNPs voisins. Avant 
 
 Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que la redaction...
-* Résumés courts
-
-*Titre :* Méthodes de factorisation matricielle pour la génomique des
-populations et les tests d'association.
-
-*Résumé :* Nous présentons des nouvelles méthodes reposant 
-
-pour étudier l'ascendance à
-partir de données 
-
-*Mots-clés :* optimisation, factorisation de matrices, structure génétique des
-populations, métissage, test d'association, facteurs de confusion, bio-informatique.
-
-*Title:* Matrix factorization methods for population genomics and association
-mapping.
-
-*Summary:* 
-
-*Keyword:* optimization, matrix factorization, genetic structure of populations,
-admixture, association mapping,  confounding factors, bioinformatics.
-
 * Soutenance                                                       :noexport:
 :LOGBOOK:
 - Note taken on [2017-09-05 mar. 10:31] \\

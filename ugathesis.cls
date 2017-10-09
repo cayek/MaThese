@@ -263,7 +263,7 @@
     \null
     \vfil
     \vspace{1cm}
-    {\fontsize{12}{14}\fontfamily{CM}\selectfont\bf \@title}
+    {\fontsize{12}{14}\fontfamily{CM}\selectfont\bf THÈSE}
     \bigskip
     \vfil
     \vfil
@@ -281,18 +281,29 @@
     \vfil
     {\fontsize{12}{14}\selectfont\bf \@author} \\
     \vfil
-    Thèse dirigée par {\fontsize{12}{14}\selectfont\bf \@advisor} \\
+    Thèse dirigée par {\fontsize{12}{14}\selectfont\bf Olivier FRANÇOIS} \\
+    et co-encadrée par {\fontsize{12}{14}\selectfont\bf Olivier MICHEL} \\
     \vfil
-    {\fontsize{12}{14}\selectfont préparée au sein du laboratoire} {\fontsize{12}{14}\selectfont\bf \@lab} \\
+    {\fontsize{12}{14}\selectfont préparée au sein du laboratoire} {\fontsize{12}{14}\selectfont\bf TIMC-IMAG} \\
     {\fontsize{12}{14}\selectfont et de l'école doctorale} {\fontsize{12}{14}\selectfont\bf "Ingénierie de la Santé, de la Cognition et Environnement" (EDISCE)}
     \vfil
     \bigskip
     \bigskip
-    {\fontsize{18}{20}\fontfamily{ppl}\selectfont\bf \@title}
+    \begin{flushleft}
+    {\fontsize{18}{20}\fontfamily{ppl}\selectfont\bf \@title} \end{flushleft}
     \centerline{}
     \vskip 1.5em
-    {\fontsize{12}{14}\selectfont Thèse soutenue publiquement le \@date, \par
-    devant le jury composé de :}
+    {\fontsize{12}{14}\selectfont Thèse soutenue publiquement le 11 décembre 2017, \par
+      devant le jury composé de : \\
+      \textbf{Michael BLUM} \\
+      DR CNRS, UGA Grenoble, Président \\
+      \textbf{Christophe AMBROISE} \\
+      DR, UEVE Évry, Rapporteur\\
+      \textbf{Charles BOUVEYRON} \\
+      DR, UCA Nice, Rapporteur\\
+      \textbf{Thomas BURGER} \\
+      DR CNRS, CEA Grenoble, Examinateur \\
+    }
 
   \end{minipage}\par
   \end{titlepage}
