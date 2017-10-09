@@ -17204,12 +17204,12 @@ rependant à des problèmes spécifique de la biologie. Ces logiciels répondent
 l'évolution des données utilisées en biologie. Ainsi, nos travaux s'inscrivent
 dans une logique de coévolution des méthodes statistiques et des techniques
 d'acquisition de données. Les perspectives ouvertes par cette thèse sont
-multiples. D'une part, nos travaux ouvrent des perspectives de développement
-méthodologique et logicielle, afin d'ajouter des fonctionnalités à nos packages
-en fonction des retours des utilisateurs. D'autre part, nos algorithmes reposent
-sur des techniques de factorisation matricielle. Ainsi, nos travaux ouvrent des
-perspectives sur l'utilisation de la factorisation matricielle à d'autres
-problèmes d'analyse de données.
+multiples. D'une part, nos travaux ouvrent des perspectives de développements
+méthodologiques et logicielles, afin d'ajouter des fonctionnalités à nos
+packages en fonction des retours des utilisateurs. D'autre part, nos algorithmes
+reposent sur des techniques de factorisation matricielle. Ainsi, nos travaux
+ouvrent des perspectives sur l'utilisation de la factorisation matricielle à
+d'autres problèmes d'analyse de données.
 
 
 
