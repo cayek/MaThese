@@ -298,11 +298,11 @@
       \textbf{Michael BLUM} \\
       DR CNRS, UGA Grenoble, Président \\
       \textbf{Christophe AMBROISE} \\
-      DR, UEVE Évry, Rapporteur\\
+      Professeur, UEVE Évry, Rapporteur\\
       \textbf{Charles BOUVEYRON} \\
-      DR, UCA Nice, Rapporteur\\
+      Professeur, UCA Nice, Rapporteur\\
       \textbf{Thomas BURGER} \\
-      DR CNRS, CEA Grenoble, Examinateur \\
+      CR CNRS, CEA Grenoble, Examinateur \\
     }
 
   \end{minipage}\par

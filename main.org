@@ -15148,6 +15148,30 @@ prendre $\lambRidge = 10^{-5}$ pour ridgeLFMM.
 \end{figure}
 #+END_EXPORT
 
+#+NAME: code:lfmm_geas_param_print
+#+CAPTION: Dépend de [[code:eas_PCs]]
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("./OUTPUT/Expr/eas_pc_toprint.rds")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "eas_pc",
+                                        env = MaTheseR.params,
+                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+#+end_src
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\includegraphics{./OUTPUT/Rplots/eas_pc.pdf}
+\caption{{\bf Variables latentes retournées par ridgeLFMM pour l'étude
+    d'association entre génotype et un gradient environnemental (GEAS).}}
+\label{fig:eas_params}
+\end{figure}
+#+END_EXPORT
+
 La figure ref:fig:geas_qqplot montre la distribution observée des \pvalues
 renvoyées par chaque méthode, contre la distribution théorique sous l'hypothèse
 nulle. Nous constatons une forte inflation pour les petites \pvalues de la
@@ -15511,8 +15535,10 @@ CLOSED: [2017-08-17 Thu 18:09]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_CV_lambda_lfmm_lambda.png]]
 
-***** TODO Étude du jeu de données
+***** DONE Étude du jeu de données
+CLOSED: [2017-10-09 lun. 17:53]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-09 lun. 17:53]
 - State "TODO"       from "RUNNING"    [2017-08-21 lun. 16:48]
 - State "RUNNING"    from "DONE"       [2017-08-21 lun. 16:48]
 - State "DONE"       from "RUNNING"    [2017-08-21 lun. 16:41]
@@ -15639,14 +15665,17 @@ CLOSED: [2017-08-31 jeu. 08:34]
   save_expr(res.df, "eas_all_df.rds")
 
 #+end_src
-****** TODO Que donne les axes factoriels ?
+****** DONE Que donne les axes factoriels ?
+CLOSED: [2017-10-09 lun. 17:06]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-09 lun. 17:06]
 - State "TODO"       from              [2017-10-09 lun. 16:04]
 :END:
-#+NAME: code:gea_eas
+#+NAME: code:eas_PCs
 #+CAPTION: Dépend de [[code:eas_expr]]
 #+begin_src R 
   library(MaTheseR)
+  library(cowplot)
   MaTheseR.params <- get_MaTheseRparams()
 
   ## get res
@@ -15661,16 +15690,36 @@ CLOSED: [2017-08-31 jeu. 08:34]
   mean(rownames.Y == indiv.df$sample)
 
   ## plot
-  U.df <- as_tibble(expr$U)
+  U.df <- as_tibble(expr$U) 
   colnames(U.df) <- paste0("PC",1:9)
-  U.df <- U.df %>% cbind(indiv.df) %>% as_tibble()
-  pl <- ggplot(U.df, aes(x = PC6, PC7, color = pop)) +
+  U.df <- U.df %>% cbind(indiv.df) %>% as_tibble() %>%
+    mutate(Population = pop)
+  pl1 <- ggplot(U.df, aes(x = PC6, PC7, color = Population)) +
     geom_point() +
-    xlab("Variable latente $K = 6$") +
-    ylab("Variable latente $K = 7$") 
-  save_plot_png(pl, "GEAS_PC67.png")
+    xlab("Variable latente 6") +
+    ylab("Variable latente 7") + 
+    MaTheseR.params$gtheme
+
+
+  pl2 <- ggplot(U.df, aes(x = PC8, PC9, color = pop)) +
+    geom_point() +
+    xlab("Variable latente 8") +
+    ylab("Variable latente 9") +
+    MaTheseR.params$gtheme
+
+  ## plot for thesis
+  mylegend <- g_legend(pl1)
+  pl <- plot_grid(pl1 + theme(legend.position = "none"),
+                  pl2 + theme(legend.position = "none"),
+                  mylegend,
+                  ncol = 3,
+                  labels = c("A","B"), rel_widths=c(5,5,2))
+  save_plot_png(pl, "eas_pc.png")
+  save_expr(pl, "eas_pc_toprint.rds")
 #+end_src
 
+#+RESULTS:
+[[./OUTPUT/Rplots/eas_pc.png]]
 ****** DONE compute qvalue
 CLOSED: [2017-08-21 lun. 17:57]
 :LOGBOOK:
@@ -15729,8 +15778,10 @@ CLOSED: [2017-08-22 mar. 09:36]
 : 4     PCAlm 1.046560 0.01363840
 : 5 ridgeLFMM 1.587502 0.11969276
 
-****** TODO Les qqplots ?
+****** CANCELLED Les qqplots ?
+CLOSED: [2017-10-09 lun. 17:53]
 :LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2017-10-09 lun. 17:53]
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
 :END:
 
@@ -15751,8 +15802,10 @@ CLOSED: [2017-08-22 mar. 09:36]
 #+RESULTS:
 [[./OUTPUT/Rplots/EAS_qqplots2.png]]
 
-****** TODO Comparaison des top listes
+****** CANCELLED Comparaison des top listes
+CLOSED: [2017-10-09 lun. 17:53]
 :LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2017-10-09 lun. 17:53]
 - State "TODO"       from "DONE"       [2017-08-31 jeu. 08:53]
 - State "DONE"       from "TODO"       [2017-08-22 mar. 09:41]
 - State "TODO"       from              [2017-08-17 jeu. 09:31]
@@ -15809,8 +15862,10 @@ CLOSED: [2017-08-31 jeu. 10:14]
 [[./OUTPUT/Rplots/eas_fdr01_venn.png]]
 [[./OUTPUT/Rplots/eas_fdr01_inter.png]]
 
-****** TODO Annotation Biomart
+****** CANCELLED Annotation Biomart
+CLOSED: [2017-10-09 lun. 17:52]
 :LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2017-10-09 lun. 17:52]
 - State "TODO"       from "TODO"       [2017-08-30 mer. 10:22]
 - State "TODO"       from "DONE"       [2017-07-12 mer. 11:10]
 - State "DONE"       from              [2017-07-12 mer. 11:10]
@@ -15932,8 +15987,10 @@ CLOSED: [2017-08-31 jeu. 10:14]
 #+RESULTS:
 [[./OUTPUT/Rplots/eas_inter_manhattan.png]]
 
-****** TODO Annotation Vep
+****** CANCELLED Annotation Vep
+CLOSED: [2017-10-09 lun. 17:52]
 :LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2017-10-09 lun. 17:52]
 - State "TODO"       from              [2017-08-22 mar. 11:46]
 :END:
 
@@ -15976,8 +16033,10 @@ CLOSED: [2017-08-31 jeu. 10:14]
   res.df.union$IMPACT %>% table() / nrow(res.df.union)
 #+end_src
 
-****** TODO Annotation de l'intersection
+****** CANCELLED Annotation de l'intersection
+CLOSED: [2017-10-09 lun. 17:52]
 :LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2017-10-09 lun. 17:52]
 - State "TODO"       from              [2017-08-30 mer. 10:15]
 :END:
 
@@ -16601,8 +16660,10 @@ CLOSED: [2017-09-12 mar. 20:22]
 Mouais c'est pas forcément très fair de faire remonter le phénotype de la touffe avec la pvaleur max de celle ci ....
 a mediter
 
-****** TODO manhattan plot
+****** CANCELLED manhattan plot
+CLOSED: [2017-10-09 lun. 17:52]
 :LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2017-10-09 lun. 17:52]
 - State "TODO"       from              [2017-07-12 mer. 11:11]
 :END:
 
@@ -16618,6 +16679,264 @@ a mediter
   ggplot(toplot, aes(pvalue)) +
     geom_histogram()
 #+end_src
+***** TODO Run seulement avec 7 premières variables latentes
+****** TODO Run
+:LOGBOOK:
+- State "TODO"       from              [2017-10-09 lun. 17:28]
+- State "TODO"       from              [2017-10-09 lun. 17:24]
+:END:
+#+NAME: code:eas_expr_7
+#+CAPTION: Dépend de [[eas_expr]]
+#+begin_src R 
+  library(MaTheseR)
+  library(lfmm)
+  library(matter)
+  library(foreach)
+  library(doParallel)
+
+  rerun <- FALSE
+  nb.cluster <- 1
+  ## param
+  param <- list(K.method = 9,
+                lambda = 1e-5,
+                nozero.prop = 0.01,
+                lambda.num = 25,
+                relative.err.epsilon = 1e-6)
+
+
+  ## methods
+  methods <- list()
+  methods$m.lm <- method_lm()
+  methods$m.ridgeLfmm <- method_ridgeLFMM(K = param$K.method, lambda = param$lambda)
+  methods$m.pca <- method_PCAlm(K = param$K.method)
+  methods$m.cate <- method_cate(K = param$K.method)
+  methods$m.lasso <- method_lassoLFMM(K = param$K.method,
+                                      nozero.prop = param$nozero.prop,
+                                      lambda.num = param$lambda.num,
+                                      relative.err.epsilon = param$relative.err.epsilon)
+
+  run_eas <- function(m) {
+    message("=============== ", m$name)
+    ## dat
+    Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds"
+    X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds"
+    outlier <- c()
+    dat <- MaTheseR::LfmmMatterDat(Y, X, outlier)
+    col.mask <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_ind_pruning.rds")
+    out.file.res.df <- paste0("./OUTPUT/Expr/Eas_df_7variables","_", m$name)
+    out.file.U <- paste0("./OUTPUT/Expr/Eas_U","_", m$name)
+
+    if (!exist_res(m, out.file.res.df) && !rerun) {
+
+      message("retrieve U")
+      m.U <- retrieve_res(m, out.file.U)
+
+      ## keep only 7 variables
+      m.U$U <- m.U$U[,1:7, drop = FALSE]
+
+      ## run HP
+      message("running HP")
+      m.res <- m
+      X <- cbind(dat$X, m.U$U)
+      d <- ncol(dat$X)
+      hp <- lfmm::hypothesis_testing_lm(dat, X)
+      m.res$score <- hp$score[,1:d, drop = FALSE]
+      m.res$pvalue <- hp$pvalue[,1:d, drop = FALSE]
+      m.res$B.hp <- hp$B[,1:d, drop = FALSE]
+      ## saving res
+      message("saving res.df")
+      df <- ExpRextractor_pvalue1_calibrated(dat, m.res, 1, 1)
+      save_res(m, df, out.file.res.df)
+    } else {
+      message("res.df exist !! ")
+    }
+
+  }
+
+
+  cl <- parallel::makeCluster(nb.cluster, outfile = "")
+  doParallel::registerDoParallel(cl)
+  foreach(m = methods) %dopar% {
+    run_eas(m)
+  }
+  doParallel::stopImplicitCluster()
+  parallel::stopCluster(cl)
+
+
+  ## cbind res
+  res.df <- tibble()
+  for (m in methods) {
+    out.file.res.df <- paste0("./OUTPUT/Expr/Eas_df_7variables","_", m$name)
+    if (exist_res(m, out.file.res.df)) {
+      message("=============== ", m$name)
+      res.df <- res.df %>%
+        rbind(retrieve_res(m, out.file.res.df))
+    }
+  }
+
+  save_expr(res.df, "eas_all_df_7variables.rds")
+
+#+end_src
+****** TODO qvalue
+:LOGBOOK:
+- State "TODO"       from              [2017-10-09 lun. 17:31]
+:END:
+#+NAME: code:eas_qvalue_7
+#+CAPTION: Dépend de [[code:eas_expr_7]]
+#+BEGIN_SRC R
+  library(MaTheseR)
+  res.df <- readRDS("./OUTPUT/Expr/eas_all_df_7variables.rds")
+
+  qval.df <- res.df %>%
+    group_by(method) %>%
+    dplyr::mutate(qvalue = qvalue::qvalue(calibrated.pvalue)$qvalues) %>%
+    ungroup()
+
+  save_expr(qval.df, "eas_all_qvalue_df_7variables.rds")
+#+END_SRC
+****** load qvalue
+#+NAME: code:eas_load_res_7
+#+CAPTION: Dépend de [[code:eas_qvalue_7]]
+#+BEGIN_SRC R
+  library(MaTheseR)
+  qval.df <- readRDS("./OUTPUT/Expr/eas_all_qvalue_df_7variables.rds")
+#+END_SRC
+****** TODO calibration ?
+:LOGBOOK:
+- State "TODO"       from              [2017-10-09 lun. 17:43]
+:END:
+#+NAME: code:eas_calibration_7
+#+CAPTION: Dépend de [[code:eas_load_res_7]]
+#+BEGIN_SRC R
+  qval.df %>%
+    group_by(method) %>%
+    summarise(mad = mad[1], median = median[1])
+#+END_SRC
+****** TODO Diagramme de Venn
+:LOGBOOK:
+- State "TODO"       from              [2017-10-09 lun. 17:44]
+:END:
+#+NAME: code:eas_fdr_7
+#+CAPTION: Dépend de [[code:eas_load_res_7]]
+#+BEGIN_SRC R
+  toplot <- qval.df %>%
+    dplyr::filter(qvalue <= 0.01)
+
+  ## matrix
+  pl <- plot_intersection(toplot, by = "colname", plot = "point")
+  save_plot_png(pl, "eas_fdr01_inter.png")
+
+  ## venn diagram
+  sets <- list(lm = toplot$index[toplot$method == "lm"],
+               cate = toplot$index[toplot$method == "cate"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"]
+               )
+
+
+  out <- plot_venn(sets[2:5])
+
+  save_plot_png(out, "eas_fdr01_venn.png")
+
+#+END_SRC
+****** TODO Annotation de l'union controlé à un FDR de 1%
+:LOGBOOK:
+- State "TODO"       from              [2017-10-09 lun. 17:45]
+:END:
+#+NAME: code:eas_union_annotation_7
+#+CAPTION: Dépend de [[code:eas_load_res_7]] [[code:1000g_vep_output]]
+#+begin_src R 
+  require(MaTheseR)
+  library(stringr)
+
+  vep.output <- readRDS( "./Data/ThesisDataset/3Article/1000GenomesPhase3/vep.output.rds")
+
+  ## contingency IMPACT
+  impact.all <- vep.output %>%
+    distinct(snsp, keep_all = TRUE) %>%
+    dplyr::select(IMPACT)
+  cont.impact.all <- impact.all$IMPACT %>% table()
+
+  ## filter FDR 1%
+  aux <- qval.df %>%
+    dplyr::filter(qvalue <= 0.01) %>%
+    mutate(snps = colname)
+
+  ## union
+  union.list <- function(...) {
+    id <- list(...)
+      res <- sets[[id[[1]]]]
+    for (i in id) {
+      res <- base::union(res, sets[[i]])
+    }
+    res
+  }
+  sets <- list(cate = aux$index[aux$method == "cate"],
+               lassoLFMM = aux$index[aux$method == "lassoLFMM"],
+               ridgeLFMM = aux$index[aux$method == "ridgeLFMM"],
+               PCAlm = aux$index[aux$method == "PCAlm"]
+               )
+  union.candidates.df <- aux %>%
+    dplyr::filter(index %in% union.list(1,2,3,4))
+  message("== number of SNPS detected ==")
+  length(unique(union.candidates.df$colname))
+
+  ## vep annotation
+  union.candidates.df.vep <- union.candidates.df %>%
+    dplyr::left_join(vep.output, by = c('snps')) %>%
+    mutate(chrm = str_replace(Location, ":[:digit:]*",""),
+           pos = str_replace(Location, "[:digit:]*:",""))
+
+  ## over representation of HIGH
+  library(broom)
+  cont <- rbind(union = union.candidates.df.vep$IMPACT %>% table(), cont.impact.all)
+  over.test.res <- tibble()
+  f.aux <- function(lvl) {
+    cont.lvl <- cbind(lvl = cont[,lvl], other = rowSums(cont[,!(colnames(cont) %in% lvl)]))
+    over.test.res <<- fisher.test(cont.lvl, alternative="greater") %>% tidy() %>%
+      mutate(lvl = lvl) %>%
+      rbind(over.test.res)
+  }
+  message("== over representation tests ==")
+  f.aux(lvl = "HIGH")
+  f.aux(lvl = "LOW")
+  f.aux(lvl = "MODERATE")
+  over.test.res %>%
+    transmute(odds.ratio = estimate,
+                pvalue = p.value,
+                lvl = lvl) %>%
+    knitr::kable()
+
+  ## biomart
+  require(biomaRt)
+  biomaRt::listMarts()
+  snp.db = biomaRt::useMart("ENSEMBL_MART_SNP", dataset="hsapiens_snp")
+  ## listFilters(snp.db)
+  ## listAttributes(snp.db)
+
+  union.candidates.df.biomart <- union.candidates.df %>%
+    mutate_annotation(snp.db)
+
+  save_expr(union.candidates.df.biomart, "geas_union_biomart.rds")
+
+  ## tab
+  message("== phenotype description in union union ==")
+  union.candidates.df.biomart$phenotype_description %>% table()
+  union.candidates.df.biomart %>%
+    dplyr::filter(phenotype_description != "") %>%
+    group_by(phenotype_description) %>%
+    dplyr::summarise(methods = paste0(unique(method), collapse=", "),
+                     spns = paste0(unique(snps), collapse=", ")) %>%
+    knitr::kable()
+
+  ## amiGo2
+  message("== panther input ==")
+  (union.candidates.df.vep %>%
+    distinct(Gene))$Gene %>%
+    paste0(collapse=" ")
+#+end_src
+
 ***** DONE Plot
 CLOSED: [2017-09-01 ven. 13:11]
 :LOGBOOK:
