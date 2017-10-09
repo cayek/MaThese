@@ -694,6 +694,7 @@ d'ascendance génétique dans la Table [[table:tess3_etat_art]]
 | TESS3-AQP     | factorisation matricielle régularisé sur graphe     | oui      | optimisation quadratique alterné                 |                                             |
 | TESS3-APLS    | factorisation matricielle régularisé sur graphe     | oui      | moindres carré alterné projeté                   |                                             |
 | conStruct     | bayésien                                            | oui      | MCMC                                             | citet:Bradburd189688                        |
+#+LATEX:\rowcolors{2}{}{}
 
 ** Tests d'association
 :LOGBOOK:
@@ -947,7 +948,7 @@ co-encadrée par Olivier François du laboratoire TIMC-IMAG et Olivier Michel du
 laboratoire GIPSA-lab. Les travaux on principalement été réalisé au sein de
 l'équipe BCM. L'équipe BCM du laboratoir TIMC-IMAG est spacialisé en ...
 
-parler de leur logiciel nanananan
+parler de leur logiciel nanananan qui devellope des logiciel sur la génomic etc
 
 En effet, les données évoluant, il est nécéssaire de faire évoluer les logiciels
 d'annalyse. Ainsi, les logiciels développé dans cette thèse sont la suite
@@ -17189,9 +17190,31 @@ nous pouvons nous interroger sur l'effet des valeurs aberrantes présentes dans
 les données génétiques, ainsi que sur la façon dont les erreurs de mesure
 peuvent influencer les études d'association faites à partir de notre package
 =lfmm=.
+** Conclusion générale
+:LOGBOOK:
+- Note taken on [2017-10-09 lun. 11:47] \\
+  Rmk perso : la factorisation matriciel c'est pour l'inférence que c'est util !!
+  C'est plutot coté algo ! La modélisation des données c'est les X = QG^T ou Y = U
+  V + XB + E. Après l'approximation des moindres carré et algo (cette parti la est
+  inspiré des méthodes utilisé en factorisation matricielle)
+:END:
+
+Dans cette thèse, nous avons développé deux logiciels d'analyse de données
+rependant à des problèmes spécifique de la biologie. Ces logiciels répondent à
+l'évolution des données utilisées en biologie. Ainsi, nos travaux s'inscrivent
+dans une logique de coévolution des méthodes statistiques et des techniques
+d'acquisition de données. Les perspectives ouvertes par cette thèse sont
+multiples. D'une part, nos travaux ouvrent des perspectives de développement
+méthodologique et logicielle, afin d'ajouter des fonctionnalités à nos packages
+en fonction des retours des utilisateurs. D'autre part, nos algorithmes reposent
+sur des techniques de factorisation matricielle. Ainsi, nos travaux ouvrent des
+perspectives sur l'utilisation de la factorisation matricielle à d'autres
+problèmes d'analyse de données.
+
+
 
 #+BEGIN_EXPORT latex
-\printbibliography
+\printbibliography[heading=bibintoc]
 
 \backmatter
 #+END_EXPORT
@@ -17226,17 +17249,26 @@ chromosomes. Le mode de transmition des chromosomes des parents au enfant
 provoque un déséquilibre de liaison entre les SNPs voisins. Avant 
 
 Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que la redaction...
-** Conclusion générale
 * Résumés courts
 
+*Titre :* Méthodes de factorisation matricielle pour la génomique des
+populations et les tests d'association.
 
-*Résumé*  
+*Résumé :* Nous présentons des nouvelles méthodes reposant 
 
-*Mots-clés*
+pour étudier l'ascendance à
+partir de données 
 
-*Summary*  
+*Mots-clés :* optimisation, factorisation de matrices, structure génétique des
+populations, métissage, test d'association, facteurs de confusion, bio-informatique.
 
-*Keyword*  
+*Title:* Matrix factorization methods for population genomics and association
+mapping.
+
+*Summary:* 
+
+*Keyword:* optimization, matrix factorization, genetic structure of populations,
+admixture, association mapping,  confounding factors, bioinformatics.
 
 * Soutenance                                                       :noexport:
 :LOGBOOK:
