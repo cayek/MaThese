@@ -937,6 +937,23 @@ méthodes rapides et utilisables sur les données massives. Par ailleurs, une
 comparaison des méthodes de correction pour les facteurs de confusion
 permettrait de mieux comprendre les spécificités de chaque méthode.
 ** Contexte de la thèse
+:LOGBOOK:
+- Note taken on [2017-10-09 Mon 08:04] \\
+  [[https://persyval-lab.org/fr/research/phd/m%25C3%25A9thodes-dapprentissage-statistique-pour-les-tests-dassociation-%25C3%25A9cologique][labex persyval]]
+:END:
+
+Les travaux de cette thèse ont été financé par le LabEx PERSYVAL-Lab et est
+co-encadrée par Olivier François du laboratoire TIMC-IMAG et Olivier Michel du
+laboratoire GIPSA-lab. Les travaux on principalement été réalisé au sein de
+l'équipe BCM. L'équipe BCM du laboratoir TIMC-IMAG est spacialisé en ...
+
+parler de leur logiciel nanananan
+
+En effet, les données évoluant, il est nécéssaire de faire évoluer les logiciels
+d'annalyse. Ainsi, les logiciels développé dans cette thèse sont la suite
+logique de logiciels dévelopés dans l'équipe BCM : =TESS= 2.3
+citep:Durand_2009 et =LEA= citep:Frichot_2015. 
+
 ** Objectifs de la thèse
 
 La génétique produit beaucoup de données grâce aux technologies de séquençage
@@ -17209,7 +17226,7 @@ chromosomes. Le mode de transmition des chromosomes des parents au enfant
 provoque un déséquilibre de liaison entre les SNPs voisins. Avant 
 
 Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que la redaction...
-
+** Conclusion générale
 * Résumés courts
 
 
