@@ -282,7 +282,7 @@
     {\fontsize{12}{14}\selectfont\bf \@author} \\
     \vfil
     Thèse dirigée par {\fontsize{12}{14}\selectfont\bf Olivier FRANÇOIS} \\
-    et co-encadrée par {\fontsize{12}{14}\selectfont\bf Olivier MICHEL} \\
+    et co-encadrée par {\fontsize{12}{14}\selectfont\bf Olivier MICHEL} et  {\fontsize{12}{14}\selectfont\bf Jean-Luc BOSSON}\\
     \vfil
     {\fontsize{12}{14}\selectfont préparée au sein du laboratoire} {\fontsize{12}{14}\selectfont\bf TIMC-IMAG} \\
     {\fontsize{12}{14}\selectfont et de l'école doctorale} {\fontsize{12}{14}\selectfont\bf "Ingénierie de la Santé, de la Cognition et Environnement" (EDISCE)}

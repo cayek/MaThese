@@ -2950,11 +2950,12 @@ l'algorithme non spatial (Figure ref:fig:tess3:comp:rmse:snmf).
 
 #+NAME: code:tess3:comp:rmse:snmf
 #+CAPTION: Dépend de [[code:tess3:rmse:plot]]
-#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/
+#+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
 
-  pl <- readRDS("./OUTPUT/Expr/tess3_comp_rmse_snmf_plot.rds")
+  pl <- readRDS("./OUTPUT/Expr/tess3_comp_rmse_snmf_plot.rds") + 
+    xlab("Indice de fixation $(F_{\\rm ST})$")
 
   ThesisRpackage::Plots_export_tikz_pdf(pl,
                                         basename.output = "tess3_comp_rmse_snmf",
@@ -3915,7 +3916,7 @@ homogènes.
                                    basename.output = "tess3_AT_map",
                                    env = MaTheseR.params,
                                    width = MaTheseR.params$textheightinch,
-                                   height = MaTheseR.params$textwidthinch)
+                                   height = 0.9 * MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
 \begin{sidewaysfigure}[!t]
@@ -3963,7 +3964,7 @@ Bonferonni).
                                    basename.output = "tess3_AT_manhattanplot",
                                    env = MaTheseR.params,
                                    width = MaTheseR.params$textheightinch,
-                                   height = MaTheseR.params$textwidthinch,
+                                   height = 0.9 * MaTheseR.params$textwidthinch,
                                    res = 600)
 #+end_src
 #+BEGIN_EXPORT latex
@@ -4513,8 +4514,8 @@ CLOSED: [2017-09-11 lun. 19:35]
           panel.background = element_blank(),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank()) +
-    xlab("Individual") +
-    ylab("Admixture\n\ coefficient (Q)") +
+    xlab("Individus") +
+    ylab("Coefficients\n de métissage (Q)") +
     scale_y_continuous(breaks = c(0.0,0.5,1.0)) +
     scale_color_manual(values = cols)
 
@@ -4603,7 +4604,7 @@ CLOSED: [2017-09-11 lun. 19:44]
     scale_x_continuous(breaks = sapply(1:5, function(i) mean(toplot[toplot$Chromosome == i, ]$index)),
                        labels = 1:5) +
     xlab("Chromosome") +
-    ylab("log(p-value)") +
+    ylab("log(p-valeur)") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none") +
     scale_color_manual(values = c(Article2.env$cbPalette[6], Article2.env$cbPalette[2],
@@ -10893,11 +10894,11 @@ ridgeLFMM.
   ThesisRpackage::Plots_export_tikz_pdf(pl,
                                         basename.output = "ewas_hyperparams",
                                         env = MaTheseR.params,
-                                        height = 0.9 * MaTheseR.params$textheightinch,
+                                        height = 0.7 * MaTheseR.params$textheightinch,
                                         width = MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!ht]
+\begin{figure}
 \centering
 \includegraphics{./OUTPUT/Rplots/ewas_hyperparams.pdf}
 \caption{{\bf Choix des paramètres pour l'étude d'association entre des sites
@@ -10918,17 +10919,17 @@ ridgeLFMM.
 On constate une augmentation du nombre de petites \pvalues pour toutes les
 méthodes; cette augmentation est encore plus forte pour les méthodes lm et
 sva-irw. La figure ref:fig:ewas_qqplot_top B montre la proportion des candidats
-identifiés par citet:Zou_2014,Rahmani_2016 qui sont retrouvés dans les "top"
-listes de chaque méthode. Nous rappelons que les candidats identifiés par
-citet:Zou_2014,Rahmani_2016 sont au nombre de 5. Ils ont été identifiés en
-prenant en compte les facteurs de confusion tels que l'âge, le sexe et une
-estimation de la composition cellulaire. Les méthodes considérées dans notre
-analyse retrouvent les candidats de la littérature dans leurs 40 premiers rangs,
-sauf lm et sva-irw. Pour la méthode lm, il faut prendre le rang 11881 pour
-trouver le premier candidat de citet:Zou_2014,Rahmani_2016, et le rang 138038
-pour tous les avoir. Pour la méthode sva-irw, les candidats de
-citet:Zou_2014,Rahmani_2016 sont tous identifiés entre les rangs $5111$ et
-$87659$.
+identifiés par citet:Zou_2014,Rahmani_2016 qui sont retrouvés dans les listes
+rangées (les listes sont rangées selon les $p\text{-valeurs}$) de chaque méthode. Nous
+rappelons que les candidats identifiés par citet:Zou_2014,Rahmani_2016 sont au
+nombre de 5. Ils ont été identifiés en prenant en compte les facteurs de
+confusion tels que l'âge, le sexe et une estimation de la composition
+cellulaire. Les méthodes considérées dans notre analyse retrouvent les candidats
+de la littérature dans leurs 40 premiers rangs, sauf lm et sva-irw. Pour la
+méthode lm, il faut prendre le rang 11881 pour trouver le premier candidat de
+citet:Zou_2014,Rahmani_2016, et le rang 138038 pour tous les avoir. Pour la
+méthode sva-irw, les candidats de citet:Zou_2014,Rahmani_2016 sont tous
+identifiés entre les rangs $5111$ et $87659$.
 
 #+NAME: code:lfmm_ewas_res_print
 #+CAPTION: Dépend de [[code:ewas_qqplot_top]]
@@ -10943,19 +10944,20 @@ $87659$.
   ThesisRpackage::Plots_export_png(pl.leg,
                                    basename.output = "ewas_qqplot_top",
                                    env = MaTheseR.params,
-                                   height = 0.9 * MaTheseR.params$textheightinch,
+                                   height = 0.6 * MaTheseR.params$textheightinch,
                                    width = MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!ht]
+\begin{figure}[!h]
 \centering
 \includegraphics{./OUTPUT/Rplots/ewas_qqplot_top.png}
 \caption{{\bf Q-Q plot et rang pour l'étude d'association entre des sites de
-    méthylation et la polyarthrite rhumatoïde (EWAS).} A) Diagramme quantile-quantile de
-  l'inverse du logarithme en base 10 des \pvalues renvoyées par chaque méthode.
-  Les quantiles théoriques sont ceux de la loi exponentielle. B) Proportion des
-  candidats proposés par \citet{Rahmani_2016,Zou_2014} retrouvés dans
-  la top liste renvoyée par chaque méthode.}
+    méthylation et la polyarthrite rhumatoïde (EWAS).} A) Diagramme
+  quantile-quantile de l'inverse du logarithme en base 10 des \pvalues renvoyées
+  par chaque méthode. Les quantiles théoriques sont ceux de la loi
+  exponentielle. B) Nombre de sites proposés par \citet{Rahmani_2016,Zou_2014}
+  retrouvés dans la liste rangée (la liste est rangée selon les $p\text{-valeurs}$) avant
+  un rang donné.}
 \label{fig:ewas_qqplot_top}
 \end{figure}
 #+END_EXPORT
@@ -10983,7 +10985,7 @@ système immunitaire (Table ref:table:ewas).
   ThesisRpackage::Plots_export_tikz_pdf(pl,
                                         basename.output = "ewas_venn",
                                         env = MaTheseR.params,
-                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
                                         width = MaTheseR.params$textwidthinch)
 
   convert.cmd <- paste("convert",
@@ -10994,7 +10996,7 @@ système immunitaire (Table ref:table:ewas).
   system(convert.cmd)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!th]
+\begin{figure}[!h]
 \centering
 \includegraphics[width=\textwidth]{./OUTPUT/Rplots/ewas_venn.png}
 \caption{{\bf Diagramme de Venn de l'étude d'association entre des sites de
@@ -12617,7 +12619,7 @@ CLOSED: [2017-08-09 mer. 13:56]
     scale_color_manual(values = color.values) +
     gtheme +
     theme(legend.position="none") + 
-    xlab("Taille de la top liste") + 
+    xlab("Rang") + 
     ylab("Candidats retrouvés")
 
   ## pl.top
@@ -12932,11 +12934,11 @@ renvoyer les mêmes résultats que PCAlm.
   ThesisRpackage::Plots_export_tikz_pdf(pl,
                                         basename.output = "gwas_hyperparams",
                                         env = MaTheseR.params,
-                                        height = 0.9 * MaTheseR.params$textheightinch,
+                                        height = 0.7 * MaTheseR.params$textheightinch,
                                         width = MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!h]
 \centering
 \includegraphics{./OUTPUT/Rplots/gwas_hyperparams.pdf}
 \caption{{\bf Choix des paramètres pour l'étude d'association entre génotype et
@@ -12956,15 +12958,15 @@ renvoyer les mêmes résultats que PCAlm.
 Les méthodes fournissent des \pvalues bien calibrées avec une forte inflation du
 nombre de petites \pvalues (Figure ref:fig:gwas_qqplot_top A). La méthode la
 plus libérale est lm, alors que ridgeLFMM et PCAlm sont les méthodes les plus
-conservatives. Le chromosome 6 contient le complexe de gènes HLA. Ce
-complexe de gènes joue un rôle important dans le système immunitaire et dans la
-maladie c\oe{}liaque citep:dubois2010multiple. Nous avons séparé les SNPs candidats
-du GWAS catalog retrouvés sur le chromosome 6 des autre chromosomes. Les
-candidats du GWAS catalog sur le chromosome 6 sont retrouvé plutôt dans les
-listes retournées par les méthodes PCAlm et ridgeLFMM (Figure
+conservatives. Le chromosome 6 contient le complexe de gènes HLA. Ce complexe de
+gènes joue un rôle important dans le système immunitaire et dans la maladie
+c\oe{}liaque citep:dubois2010multiple. Nous avons séparé les SNPs candidats du
+GWAS catalog retrouvés sur le chromosome 6 des autre chromosomes. Les candidats
+du GWAS catalog sur le chromosome 6 arrive plus tôt dans les listes rangées (la
+liste est rangée selon les $p\text{-valeurs}$) des méthodes PCAlm et ridgeLFMM (Figure
 ref:fig:gwas_qqplot_top B). Sur les autres chromosomes, ce sont les méthodes
 lassoLFMM et cate qui retrouvent le plus vite les candidats du GWAS catalog
-(Figure ref:fig:gwas_qqplot_top B). 
+(Figure ref:fig:gwas_qqplot_top B).
 
 #+NAME: code:gwas_qqplot_top_print
 #+CAPTION: Dépend de [[code:gwas_qqplot]]
@@ -12974,32 +12976,29 @@ lassoLFMM et cate qui retrouvent le plus vite les candidats du GWAS catalog
 
   pl <- readRDS("./OUTPUT/Expr/gwas_qqplot_top_plot.rds")
 
-  pl$pl.func()
-  print(pl)
-
   pl.leg <- drawable(function() {
     gridExtra::grid.arrange(pl$pl,
                  pl$legend, nrow=2, heights=c(10, 1))
   })
 
-  print(pl.leg)
 
   ThesisRpackage::Plots_export_png(pl.leg,
                                    basename.output = "gwas_qqplot_top",
                                    env = MaTheseR.params,
-                                   height = 0.9 * MaTheseR.params$textheightinch,
+                                   height = 0.8 * MaTheseR.params$textheightinch,
                                    width = MaTheseR.params$textwidthinch,
                                    res = 600)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!h]
 \centering
 \includegraphics{./OUTPUT/Rplots/gwas_qqplot_top.png}
 \caption{{\bf Q-Q plot et rang pour l'étude d'association entre des génomes et
     la maldie c\oe{}liaque (GWAS).} A) Diagramme quantile-quantile de l'inverse
-  du logarithme en base 10 des \pvalues renvoyées par chaque méthode. Les quantiles
-  théoriques sont ceux de la loi exponentielle. B) Proportion des candidats du GWAS
-  catalog retrouvés dans la top liste renvoyée par chaque méthode.}
+  du logarithme en base 10 des \pvalues renvoyées par chaque méthode. Les
+  quantiles théoriques sont ceux de la loi exponentielle. B) Nombre de gènes du
+  GWAS catalog retrouvés dans la liste rangée (la liste est rangée selon les $p\text{-valeurs}$) avant
+  un rang donné.}
 \label{fig:gwas_qqplot_top}
 \end{figure}
 #+END_EXPORT
@@ -13027,7 +13026,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
   ThesisRpackage::Plots_export_tikz_pdf(pl,
                                         basename.output = "gwas_venn",
                                         env = MaTheseR.params,
-                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
                                         width = MaTheseR.params$textwidthinch)
 
   convert.cmd <- paste("convert",
@@ -13038,7 +13037,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
   system(convert.cmd)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!h]
 \centering
 \includegraphics[width=\textwidth]{./OUTPUT/Rplots/gwas_venn.png}
 \caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
@@ -13063,7 +13062,7 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
   table.df %>%
     head(20) %>%
     dplyr::select(- `Position (pb)`) %>%
-    xtable(align = "lllp{2.5cm}p{2.8cm}ccp{4cm}",
+    xtable(align = "lllllccp{6cm}",
     type = "latex",
     label = "table:gwas_table",
     caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les SNPs référencés dans la base de données GWAS catalog.") %>%
@@ -13080,11 +13079,11 @@ chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS cata
 #+RESULTS: code:gwas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Sun Oct  8 20:26:11 2017
+% Tue Oct 10 18:00:18 2017
 \begin{sidewaystable}[ht]
 \centering
 \begingroup\fontsize{8pt}{8pt}
-\begin{tabular}{llp{2.5cm}p{2.8cm}ccp{4cm}}
+\begin{tabular}{llllccp{6cm}}
   \hline
 Chr & Snp & LD block (Mb) & Odds ratio [$95\%$ IC] & \pvalue & \qvalue & Gènes dans la zone \\ 
   \hline
@@ -14679,7 +14678,7 @@ CLOSED: [2017-09-01 ven. 09:35]
                       ymax = err.mean + se,
                       width = 1)) +
     geom_line() +
-    xlab("Paramètre de regularisation $L_{2}$ ($\\lambda$)") +
+    xlab("Param\\`etre de regularisation $L_{2}$ ($\\lambda$)") +
     scale_x_log10() +
     geom_vline(xintercept = 1e3, linetype = "dashed") +
     ylab("Erreur de\npr\\'ediction") +
@@ -14764,7 +14763,7 @@ CLOSED: [2017-09-01 ven. 13:13]
     scale_color_manual(values = color.values) +
     gtheme +
     theme(legend.position="none") +
-    xlab("Taille de la top liste") +
+    xlab("Rang") +
     ylab("Candidats retrouvés")
 
   ## When to we have every candidates ?
@@ -15109,10 +15108,17 @@ Nous avons utilisé les méthodes avec 9 variables latentes (Figure
 ref:fig:eas_params A et B). Le screeplot et l'erreur de validation croisée
 conduisent à choisir 5 variables latentes, mais nous avons choisi un nombre
 légèrement plus élevé car les individus proviennent de 16 populations
-différentes. Pour $\K = 9$, les valeurs du paramètre de régularisation $L_{2}$
-($\lambRidge$) entre $10^{-10}$ et $1.0$ donnent les mêmes valeurs moyennes
-d'erreur de prédiction (Figure ref:fig:eas_params C). Nous avons choisi de
-prendre $\lambRidge = 10^{-5}$ pour ridgeLFMM. 
+différentes. En effet, les 6 premières variables latentes permettent d'expliquer
+la structure de population (Figure ref:fig:eas_variable A et B). Les variables
+latentes 8 et 9 ne permettent pas de visualiser la structure de population, mais
+il pourrait s'agir de facteurs de confusion à prendre en compte dans l'étude
+d'association (Figure ref:fig:eas_variable C). Enfin, les 10-ième et 11-ième
+variables latentes séparent un seul individu du reste du groupe (Figure
+ref:fig:eas_variable D), nous avons donc choisi $K = 9$. Pour $\K = 9$, les
+valeurs du paramètre de régularisation $L_{2}$ ($\lambRidge$) entre $10^{-10}$
+et $1.0$ donnent les mêmes valeurs moyennes d'erreur de prédiction (Figure
+ref:fig:eas_params C). Nous avons choisi de prendre $\lambRidge = 10^{-5}$ pour
+ridgeLFMM.
 
 #+NAME: code:lfmm_geas_param_print
 #+CAPTION: Dépend de [[code:eas_screeplot_CV]]
@@ -15125,11 +15131,11 @@ prendre $\lambRidge = 10^{-5}$ pour ridgeLFMM.
   ThesisRpackage::Plots_export_tikz_pdf(pl,
                                         basename.output = "eas_hyperparams",
                                         env = MaTheseR.params,
-                                        height = 0.9 * MaTheseR.params$textheightinch,
+                                        height = 0.7 * MaTheseR.params$textheightinch,
                                         width = MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!h]
 \centering
 \includegraphics{./OUTPUT/Rplots/eas_hyperparams.pdf}
 \caption{{\bf Choix des paramètres pour l'étude d'association entre génotype et
@@ -15160,23 +15166,23 @@ prendre $\lambRidge = 10^{-5}$ pour ridgeLFMM.
 
   pl.leg <- drawable(function() {
     gridExtra::grid.arrange(pl,
-                            mylegend, nrow=2, heights=c(10, 2.5))
+                            mylegend, nrow=2, heights=c(10, 2))
   })
 
 
   ThesisRpackage::Plots_export_tikz_pdf(pl.leg,
                                         basename.output = "eas_pc",
                                         env = MaTheseR.params,
-                                        height = 0.4 * MaTheseR.params$textheightinch,
+                                        height = 0.7 * MaTheseR.params$textheightinch,
                                         width = MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!t]
+\begin{figure}[!h]
 \centering
 \includegraphics{./OUTPUT/Rplots/eas_pc.pdf}
 \caption{{\bf Variables latentes retournées par ridgeLFMM pour l'étude
     d'association entre génotype et un gradient environnemental (GEAS).} Les noms de populations sont les codes utilisés dans le projet 1000Genomes.}
-\label{fig:eas_params}
+\label{fig:eas_variable}
 \end{figure}
 #+END_EXPORT
 
@@ -15220,9 +15226,9 @@ catalog n'est détecté par les méthodes lm et PCAlm.
                                    res = 600)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!th]
+\begin{figure}[!h]
 \centering
-\includegraphics{./OUTPUT/Rplots/geas_qqplot.png}
+\includegraphics[width = \textwidth]{./OUTPUT/Rplots/geas_qqplot.png}
 \caption{{\bf Q-Q plot de l'étude d'association entre génotype et un gradient
     environnemental (GEAS).} Diagramme quantile-quantile de l'inverse du
   logarithme en base 10 des \pvalues renvoyées par chaques méthodes. Les quantiles
@@ -15245,7 +15251,7 @@ catalog n'est détecté par les méthodes lm et PCAlm.
   ThesisRpackage::Plots_export_tikz_pdf(pl,
                                         basename.output = "geas_venn",
                                         env = MaTheseR.params,
-                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
                                         width = MaTheseR.params$textwidthinch)
 
   convert.cmd <- paste("convert",
@@ -15256,7 +15262,7 @@ catalog n'est détecté par les méthodes lm et PCAlm.
   system(convert.cmd)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{figure}[!th]
+\begin{figure}[!h]
 \centering
 \includegraphics[width=\textwidth]{./OUTPUT/Rplots/geas_venn.png}
 \caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
@@ -15679,8 +15685,27 @@ CLOSED: [2017-10-09 lun. 17:06]
 - State "DONE"       from "TODO"       [2017-10-09 lun. 17:06]
 - State "TODO"       from              [2017-10-09 lun. 16:04]
 :END:
+
+#+NAME: code:eas_K14_ridge
+#+CAPTION: Dépend de [[code:eas_climatic_gradient]] [[code:1000g_G_noNA_scaled_prunned]] [[code:1000g_G_noNA_scaled]]
+#+begin_src R 
+  library(MaTheseR)
+
+  m.ridgeLfmm <- method_ridgeLFMM(K = 14, lambda = 1e-5)
+  Y <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.matter.rds"
+  X <- "./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_X.rds"
+  outlier <- c()
+  dat <- MaTheseR::LfmmMatterDat(Y, X, outlier)
+  col.mask <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_ind_pruning.rds")
+  dat.masked <- lfmm::LfmmDat(Y = NULL, X = dat$X, missing = FALSE)
+  dat.masked$Y <- dat$Y[,col.mask]
+
+  m.U <- ExpRmouline(m.ridgeLfmm, dat.masked)
+  save_expr(m.U, "Eas_U_ridgeLFMM_K14.rds")
+#+end_src
+
 #+NAME: code:eas_PCs
-#+CAPTION: Dépend de [[code:eas_expr]]
+#+CAPTION: Dépend de [[code:eas_K14_ridge]]
 #+begin_src R 
   library(MaTheseR)
   library(cowplot)
@@ -15688,7 +15713,7 @@ CLOSED: [2017-10-09 lun. 17:06]
 
   ## get res
   rownames.Y <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.rownames.rds")
-  expr <- readRDS("./OUTPUT/Expr/Eas_U_ridgeLFMM_409192b1e7bfbf4affc37da98f3ea0bd.rds")
+  expr <- readRDS("./OUTPUT/Expr/Eas_U_ridgeLFMM_K14.rds")
   str(expr)
 
   ## get indiv information
@@ -15699,29 +15724,45 @@ CLOSED: [2017-10-09 lun. 17:06]
 
   ## plot
   U.df <- as_tibble(expr$U) 
-  colnames(U.df) <- paste0("PC",1:9)
+  colnames(U.df) <- paste0("PC",1:14)
   U.df <- U.df %>% cbind(indiv.df) %>% as_tibble() %>%
     mutate(Population = pop)
-  pl1 <- ggplot(U.df, aes(x = PC6, PC7, color = Population)) +
+
+  pl2 <- ggplot(U.df, aes(x = PC4, PC5, color = Population)) +
+    geom_point() +
+    xlab("Variable latente 4") +
+    ylab("Variable latente 5") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none")
+  pl3 <- ggplot(U.df, aes(x = PC6, PC7, color = Population)) +
     geom_point() +
     xlab("Variable latente 6") +
-    ylab("Variable latente 7") + 
-    MaTheseR.params$gtheme
-
-
-  pl2 <- ggplot(U.df, aes(x = PC8, PC9, color = pop)) +
+    ylab("Variable latente 7") +
+    MaTheseR.params$gtheme+
+    theme(legend.position = "none")
+  pl4 <- ggplot(U.df, aes(x = PC8, PC9, color = Population)) +
     geom_point() +
     xlab("Variable latente 8") +
     ylab("Variable latente 9") +
-    MaTheseR.params$gtheme
+    MaTheseR.params$gtheme+
+    theme(legend.position = "none")
+  pl5 <- ggplot(U.df, aes(x = PC10, PC11, color = Population)) +
+    geom_point() +
+    xlab("Variable latente 10") +
+    ylab("Variable latente 11") +
+    MaTheseR.params$gtheme+
+    theme(legend.position = "none")
+
 
   ## plot for thesis
   mylegend <- g_legend(pl1 + theme(legend.position = "bottom") +
                        guides(color = guide_legend(nrow = 2)))
-  pl <- plot_grid(pl1 + theme(legend.position = "none"),
-                  pl2 + theme(legend.position = "none"),
-                  nrow = 1,
-                  labels = c("A","B"))
+  pl <- plot_grid(pl2,
+                  pl3,
+                  pl4,
+                  pl5,
+                  nrow = 2,
+                  labels = c("A","B", "C", "D"))
   pl.leg <- drawable(function() {
     gridExtra::grid.arrange(pl,
                               mylegend, nrow=2, heights=c(10, 2))
@@ -15731,10 +15772,49 @@ CLOSED: [2017-10-09 lun. 17:06]
 
   save_plot_png(pl.leg, "eas_pc.png")
   save_expr(pl.leg, "eas_pc_toprint.rds")
+
+
+
+  ## axe factoriel
+  V.df <- as_tibble(expr$V) 
+  colnames(V.df) <- paste0("PC",1:14)
+  V.df <- V.df %>% mutate(index = seq_along(PC1))
+
+  pl1 <- ggplot(V.df, aes(x = index, y = PC8 ^ 2)) +
+    geom_point() +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none") +
+    ylim(c(0.00001, 0.0018))
+  pl2 <- ggplot(V.df, aes(x = index, y = PC9 ^ 2)) +
+    geom_point() +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none")+
+    ylim(c(0.00001, 0.0018))
+  pl3 <- ggplot(V.df, aes(x = index, y = PC10 ^ 2)) +
+    geom_point() +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none")+
+    ylim(c(0.00001, 0.0018))
+  pl4 <- ggplot(V.df, aes(x = index, y = PC11 ^ 2)) +
+    geom_point() +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none")+
+    ylim(c(0.00001, 0.0018))
+  pl <- plot_grid(pl1,
+                  pl2,
+                  pl3,
+                  pl4,
+                  nrow = 2,
+                  labels = c("A","B"))
+  save_plot_png(pl, "eas_pc_factorielle.png")
 #+end_src
 
 #+RESULTS:
+[[./OUTPUT/Rplots/eas_pc_factorielle.png]]
 [[./OUTPUT/Rplots/eas_pc.png]]
+
+Ok je prends K = 9 mais que peut expliquer ces axes ?
+
 ****** DONE compute qvalue
 CLOSED: [2017-08-21 lun. 17:57]
 :LOGBOOK:
@@ -16694,9 +16774,16 @@ CLOSED: [2017-10-09 lun. 17:52]
   ggplot(toplot, aes(pvalue)) +
     geom_histogram()
 #+end_src
-***** TODO Run seulement avec 7 premières variables latentes
-****** RUNNING Run
+***** DONE Run seulement avec 7 premières variables latentes
+CLOSED: [2017-10-10 mar. 16:06]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-10 mar. 16:06]
+:END:
+****** DONE Run
+CLOSED: [2017-10-10 mar. 15:00]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-10 mar. 15:00]
+- State "TODO"       from "RUNNING"    [2017-10-10 mar. 15:00]
 - State "RUNNING"    from "TODO"       [2017-10-10 mar. 08:43]
 - State "TODO"       from              [2017-10-09 lun. 17:28]
 - State "TODO"       from              [2017-10-09 lun. 17:24]
@@ -16793,8 +16880,11 @@ CLOSED: [2017-10-09 lun. 17:52]
   save_expr(res.df, "eas_all_df_7variables.rds")
 
 #+end_src
-****** TODO qvalue
+****** DONE qvalue
+CLOSED: [2017-10-10 mar. 15:03]
 :LOGBOOK:
+- State "DONE"       from "RUNNING"    [2017-10-10 mar. 15:03]
+- State "RUNNING"    from "TODO"       [2017-10-10 mar. 15:01]
 - State "TODO"       from              [2017-10-09 lun. 17:31]
 :END:
 #+NAME: code:eas_qvalue_7
@@ -16817,8 +16907,10 @@ CLOSED: [2017-10-09 lun. 17:52]
   library(MaTheseR)
   qval.df <- readRDS("./OUTPUT/Expr/eas_all_qvalue_df_7variables.rds")
 #+END_SRC
-****** TODO calibration ?
+****** DONE calibration ?
+CLOSED: [2017-10-10 mar. 15:49]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-10 mar. 15:49]
 - State "TODO"       from              [2017-10-09 lun. 17:43]
 :END:
 #+NAME: code:eas_calibration_7
@@ -16828,8 +16920,21 @@ CLOSED: [2017-10-09 lun. 17:52]
     group_by(method) %>%
     summarise(mad = mad[1], median = median[1])
 #+END_SRC
-****** TODO Diagramme de Venn
+
+#+RESULTS: code:eas_calibration_7
+: # A tibble: 5 x 3
+:      method      mad     median
+:       <chr>    <dbl>      <dbl>
+: 1      cate 1.589438 0.11123995
+: 2 lassoLFMM 1.295454 0.08922671
+: 3        lm 8.760657 0.38152482
+: 4     PCAlm 1.127542 0.02570760
+: 5 ridgeLFMM 1.596154 0.11822620
+
+****** DONE Diagramme de Venn
+CLOSED: [2017-10-10 mar. 15:50]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-10 mar. 15:50]
 - State "TODO"       from              [2017-10-09 lun. 17:44]
 :END:
 #+NAME: code:eas_fdr_7
@@ -16856,8 +16961,15 @@ CLOSED: [2017-10-09 lun. 17:52]
   save_plot_png(out, "eas_fdr01_venn.png")
 
 #+END_SRC
-****** TODO Annotation de l'union controlé à un FDR de 1%
+
+#+RESULTS: code:eas_fdr_7
+[[./OUTPUT/Rplots/eas_fdr01_inter.png]]
+[[./OUTPUT/Rplots/eas_fdr01_venn.png]]
+
+****** DONE Annotation de l'union controlé à un FDR de 1%
+CLOSED: [2017-10-10 mar. 16:06]
 :LOGBOOK:
+- State "DONE"       from "TODO"       [2017-10-10 mar. 16:06]
 - State "TODO"       from              [2017-10-09 lun. 17:45]
 :END:
 #+NAME: code:eas_union_annotation_7
@@ -16934,7 +17046,7 @@ CLOSED: [2017-10-09 lun. 17:52]
   union.candidates.df.biomart <- union.candidates.df %>%
     mutate_annotation(snp.db)
 
-  save_expr(union.candidates.df.biomart, "geas_union_biomart.rds")
+  save_expr(union.candidates.df.biomart, "geas_union_biomart_7.rds")
 
   ## tab
   message("== phenotype description in union union ==")
@@ -16949,8 +17061,10 @@ CLOSED: [2017-10-09 lun. 17:52]
   ## amiGo2
   message("== panther input ==")
   (union.candidates.df.vep %>%
-    distinct(Gene))$Gene %>%
-    paste0(collapse=" ")
+   distinct(Gene))$Gene %>%
+                   paste0(collapse="\n") %>%
+                   cat()
+
 #+end_src
 
 ***** DONE Plot
@@ -17657,7 +17771,7 @@ chromosomes. Le mode de transmition des chromosomes des parents au enfant
 provoque un déséquilibre de liaison entre les SNPs voisins. Avant 
 
 Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que la redaction...
-* Listes des travaux réalisés
+* Liste des travaux réalisés
 
 
 
@@ -17729,6 +17843,7 @@ La grande différence est dans le calcule de l'acp
 
 Du coups la matrice de kindship pourrait etre calculé avec l'acp et du coup on a
 aussi un complexité faible pour le smodèle mixte :D
+**** Qu'est ce qu'explique les variables latentes ?
 
 *** Général
 **** Les types de mutation génétiques
