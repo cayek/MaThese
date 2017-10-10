@@ -125,42 +125,37 @@
 \noindent *Titre :* Méthodes de factorisation matricielle pour la génomique des
 populations et les tests d'association.
 
-\noindent *Résumé :* Nous présentons des méthodes statistiques reposant sur des problèmes
-de factorisation matricielle. Une première méthode permet l'inférence rapide de
-la structure de populations à partir de données génétiques en incluant
+\noindent *Résumé :* Nous présentons des méthodes statistiques reposant sur des
+problèmes de factorisation matricielle. Une première méthode permet l'inférence
+rapide de la structure de populations à partir de données génétiques en incluant
 l'information de proximité géographique. Une deuxième méthode permet de corriger
 les études d'association pour les facteurs de confusion. Nous présentons dans ce
 manuscrit les modèles, ainsi que les aspects théoriques des algorithmes
-d'inférence. De plus, nous comparons les performances de nos méthodes à ceux des
-méthodes existantes à l'aide de simulations numériques. Enfin, nous illustrons
-l'utilisations de nos méthodes sur des données biologiques réelles. Nos méthodes
-ont été implémentées et distribuées sous la forme de packages R : =tess3r= et
-=lfmm=.
+d'inférence. De plus, à l'aide de simulations numériques, nous comparons les
+performances de nos méthodes à celles des méthodes existantes. Enfin, nous
+utilisons nos méthodes sur des données biologiques réelles. Nos méthodes ont été
+implémentées et distribuées sous la forme de packages R : =tess3r= et =lfmm=.
 
 \noindent *Mots-clés :* optimisation, factorisation de matrices, structure génétique des
-populations, métissage, test d'association, facteurs de confusion, bio-informatique.
+populations, métissage, étude d'association, facteurs de confusion, bio-informatique.
 
 #+LATEX: \vspace{1cm}
 
 \noindent *Title:* Matrix factorization methods for population genomics and association
 mapping.
 
-\noindent *Summary:* We present statistical methods based on matrix factorization
-problems. A first method allows efficient inference of population structure from
-genetic data and using geographic proximity information. A second method
-corrects the association studies for confounding factors. We present in this
-manuscript the statistical models, as well as the theoretical aspects of their
-inference algorithms. In addition, we compare our methods with existing methods
-on simulations; and we illustrate their uses on real biological data. Our
-methods have been implemented and distributed as R packages: =tess3r= and =lfmm=
-.
+\noindent *Summary:* We present statistical methods based on matrix
+factorization problems. A first method allows efficient inference of population
+structure from genetic data and including geographic proximity information. A
+second method corrects the association studies for confounding factors. We
+present in this manuscript the models, as well as the theoretical aspects of the
+inference algorithms. Moreover, using numerical simulations, we compare the
+performance of our methods with those of existing methods. Finally, we use our
+methods on real biological data. Our methods have been implemented and
+distributed as R packages: =tess3r= and =lfmm=.
 
 \noindent *Keyword:* optimization, matrix factorization, genetic structure of populations,
-admixture, association mapping,  confounding factors, bioinformatics.
-* Publications
-
-TODO
-
+admixture, association study,  confounding factors, bioinformatics.
 #+BEGIN_EXPORT latex
 \mainmatter
 #+END_EXPORT
@@ -718,22 +713,22 @@ d'ascendance génétique dans la Table [[table:tess3_etat_art]]
 #+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
 #+ATTR_LATEX: :align l|p{5cm}lp{5.5cm}|p{5.5cm} :float sideways
 #+NAME: table:tess3_etat_art
-#+CAPTION: *Méthodes d'estimation de coéficients d'ascendance non spatial et spatial.* La méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
-|---------------+-----------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
-| Méthode       | Modèle                                              | Spatiale | Algorithme                                       | Référence                                   |
-|---------------+-----------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
-| STUCTURE      | bayésien                                            | non      | MCMC                                             | citet:Pritchard2000,Falush1567              |
-| FRAPPE        | vraisemblance                                       | non      | EM                                               | citet:Tang_2005                             |
-| TESS          | bayésien                                            | oui      | MCMC                                             | citet:CHEN_2007                             |
-| GENELAND      | bayésien                                            | oui      | MCMC                                             | citet:phdGuedj                              |
-| BAPS          | bayésien                                            | oui      | optimisation stochastique                        | citet:Corander2008                          |
-| ADMIXTURE     | vraisemblance                                       | non      | optimisation quasi-Newton alterné                | citet:alexander2009admixture,Alexander_2011 |
-| fastStructure | bayésien                                            | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
-| PSIKO         | PCA                                                 | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
-| sNMF          | factorisation matricielle parcimonieuse             | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
-| TESS3-AQP     | factorisation matricielle régularisé sur graphe     | oui      | optimisation quadratique alterné                 |                                             |
-| TESS3-APLS    | factorisation matricielle régularisé sur graphe     | oui      | moindres carré alterné projeté                   |                                             |
-| conStruct     | bayésien                                            | oui      | MCMC                                             | citet:Bradburd189688                        |
+#+CAPTION: *Méthodes spatiale et non spatiale d'estimation de coéficients d'ascendance.* Les méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
+|---------------+--------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
+| Méthode       | Modèle                                           | Spatiale | Algorithme                                       | Référence                                   |
+|---------------+--------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
+| STRUCTURE     | bayésien                                         | non      | MCMC                                             | citet:Pritchard2000,Falush1567              |
+| FRAPPE        | vraisemblance                                    | non      | EM                                               | citet:Tang_2005                             |
+| TESS          | bayésien                                         | oui      | MCMC                                             | citet:CHEN_2007                             |
+| GENELAND      | bayésien                                         | oui      | MCMC                                             | citet:phdGuedj                              |
+| BAPS          | bayésien                                         | oui      | optimisation stochastique                        | citet:Corander2008                          |
+| ADMIXTURE     | vraisemblance                                    | non      | optimisation quasi-Newton alterné                | citet:alexander2009admixture,Alexander_2011 |
+| fastStructure | bayésien                                         | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
+| PSIKO         | PCA                                              | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
+| sNMF          | factorisation matricielle parcimonieuse          | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
+| TESS3-AQP     | factorisation matricielle régularisée sur graphe | oui      | optimisation quadratique alterné                 |                                             |
+| TESS3-APLS    | factorisation matricielle régularisée sur graphe | oui      | moindres carrés alternés projetés                |                                             |
+| conStruct     | bayésien                                         | oui      | MCMC                                             | citet:Bradburd189688                        |
 #+LATEX:\rowcolors{2}{}{}
 
 ** Tests d'association
@@ -937,20 +932,20 @@ tableau.
 
 #+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
 #+ATTR_LATEX: :align p{3cm}|p{4cm}p{4cm}p{5cm}|p{4cm} :float sideways
-#+CAPTION: *Méthodes reposant sur l'équation ref:eq:model0 pour la correction des facteurs de confusion dans les études d'association.* Les méthodes ridgeLFMM et LassoLFMM sont présentées dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont présentées plus en détailles dans la section [[sec:similar_method]].
+#+CAPTION: *Méthodes reposant sur l'équation ref:eq:model0 pour la correction des facteurs de confusion dans les études d'association.* Les méthodes ridgeLFMM et LassoLFMM sont présentées dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont présentées plus en détail dans la section [[sec:similar_method]].
 #+NAME: table:lfmm_etat_art
-|----------------------+-------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------------------+-------------------------------------------------|
-| Méthode              | Modèle                                                | Algorithme                                                          | Test d'hypothèse                                                                | Référence                                       |
-|----------------------+-------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------------------+-------------------------------------------------|
-| sva-twostep          | PCA et régression linéaire                            | moindres carrés ordinaire et SVD                                    | test de Fisher                                                                  | citet:article_Leek_Storey_2007                  |
-| sva-irw              | weighted-PCA et régression linéaire                   | moindres carrés ordinaire et weighted-SVD                          | test de Fisher                                                                  | citet:article_Leek_Storey_2008                  |
-| RLFM                 | bayésien                                              | Monte-Carlo EM                                                      | pas de test                                                                     | citet:agarwal09_regres                          |
-| famt                 | vraisemblance                                         | EM                                                                  | test de Student                                                                 | citet:friguet09_factor_model_approac_to_multip  |
-| LFMM                 | bayésien                                              | MCMC                                                                | test de wald, estimation de la variance par bootstrap bayésien                  | citet:Frichot_2013 |
-| cate                 | analyse factorielle et régression linéaire            | EM ou SVD et moindres carrés généralisé                             | test basé sur la distribution asymptotique de l'estimateur des effets d'intérêt | citet:wang2015confounder                        |
-| ridgeLFMM            | factorisation matricielle avec régularisation $L_{2}$ | SVD et moindres carrés régularisé en norme $L_{2}$                  | test de Student                                                                 |                                                 |
-| lassoLFMM            | factorisation matricielle avec régularisation $L_{1}$ | soft-thresholded SVD et moindres carrés régularisé en norme $L_{1}$ | test de Student                                                                 |                                                 |
-| MOUTHWASH / BACKWASH | régression linéaire et analyse factorielle            | moindres carrés ordinaire et EM ou descente par coordonnées         | adaptive shrinkage (ASH) citep:stephens16_false_discov_rates                    | citet:gerard2017empirical                       |
+|----------------------+-------------------------------------------------------+----------------------------------------------------------------------+---------------------------------------------------------------------------------+------------------------------------------------|
+| Méthode              | Modèle                                                | Algorithme                                                           | Test d'hypothèse                                                                | Référence                                      |
+|----------------------+-------------------------------------------------------+----------------------------------------------------------------------+---------------------------------------------------------------------------------+------------------------------------------------|
+| sva-twostep          | PCA et régression linéaire                            | moindres carrés ordinaire et SVD                                     | test de Fisher                                                                  | citet:article_Leek_Storey_2007                 |
+| sva-irw              | weighted-PCA et régression linéaire                   | moindres carrés ordinaire et weighted-SVD                            | test de Fisher                                                                  | citet:article_Leek_Storey_2008                 |
+| RLFM                 | bayésien                                              | Monte-Carlo EM                                                       | pas de test                                                                     | citet:agarwal09_regres                         |
+| famt                 | vraisemblance                                         | EM                                                                   | test de Student                                                                 | citet:friguet09_factor_model_approac_to_multip |
+| LFMM                 | bayésien                                              | MCMC                                                                 | test de wald, estimation de la variance par bootstrap bayésien                  | citet:Frichot_2013                             |
+| cate                 | analyse factorielle et régression linéaire            | EM ou SVD et estimation par moindres carrés généralisée              | test basé sur la distribution asymptotique de l'estimateur des effets d'intérêt | citet:wang2015confounder                       |
+| ridgeLFMM            | factorisation matricielle avec régularisation $L_{2}$ | SVD et moindres carrés régularisés en norme $L_{2}$                  | test de Student                                                                 |                                                |
+| lassoLFMM            | factorisation matricielle avec régularisation $L_{1}$ | soft-thresholded SVD et moindres carrés régularisés en norme $L_{1}$ | test de Student                                                                 |                                                |
+| MOUTHWASH / BACKWASH | régression linéaire et analyse factorielle            | moindres carrés ordinaire et EM ou descente par coordonnées          | adaptive shrinkage (ASH) citep:stephens16_false_discov_rates                    | citet:gerard2017empirical                      |
 #+LATEX:\rowcolors{2}{}{}
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
@@ -1312,7 +1307,7 @@ géographique.
 *** Matrices d'ascendance génétique
 
 Nous considérons une matrice de génotype, $\Y$, enregistrant des données de $n$
-individus à $p$ loci polymorphes pour une espèce ayant une ploïdie de $d$,
+individus à $p$ locus polymorphes pour une espèce ayant une ploïdie de $d$,
 c'est-à-dire qui possède un génome composé de $d$ exemplaires de chaque
 chromosome. Pour les SNPs autosomiques[fn:autosomique] dans un organisme
 diploïde, le génotype au locus $\ell$ est un nombre entier, 0, 1 ou 2,
@@ -1668,24 +1663,24 @@ Ensuite, l'erreur de prédiction est calculée en utilisant l'erreur quadratique
 moyenne (RMSE, Root Square Mean Error) entre le génotype prédit et le génotype
 réellement observé.
 
-*** Statistique de différenciation des clusters génétiques pour détecter les loci sous adaptation locale
+*** Statistique de différenciation des clusters génétiques pour détecter les locus sous adaptation locale
 
 Les méthodes d'estimation de la structure génétique des populations arrivent à
 détecter des clusters génétiques grâce aux pressions évolutives (décrites dans
 la partie [[intro_genet]]) qui provoquent la différenciation des distributions
 alléliques entre les différents clusters génétiques. À l'origine de cette
 différenciation il y a la migration, la dérive génétique et l'adaptation à
-l'environnement. Les loci qui ne sont pas impliqués dans un processus
+l'environnement. Les locus qui ne sont pas impliqués dans un processus
 d'adaptation à l'environnement sont dits neutres. Nous faisons l'hypothèse
-qu'une large majorité des loci observés sont neutres. La migration et la dérive
+qu'une large majorité des locus observés sont neutres. La migration et la dérive
 génétique influencent de la même façon les distributions alléliques de tous les
-loci neutres, induisant ainsi une différenciation typique entre les différents
+locus neutres, induisant ainsi une différenciation typique entre les différents
 clusters génétiques identifiés par les méthodes d'estimation de la structure.
-Les loci impliqués dans l'adaptation locale peuvent être identifiés en
-cherchant les loci pour lesquels on observe une différenciation anormale entre
+Les locus impliqués dans l'adaptation locale peuvent être identifiés en
+cherchant les locus pour lesquels on observe une différenciation anormale entre
 les clusters génétiques citep:Lewontin175. Nous proposons de calculer une
 statistique de différenciation entre les fréquences génomiques dans les clusters
-génétiques inférées par nos algorithmes pour détecter les loci sous adaptation
+génétiques inférées par nos algorithmes pour détecter les locus sous adaptation
 à l'environnement.
 
 En supposant qu'il y à $K$ clusters génétiques, les matrices $\Q$ et $\mathbf{G}$
@@ -1757,7 +1752,7 @@ processeur informatique Intel Xeon 2.0 GHz.
 Nous avons utilisé le programme informatique =ms= pour effectuer des simulations
 coalescentes de SNPs neutres et de SNPs sous adaptation à l'environnement
 citep:Hudson_2002. Deux populations sources ont été créées à partir de la
-simulation du modèle à deux îles de Wright's. Ensuite nous avons généré des
+simulation du modèle à deux îles de Wright. Ensuite nous avons généré des
 génotypes en mélangeant les génotypes des deux populations simulées avec =ms=
 grâce à des proportions de mélange qui varient continuellement selon un gradient
 longitudinal citep:Durand_2009,FRAN_OIS_2010 (Figure ref:tess3:cline). Dans ce
@@ -1789,10 +1784,10 @@ simulant des séquences d'ADN avec une taille de population efficace de $N_0 =
 génération a été réglé sur $r = 0,25 \times 10^{-8}$; et le paramètre $m$ a été
 choisi pour obtenir des niveaux neutres de $F_{\rm ST}$ compris entre des
 valeurs de $0.005$ et $0.10$. Le nombre de nucléotides pour chaque séquence
-d'ADN a varié entre 10k et 300k pour obtenir un nombre de loci polymorphes
+d'ADN a varié entre 10k et 300k pour obtenir un nombre de locus polymorphes
 compris entre 1k et 200k après avoir filtré les SNPs ayant une fréquence
 d'allèle mineure inférieure à 5 $\%$. Pour créer des SNPs avec des valeurs de
-$F_{\rm ST}$ atypiques par rapport au $F_{\rm ST}$ des loci neutres, des
+$F_{\rm ST}$ atypiques par rapport au $F_{\rm ST}$ des locus neutres, des
 segments chromosomiques ancestraux supplémentaires ont été générés en simulant
 des séquences d'ADN avec un taux de migration $m_s$ inférieur à $m$. Les
 simulations ont permis de reproduire pour les SNPs sous adaptation locale les
@@ -1855,7 +1850,7 @@ de l'intensité de la sélection ($m/m_s$).
 <<simu_At>>
 
 Nous avons utilisé l'algorithme APLS pour étudier la structure de population
-spatiale et pour détecter les loci sous adaptation locale en considérant 214k
+spatiale et pour détecter les locus sous adaptation locale en considérant 214k
 SNPs à partir de 1 095 écotypes européens des espèces végétales /A.thaliana/
 citep:Horton_2012. Le critère de validation croisée a été utilisé pour évaluer
 le nombre de clusters génétiques dans l'échantillon, et nous avons utilisé le
@@ -2498,9 +2493,9 @@ populations sources simulées par =ms=. Pour la matrice $\mathbf{G}$, la matrice
 de référence, notée ($\mathbf{G}_0$), est calculée à partir des fréquences
 empiriques des génotypes des deux populations sources. Les erreurs quadratiques
 moyennes (RMSE) pour les estimations des matrices $\Q$ et $\mathbf{G}$ diminue à
-mesure que la taille de l'échantillon et le nombre de loci augmentent (Figure
+mesure que la taille de l'échantillon et le nombre de locus augmentent (Figure
 ref:fig:tess3:comp). Pour tous les algorithmes, les erreurs statistiques sont
-généralement faibles lorsque le nombre de loci est supérieur à 10k. Ces
+généralement faibles lorsque le nombre de locus est supérieur à 10k. Ces
 résultats permettent de prouver que les deux algorithmes produisent des
 estimations équivalentes des matrices $\Q_0$ et $\mathbf{G}_0$. Les résultats
 permettent également de vérifier que l'algorithme APLS converge vers les mêmes
@@ -2529,7 +2524,7 @@ converger vers un minimum de la fonction objectif $\LS$.
     estimations des matrices $\Q$ et $\mathbf{G}$}. Simulations de génotype métissé
   spatialement. A-B) Erreur statistique des estimations de APLS et AQP en
   fonction du nombre d'individu $n$ ($p \sim 10^4$). C-D) Erreur statistique des
-  estimations de APLS et AQP en fonction du nombre de loci $p$ ($n = 200$)}
+  estimations de APLS et AQP en fonction du nombre de locus $p$ ($n = 200$)}
 \label{fig:tess3:comp}
 \end{figure}
 #+END_EXPORT
@@ -2539,16 +2534,16 @@ Nous avons sous-échantillonné un grand jeu de données de SNPs d'écotypes de
 d'exécution des algorithmes AQP et APLS. Dans ces expériences, nous utilisons
 les méthodes avec $6$ clusters génétiques et avons répliqué 5 fois chaque
 simulation. Pour un nombre d'individus allant de 500 à 600 et un nombre de 50k
-loci, l'algorithme APLS nécessite plus d'itérations (25 itérations) que
+locus, l'algorithme APLS nécessite plus d'itérations (25 itérations) que
 l'algorithme AQP (20 itérations) pour converger vers sa solution (Figure
-ref:fig:tess3:vitesse). Pour un nombre de loci allant de 10k à 200k et 150
+ref:fig:tess3:vitesse). Pour un nombre de locus allant de 10k à 200k et 150
 individus, nous observons des résultats similaires. Pour 50k SNPs, les temps
 d'exécution sont significativement plus bas pour l'algorithme APLS que pour
 l'algorithme AQP. Pour 50k SNPs et 600 individus, cela prend en moyenne 1,0 min
 pour l'algorithme APLS et 100 min pour l'algorithme AQP pour calculer leurs
 résultats. Pour 100k SNPs et 150 individus, il faut en moyenne 0,6 min (9,0 min)
 pour l'algorithme APLS (AQP) pour calculer leurs résultats. Pour le spectre de
-valeurs du nombre d'individus et de loci considéré, l'implémentation de
+valeurs du nombre d'individus et de locus considéré, l'implémentation de
 l'algorithme APLS est environ 2 à 100 fois plus rapide que celle de
 l'algorithme AQP.
 
@@ -2704,7 +2699,7 @@ CLOSED: [2017-09-15 ven. 11:09]
                       width = (max(L) - min(L)) * 0.00002 )) +
     geom_line() +
     geom_point(size = 2) +
-    xlab("Nombre de loci $\\times 1000$") +
+    xlab("Nombre de locus $\\times 1000$") +
     ylab("RMSE") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none") +
@@ -2716,7 +2711,7 @@ CLOSED: [2017-09-15 ven. 11:09]
                       width = (max(L) - min(L)) * 0.00002 )) +
     geom_line() +
     geom_point(size = 2) +
-    xlab("Nombre de loci $\\times 1000$") +
+    xlab("Nombre de locus $\\times 1000$") +
     ylab("") +
     MaTheseR.params$gtheme +
     Article2.env$scale.linetype +
@@ -2733,7 +2728,7 @@ CLOSED: [2017-09-15 ven. 11:09]
 
 #+RESULTS: code:tess3:comparison:plot
 [[./OUTPUT/Rplots/tess3_APLS_AQP_rmse_comp.png]]
-: Measuring dimensions of:  Nombre de loci $\times 1000$ ($p$)
+: Measuring dimensions of:  Nombre de locus $\times 1000$ ($p$)
 
 ***** DONE Expérience vitesse
 CLOSED: [2017-09-11 lun. 12:21]
@@ -2865,7 +2860,7 @@ CLOSED: [2017-09-11 lun. 12:21]
                       width = (max(L) - min(L)) * 0.02 / 1000)) +
     theme_bw() +
     scale_y_log10() +
-    xlab("Nombre de loci $\\times 1000$") +
+    xlab("Nombre de locus $\\times 1000$") +
     ylab("") +
     MaTheseR.params$gtheme +
     theme(legend.position = "none") +
@@ -2904,7 +2899,7 @@ Expr save in ./OUTPUT/Expr/tess3_vitesse_plot.rds
 Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
 un modèle spatial de mélange pour évaluer les capacités de l'algorithme APLS à
 reproduire les estimations obtenues avec le logiciel =TESS= 2.3. Nous avons
-simulé deux clusters génétiques de 100 échantillons de 2000 loci pour différent
+simulé deux clusters génétiques de 100 échantillons de 2000 locus pour différent
 niveau de différenciation moyen $F_{\rm ST}$. Cela a permis de créer des jeux de
 données pour lesquels il est plus ou moins difficile d'estimer la structure de
 population. Les erreurs statistiques, mesurées par RMSE, pour l'estimation des
@@ -2928,7 +2923,7 @@ Dans l'ensemble, les performances statistiques sont du même ordre pour =TESS=
     $\Q$ (figure A) et $\mathbf{G}$ (figure B).} Simulations de génotypes métissés
   spatialement pour plusieurs niveaux de différenciation ($\Fst$) entre les
   populations sources. Les populations sources sont simulées par un modèle de
-  Wright's à deux îles et la statistique de différenciation est définie comme
+  Wright à deux îles et la statistique de différenciation est définie comme
   $1/(1+4N_0 m)$ où $m$ est le taux de migration et $N_0$ la taille
   effective de la population. Les erreurs statistiques de \textit{TESS} 2.3 et APLS sont
   représentées comme des fonctions de $\Fst$.}
@@ -2975,7 +2970,7 @@ l'algorithme non spatial (Figure ref:fig:tess3:comp:rmse:snmf).
 \caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation de
     $\Q$.} Simulations de génotypes métissés spatialement pour plusieurs niveaux
   de différenciation($F_{\rm ST}$) entre les populations sources. Les
-  populations sources sont simulées par un modèle de Wright's à deux îles et la
+  populations sources sont simulées par un modèle de Wright à deux îles et la
   statistique de différenciation est définie comme $1 / (1 + 4 N_0 m)$ où $m$
   est le taux de migration et $N_0$ la taille effective de la population. Les
   erreurs statistiques de sNMF et APLS sont représentées comme des fonctions de
@@ -2984,16 +2979,16 @@ l'algorithme non spatial (Figure ref:fig:tess3:comp:rmse:snmf).
 \end{figure}
 #+END_EXPORT
 
-Sur les simulations avec des loci sous adaptation locale, nous avons utilisé
+Sur les simulations avec des locus sous adaptation locale, nous avons utilisé
 l'aire sous la courbe de précision-rappel (AUC) pour quantifier les performances
-des tests de détection des loci sélectionnés reposant sur les estimations des
+des tests de détection des locus sélectionnés reposant sur les estimations des
 matrices d'ascendance génétique, $\Q$ et $\mathbf{G}$. De plus, nous avons
 calculé les AUC pour des tests de neutralité basés sur le calcul de la $\Fst$ à
 partir des génotypes des populations sources avant le mélange. Comme ils
 représentent les valeurs maximales atteignables, les AUC basés sur les génotypes
 des populations sources sont toujours plus élevés que ceux obtenus pour des
 tests basés sur des estimations des matrices d'ascendance. Pour toutes les
-valeurs de l'intensité de sélection (le rapport des taux de migration aux loci
+valeurs de l'intensité de sélection (le rapport des taux de migration aux locus
 neutres et adaptatifs), les AUC sont plus élevées pour les méthodes spatiales
 que pour les méthodes non spatiales (Figure ref:fig:tess3:auc). Pour les
 intensités de sélection élevées, les performances des tests fondés sur les
@@ -3502,12 +3497,12 @@ estimations de la matrice $\Q$ fournies par APLS, relativement à celle obtenue
 par la méthode non spatiale sNMF. Pour de faibles niveaux d'incertitude dans les
 coordonnées spatiales, les erreurs statistiques des estimations APLS sont
 inférieures à celles de sNMF (Figure ref:fig:tess3:noise). Pour les simulations
-avec $n = 500$ individus et $p = 10^{5}$ loci, un rapport de signal sur bruit
+avec $n = 500$ individus et $p = 10^{5}$ locus, un rapport de signal sur bruit
 important augmente les erreurs statistiques dans les estimations de la matrice
 $\Q$ de l'algorithme APLS. Pour un rapport signal sur bruit plus petit, les RMSE
 sont généralement inférieurs pour l'algorithme APLS que pour la méthode sans
 coordonnées spatiales. Pour les simulations avec $n = 50$ individus et $p =
-10^4$ loci, les estimations APLS étaient plus précises que les estimations non
+10^4$ locus, les estimations APLS étaient plus précises que les estimations non
 spatiales. Ce résultat inattendu s'explique par des différences algorithmiques
 subtiles dans les programmes testés. Dans une large mesure, les estimations de
 l'algorithme APLS sont robustes à l'incertitude dans les mesures spatiales. Des
@@ -3936,7 +3931,7 @@ homogènes.
 #+END_EXPORT
 
 Les tests basés sur la statistique $\Fst$ ont été appliqués à l'ensemble de 214k
-SNP pour détecter les loci sous sélection naturelle dans le génome de l'espèce
+SNP pour détecter les locus sous sélection naturelle dans le génome de l'espèce
 /A.thaliana/. /A. thaliana/ se trouve dans une large variété d'habitats, et
 l'adaptation locale à l'environnement est reconnue comme étant une pression
 importante qui façonne la diversité génétique dans l'espace
@@ -3975,7 +3970,7 @@ Bonferonni).
 \begin{sidewaysfigure}[!t]
 \centering
 \includegraphics{./OUTPUT/Rplots/tess3_AT_manhattanplot.png}
-\caption{{\bf Détection de loci sous adaptation locale sur des écotypes
+\caption{{\bf Détection de locus sous adaptation locale sur des écotypes
     européennes de \bf {\it A. thaliana}}. Manhattan plot de
   $-\log(p\text{-value})$. Les \pvalues ont été calculées à partir de la
   structure de la population estimée par l'algorithme APLS avec $K = 6$ clusters
@@ -4804,8 +4799,10 @@ CLOSED: [2017-10-08 dim. 13:11]
 [[./OUTPUT/Rplots/Simons_vario.png]]
 [[./OUTPUT/Rplots/Simons_W.png]]
 
-***** RUNNING TESS3 cross validation
+***** CANCELLED TESS3 cross validation
+CLOSED: [2017-10-10 mar. 08:42]
 :LOGBOOK:
+- State "CANCELLED"  from "RUNNING"    [2017-10-10 mar. 08:42]
 - State "RUNNING"    from "DONE"       [2017-10-08 dim. 13:37]
 - State "DONE"       from "RUNNING"    [2017-10-08 dim. 13:10]
 - State "RUNNING"    from "TODO"       [2017-10-07 Sat 13:51]
@@ -4905,8 +4902,10 @@ CLOSED: [2017-10-08 dim. 13:11]
 #+RESULTS:
 [[./OUTPUT/Rplots/Simons_tess3_CV.png]]
 
-***** RUNNING TESS3
+***** CANCELLED TESS3
+CLOSED: [2017-10-10 mar. 08:42]
 :LOGBOOK:
+- State "CANCELLED"  from "RUNNING"    [2017-10-10 mar. 08:42]
 - State "RUNNING"    from "TODO"       [2017-10-08 dim. 13:35]
 - State "TODO"       from              [2017-10-05 Jeu 23:05]
 :END:
@@ -5129,7 +5128,7 @@ observées avec des méthodes non spatiales, et les algorithmes spatiaux ont
 permis de détecter une structure de population plus subtile. En outre, nous
 avons mis en place un test de détection de la sélection reposant sur les
 estimations spatiales des matrices $\Q$ et $\mathbf{G}$ citep:Martins_2016; et
-nous avons observé que les tests rejettent la neutralité des loci avec plus de
+nous avons observé que les tests rejettent la neutralité des locus avec plus de
 précision que ceux fondés sur des approches non spatiales. Ainsi, l'information
 spatiale a contribué à améliorer la détection des signatures de balayage
 sélectif survenant dans des populations sources avant les événements de mélange.
@@ -5147,7 +5146,7 @@ approches non spatiales. Dans cette étude, nous avons présenté un cadre
 conceptuelle permettant de développer des méthodes rapides d'estimation de
 l'ascendance spatiale. Ces méthodes rapides sont implémentées dans le package
 =tess3r= qui propose une pipeline intégrée pour l'estimation et la visualisation
-de la structure génétique de population et pour la recherche de loci
+de la structure génétique de population et pour la recherche de locus
 responsables de l'adaptation locale. La complexité algorithmique de nos
 algorithmes permet à leurs utilisateurs d'analyser des échantillons comprenant
 des centaines à des milliers d'individus. Par exemple, l'analyse de plus d'un
@@ -5212,7 +5211,7 @@ phénotypes citep:Rakyan_2011. Des approches similaires ont été appliquées à
 caractérisation de la variation observée dans l'ARN par rapport à différents
 environnements, traitements médicaux, phénotypes ou maladies citep:Slonim_2002.
 D'autres exemples d'études d'association incluent des études d'association
-génétique-environnement (GEAS) dans lesquelles des loci sont testés pour leurs
+génétique-environnement (GEAS) dans lesquelles des locus sont testés pour leurs
 corrélations avec des gradients écologiques afin de détecter des signatures de
 sélection naturelle citep:rellstab15_pract_guide_to_envir_assoc. En peu de
 temps, les études d'association ont permis des progrès considérables dans
@@ -7088,11 +7087,11 @@ faible fréquence, de la même façon que l'étude GWAS (voir section [[sec:gwas
 Nous avons enlevé les populations afro-américaine et africaine des Caraïbes pour
 ne garder que les individus vivant dans leur environnement depuis plusieurs
 générations. Après cette étape de filtrage il reste 1409 individus et 5397214
-loci. Enfin, de la même façon que pour l'étude GWAS, nous avons identifié un
+locus. Enfin, de la même façon que pour l'étude GWAS, nous avons identifié un
 sous-ensemble de 296948 SNPs grâce au LD pruning. Nous avons utilisé ce
-sous-ensemble de loci pour calculer les variables latentes avec les méthodes
+sous-ensemble de locus pour calculer les variables latentes avec les méthodes
 PCAlm, cate, lassoLFMM et ridgeLFMM. Nous avons calculé ensuite des \pvalues
-pour chacun des 5397214 loci et pour chacune des méthodes. Les candidats
+pour chacun des 5397214 locus et pour chacune des méthodes. Les candidats
 retournés par les méthodes a été étudiée grâce au logiciel VEP (Variant Effect
 Predictor). Le logiciel VEP permet d'annoter l'effet d'un polymorphisme sur
 l'expression des gènes citep:McLaren_2016. Les annotations retournées par VEP
@@ -10417,10 +10416,10 @@ ref:fig:method_comp B).
                                         basename.output = "lfmm_method_comp",
                                         env = MaTheseR.params,
                                         width = MaTheseR.params$textheightinch,
-                                        height = MaTheseR.params$textwidthinch)
+                                        height = 0.75 * MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
-\begin{sidewaysfigure}[h]
+\begin{sidewaysfigure}
 \centering
 \includegraphics{./OUTPUT/Rplots/lfmm_method_comp.pdf}
 \caption{{\bf Comparaison des méthodes sur des simulations rélisées à partir du jeu de
@@ -11214,15 +11213,15 @@ CLOSED: [2017-08-06 Sun 14:40]
 :LOGBOOK:
 - State "DONE"       from              [2017-08-06 Sun 14:40]
 :END:
-Les loci relevé par cite:Rahmani_2016
+Les locus relevé par cite:Rahmani_2016
 #+begin_src R :results output :exports both
-  rahmani.loci <- c("cg05428452",
+  rahmani.locus <- c("cg05428452",
                      "cg07839457",
                      "cg16411857")
 #+end_src
 Ceux de cite:Zou_2014
 #+begin_src R :results output :exports both
-  Zou.loci <- c("cg05428452",
+  Zou.locus <- c("cg05428452",
                 "cg07839457",
                 "cg16411857",
                 "cg25372449",
@@ -11234,13 +11233,13 @@ On retrouve les 3 mêmes. On va prend cela
 #+CAPTION: Dépend de [[code:ewas_G_X]]
 #+begin_src R :results output :exports both :session *ssh krakenator*
   G <- readRDS("./Data/ThesisDataset/3Article/GSE42861/G.rds")
-  Zou.loci <- c("cg05428452",
+  Zou.locus <- c("cg05428452",
                 "cg07839457",
                 "cg16411857",
                 "cg25372449",
                 "cg20821042")
   cols <- colnames(G)
-  candidates <- which(colnames(G) %in% Zou.loci)
+  candidates <- which(colnames(G) %in% Zou.locus)
   cols[candidates]
   saveRDS(candidates, "./Data/ThesisDataset/3Article/GSE42861/candidates.rds")
 #+end_src
@@ -15154,12 +15153,21 @@ prendre $\lambRidge = 10^{-5}$ pour ridgeLFMM.
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
 
-  pl <- readRDS("./OUTPUT/Expr/eas_pc_toprint.rds")
+  pl.leg <- readRDS("./OUTPUT/Expr/eas_pc_toprint.rds")
 
-  ThesisRpackage::Plots_export_tikz_pdf(pl,
+  pl <- pl.leg$pl
+  mylegend <- pl.leg$mylegend
+
+  pl.leg <- drawable(function() {
+    gridExtra::grid.arrange(pl,
+                            mylegend, nrow=2, heights=c(10, 2.5))
+  })
+
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl.leg,
                                         basename.output = "eas_pc",
                                         env = MaTheseR.params,
-                                        height = 0.5 * MaTheseR.params$textheightinch,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
                                         width = MaTheseR.params$textwidthinch)
 #+end_src
 #+BEGIN_EXPORT latex
@@ -15167,7 +15175,7 @@ prendre $\lambRidge = 10^{-5}$ pour ridgeLFMM.
 \centering
 \includegraphics{./OUTPUT/Rplots/eas_pc.pdf}
 \caption{{\bf Variables latentes retournées par ridgeLFMM pour l'étude
-    d'association entre génotype et un gradient environnemental (GEAS).}}
+    d'association entre génotype et un gradient environnemental (GEAS).} Les noms de populations sont les codes utilisés dans le projet 1000Genomes.}
 \label{fig:eas_params}
 \end{figure}
 #+END_EXPORT
@@ -15708,14 +15716,21 @@ CLOSED: [2017-10-09 lun. 17:06]
     MaTheseR.params$gtheme
 
   ## plot for thesis
-  mylegend <- g_legend(pl1)
+  mylegend <- g_legend(pl1 + theme(legend.position = "bottom") +
+                       guides(color = guide_legend(nrow = 2)))
   pl <- plot_grid(pl1 + theme(legend.position = "none"),
                   pl2 + theme(legend.position = "none"),
-                  mylegend,
-                  ncol = 3,
-                  labels = c("A","B"), rel_widths=c(5,5,2))
-  save_plot_png(pl, "eas_pc.png")
-  save_expr(pl, "eas_pc_toprint.rds")
+                  nrow = 1,
+                  labels = c("A","B"))
+  pl.leg <- drawable(function() {
+    gridExtra::grid.arrange(pl,
+                              mylegend, nrow=2, heights=c(10, 2))
+  })
+  pl.leg$pl <- pl
+  pl.leg$mylegend <- mylegend
+
+  save_plot_png(pl.leg, "eas_pc.png")
+  save_expr(pl.leg, "eas_pc_toprint.rds")
 #+end_src
 
 #+RESULTS:
@@ -16680,8 +16695,9 @@ CLOSED: [2017-10-09 lun. 17:52]
     geom_histogram()
 #+end_src
 ***** TODO Run seulement avec 7 premières variables latentes
-****** TODO Run
+****** RUNNING Run
 :LOGBOOK:
+- State "RUNNING"    from "TODO"       [2017-10-10 mar. 08:43]
 - State "TODO"       from              [2017-10-09 lun. 17:28]
 - State "TODO"       from              [2017-10-09 lun. 17:24]
 :END:
@@ -17641,6 +17657,12 @@ chromosomes. Le mode de transmition des chromosomes des parents au enfant
 provoque un déséquilibre de liaison entre les SNPs voisins. Avant 
 
 Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que la redaction...
+* Listes des travaux réalisés
+
+
+
+TODO
+
 * Soutenance                                                       :noexport:
 :LOGBOOK:
 - Note taken on [2017-09-05 mar. 10:31] \\
