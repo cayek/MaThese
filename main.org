@@ -17844,7 +17844,9 @@ La grande différence est dans le calcule de l'acp
 Du coups la matrice de kindship pourrait etre calculé avec l'acp et du coup on a
 aussi un complexité faible pour le smodèle mixte :D
 **** Qu'est ce qu'explique les variables latentes ?
-
+**** Comment le choix du model (model pour le test) influence les étude d'association ?
+j'ai utilisé un lm, est ce bien adapté pour des variables discrete ? 
+Pourrait-on utilisé les variables latentes dans un modèle logistique ?
 *** Général
 **** Les types de mutation génétiques
 indel : insertion délétion
