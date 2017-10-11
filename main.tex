@@ -41,9 +41,9 @@
 \frontmatter
 
 \chapter{Remerciements}
-\label{sec:orge621837}
+\label{sec:org7b990d0}
 \chapter{Résumé court}
-\label{sec:orgf8a08e9}
+\label{sec:org98a44b9}
 
 \noindent \textbf{Titre :} Méthodes de factorisation matricielle pour la génomique des
 populations et les tests d'association.
@@ -83,7 +83,7 @@ admixture, association study,  confounding factors, bioinformatics.
 \mainmatter
 
 \chapter{Introduction}
-\label{sec:org204f3ae}
+\label{sec:org3a753dd}
 Cette dernière décennie a été marquée par une accumulation des données dans tous
 les domaines de la science. Cette accumulation de données est une aubaine pour
 les scientifiques. En génétique, l'abondance des données permet de comprendre
@@ -126,8 +126,8 @@ problèmes de factorisation matricielle. Nous allons maintenant introduire plus
 en détails les problématiques biologiques.
 
 \section{La génomique des populations}
-\label{sec:org973910b}
-\label{org9bbe912}
+\label{sec:org06eebd6}
+\label{org3165e52}
 
 La génétique des populations est l'étude de la distribution et des changements
 de la fréquence des variants d'un gène, que l'on appelle allèles, dans des
@@ -222,7 +222,7 @@ $
 \label{fig:matrix}
 \end{figure}
 \subsection{Estimation de la structure génétique des populations}
-\label{sec:orgd7edb17}
+\label{sec:org88c2552}
 Une étape très importante en génétique des populations est l'inférence d'une
 représentation synthétique de la structure de populations à partir des données
 génétiques. La structure de populations influence les distributions des SNPs par
@@ -300,8 +300,8 @@ démographique des individus afro-américains \citep{tishkoff2009genetic}.
 \label{fig:tess3_intro}
 \end{figure}
 
-\subsection{Méthodes d'estimation de la structure génétique des populations}
-\label{sec:orgb8fc2bc}
+\subsection{Méthodes d'estimation des coefficients d'ascendance}
+\label{sec:org12e2e3f}
 
 Il existe de nombreuses méthodes pour estimer les coefficients d'ascendance à
 partir de données génétiques. Le modèle du logiciel \texttt{structure} est bayésien et
@@ -309,25 +309,25 @@ l'inférence repose sur des méthodes d'échantillonnage de la loi a posteriori 
 coefficients d'ascendance \citep{Pritchard2000}. D'autres méthodes visant à rendre
 plus rapide l'inférence des matrices d'ascendance, minimisent la fonction
 log-vraisemblance des paramètres d'ascendance génétique
-\citep{Tang_2005,alexander2009admixture}; ou bien elles utilisent des méthodes
-d'inférence variationnelle bayésiennes \citep{Raj_2014}. Des méthodes très
-rapides, ne reposant pas sur une modélisation probabiliste, ont aussi été
+\citep{Tang_2005,alexander2009admixture}. Certaines méthodes utilisent des
+méthodes d'inférence variationnelle bayésiennes \citep{Raj_2014}. Des méthodes
+très rapides, ne reposant pas sur une modélisation probabiliste, ont aussi été
 proposées pour passer à l'échelle des grands jeux de données modernes
 \citep{Frichot_2014,Popescu_2014}. Par ailleurs, de nombreuses méthodes utilisent
 l'information spatiale individuelle afin d'améliorer l'estimation de
 l'ascendance génétique et de localiser les clusters génétiques dans l'espace.
-Des méthodes ont ajouter l'information géographique au modèle bayésien de
+Des méthodes ont ajouté l'information géographique au modèle bayésien de
 \texttt{structure} \citep{CHEN_2007,Corander2008,GUEDJ_2011}. Cependant, les méthodes
-bayésiennes repose sur de nombreuse hypothèses et passe plus difficilement à
-l'échelle des grands jeux de données. Aucune méthode non basée sur un modèle
-probabiliste n'a été proposé pour l'inférence spatiale des coefficients
+bayésiennes reposent sur de nombreuses hypothèses et passent plus difficilement
+à l'échelle des grands jeux de données. Aucune méthode non basée sur un modèle
+probabiliste n'a été proposée pour l'inférence spatiale des coefficients
 d'ascendance. Nous résumons les méthodes d'inférence des coefficients
-d'ascendance génétique dans la Table \ref{tab:org9ce7787}
+d'ascendance génétique dans la Table \ref{tab:org1b3b017}
 
 \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
 \begin{sidewaystable}[htbp]
-\caption{\label{tab:org9ce7787}
-\textbf{Méthodes spatiale et non spatiale d'estimation de coéficients d'ascendance.} Les méthodes TESS3-AQP/APLS sont présentées dans cette thèse.}
+\caption{\label{tab:org1b3b017}
+\textbf{Méthodes spatiales et non spatiales d'estimation de coefficients d'ascendance.} Les méthodes TESS3-AQP/APLS sont présentées dans cette thèse.}
 \centering
 \begin{tabular}{l|p{5cm}lp{5.5cm}|p{5.5cm}}
 \hline
@@ -350,7 +350,7 @@ conStruct & bayésien & oui & MCMC & \citet{Bradburd189688}\\
 \rowcolors{2}{}{}
 
 \section{Tests d'association}
-\label{sec:org790f6e3}
+\label{sec:org17e5952}
 Un problème fondamental en science du vivant consiste à détecter les relations
 de causalité qui existent entre des événements. En statistique, un événement est
 modélisé par une variable aléatoire. Il est seulement possible de détecter des
@@ -374,8 +374,8 @@ plus en détail ce que sont les facteurs de confusion dans les études
 d'association.
 
 \subsection{Les facteurs de confusion}
-\label{sec:org0086229}
-\label{orgf3e4584}
+\label{sec:orga5cac86}
+\label{orgb346839}
 
 Basées sur l'analyse de la corrélation, les études d'association sont
 confrontées aux problèmes des facteurs de confusion et de la causalité. En effet
@@ -386,7 +386,7 @@ impliquer des liens avec d'autres variables non observées. En particulier, il
 est possible de conclure à une association entre deux variables alors qu'elles
 sont associées à une autre variable non considérée dans l'étude. On appelle
 alors la variable non observée un facteur de confusion. La figure
-\ref{fig:org49e6309} illustre cette situation. Le problème des facteurs de
+\ref{fig:orgede099d} illustre cette situation. Le problème des facteurs de
 confusion est connu depuis longtemps. En effet, on le retrouve déjà dans
 l'ouvrage \emph{The Design of Experiment} de Ronald Fisher qui introduisit entre
 autre le concept d'hypothèse nulle en statistique \citep{fisher1937design}. Dans
@@ -407,13 +407,13 @@ prendre en compte dans l'étude d'association.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=5cm]{Figures/conf_factor.png}
-\caption{\label{fig:org49e6309}
+\caption{\label{fig:orgede099d}
 \textbf{Graphe de corrélation entre la variable \(\Y\), la variable \(\X\) et le facteur de confusion \(\matr{U}\).} Dans cette situation si on ne prend pas en compte la variable \(\matr{U}\) dans l'étude d'association alors \(\X\) et \(\Y\) apparaîtront comme étant associées.}
 \end{figure}
 
 \subsection{Simulation numérique d'une association avec facteurs de confusion}
-\label{sec:org6cae58f}
-\label{org5be161d}
+\label{sec:org2e086b9}
+\label{orgde0bb5d}
 
 Dans cette partie nous proposons de montrer l'intérêt de prendre en
 considération les facteurs de confusion dans les études d'association par une
@@ -460,30 +460,30 @@ latente; sans celle-ci on détecte presque la moitié des colonnes de \(\Y\) com
 \end{figure}
 
 \subsection{Méthodes de correction des facteurs de confusion pour les études d'association}
-\label{sec:org16e3a15}
+\label{sec:org491a3e5}
 
 Prendre en compte les facteurs latents est un problème important des études
 d'association. Certaines méthodes utilisent l'analyse en composantes principales
 pour estimer les facteurs de confusion et les intégrer aux tests de
-significativité statistiques \citep{Rahmani_2016,Price_2006}. D'autres méthodes
-utilisent les modèles mixtes afin de corriger les tests d'hypothèse pour les
-sources de variation indésirable \citep{Kang_2008,Zhou_2014,Loh194944}. Récemment,
-de nombreuses méthodes ont été proposées pour permettre d'estimer dans un même
+significativité \citep{Rahmani_2016,Price_2006}. D'autres méthodes utilisent les
+modèles mixtes afin de corriger les tests d'hypothèse pour les sources de
+variation indésirable \citep{Kang_2008,Zhou_2014,Loh194944}. Récemment, de
+nombreuses méthodes ont été proposées pour permettre d'estimer dans un même
 modèle les effets des variables latentes et les effets des variables étudiées
 pour l'association. La plupart de ces méthodes reposent sur l'équation
-\eqref{eq:model0} que nous avons utilisé dans la partie précédente. Ces modèles
-ont recu plusieurs nom dans la littérature : Latent Fator Mixed Models (LFMM)
-\citep{Frichot_2013}, regression-based latent models
-(RLFM) \citep{agarwal09_regres}, factor-augmented regression model
+\eqref{eq:model0} que nous avons utilisée dans la partie précédente. Ces modèles
+ont recu plusieurs noms dans la littérature : Latent Fator Mixed Models (LFMM)
+\citep{Frichot_2013}, regression-based latent models (RLFM)
+\citep{agarwal09_regres}, factor-augmented regression model
 \cite{gerard2017empirical}, surrogate variable analysis (SVA)
-\cite{article_Leek_Storey_2007}. Nous résumons les méthodes reposant sur des
-modèles construit à partir des dérivé de l'équation \eqref{eq:model0} dans le
-tableau.
+\cite{article_Leek_Storey_2007}. Nous résumons dans le Table
+\ref{tab:orgb1a0093}, les méthodes reposant sur des modèles construits à
+partir de l'équation \eqref{eq:model0} .
 
 \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
 \begin{sidewaystable}[htbp]
-\caption{\label{tab:org5d14b63}
-\textbf{Méthodes reposant sur l'équation \ref{eq:model0} pour la correction des facteurs de confusion dans les études d'association.} Les méthodes ridgeLFMM et LassoLFMM sont présentées dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont présentées plus en détail dans la section \ref{org51f5869}.}
+\caption{\label{tab:orgb1a0093}
+\textbf{Méthodes reposant sur l'équation \ref{eq:model0} pour la correction des facteurs de confusion dans les études d'association.} Les méthodes ridgeLFMM et LassoLFMM sont présentées dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont présentées plus en détail dans la section \ref{org41f55bc}.}
 \centering
 \begin{tabular}{p{3cm}|p{4.2cm}p{4cm}p{5cm}|p{4cm}}
 \hline
@@ -494,16 +494,16 @@ sva-irw & weighted-PCA et régression linéaire & moindres carrés ordinaire et 
 RLFM & bayésien & Monte-Carlo EM & pas de test & \citet{agarwal09_regres}\\
 famt & vraisemblance & EM & test de Student & \citet{friguet09_factor_model_approac_to_multip}\\
 LFMM & bayésien & MCMC & test de wald, estimation de la variance par bootstrap bayésien & \citet{Frichot_2013}\\
-cate & analyse factorielle et régression linéaire & EM ou SVD et estimation par moindres carrés généralisée & test basé sur la distribution asymptotique de l'estimateur des effets d'intérêt & \citet{wang2015confounder}\\
-ridgeLFMM & factorisation matricielle avec régularisation \(L_{2}\) & SVD et moindres carrés régularisés en norme \(L_{2}\) & test de Student & \\
-lassoLFMM & factorisation matricielle avec régularisation \(L_{1}\) & \emph{soft-thresholded} SVD et moindres carrés régularisés en norme \(L_{1}\) & test de Student & \\
+cate & analyse factorielle et régression linéaire & EM ou SVD et estimation des moindres carrés généralisée & test basé sur la distribution asymptotique de l'estimateur des effets d'intérêt & \citet{wang2015confounder}\\
+ridgeLFMM & factorisation matricielle avec régularisation \(L_{2}\) & SVD et estimation des moindres carrés régularisée en norme \(L_{2}\) & test de Student & \\
+lassoLFMM & factorisation matricielle avec régularisation \(L_{1}\) & \emph{soft-thresholded} SVD et estimation des moindres carrés régularisée en norme \(L_{1}\) & test de Student & \\
 MOUTHWASH / BACKWASH & régression linéaire et analyse factorielle & moindres carrés ordinaire et EM ou descente par coordonnées & \emph{adaptive shrinkage} (ASH) \citep{stephens16_false_discov_rates} & \citet{gerard2017empirical}\\
 \end{tabular}
 \end{sidewaystable}
 \rowcolors{2}{}{}
 
 \section{Résumé de la problématique}
-\label{sec:orgad6900b}
+\label{sec:orgdaff216}
 
 L'évaluation de l'ascendance génétique est un problème majeur en génétique des
 populations. Des méthodes très efficaces ont été proposées pour l'estimation des
@@ -523,23 +523,23 @@ méthodes rapides et utilisables sur les données massives. Par ailleurs, une
 comparaison des méthodes de correction pour les facteurs de confusion
 permettrait de mieux comprendre les spécificités de chaque méthode.
 \section{Contexte de la thèse}
-\label{sec:orgf55c7d0}
+\label{sec:org0010254}
 Cette thèse a été financée par le LabEx PERSYVAL-Lab et co-encadrée par Olivier
 François du laboratoire TIMC-IMAG et Olivier Michel du laboratoire GIPSA-lab.
 Nos travaux ont principalement été réalisés au sein de l'équipe BCM (Biologie
 Computationnelle et Mathématique). L'équipe BCM du laboratoire TIMC-IMAG est
 spécialisée en étude de données génétiques et en développement de modèles
 mathématiques pour les systèmes biologiques complexes. Les méthodes présentées
-dans de cette thèse sont donc dans la ligné des méthodes développées au sein de
-l'équipe BCM. Ainsi, les logiciels que nous avons développés sont la suite
-logique des logiciels développés dans l'équipe BCM, qu'ils viennent compléter.
-Nous parlons en particulier de \texttt{TESS} 2.3, un logiciel d'inférence spatiale de
-la structure génétique des populations \citep{Durand_2009}; ainsi que de \texttt{LEA}, un
-package R proposant une suite de fonctions dédiées aux études d'association
-génomique \citep{Frichot_2015}.
+dans cette thèse sont donc dans la lignée des méthodes développées au sein de
+l'équipe BCM. Ainsi, les logiciels que nous avons développés dans cette thèse
+viennent compléter les logiciels produits par l'équipe BCM. Nous parlons en
+particulier de \texttt{TESS} 2.3, un logiciel d'inférence spatiale de la structure
+génétique des populations \citep{Durand_2009}; ainsi que de \texttt{LEA}, un package R
+proposant une suite de fonctions dédiées aux études d'association génomique
+\citep{Frichot_2015}.
 
 \section{Objectifs de la thèse}
-\label{sec:org9954a33}
+\label{sec:org8c6310e}
 
 La génétique produit beaucoup de données grâce aux technologies de séquençage
 toujours plus efficaces. Cette affluence de données pose de nouveaux problèmes
@@ -556,10 +556,10 @@ communauté scientifique, il a été important de rendre accessibles des
 implémentations informatiques efficaces des nouvelles méthodes statistiques.
 
 \section{Résumé des résultats principaux}
-\label{sec:orga9a810e}
+\label{sec:org8c813f0}
 
-Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes résolvant
-des problèmes de factorisation matricielle. Nos algorithmes ont été implémentés
+Dans le cadre de cette thèse, nous avons proposé plusieurs méthodes reposant sur
+des problèmes de factorisation matricielle. Nos méthodes ont été implémentés
 dans deux packages R : \texttt{tess3r} et \texttt{lfmm}. Le package \texttt{tess3r} contient les
 algorithmes AQP et APLS d'inférence de l'ascendance génétique en incluant
 l'information spatiale. Le package \texttt{lfmm} contient les algorithmes lassoLFMM et
@@ -568,39 +568,39 @@ d'association.
 
 
 \subsection{\texttt{tess3r}}
-\label{sec:org5a22bcd}
+\label{sec:org0392f60}
 
 Dans le package \texttt{tess3r}, nous avons développé des algorithmes d'estimation
-rapide des coéficients de métissage à partir de données génétiques et
+rapide des coefficients de métissage à partir de données génétiques et
 géographiques. Les algorithmes reposent sur un problème de factorisation de la
 matrice génétique. L'objectif est de factoriser la matrice génétique en le
-produit d'une matrice des coefficients d'ascendance et une matrice des
+produit d'une matrice des coefficients d'ascendance et d'une une matrice des
 fréquences d'allèle dans les clusters génétiques. Pour inférer les matrices
 d'ascendance nous avons utilisé une approximation des moindres carrés.
 L'information spatiale est ajoutée à la fonction objectif au moyen d'une
 régularisation sur la matrice des coefficients de métissage. La régularisation
 spatiale permet d'ajouter l'hypothèse que des individus proches ont plus de
 chance de partager des ancêtres communs, que des individus éloignés. Afin
-d'estimer les matrices d'ascendance, nous avons proposé deux algorithmes appelé
+d'estimer les matrices d'ascendance, nous avons proposé deux algorithmes appelés
 AQP et APLS. Nos algorithmes diffèrent dans les approximations qu'ils font pour
 diminuer la complexité algorithmique. Plus précisément, nous avons d'une part
 l'algorithme AQP qui alterne des résolutions de problèmes d'optimisation
 quadratique. Le corollaire 2 établi par \citet{Grippo_2000} permet de montrer la
 convergence de l'algorithme AQP vers un minimum local de la fonction objectif.
 Nous avons d'autre part, l'algorithme APLS pour lequel nous avons supprimé les
-contraintes des problèmes d'optimisation quadratique. Cela permet d'alterner des
-problèmes des moindres carrés régularisé par une norme \(L_{2}\). Ainsi, la
-complexité de l'algorithme APLS augmente linéairement avec le nombre d'individus
-dans l'échantillon. De plus, nous avons mis en place un test de détection de
-l'adaptation locale. La statistique de test est calculé à partir des estimations
-spatiales des matrices d'ascendance génétique.
+contraintes des problèmes d'optimisation quadratique. Cela permet d'alterner la
+résolution de problèmes des moindres carrés régularisés par une norme \(L_{2}\).
+Ainsi, la complexité de l'algorithme APLS augmente linéairement avec le nombre
+d'individus dans l'échantillon. De plus, nous avons mis en place un test de
+détection de l'adaptation locale. La statistique de test est calculée à partir
+des estimations spatiales des matrices d'ascendance génétique.
 
-En utilisant des simulations de coalescants, nous avons montré que les deux
-algorithmiques AQP et APLS retournes des résultats avec la même précision
-statistique. Toujours sur des simulations de coalescants, nous avons montré que
+En utilisant des simulations de coalescents, nous avons montré que les deux
+algorithmiques AQP et APLS retournent des résultats avec la même précision
+statistique. Toujours sur des simulations de coalescents, nous avons montré que
 nos algorithmes reproduisent les mêmes erreurs statistiques que le logiciel
 \texttt{TESS} 2.3 \cite{CHEN_2007}. Le logiciel \texttt{TESS} 2.3 permet également l'estimation
-des coéficient de métissage à partir de données génétiques et géographiques mais
+des coefficients de métissage à partir de données génétiques et géographiques mais
 en utilisant un modèle bayésien. Sur ces simulations, nos algorithmes étaient 10
 à 100 fois plus rapides que le logiciel \texttt{TESS} 2.3.
 
@@ -612,66 +612,66 @@ nos expériences numériques, les erreurs des méthodes spatiales sont inférieu
 spatiaux ont permis de détecter une structure de population plus subtile.
 
 Enfin, nous avons illustré l'utilisation de notre package R sur un millier de
-génotypes \emph{A.thaliana}, chacun incluant plus de 210k SNP. Notre méthode a permis
-d'exiber la structure de population de l'espèce \emph{A.thaliana} en Europe. Par
-ailleurs, nous avons appliqué les tests de neutralité pour effectuer un balayage
-du génome pour la sélection dans des écotypes européens de l'espèce végétale
-\emph{A.thaliana}. Le scan du génome a confirmé la preuve de la sélection des gènes
-liés à la floraison \emph{CIP4.1}, \emph{FRI} et \emph{DOG1} différenciant la Fenno-Scandinavie
-du nord-ouest de l'Europe \citep{Horton_2012}.
+génotypes \emph{A.thaliana}, chacun incluant plus de 210k SNPs. Notre méthode a
+permis d'exiber la structure de population de l'espèce \emph{A.thaliana} en Europe.
+Par ailleurs, nous avons appliqué les tests de neutralité afin d'effectuer un
+balayage du génome pour la sélection dans des écotypes européens de l'espèce
+végétale \emph{A.thaliana}. Le scan du génome a confirmé la preuve de la sélection
+des gènes liés à la floraison \emph{CIP4.1}, \emph{FRI} et \emph{DOG1} différenciant la
+Fenno-Scandinavie du nord-ouest de l'Europe \citep{Horton_2012}.
 
 \subsection{\texttt{lfmm}}
-\label{sec:org8c05815}
+\label{sec:org1e39706}
 Dans le package \texttt{lfmm}, nous avons développé des algorithmes qui permettent
 d'estimer les variables latentes afin de corriger les études d'association pour
-les facteurs de confusion. Nous avons proposé une fonction objectif à partir
-l'égalité \eqref{eq:model0} du modèle mixte à facteurs latents. Le modèle consiste
-à expliquer les variations de la matrice des variables étudiées par la somme de
-deux effets : l'effet des variables latentes et l'effet des variables
-explicatives (aussi appelées covariables). L'attache aux données de la fonction
-objectif a été construite à partir de l'approximation des moindres carrés de
-l'égalité \eqref{eq:model0}. Nous avons montré que le terme d'attache au données
-seul ne permet pas de définir des estimateurs de manière univoque pour notre
-problème. Ainsi, nous avons proposé d'ajouter un terme de régularisation portant
-sur les effets des variables explicatives. Nous avons appelé nos méthodes
-ridgeLFMM, pour la régularisation \(L_{2}\) et lassoLFMM, pour la régularisation
-\(L_{1}\). L'algorithme ridgeLFMM utilise la formule du minimum global de la
-fonction objectif des moindres carrés régularisé en norme \(L_{2}\). Nous avons
-apporté la démonstration de cette formule. Pour l'algorithme lassoLFMM, nous
-avons proposé une méthode alternée de descente par blocs de coordonnées. Les
-travaux de \citet{Tseng_2001} permettent de démontrer la congergence de
-l'algorithme lassoLFMM vers le minimum global de sa fonction objectif.
-Cependant, nous avons proposé une preuve adapté au résultat de convergence de
-notre algorithme.
+les facteurs de confusion. Nous avons proposé une fonction objectif basée sur
+l'approximation des moindres carrés de l'égalité \eqref{eq:model0} du modèle mixte
+à facteurs latents. Le modèle consiste à expliquer les variations des variables
+étudiées par la somme de deux effets : l'effet des variables latentes et l'effet
+des variables explicatives (ces dernières sont aussi appelées covariables).
+L'attache aux données de la fonction objectif a été construite à partir de
+l'approximation des moindres carrés de l'égalité \eqref{eq:model0}. Nous avons
+montré que le terme d'attache aux données ne permet pas à lui seul de définir
+des estimateurs de manière univoque pour notre problème. Ainsi, nous avons
+proposé d'ajouter un terme de régularisation portant sur les effets des
+variables explicatives. Nous avons appelé nos méthodes ridgeLFMM, pour la
+régularisation \(L_{2}\) et lassoLFMM, pour la régularisation \(L_{1}\).
+L'algorithme ridgeLFMM utilise la formule du minimum global de la fonction
+objectif des moindres carrés régularisée en norme \(L_{2}\). Nous avons apporté la
+démonstration de cette formule. Pour l'algorithme lassoLFMM, nous avons proposé
+une méthode alternée de descente par blocs de coordonnées. Les travaux de
+\citet{Tseng_2001} permettent de démontrer la congergence de l'algorithme
+lassoLFMM vers le minimum global de sa fonction objectif. Cependant, nous avons
+proposé une preuve adaptée au résultat de convergence de notre algorithme.
 
 Pour évaluer la capacité de nos méthodes à corriger les études d'association
-pour les facteurs de confusions, nous avons réalisé des simulations à partir
-d'un jeux de données réelle de génotypes humains. Nous avons ajouté à la
-comparaisons une méthode de référence qui ne prend pas en compte les facteurs.
-Nous avons aussi comparé les méthodes de la littératures reposant le même modèle
+pour les facteurs de confusion, nous avons réalisé des simulations à partir d'un
+jeu de données réelles de génotypes humains. Nous avons ajouté à la comparaison
+une méthode de référence qui ne prend pas en compte les facteurs latents. Nous
+avons aussi comparé les méthodes de la littérature reposant sur le même modèle
 de régression avec facteur latent que nos méthodes : cate, sva-irw et
 sva-twostep. Nous avons également considéré la méthode calculant les facteurs
-latents à l'aide de l'ACP. Ces simulations nous ont permit de montrer que nos
-méthode ridgeLFMM et lassoLFMM ont la même puissance que la méthode oracle qui
-connaire les variables latentes de la simulation. De plus, les statistiques
-\pvalues obtenus avec nos méthodes sont correctement calibrées. Nous avons
-observé que la méthode cate obtenait des performances comparable à celles de nos
-méthodes sur toutes les simulations considérées.
+latents à l'aide de l'ACP. Ces simulations nous ont permis de montrer que nos
+méthodes ridgeLFMM et lassoLFMM ont la même puissance que la méthode oracle qui
+connait les variables latentes de la simulation. De plus, les statistiques
+\pvalues obtenues avec nos méthodes sont correctement calibrées. Nous avons
+observé que la méthode cate obtenait des performances très proches de celles de
+nos méthodes sur toutes les simulations considérées.
 
 Enfin, nous avons illustré l'utilisation de nos méthodes sur des études
 d'association pour des données réelles. Sur les données réelles, nous montrons
-que nos méthodes permettent de retrouver les associations découvert par d'autres
-études. De plus, dans ces études nous observons que malgré les ressemblances
-conceptuelles entre les méthodes, les associations découvertes par les méthodes
-peuvent varier largement. Cela met en avant la nécessité d'utiliser plusieurs
-méthodes dans les études d'association, ainsi que d'être prudent dans les
-interprétations.
+que nos méthodes permettent de retrouver les associations découvertes par
+d'autres études. De plus, nous observons dans ces études que malgré les
+ressemblances conceptuelles entre les méthodes, les associations découvertes
+peuvent varier largement d'une méthode à l'autre. Cela met en avant la nécessité
+d'utiliser plusieurs méthodes dans les études d'association, ainsi que d'être
+prudent dans les interprétations.
 
 \chapter[Inférence spatiale des coefficients de métissage]{Inférence des coefficients de métissage à l'aide de données géographiques}
-\label{sec:org3161ae4}
-\label{orgaf63d8f}
+\label{sec:orgf07eed8}
+\label{orgb08a600}
 \section{Résumé}
-\label{sec:orgdd52ba8}
+\label{sec:orgb39728c}
 
 L'évaluation précise de la répartition de l'ascendance génétique dans l'espace
 géographique est l'une des principales questions abordées par les biologistes de
@@ -698,8 +698,8 @@ plus courts que ceux observés pour les méthodes spatiales développées
 antérieurement. Nos algorithmes sont implémentés dans le package R, \texttt{tess3r}.
 
 \section{Introduction}
-\label{sec:org80b63c5}
-\label{org27566d1}
+\label{sec:orga3734a6}
+\label{orgb2dc426}
 
 Représenter la structure génétique de population est une étape importante dans
 l'étude de données génétiques. Les données génétiques sont volumineuses et
@@ -726,7 +726,7 @@ génétique. Les proportions sont appelées coefficients de métissage individue
 aussi appelés coefficients d'ascendance.
 
 \subsection{Méthodes d'inférence des coefficients de métissage}
-\label{sec:org2bf6558}
+\label{sec:orgcd154f2}
 L'inférence des coefficients de métissage a été largement étudiée et il existe
 de nombreuses méthodes. On distingue deux types d'approche : les approches
 reposant sur un modèle probabiliste et les approches fondées sur l'optimisation
@@ -764,7 +764,7 @@ algorithmes qui sont généralement plus rapides que ceux des méthodes reposant
 sur un modèle probabiliste.
 
 \subsection{Méthodes d'inférence des coefficients de métissage à l'aide de données géographiques}
-\label{sec:orga4f7e6d}
+\label{sec:orgfc80e1b}
 
 Dans la nature, les individus d'une espèce évoluent dans un environnement
 géographique. Les clusters génétiques, identifiés par les méthodes d'estimation
@@ -792,7 +792,7 @@ coefficients d'ascendance à l'aide de données géographiques ne sont pas adapt
 aux grands jeux de données modernes.
 
 \subsection{Plan du chapitre}
-\label{sec:orgd843e34}
+\label{sec:org60f3376}
 
 Dans ce chapitre, nous présentons une nouvelle méthode pour l'estimation des
 coefficients individuels de métissage fondée sur des données géographiques et
@@ -822,13 +822,13 @@ végétale \emph{Arabidopsis thaliana}, pour lesquelles des données géographiq
 individuelles et génétiques sont disponibles \citep{Horton_2012}.
 
 \section{Nouvelles méthodes d'estimation des coefficients de métissage}
-\label{sec:org4716a8c}
+\label{sec:org92f781a}
 Dans cette section, nous présentons deux nouveaux algorithmes d'estimation de la
 structure génétique des populations qui intègrent l'information de proximité
 géographique.
 
 \subsection{Matrices d'ascendance génétique}
-\label{sec:org9297ec4}
+\label{sec:orgc10a002}
 
 Nous considérons une matrice de génotype, \(\Y\), enregistrant des données de \(n\)
 individus à \(p\) locus polymorphes pour une espèce ayant une ploïdie de \(d\),
@@ -875,7 +875,7 @@ décrites par les équations \eqref{eq:QConst} et \eqref{eq:GConst}
 \(\DQ\) et \(\DG\) pour représenter les ensembles formés à partir des contraintes
 sur les matrices \(\Q\) et \(\mathbf{G}\).
 \subsection{Information géographique}
-\label{sec:org2e6d2e3}
+\label{sec:org0bc698d}
 L'information géographique est introduite dans le problème de factorisation de
 matrice en utilisant des poids entre les individus. Les poids sont utilisés pour
 imposer une contrainte de régularité de l'estimateur des coefficients de
@@ -918,7 +918,7 @@ l'équation \eqref{eq:tess3Reg} pour régulariser l'estimateur de la matrice des
 coefficients de métissage \(\Q\).
 
 \subsection{Problèmes d'optimisation des moindres carrés}
-\label{sec:org79f8ce2}
+\label{sec:org3c1ae88}
 L'estimation des matrices \(\Q\) et \(\mathbf{G}\) à partir de la matrice de génotype \(\Y\)
 est réalisée en optimisant la fonction suivante
 \begin{equation}
@@ -935,7 +935,7 @@ coefficients de métissage aient des valeurs proches pour les individus
 géographiquement proches.
 
 \subsection{Algorithme d'optimisation quadratique alterné (AQP)}
-\label{sec:org1197e53}
+\label{sec:org80e005c}
 
 Nous remarquons que les polyèdres \(\DQ\) et \(\DG\) sont des ensembles convexes et
 que la fonction \(\LS\) définie par l'équation \eqref{eq:tess3LS}, est convexe par
@@ -1004,7 +1004,7 @@ pour les jeux de données avec beaucoup d'individus. Nous alternons ces deux
 
 Nous pouvons énoncer le résultat de convergence suivant.
 \begin{theorem}
-\label{orge165dc9} L'algorithme AQP qui alterne les étapes d'optimisation des
+\label{orgfd8fa29} L'algorithme AQP qui alterne les étapes d'optimisation des
 problèmes \eqref{eq:AQPg} et \eqref{eq:AQPq} converge vers un minimum local de la
 fonction \(\LS\) définie par l'équation \eqref{eq:tess3LS}.
 \end{theorem}
@@ -1018,7 +1018,7 @@ point de minimum local de la fonction \(\LS\).
 \end{proof}
 
 \subsection{Algorithme des moindres carrés alternés projetés (APLS)}
-\label{sec:orge441ccb}
+\label{sec:org7321083}
 Dans cette partie nous présentons l'algorithme APLS de calcul d'un minimum local
 de la fonction \(\LS\) définie par l'équation \eqref{eq:tess3LS}. Contrairement à
 AQP, il n'y a pas de résultat qui garantisse la convergence de d'APLS vers un
@@ -1069,7 +1069,7 @@ approximations de l'algorithme AQP. C'est ce que nous observons dans nos
 expériences numériques.
 
 \subsection{Choix des hyperparamètres}
-\label{sec:org24580db}
+\label{sec:org4182a43}
 Le choix des hyperparamètres est un problème qui est commun à toutes les
 méthodes d'estimation des coefficients de métissage. La méthode que nous avons
 présentée dans la partie précédente nécessite le choix de trois
@@ -1078,7 +1078,7 @@ hyperparamètres : le nombre de facteurs, \(K\), le paramètre de régularisatio
 des méthodes qui permettent d'aider au choix de ces paramètres.
 
 \subsubsection{Le paramètre d'échelle géographique \(\sigma\)}
-\label{sec:org2edcb89}
+\label{sec:orgb747526}
 Les tests la corrélation entre le génotype et les coordonnées géographiques sont
 utilisés depuis longtemps en génétique des populations. Des approches populaires
 reposent sur le test de Mantel \citep{mantel1967} et sur la mesure de
@@ -1099,7 +1099,7 @@ prendre pour paramètre d'echelle géographique la distance géographique moyenn
 entre les individus.
 
 \subsubsection{Le paramètre de régularisation \(\alpha\)}
-\label{sec:orgf8b297c}
+\label{sec:orga1712bd}
 La valeur par défaut du paramètre de régularisation \(\alpha\) a été choisie de
 sorte que le terme d'attache aux données et le terme de régularisation de la
 fonction \(\LS\) définie par \eqref{eq:tess3LS} soient du même ordre de grandeur.
@@ -1108,7 +1108,7 @@ revient à considérer \(\alpha\) égal à \(p / \lambda_{max}\), où \(\lambda_
 la plus grande valeur propre de la matrice laplacienne.
 
 \subsubsection{Le nombre de clusters génétiques \(K\)}
-\label{sec:org442d16c}
+\label{sec:orgd9633a8}
 
 Le nombre de clusters génétiques, \(K\), peut être évalué en utilisant une
 technique de validation croisée fondée sur l'imputation des génotypes masqués
@@ -1122,11 +1122,11 @@ moyenne (RMSE, Root Square Mean Error) entre le génotype prédit et le génotyp
 réellement observé.
 
 \subsection{Statistique de différenciation des clusters génétiques pour détecter les locus sous adaptation locale}
-\label{sec:org5eb2005}
+\label{sec:org623be15}
 
 Les méthodes d'estimation de la structure génétique des populations arrivent à
 détecter des clusters génétiques grâce aux pressions évolutives (décrites dans
-la partie \ref{org9bbe912}) qui provoquent la différenciation des distributions
+la partie \ref{org3165e52}) qui provoquent la différenciation des distributions
 alléliques entre les différents clusters génétiques. À l'origine de cette
 différenciation il y a la migration, la dérive génétique et l'adaptation à
 l'environnement. Les locus qui ne sont pas impliqués dans un processus
@@ -1187,7 +1187,7 @@ taux de fausse découverte est effectué en utilisant l'algorithme de
 Benjamini-Hochberg \citep{benjamini1995controlling}.
 
 \subsection{Implémentation en R}
-\label{sec:orgdd697ab}
+\label{sec:org56c794b}
 Les deux algorithmes APLS et AQP que nous avons présentés dans cette partie ont
 été implémentés en langage R dans un package que nous avons appelé \texttt{tess3r}. Le
 nom du package fait référence au logiciel \texttt{TESS} 2.3 qui permet aussi d'estimer
@@ -1198,18 +1198,18 @@ d'ascendance, alors que \texttt{tess3r} implémente des algorithmes de factorisa
 matrices.
 
 \section{Expérimentations : données simulées et réelles}
-\label{sec:orge42c1a3}
+\label{sec:org193e823}
 \subsection{Données simulées}
-\label{sec:orgdb497c5}
+\label{sec:orgd967494}
 \subsubsection{Simulations à partir de données réelles}
-\label{sec:org254f508}
+\label{sec:orgebee07c}
 Des sous-échantillons provenant du jeu de données réelles d'\emph{Arabidopsis
-thaliana} (données décrites dans la section \ref{orga3b671b}) ont été utilisés pour
+thaliana} (données décrites dans la section \ref{org1d66b02}) ont été utilisés pour
 effectuer une analyse de la convergence et du temps de calcul des algorithmes
 AQP et APLS. Les temps d'exécution ont été évalués en utilisant un seul
 processeur informatique Intel Xeon 2.0 GHz.
 \subsubsection{Simulations coalescentes}
-\label{sec:org6f9a853}
+\label{sec:org76a65a9}
 Nous avons utilisé le programme informatique \texttt{ms} pour effectuer des simulations
 coalescentes de SNPs neutres et de SNPs sous adaptation à l'environnement
 \citep{Hudson_2002}. Deux populations sources ont été créées à partir de la
@@ -1269,8 +1269,8 @@ l'intensité de la sélection environnementale, nous avons utilisé l'aire sous 
 courbe précision-rappel du test d'adaptation locale (AUC) pour plusieurs valeurs
 de l'intensité de la sélection (\(m/m_s\)).
 \subsection{Application à des écotypes européens d'\emph{Arabidopsis thaliana}}
-\label{sec:orgd74898d}
-\label{orga3b671b}
+\label{sec:org1cfb66d}
+\label{org1d66b02}
 
 Nous avons utilisé l'algorithme APLS pour étudier la structure de population
 spatiale et pour détecter les locus sous adaptation locale en considérant 214k
@@ -1286,9 +1286,9 @@ quelles fonctions moléculaires et processus biologiques pourraient être
 impliqués dans l'adaptation locale de \emph{A.thaliana} en Europe.
 
 \section{Résultats}
-\label{sec:orgea9d2ed}
+\label{sec:org294d9b1}
 \subsection{Analyse de la convergence et des temps d'exécution}
-\label{sec:orgcdec69a}
+\label{sec:org17aa38b}
 
 Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
 un modèle spatial de mélange pour comparer les erreurs statistiques des
@@ -1348,7 +1348,7 @@ l'algorithme AQP.
 \label{fig:tess3:vitesse}
 \end{figure}
 \subsection{Comparaison avec une méthode spatiale bayésienne : TESS}
-\label{sec:orgc9ac952}
+\label{sec:orgf076b9e}
 
 Nous avons utilisé des simulations coalescentes de polymorphismes neutres avec
 un modèle spatial de mélange pour évaluer les capacités de l'algorithme APLS à
@@ -1383,7 +1383,7 @@ Dans l'ensemble, les performances statistiques sont du même ordre pour \texttt{
 \label{fig:tess3:tess23}
 \end{figure}    
 \subsection{Comparaison avec une méthode non spatiale : sNMF}
-\label{sec:org1503730}
+\label{sec:org2abfeab}
 
 En utilisant des simulations coalescentes de polymorphismes neutres avec un
 modèle spatial de mélange, nous avons comparé les estimations statistiques
@@ -1444,7 +1444,7 @@ clusters génétiques inconnus.
 \label{fig:tess3:auc}
 \end{figure}
 \subsection{Sensibilité des estimateurs aux erreurs dans les mesures spatiales}
-\label{sec:org74c7b0e}
+\label{sec:orgc4efc3b}
 Ensuite, nous avons utilisé les jeux de données simulées afin d'évaluer la
 robustesse des estimations APLS pour des mesures inexactes des coordonnées
 spatiales. À cette fin, un bruit gaussien a été ajouté aux coordonnées
@@ -1482,7 +1482,7 @@ décider si notre algorithme spatialement explicite est utile ou non.
 \end{figure}
 
 \subsection{Application à des données Arabidopsis Thaliana}
-\label{sec:org5224ded}
+\label{sec:org8da2b2d}
 
 Nous avons utilisé l'algorithme APLS pour étudier la structure génétique de
 population spatiale et effectuer un balayage du génome pour les allèles
@@ -1557,7 +1557,7 @@ Bonferonni).
 \end{sidewaysfigure}
 
 \section{Discussion}
-\label{sec:org2326241}
+\label{sec:org6dbc1ce}
 L'inclusion de l'information géographique dans l'inférence des relations
 ancestrales entre les organismes est un objectif majeur des études en génétique
 des populations \citep{Malecot1948,Epperson_1996,Cavalli-Sforza1994}. En supposant
@@ -1611,11 +1611,11 @@ millier de génotypes \emph{A.thaliana}, chacun incluant plus de 210k SNP, n'a p
 que quelques minutes à l'aide d'un seul CPU.
 
 \chapter[Algorithmes d'estimation des facteurs de confusion]{Algorithmes d'estimation pour les modèles de régression à facteurs latents}
-\label{sec:org7ec10f9}
-\label{orga417daa}
+\label{sec:orgdfcdd82}
+\label{orge03b707}
 
 \section{Résumé}
-\label{sec:org151ebf7}
+\label{sec:orgc4907e1}
 
 Les études d'association sont massivement utilisées en biologie. Elles
 permettent par exemple de découvrir les causes génétiques d'une maladie ou bien
@@ -1647,8 +1647,8 @@ un exemple d'étude d'association entre des génotypes et un gradient climatique
 Nos algorithmes sont implémentés dans le package R, \texttt{lfmm}.
 
 \section{Introduction}
-\label{sec:orgda04ba0}
-\label{org4f1b332} 
+\label{sec:orga7a3e61}
+\label{org7443920} 
 
 
 Au cours de la dernière décennie, des études d'association à grande échelle ont
@@ -1677,7 +1677,7 @@ maladies, ainsi qu'une compréhension plus approfondie de l'évolution des géno
 en réponse à la sélection naturelle.
 
 \subsection{Méthodes de correction pour les facteurs latents}
-\label{sec:orgd9747e5}
+\label{sec:org6857d2a}
 Dans cette section, nous nous plaçons dans le cadre méthodologique des modèles
 de régression linéaire. Il s'agit d'un cadre très utilisé en étude d'association
 que nous pouvons formaliser de la façon suivante
@@ -1707,7 +1707,7 @@ maintenant présenter différentes approches de correction des études
 d'association pour les facteurs de confusion.
 
 \subsubsection{Estimation des facteurs latents a priori}
-\label{sec:org696da0a}
+\label{sec:org97009ba}
 Une première approche consiste à estimer les variables latentes en faisant une
 analyse factorielle de \(\Y\). On fait l'analyse factorielle a priori et sans
 prendre en compte la variable \(\X\). Les variables latentes sont ensuite ajoutées
@@ -1722,7 +1722,7 @@ les méthodes EIGENSTRAT et Refactor calculent les variables latentes à l'aide 
 l'analyse en composantes principales (ACP) de la matrice \(\Y\)
 \citep{Price_2006,Rahmani_2016}.
 \subsubsection{Les modèles mixtes}
-\label{sec:orgfb182a0}
+\label{sec:orgd3fbcdb}
 Une autre approche de correction pour les facteurs de confusion est le modèle
 mixte. Dans un tel modèle, on ajoute un effet aléatoire au modèle de la
 régression
@@ -1742,7 +1742,7 @@ génétique) et \(\X\) (un phénotype) sont inversés dans l'équation
 \(\Y_{j}\) qui est due à la structure de population. Dans ce cas, la matrice de
 covariance est estimée a priori à partir les données génétiques.
 \subsubsection{Les modèles mixtes à facteurs latents (LFMM latent factor mixed model)}
-\label{sec:orgbcbdffd}
+\label{sec:org50fefaa}
 Nous introduisons maintenant les modèles mixtes à facteurs latents. Pour de tels
 modèles, l'équation de régression peut s'écrire comme ceci :
 \begin{equation}
@@ -1779,7 +1779,7 @@ variables dîtes nulles pour estimer les variables latentes. L'estimation des
 variables latentes pour corriger les études d'association est un problème très
 vaste et aucune méthode ne s'est imposée comme étant la méthode référence.
 \subsection{Plan du chapitre}
-\label{sec:org15ac7e1}
+\label{sec:org226a79d}
 Nous proposons, dans ce chapitre, deux algorithmes d'estimation rapide et
 efficace des paramètres du modèle LFMM. Nos deux algorithmes d'estimation
 consistent à isoler la variation de \(\Y\), expliquée par les variables latentes,
@@ -1787,17 +1787,17 @@ de celle expliquée par les variables explicatives \(\X\). Les méthodes que nou
 présentons sont comparables aux méthodes sva \citep{article_Leek_Storey_2007} et
 cate \citep{wang2015confounder}, qui procèdent d'une façon très similaire. Nous
 décrivons plus en détail les méthodes cate et sva dans la partie
-\ref{org51f5869}. Chacun des algorithmes que nous présentons découle de
+\ref{org41f55bc}. Chacun des algorithmes que nous présentons découle de
 l'optimisation d'une fonction objectif. Nous montrons que nos algorithmes
 d'estimation convergent vers le point de minimum global de leur fonction
 objectif respective. Enfin, nous comparons nos méthodes à sva et cate sur des
 simulations numériques ainsi que pour des exemples de GWAS, EWAS et GEAS.
 
 \section{Nouvelles méthodes de correction pour les facteurs de confusion}
-\label{sec:org13b5fd4}
+\label{sec:org6894660}
 \subsection{Modèle mixte à facteurs latents}
-\label{sec:orgafe060a}
-\label{orgdcd63bb}
+\label{sec:org1fc00cc}
+\label{orgd29aabc}
 
 Dans cette partie, nous introduisons les notations du modèle mixte à facteurs
 latents que nous utilisons pour corriger les tests d'association : 
@@ -1844,8 +1844,8 @@ considérons \(\matr{U}\) et \(\V\) comme étant les matrices uniques obtenues g
 l'analyse en composantes principales de la matrice latente \(\W\).
 
 \subsection{Estimateur des moindres carrés régularisé en norme \(L_{2}\)}
-\label{sec:orgf00c6ae}
-\label{org04bcca7}
+\label{sec:org359b9d7}
+\label{org5149fa3}
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
 modèle défini par l'équation \eqref{eq:model}. L'algorithme d'estimation est fondé
 sur un problème des moindres carrés régularisé en norme \(L_{2}\). Nous montrons
@@ -1853,7 +1853,7 @@ que cet algorithme calcule un minimum global du problème d'optimisation des
 moindres carrés régularisé en norme \(L_{2}\).
 
 \subsubsection{Fonction objectif}
-\label{sec:org31481cb}
+\label{sec:org85604c9}
 
 Afin d'estimer les paramètres \(\matr{U}\), \(\V\) et \(\B\) de LFMM, nous définissons la
 fonction objectif de type ridge suivante
@@ -1878,7 +1878,7 @@ manière univoque pour notre problème quand le paramètre de régularisation es
 nul.
 
 \subsubsection{Algorithme de minimisation de la fonction objectif \(\Lridge\)}
-\label{sec:orgbe6d23d}
+\label{sec:org380a5e3}
 Afin d'estimer les paramètres de LFMM minimisant la fonction \(\Lridge\), nous
 commençons par calculer la décomposition en valeurs singulières de \(\X\)
 \begin{equation*}
@@ -1919,13 +1919,13 @@ toute la part de variance expliquée par \(\X\). À la limite, \(\D\) n'est plus
 inversible. Si \(\lambRidge\) est très grand, \(\D\) tend vers la matrice identité.
 Dans ce cas, le calcul de \(\hat{\matr{U}} \hat{\V}\) revient à faire une analyse en
 composantes principales de la matrice des variables expliquées \(\Y\). Nous
-expliquons plus en détail dans la section \ref{orgdac79ed} comment choisir
+expliquons plus en détail dans la section \ref{orgbd024c8} comment choisir
 l'hyperparamètre \(\lambRidge\).
 
 Les estimateurs des paramètres régularisés en norme \(L_{2}\) sont justifiés par le
 théorème suivant.
 \begin{theorem}
-\label{org813f967} 
+\label{org6316a0f} 
 Pour \(\lambRidge\) strictement supérieur à zéro, les
 estimateurs des paramètres de LFMM régularisés en norme \(L_{2}\), définis par
 \eqref{eq:RidgeLfmmEstomatorW} et \eqref{eq:RidgeLfmmEstomatorB}, définissent un
@@ -1997,8 +1997,8 @@ singulières les plus grandes \citep{Eckart_1936}. Nous avons bien montré que
 est un point de minimum global de \(\Lridge\).
 \end{proof}
 \subsection{Estimateur des moindres carrés régularisé en norme \(L_{1}\)}
-\label{sec:org9cf2d98}
-\label{org6c881aa}
+\label{sec:org38cd92f}
+\label{org6c5a701}
 Dans cette partie, nous présentons un algorithme d'estimation des paramètres du
 modèle défini par \eqref{eq:model} fondé sur un problème des moindres carrés
 régularisé en norme \(L_{1}\) et en norme nucléaire. Nous montrons que cet
@@ -2006,7 +2006,7 @@ algorithme calcule un minimum global du problème d'optimisation des moindres
 carrés régularisé.
 
 \subsubsection{Fonction objectif}
-\label{sec:orgaf1f03c}
+\label{sec:orgda13ec5}
 Afin d’estimer les paramètres \(\matr{U}\), \(\V\) et \(\B\) de LFMM, nous définissons
 la fonction objectif de type lasso suivante
 \begin{equation}
@@ -2033,8 +2033,8 @@ norme nucléaire contraint le rang de \(\W\) et donc le nombre de variables
 latentes.
 
 \subsubsection{Algorithme de minimisation de la fonction objectif \(\Llasso\)}
-\label{sec:org6207b71}
-\label{org5fa5781}
+\label{sec:orgb51788c}
+\label{org83d1639}
 
 Nous présentons maintenant un algorithme de descente par blocs de coordonnées
 qui permet d'estimer les paramètres de LFMM en minimisant la fonction objectif
@@ -2072,7 +2072,7 @@ estimer les paramètres de cette régression. Nous utilisons l'algorithme de
 descente par coordonnées de \citet{Friedman_2007}. Dans le cas présent, on
 s'intéresse plus particulièrement à l'estimation des variables latentes, qui
 permettront ensuite de faire le test d'association (voir la partie
-\ref{org689a3f6}). Nous supposons donc que les variables explicatives \(\X\) ont été
+\ref{org3f5025b}). Nous supposons donc que les variables explicatives \(\X\) ont été
 transformées de sorte que
 \begin{equation}
 \X^{T} \X = \Id_{d}.
@@ -2201,7 +2201,7 @@ f(x) - f(\bar{x}) \geq 0, ~ \forall x \in A.
 Ce résultat démontre que l'algorithme d'estimation \(L_{1}\) des paramètres du
 modèle LFMM converge vers un point de minimum global de \(\Llasso\).
 \subsection{Complexité des algorithmes}
-\label{sec:org1da9d71}
+\label{sec:org9835b8c}
 Dans cette partie nous abordons la complexité des algorithmes présentés dans les
 sections précédentes. On peut distinguer deux grandes étapes dans ces
 algorithmes. La première étape est le calcul de la décomposition en
@@ -2255,8 +2255,8 @@ ordinateurs ne possédant pas assez de RAM. Il est possible d'envisager de ne pa
 charger \(\Y\) en RAM et d'accéder aux données seulement quand cela est nécessaire.
 
 \subsection{Choix des hyperparamètres}
-\label{sec:orga46b8c3}
-\label{orgdac79ed}
+\label{sec:org9ad6b4f}
+\label{orgbd024c8}
 La sélection des hyperparamètres est un problème commun à de nombreuses
 méthodes en analyse de données. Nous présentons plusieurs approches pratiques
 pour choisir les hyperparamètres qui interviennent dans les algorithmes que nous
@@ -2267,10 +2267,10 @@ régularisation. Enfin nous présentons un algorithme de validation croisée ada
 aux algorithmes que nous avons présentés.
 
 \subsubsection{Nombre de variables latentes (\(K\))}
-\label{sec:org6b9fedb}
+\label{sec:org0105ece}
 Pour trouver le nombre de variables latentes \(\K\) nous proposons d'isoler les
 variations de \(\Y\) expliquées par les variables latentes à l'aide de la matrice
-\(\D\) utilisée dans l'estimation \(L_{2}\) (voir la section \ref{org04bcca7}). Pour
+\(\D\) utilisée dans l'estimation \(L_{2}\) (voir la section \ref{org5149fa3}). Pour
 cela on projette \(\Y\) sur l'espace orthogonal à \(\X\) en prenant \(\lambRidge = 0\).
 On a alors
 \begin{equation}
@@ -2295,11 +2295,11 @@ est préférable d'en utiliser plusieurs. Pour les expériences que nous avons
 réalisées sur des données réelles, le choix du nombre de variables latentes \(\K\)
 du modèle LFMM a été fait à partir du scree plot de l'ACP de la matrice
 \(\matr{D}_{0} \Q^{T} \Y\). Nous avons aussi utilisé l'algorithme de validation
-croisée que nous présentons dans la section \ref{org50f15c3}.
+croisée que nous présentons dans la section \ref{org48c7fe8}.
 
 \subsubsection{Paramètre de régularisation \(L_{2}\)}
-\label{sec:org523c262}
-\label{orga8f115f}
+\label{sec:orge43f8fb}
+\label{orgc84f998}
 Le paramètre de régularisation \(L_{2}\) (\(\lambRidge\)) intervient dans le calcul
 de l'estimation de la matrice latente décrit par l'équation
 \ref{eq:RidgeLfmmEstomatorW}. Ce paramètre de régularisation intervient dans la
@@ -2318,7 +2318,7 @@ grand ni trop petit. Nous avons remarqué dans les expériences que de petites
 valeurs donnent de meilleurs résultats dans de nombreux cas.
 
 \subsubsection{Paramètre de régularisation \(L_{1}\)}
-\label{sec:org1a7b49f}
+\label{sec:orgd84e658}
 
 Le paramètre de régularisation \(L_{1}\) (\(\lambLasso\)) a un impact sur le nombre
 de lignes nulles dans la matrice des effets \(\B\). La proportion de lignes non
@@ -2336,7 +2336,7 @@ petite valeur du paramètre de régularisation \(\lambLasso\) tel que le vecteur
 \end{equation}
 vaut zéro. La matrice \(\hat{\B}_{t = 1}\) est le résultat de la première étape de
 l'algorithme d'estimation des moindres carrés régularisée en norme \(L_{1}\) (cf
-section \ref{org5fa5781}). La valeur de \(\lambLasso\) correspondante est notée
+section \ref{org83d1639}). La valeur de \(\lambLasso\) correspondante est notée
 \(\lambLasso^{\mathrm{max}}\). Ensuite, nous construisons une suite de \(m\) valeurs
 de \(\lambLasso\) décroissant selon une échelle logarithmique depuis
 \(\lambLasso^{\mathrm{max}}\) jusqu'à
@@ -2349,7 +2349,7 @@ Nous stoppons l'algorithme si la proportion de lignes non nulles souhaitée est
 dépassée.
 
 \subsubsection{Paramètre de régularisation de la norme nucléaire}
-\label{sec:orgae47102}
+\label{sec:org6e101c1}
 
 Le paramètre de régularisation de la norme nucléaire (\(\gamma\)) dans
 l'algorithme d'estimation \(L_{1}\) a une influence sur le rang de la matrice
@@ -2367,8 +2367,8 @@ régularisation \(\gamma\) a toujours fait converger l'algorithme d'estimation
 \(L_{1}\) vers une estimation de la matrice latente \(\hat{\W}\) de rang \(\K\).
 
 \subsubsection{Validation croisée}
-\label{sec:orgae72455}
-\label{org50f15c3}
+\label{sec:org6ee5615}
+\label{org48c7fe8}
 
 La validation croisée est une méthode d'évaluation des hyperparamètres d'un
 modèle, très utilisée en apprentissage statistique. Le principe est de séparer
@@ -2378,8 +2378,8 @@ ensuite l'erreur de prédiction à l'aide des données de test. Pour que la
 validation croisée fonctionne, il est très important que les données de test ne
 soient pas utilisées pour estimer les paramètres du modèle. Dans le cas des
 modèles à facteurs latents en général, les données d'apprentissage ne permettent
-toutefois pas de calculer les variables latentes pour les données de test. Le
-plus simple est de séparer les variables des données de test. Nous utilisons
+toutefois pas de calculer les variables latentes pour les données de test. Une
+méthode consite à séparer les variables des données de test. Nous utilisons
 ensuite une partie des variables des données de test pour estimer les variables
 latentes et l'autre partie pour calculer l'erreur de prédiction \citep{Bro_2008}.
 Nous présentons maintenant plus formellement notre procédure de validation
@@ -2410,8 +2410,8 @@ permet de mesurer une erreur sur des observations des variables expliquées qui
 n'ont pas été utilisées pour estimer les paramètres du modèle.
 
 \subsection{Tests d'hypothèse corrigés pour les facteurs de confusion}
-\label{sec:orgb323b45}
-\label{org689a3f6}
+\label{sec:org4be94f3}
+\label{org3f5025b}
 Jusqu'ici, nous avons abordé l'estimation des variables latentes et des effets.
 Cependant, l'objectif initial est de trouver les variables expliquées associées
 aux variables explicatives, tout en prenant en compte les variables latentes.
@@ -2441,7 +2441,7 @@ d'estimation \(L_{1}\) ou \(L_{2}\) de la matrice latente de LFMM que nous avons
 présentés précédemment.
 
 \subsubsection{Calcul de la statistique de test et des \pvalues}
-\label{sec:org986087c}
+\label{sec:org03b55a3}
 
 Pour chaque variable expliquée \(\Y_{j}\), nous avons défini le modèle de
 régression linéaire suivant
@@ -2460,8 +2460,8 @@ calcul de la statistique de test est très classique. Par exemple, il est donné
 dans la section 3.2 du livre de \citet{Hastie_2009}.
 
 \subsubsection{Calibration des \pvalues}
-\label{sec:org647301c}
-\label{org1f21ab4} 
+\label{sec:orgafe7096}
+\label{org68c8456} 
 
 Il arrive parfois que la statistique de test ne suive pas la distribution
 théorique sous l'hypothèse nulle. On dit dans ce cas que le test est mal
@@ -2482,7 +2482,7 @@ Pour calculer les nouvelles \pvalues, on suppose que \(\tilde{z_{j}}\) suit une 
 normale de moyenne nulle et d'écart type 1 sous l'hypothèse nulle.
 
 \subsection{Implémentation en R}
-\label{sec:orge0bca4e}
+\label{sec:org096f921}
 Les deux nouvelles méthodes de test d'association avec correction pour les
 facteurs de confusion, que nous avons développées dans cette thèse, ont été
 implémentées dans le langage de programmation R. Nous les avons appelées
@@ -2496,15 +2496,15 @@ non nulles dans la matrice des effets \(\B\). Enfin les deux algorithmes
 retournent les estimations pour les paramètres de LFMM ainsi qu'une \pvalue pour
 le test d'association de chaque colonne de \(\Y\) avec \(\X\).
 \section{Comparaisons avec d'autres méthodes de correction pour les facteurs de confusion}
-\label{sec:org1c4243f}
-\label{org51f5869}
+\label{sec:orgc626e25}
+\label{org41f55bc}
 
 Dans cette section nous présentons d'autres méthodes pour les études
 d'association avec et sans correction pour les facteurs de confusion. Celles-ci
 sont comparées aux méthodes lassoLFMM et ridgeLFMM dans la section suivante.
 
-\subsection{Régression linéaire simple et avec les scores de l'ACP}
-\label{sec:orgca8058b}
+\subsection{Régressions linéaire simple et avec les scores de l'ACP}
+\label{sec:orgc5adc0f}
 Dans lassoLFMM et ridgeLFMM, les tests d'hypothèse utilisés pour détecter les
 associations reposent sur un modèle de régression linéaire de \(\Y\) par \(\X\) et
 sur l'estimation des facteurs latents \(\bar{\matr{U}}\). Il est donc naturel de
@@ -2520,14 +2520,14 @@ linéaire avec et sans les scores de l'ACP, ont été implémentées en langage 
 nous les appelons respectivement lm et PCAlm.
 
 \subsection{Méthode "Surrogate Variable Analysis" (SVA) \citep{article_Leek_Storey_2007}}
-\label{sec:orgfeddb86}
+\label{sec:orge8177ca}
 Il existe deux versions de SVA : sva-two-step \citep{article_Leek_Storey_2007} et
 sva-irw \citep{article_Leek_Storey_2008}. La méthode sva-two-step se découpe en
 deux étapes : une étape d'estimation de la matrice des axes factoriels \(\V\) et
 une étape d'estimation de la matrice des variables latentes \(\matr{U}\). Lors de la
 première étape la méthode sva-two-step estime les axes factoriels en faisant une
 ACP de la matrice résiduelle de la régression linaire de \(\Y\) par \(\X\). En
-utilisant les notations de la section \ref{org04bcca7}, cela correspond à faire
+utilisant les notations de la section \ref{org5149fa3}, cela correspond à faire
 l'ACP de \(\matr{D}_{(\lambRidge = 0)} \Q^{T} \Y\). Ensuite la méthode
 sva-two-step détermine un sous-ensemble de colonnes de la matrice \(\Y\) qui sont
 les moins corrélées avec la variable \(\X\). Le sous-ensemble de colonnes est
@@ -2544,7 +2544,7 @@ compte ces poids. La méthode itère ces deux étapes un nombre de fois choisi p
 l'utilisateur. Nous avons utilisé le package R sva fourni par les auteurs.
 
 \subsection{"High dimensional factor analysis and confounder adjusted testing and estimation" (CATE) \citep{wang2015confounder}}
-\label{sec:orgf4308e6}
+\label{sec:org066499d}
 
 Nous présentons dans cette partie la méthode cate \citep{wang2015confounder}. Pour
 faciliter les explications, nous considérons le cas où il n'y a qu'une variable
@@ -2558,7 +2558,7 @@ ligne de la matrice transformée les coefficients de la régression linéaire de
 \(\Y\) par rapport à \(\X\) qui correspond au résidu de la régression. La méthode
 cate utilise le projeté orthogonal de \(\Y\) par rapport à \(\X\) pour calculer les
 axes factoriels. Cette première étape est comparable à l'étape de calcul de la
-matrice \(\V\) dans notre méthode ridgeLFMM (voir partie \ref{org04bcca7}). Dans
+matrice \(\V\) dans notre méthode ridgeLFMM (voir partie \ref{org5149fa3}). Dans
 ridgeLFMM, plutôt que d'enlever complètement les variations de \(\Y\) expliquées
 par \(\X\), nous les réduisons en fonction du paramètre de régularisation
 \(\lambRidge\). Comme cela a été montré par \citet{wang2015confounder}, les méthodes
@@ -2599,9 +2599,9 @@ colonnes de \(\Y\) associées à \(\X\). Nous avons utilisé le package R cate f
 par les auteurs.
 
 \section{Expérimentations : données simulées et réelles}
-\label{sec:org641bb2b}
+\label{sec:org2606e5d}
 \subsection{Données simulées à partir de données réelles}
-\label{sec:org94667a9}
+\label{sec:org1357805}
 Nous avons simulé des données pour lesquelles nous connaissons les variables
 expliquées associées à la variable explicative. Pour cela, nous utilisons une
 matrice de variables expliquées \(\Y\) d'un jeu de données réelles. Pour obtenir
@@ -2653,7 +2653,7 @@ nulles de la matrice \(\B^{'}\).
 
 Le jeu de données réelles que nous avons choisi pour réaliser les simulations
 est issu de la base de données 1000Genome que nous présentons dans la partie
-\ref{org9f65187} \cite{1000Genome_2015}. Nous avons gardé seulement les chromosomes 1
+\ref{org3b41063} \cite{1000Genome_2015}. Nous avons gardé seulement les chromosomes 1
 et 2. Cela permet de simuler une matrice de 52211 variables expliquées pour 1758
 individus. Nous avons choisi de simuler 5 variables latentes. Le coefficient
 d'intensité de la corrélation entre les variables latentes et la variable
@@ -2666,12 +2666,12 @@ donne un total de 125 jeux de données.
 
 Nous avons considéré une méthode oracle qui fait le test d'association entre
 \(\Y\) et \(\X\) en connaissant les variables latentes de la simulation. La méthode
-oracle utilise le test d'association présenté dans la partie \ref{org689a3f6} avec
+oracle utilise le test d'association présenté dans la partie \ref{org3f5025b} avec
 la matrice des variables latentes de la simulation. Ainsi la méthode oracle
 devrait donner les meilleurs résultats.
 
 \subsection{Mesure de comparaison des performances}
-\label{sec:org121806c}
+\label{sec:orgad54e1a}
 
 Pour évaluer la capacité des méthodes à séparer les vrais associations des
 fausses association nous avons utilisé l'aire sous la courbe précision-rappel
@@ -2694,7 +2694,7 @@ par exemple utiliser l'algorithme de Benjamini-Hoshberg de
 \citet{benjamini1995controlling} ou bien la \qvalue de \citet{Storey_2011}.
 
 \subsection{Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)}
-\label{sec:org29037bf}
+\label{sec:org8ba124a}
 
 La polyarthrite rhumatoïde est une maladie auto-immune d'origine inconnue. Dans
 cette étude nous souhaitons étudier le rôle de la méthylation de l'ADN dans le
@@ -2728,12 +2728,12 @@ Enfin pour chaque méthode, nous avons calculé la liste obtenue lorsque l'on co
 le taux de fausse découverte (FDR) à \(1 \%\). Les algorithmes de contrôle du FDR
 nécessitent que les \pvalues soient correctement calibrées. Pour cela nous avons
 calibrées les \pvalues grâce à la méthode présentée dans la partie
-\ref{org1f21ab4}. Le contrôle du FDR a été réalisé à l'aide du package R \texttt{qvalue}
+\ref{org68c8456}. Le contrôle du FDR a été réalisé à l'aide du package R \texttt{qvalue}
 \citep{Storey_2011}.
 
 \subsection{Étude d'association entre des données génétiques et la maladie c\oe{}liaque (GWAS)}
-\label{sec:org5228e68}
-\label{orged6b489} 
+\label{sec:org6a8f780}
+\label{orgfb7d23e} 
 
 La maladie c\oe{}liaque est une maladie auto-immune ayant une prévalence de près
 de \(1 \%\) dans la population générale \citep{Gujral_2012}. Bien que les mécanismes
@@ -2775,7 +2775,7 @@ Nous avons appliqué les méthodes cate, lm, PCAlm, lassoLFMM et ridgeLFMM dans 
 but de trouver les SNPs associés à la maladie \celiac. Afin d'estimer les
 facteurs de confusion, nous avons appliqué les méthodes sur le sous-ensemble de
 80275 SNPs identifiés par l'étape de pruning. Par la suite, nous avons effectué
-le test d'hypothèse présenté dans la section \ref{org689a3f6} sur les 281122 SNPs,
+le test d'hypothèse présenté dans la section \ref{org3f5025b} sur les 281122 SNPs,
 en utilisant l'estimation des variables latentes calculées sur le sous-ensemble
 de 80275 SNPs. Les 281122 SNPs ont finalement été groupés par voisinage de SNPs
 corrélés. Cette étape a été réalisée à l'aide de l'algorithme de \emph{clumping} du
@@ -2784,7 +2784,7 @@ groupe. Comme dans l'étude EWAS, le contrôle du FDR a été réalisé à l'aid
 package R \texttt{qvalue}.
 
 \subsection{Étude d'association entre des données génétiques et un gradient environnemental (GEAS)}
-\label{sec:orgcd48762}
+\label{sec:org4f605eb}
 
 Depuis Darwin nous savons que les organismes vivants s'adaptent à leur
 environnement \citep{Darwin}. Ainsi les organismes les mieux adaptés à leur
@@ -2804,7 +2804,7 @@ regroupent \(84.4\) millions de variants génétiques pour 2506 individus venant
 26 populations différentes. Par ailleurs nous avons récupéré des données
 climatiques à partir de la base de données WorldClim 2.0 \citep{fick17_world}.
 Nous avons filtré les individus trop apparentés et les variants génétiques de
-faible fréquence, de la même façon que l'étude GWAS (voir section \ref{orged6b489}).
+faible fréquence, de la même façon que l'étude GWAS (voir section \ref{orgfb7d23e}).
 Nous avons enlevé les populations afro-américaine et africaine des Caraïbes pour
 ne garder que les individus vivant dans leur environnement depuis plusieurs
 générations. Après cette étape de filtrage il reste 1409 individus et 5397214
@@ -2839,20 +2839,20 @@ population.
 \end{figure}
 
 \section{Résultats}
-\label{sec:orgc1a444f}
+\label{sec:orgb2c6497}
 Dans cette partie, nous présentons les expériences numériques que nous avons
 réalisées, pour évaluer la performance de nos algorithmes de correction des
 facteurs de confusion dans les études d'association. Les deux nouveaux
 algorithmes ont été implémentés dans le langage de programmation R et sont
 appelés respectivement ridgeLFMM pour l'estimation \(L_{2}\) et lassoLFMM pour
 l'estimation \(L_{1}\). Nos méthodes sont comparées aux méthodes présentées dans
-la partie \ref{org51f5869}. Les méthodes de régression linéaire avec et sans
+la partie \ref{org41f55bc}. Les méthodes de régression linéaire avec et sans
 les scores de l'ACP ont été implémentées dans le langage R. Elles sont
 respectivement appelées lm et PCAlm. Pour les méthodes cate, sva-irw et
 sva-two-step, nous avons respectivement utilisé les implémentations R mises à
 disposition par leurs auteurs respectifs.
 \subsection{Comparaison des méthodes sur des données simulées}
-\label{sec:org0ac4e03}
+\label{sec:orge95c43d}
 Sur les 125 jeux de données simulés, nous avons utilisé les méthodes lm, PCAlm,
 sva-irw, sva-two-step, cate, les deux méthodes présentées dans ce chapitre
 (lassoLFMM et ridgeLFMM) et la méthode oracle. Pour comparer les méthodes, nous
@@ -2905,8 +2905,8 @@ corrélation \(\rho\) mais plus faiblement que pour sva-irw (Figure
 \end{sidewaysfigure}
 
 \subsection{Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)}
-\label{sec:org7c33832}
-\label{org6d3c3d5} 
+\label{sec:org22cb8cb}
+\label{org90f253e} 
 
 Nous avons appliqué les méthodes cate, lm, PCAlm, sva-irw, sva-two-step,
 lassoLFMM et ridgeLFMM afin de trouver les sites de méthylation de l'ADN
@@ -3023,7 +3023,7 @@ ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\
 \end{sidewaystable}
 
 \subsection{Étude d'association entre des données génétiques et la maladie c\oe{}liaque (GWAS)}
-\label{sec:org45a972e}
+\label{sec:orgc349135}
 
 Nous avons utilisé les méthodes cate, lm, PCAlm, lassoLFMM et ridgeLFMM afin de
 trouver les SNPs associés avec la maladie \celiac. Nous avons utilisé les
@@ -3032,7 +3032,7 @@ validation croisée du paramètre \(\lambRidge\) tend à sélectionner une forte
 valeur pour celui-ci (Figure \ref{fig:gwas_params} C). La validation croisée
 présentée sur la Figure \ref{fig:gwas_params} C sélectionne une valeur plus grande
 que \(10^3\). Nous avons choisi \(10^3\) car, comme nous l'avons discuté dans la
-partie \ref{orga8f115f}, \(\lambRidge\) trop grand conduit la méthode ridgeLFMM à
+partie \ref{orgc84f998}, \(\lambRidge\) trop grand conduit la méthode ridgeLFMM à
 renvoyer les mêmes résultats que PCAlm.
 
 \begin{figure}[!h]
@@ -3135,8 +3135,8 @@ Chr & Snp & LD block (Mb) & Odds ratio [$95\%$ IC] & \pvalue & \qvalue & Gènes 
 \label{table:gwas_table}
 \end{sidewaystable}
 \subsection{Étude d'association entre des données génétiques et un gradient environnemental (GEAS)}
-\label{sec:orgbb7f5ad}
-\label{org9f65187}
+\label{sec:orgbaef141}
+\label{org3b41063}
 
 Nous avons utilisé les méthodes cate, ridgeLFMM, lassoLFMM et PCAlm avec 9
 variables latentes, afin de trouver les SNPs associés à un gradient climatique.
@@ -3262,7 +3262,7 @@ rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\
 \end{sidewaystable}
 
 \section{Discussion}
-\label{sec:orgf84defa}
+\label{sec:org92a1538}
 Les études d'association sont largement utilisées en biologie pour trouver des
 liens de corrélation entre des variables d'intérêt. Nous nous sommes intéressés
 à la situation où des variables non observées expliquent une partie des
@@ -3334,7 +3334,7 @@ méthodes permettant de corriger les tests d'association statistique pour les
 facteurs de confusion.
 
 \chapter{Conclusions et perspectives}
-\label{sec:org7cc5902}
+\label{sec:org7688746}
 Un grande partie de la biologie repose sur l'analyse des données provenant du
 monde qui nous entoure. Les techniques qui permettent d'acquérir les données
 évoluent; il est donc nécessaire que les méthodes pour les analyser évoluent
@@ -3348,7 +3348,7 @@ deux packages R : \texttt{tess3r} et \texttt{lfmm}. Nous proposons maintenant di
 perspectives de nos travaux.
 
 \section{Développement et maintenance des packages \texttt{tess3r} et \texttt{lfmm}}
-\label{sec:org0a3d588}
+\label{sec:org5e55188}
 Le choix de l'implémentation des packages en R n'est pas anodin. La communauté R
 est très vivante et en particulier en analyse de données biologiques. Les
 packages que nous avons développés peuvent ainsi être intégrés à des pipelines
@@ -3388,7 +3388,7 @@ des packages, mais aussi sur les aspects plus généralistes d'analyse de donné
 Ces échanges permettent de faire le lien entre statisticiens et biologistes et
 stimule la recherche de nouvelles méthodes statistiques.
 \section{Valeurs aberrantes et données manquantes}
-\label{sec:orgd1db2ab}
+\label{sec:org892d127}
 Les données réelles analysées lors de cette thèse peuvent être qualifiées de
 données "propres"; c'est-à-dire que les données contiennent peu d'erreurs et peu
 de valeurs manquantes. Cependant, il est fréquent sur les grands jeux de données
@@ -3439,35 +3439,33 @@ méthode simple consiste à filtrer les observations ayant un score trop faible
 pour les traiter comme des données manquantes. Le problème est autrement plus
 complexe lorsque que nous ne sommes pas capables de détecter les erreurs de
 mesure présentes dans les données biologiques. Nous avons évalué, dans le
-chapitre \ref{orgaf63d8f}, l'effet du bruit dans les données géographiques sur les
+chapitre \ref{orgb08a600}, l'effet du bruit dans les données géographiques sur les
 résultats de nos algorithmes spatiaux d'estimation de l'ascendance. Cependant,
 nous pouvons nous interroger sur l'effet des valeurs aberrantes présentes dans
 les données génétiques, ainsi que sur la façon dont les erreurs de mesure
 peuvent influencer les études d'association faites à partir de notre package
 \texttt{lfmm}.
 \section{Conclusion générale}
-\label{sec:orgf7b1954}
+\label{sec:org16ecfca}
 Dans cette thèse, nous avons développé deux logiciels d'analyse de données
-répondant à des problèmes spécifiques de la biologie. Ces logiciels répondent à
-l'évolution des données utilisées en biologie. Ainsi, nos travaux s'inscrivent
+répondant à des problèmes spécifiques de la biologie. Nos travaux s'inscrivent
 dans une logique de coévolution des méthodes statistiques et des techniques
 d'acquisition de données. Les perspectives ouvertes par cette thèse sont
-multiples. D'une part, nos travaux ouvrent des perspectives de développements
-méthodologiques et logiciels, afin par exemple d'ajouter des fonctionnalités à
-nos packages R en fonction des retours des utilisateurs. D'autre part, nos
-travaux ouvrent des perspectives sur l'utilisation de la factorisation
-matricielle dans d'autres problèmes d'analyse de données massives. Nous pensons
-par exemple aux études d'association à partir de données d'expression génique
-(données RNA-Seq), ou bien de données de méthylation de l'ADN utilisant les
-technologies de séquençage dernière génération.
-
+multiples. D'une part, nos travaux ouvrent des perspectives de développement
+méthodologique et logiciel, afin par exemple d'ajouter des fonctionnalités à nos
+packages R en fonction des retours des utilisateurs. D'autre part, nos travaux
+ouvrent des perspectives sur l'utilisation de la factorisation matricielle dans
+d'autres problèmes d'analyse de données massives. Nous pensons par exemple aux
+études d'association à partir de données d'expression génique (données RNA-Seq),
+ou bien de données de méthylation de l'ADN utilisant les technologies de
+séquençage dernière génération.
 
 
 \printbibliography[heading=bibintoc]
 
 \backmatter
 \chapter{Travaux réalisés}
-\label{sec:org3ca0c46}
+\label{sec:org016129b}
 
 \subsection*{Articles de revue}
 
@@ -3495,7 +3493,7 @@ ecology} 26 (2), 454-469. DOI : \href{http://dx.doi.org/10.1111/mec.13513}{10.11
 l’Estimation des Coefficients de Métissage dans des Populations Continues
 Spatialement. 48èmes Journées de Statistique de la SFdS, 30 mai-3 juin 2016.
 \item \textbf{Kévin Caye}, Olivier Michel, Olivier François (2016). \texttt{tess3r} : étude du
-jeux de données Arabidopsis thaliana RegMap. Cinquièmes Rencontres R, 22-24
+jeu de données Arabidopsis thaliana RegMap. Cinquièmes Rencontres R, 22-24
 juin 2016.
 \item \textbf{Kévin Caye}, Olivier Michel, Olivier François (2016). \texttt{tess3r} : un package R
 pour l’estimation de la structure génétique des populations spatialisées.

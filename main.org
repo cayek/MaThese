@@ -239,7 +239,7 @@ données est grand, plus il est possible de détecter des liens statistiques
 subtils. Par conséquent, dans le contexte actuel où l'accès aux données est très
 facile, il faut être très prudent et rigoureux dans les études de corrélation.
 
-Dans le cadre de cette thèse de doctorat nous nous sommes intéressés à
+Dans le cadre de cette thèse de doctorat, nous nous sommes intéressés à
 développer des méthodes statistiques adaptées au traitement de données
 génétiques afin de répondre à deux problèmes : l'estimation de la structure
 génétique des populations à partir de données génétiques et géographiques, et
@@ -319,12 +319,12 @@ par Watson et Crick en 1953, la génomique des populations utilise des données
 d'observation de génomes de plusieurs individus provenant de plusieurs
 populations. L'ADN contient toute l'information génétique (le génome) permettant
 le développement, le fonctionnement et la reproduction des êtres vivants. L'ADN
-peut être considérée comme une longue séquence des nucléotides : A, C, T, G. Les
+peut être considéré comme une longue séquence des nucléotides : A, C, T, G. Les
 récentes améliorations en séquençage de l'ADN ont permis d'acquérir les génomes
-de nombreuses espèces différentes. Dans le cadre de cette thèse nous nous sommes
-intéressés seulement aux données dîtes de SNPs (single-nucleotide polymorphism),
+de nombreuses espèces différentes. Dans le cadre de cette thèse, nous nous sommes
+intéressés seulement aux données dites de SNPs (single-nucleotide polymorphism),
 qui sont les polymorphismes génétiques d'un seul nucléotide (Figure
-ref:fig:SNP). De plus, nous supposons que l'on peut seulement observé deux
+ref:fig:SNP). De plus, nous supposons que l'on peut seulement observer deux
 allèles par SNP. Cette hypothèse n'est pas réductrice car la probabilité qu'une
 mutation survienne deux fois à la même position est très faible, et les
 mutations sont des évènements rares pour les espèces considérées dans cette
@@ -715,21 +715,21 @@ d'ascendance génétique dans la Table [[table:tess3_etat_art]]
 #+ATTR_LATEX: :align l|p{5cm}lp{5.5cm}|p{5.5cm} :float sideways
 #+NAME: table:tess3_etat_art
 #+CAPTION: *Méthodes spatiales et non spatiales d'estimation de coefficients d'ascendance.* Les méthodes TESS3-AQP/APLS sont présentées dans cette thèse.
-|---------------+--------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
-| Méthode       | Modèle                                           | Spatiale | Algorithme                                       | Référence                                   |
-|---------------+--------------------------------------------------+----------+--------------------------------------------------+---------------------------------------------|
-| STRUCTURE     | bayésien                                         | non      | MCMC                                             | citet:Pritchard2000,Falush1567              |
-| FRAPPE        | vraisemblance                                    | non      | EM                                               | citet:Tang_2005                             |
-| TESS          | bayésien                                         | oui      | MCMC                                             | citet:CHEN_2007                             |
-| GENELAND      | bayésien                                         | oui      | MCMC                                             | citet:phdGuedj                              |
-| BAPS          | bayésien                                         | oui      | optimisation stochastique                        | citet:Corander2008                          |
-| ADMIXTURE     | vraisemblance                                    | non      | optimisation quasi-Newton alterné                | citet:alexander2009admixture,Alexander_2011 |
-| fastStructure | bayésien                                         | non      | inférence variationnelle bayésienne              | citet:Raj_2014                              |
-| PSIKO         | PCA                                              | non      | SVD (singular value decompsition)                | citet:Popescu_2014                          |
-| sNMF          | factorisation matricielle parcimonieuse          | non      | optimisation quadratique alterné avec projection | citet:Frichot_2014                          |
-| TESS3-AQP     | factorisation matricielle régularisée sur graphe | oui      | optimisation quadratique alterné                 |                                             |
-| TESS3-APLS    | factorisation matricielle régularisée sur graphe | oui      | moindres carrés alternés projetés                |                                             |
-| conStruct     | bayésien                                         | oui      | MCMC                                             | citet:Bradburd189688                        |
+|---------------+--------------------------------------------------+----------+---------------------------------------------------+---------------------------------------------|
+| Méthode       | Modèle                                           | Spatiale | Algorithme                                        | Référence                                   |
+|---------------+--------------------------------------------------+----------+---------------------------------------------------+---------------------------------------------|
+| STRUCTURE     | bayésien                                         | non      | MCMC                                              | citet:Pritchard2000,Falush1567              |
+| FRAPPE        | vraisemblance                                    | non      | EM                                                | citet:Tang_2005                             |
+| TESS          | bayésien                                         | oui      | MCMC                                              | citet:CHEN_2007                             |
+| GENELAND      | bayésien                                         | oui      | MCMC                                              | citet:phdGuedj                              |
+| BAPS          | bayésien                                         | oui      | optimisation stochastique                         | citet:Corander2008                          |
+| ADMIXTURE     | vraisemblance                                    | non      | optimisation quasi-Newton alternée                | citet:alexander2009admixture,Alexander_2011 |
+| fastStructure | bayésien                                         | non      | inférence variationnelle bayésienne               | citet:Raj_2014                              |
+| PSIKO         | PCA                                              | non      | SVD                                               | citet:Popescu_2014                          |
+| sNMF          | factorisation matricielle parcimonieuse          | non      | optimisation quadratique alternée avec projection | citet:Frichot_2014                          |
+| TESS3-AQP     | factorisation matricielle régularisée sur graphe | oui      | optimisation quadratique alternée                 |                                             |
+| TESS3-APLS    | factorisation matricielle régularisée sur graphe | oui      | moindres carrés alternés projetés                 |                                             |
+| conStruct     | bayésien                                         | oui      | MCMC                                              | citet:Bradburd189688                        |
 #+LATEX:\rowcolors{2}{}{}
 
 ** Tests d'association
@@ -838,8 +838,8 @@ telle que
 \label{eq:model0}
 \end{equation} 
 Cette simulation correspond à une situation où $1 \%$ des colonnes de $\Y$ sont
-associées avec $\X$. La variable latente $\matr{U}$ est un facteur de confusion
-pour cette étude d'association car elle est corrélée avec la variable $\X$.
+associées à $\X$. La variable latente $\matr{U}$ est un facteur de confusion
+pour cette étude d'association car elle est corrélée à la variable $\X$.
 
 Afin de détecter les variables expliquées associées à la variable explicative,
 nous réalisons une régression linéaire de $\Y$ par $\X$. Nous effectuons une
@@ -928,7 +928,7 @@ citep:Frichot_2013, regression-based latent models (RLFM)
 citep:agarwal09_regres, factor-augmented regression model
 cite:gerard2017empirical, surrogate variable analysis (SVA)
 cite:article_Leek_Storey_2007. Nous résumons dans le Table
-ref:table:lfmm_etat_art, les méthodes reposant sur des modèles construits à
+[[table:lfmm_etat_art]], les méthodes reposant sur des modèles construits à
 partir de l'équation eqref:eq:model0 .
 
 #+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
@@ -1185,7 +1185,7 @@ synthétique qui permet de visualiser la variation génétique induite par la
 stratification en populations. La stratification en populations fournie des
 informations sur l'histoire et l'évolution démographique de l'espèce étudié
 citep:Li_2008. Il est également indispensable de l'utiliser comme facteur de
-correction dans les études d'association avec un phénotype, un gradient
+correction dans les études d'association à un phénotype, un gradient
 environnemental ou encore une maladie citep:marchini2004effects. De même, il
 existe de nombreuses applications en médecine génétique nécessitant de connaître
 la structure de populations, comme par exemple le calcul d'un score de risque
@@ -1278,7 +1278,7 @@ coefficients individuels de métissage fondée sur des données géographiques e
 génétiques. Cette méthode repose sur un problème de factorisation de matrices
 avec des contraintes convexes et une régularisation sur un graphe spatial. Nous
 proposons deux algorithmes qui résolvent le problème de factorisation. Le
-premier algorithme repose sur un algorithme d'optimisation quadratique alterné
+premier algorithme repose sur un algorithme d'optimisation quadratique alternée
 (AQP pour alternated quadratic programing), l'autre sur un algorithme des
 moindres carrés alternés projetés (APLS pour alternated projected least square).
 Le terme alterné dans les deux algorithmes fait référence au fait que l'on
@@ -1411,7 +1411,7 @@ l'espace géographique. Les grandes valeurs de $\alpha$ impliquent que les
 coefficients de métissage aient des valeurs proches pour les individus
 géographiquement proches.
 
-*** Algorithme d'optimisation quadratique alterné (AQP)
+*** Algorithme d'optimisation quadratique alternée (AQP)
 
 Nous remarquons que les polyèdres $\DQ$ et $\DG$ sont des ensembles convexes et
 que la fonction $\LS$ définie par l'équation eqref:eq:tess3LS, est convexe par
@@ -1425,7 +1425,7 @@ quand la fonction objectif est convexe et définie sur un ensemble convexe
 citep:Bertsekas_1997. Le problème d'optimisation selon $\mathbf{G}$, quand $\Q$ est fixé,
 est un problème d'optimisation quadratique. Il en va de même quand on échange
 les rôles de $\mathbf{G}$ et $\Q$, c'est pour cela que l'algorithme est dit
-d'optimisation quadratique alterné (AQP).
+d'optimisation quadratique alternée (AQP).
 
 #+BEGIN_EXPORT latex
 \begin{figure}[t]
@@ -5318,10 +5318,10 @@ estimation des variables latentes à partir d'une transformation de $\Y$
 citep:gerard2017unifying,wang2015confounder,article_Leek_Storey_2007. Cette
 transformation a pour but de séparer la variation de $\Y$, expliquée par les
 variables latentes, de celle expliquée par $\X$. Parmi les méthodes reposant sur
-une transformation des données, on distingue des autres les méthodes dîtes à
+une transformation des données, on distingue des autres les méthodes dites à
 contrôle négatif qui supposent connu un sous-ensemble de colonnes de $\Y$ qui ne
-sont pas associées avec $\X$. Les méthodes à contrôle négatif utilisent les
-variables dîtes nulles pour estimer les variables latentes. L'estimation des
+sont pas associées à $\X$. Les méthodes à contrôle négatif utilisent les
+variables dites nulles pour estimer les variables latentes. L'estimation des
 variables latentes pour corriger les études d'association est un problème très
 vaste et aucune méthode ne s'est imposée comme étant la méthode référence.
 *** Source de confusion                                          :noexport:
@@ -5902,7 +5902,7 @@ valeurs donnent de meilleurs résultats dans de nombreux cas.
 Le paramètre de régularisation $L_{1}$ ($\lambLasso$) a un impact sur le nombre
 de lignes nulles dans la matrice des effets $\B$. La proportion de lignes non
 nulles dans la matrice $\B$ correspond à la proportion de colonnes de $\Y$
-corrélées avec les variables explicatives $\X$. Quand on prend en compte les
+corrélées aux variables explicatives $\X$. Quand on prend en compte les
 variables latentes plutôt que de choisir le paramètre de régularisation
 $\lambLasso$, il est équivalent de choisir la proportion de colonnes de $\Y$
 corrélées aux variables $\X$. Pour trouver un paramètre de régularisation qui
@@ -6141,7 +6141,7 @@ ACP de la matrice résiduelle de la régression linaire de $\Y$ par $\X$. En
 utilisant les notations de la section [[sec:estimator_L2]], cela correspond à faire
 l'ACP de $\matr{D}_{(\lambRidge = 0)} \Q^{T} \Y$. Ensuite la méthode
 sva-two-step détermine un sous-ensemble de colonnes de la matrice $\Y$ qui sont
-les moins corrélées avec la variable $\X$. Le sous-ensemble de colonnes est
+les moins corrélées à la variable $\X$. Le sous-ensemble de colonnes est
 utilisé pour estimer la matrice des variables latentes $\matr{U}$. 
 
 La deuxième version de SVA est itérative. Plutôt que d'estimer les variables
@@ -6261,7 +6261,7 @@ façon suivante
 \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E.
 \end{equation}
 Nous avons ainsi généré des données pour lesquelles nous connaissons les colonnes
-de $\Y^{'}$ associées avec la variable $\X^{'}$. Elles correspondent aux lignes non
+de $\Y^{'}$ associées à la variable $\X^{'}$. Elles correspondent aux lignes non
 nulles de la matrice $\B^{'}$. 
 
 Le jeu de données réelles que nous avons choisi pour réaliser les simulations
@@ -6273,7 +6273,7 @@ d'intensité de la corrélation entre les variables latentes et la variable
 explicative prend une fourchette de valeurs entre $0.1$ et $1$. Cela a permis de
 simuler des jeux de données plus ou moins difficiles pour l'inférence des
 facteurs de confusion. Nous avons de plus choisi une proportion des variables
-expliquées associées avec la variable explicative, entre $1\%$ et $20\%$. Pour
+expliquées associées à la variable explicative, entre $1\%$ et $20\%$. Pour
 chaque paramètre de simulation, nous avons simulé $5$ jeux de données, ce qui
 donne un total de 125 jeux de données.
 
@@ -6318,9 +6318,9 @@ polyarthrite rhumatoïde et chez 335 individus sains citep:Liu_2013. Il est conn
 que la méthylation de l'ADN dépend de l'âge, du genre et de la consommation de
 tabac de chaque individu. Nous savons aussi que le type de cellule sur laquelle
 on prélève la mesure influence le niveau de méthylation. Tous ces facteurs
-peuvent être des facteurs de confusion pour l'étude d'association avec la
-maladie. Ils ont été pris en compte explicitement dans les études d'association
-qui ont été faites à partir des mêmes données que celles étudiées ici
+peuvent être des facteurs de confusion pour l'étude d'association à la maladie.
+Ils ont été pris en compte explicitement dans les études d'association qui ont
+été faites à partir des mêmes données que celles étudiées ici
 citep:Rahmani_2016,Zou_2014. Afin d'évaluer la capacité des méthodes à bien
 corriger les tests d'association, nous ne prenons pas en compte les facteurs de
 confusion connus et nous comparons les résultats à ceux obtenus par les études
@@ -10964,8 +10964,8 @@ identifiés entre les rangs $5111$ et $87659$.
 \end{figure}
 #+END_EXPORT
 
-Enfin, nous calculons les sites de méthylation candidats pour l'association avec
-la polyarthrite lorsque l'on contrôle le taux de fausse découverte à $1\%$. Nous
+Enfin, nous calculons les sites de méthylation candidats pour l'association à la
+polyarthrite lorsque l'on contrôle le taux de fausse découverte à $1\%$. Nous
 avons écarté lm et sva-irw car ils renvoyaient des listes trop différentes des
 autres méthodes. Parmi les 19 candidats trouvés par toutes les méthodes lorsque
 nous contrôlons le FDR à $1 \%$, nous retrouvons les 5 candidats identifiés par
@@ -13012,7 +13012,7 @@ lassoLFMM et cate qui retrouvent le plus vite les candidats du GWAS catalog
 \end{figure}
 #+END_EXPORT
 
-Enfin, nous calculons les SNPs candidats pour l'association avec la maladie
+Enfin, nous calculons les SNPs candidats pour l'association à la maladie
 \celiac lorsque l'on contrôle le taux de fausse découverte à $1\%$. Ce sont
 ridgeLFMM et PCAlm qui donnent les plus petites listes contrôlées avec 754
 candidats pour ridgeLFMM et 777 candidats pour PCAlm (Figure ref:fig:gwas_venn).
@@ -15209,7 +15209,7 @@ par la méthode lm, celle-ci ne permet pas d'identifier des \pvalues atypiques e
 donc des candidats pour l'association. Par contre, nous observons un excès de
 \pvalues atypiques pour les autre méthodes. Pour les méthodes PCAlm, ridgeLFMM,
 lassoLFMM et cate, nous avons calculé la liste des SNPs candidats pour
-l'association avec le gradient climatique, lorsque nous contrôlons le FDR à $1
+l'association au gradient climatique, lorsque nous contrôlons le FDR à $1
 \%$. La méthode lm a été écartée pour les raisons que nous venons d'évoquer. La
 Figure ref:fig:gwas_venn montre l'intersection des listes de candidats contrôlés
 à un FDR de $1\%$ entre les méthodes. L'union des candidats retournés par ces
