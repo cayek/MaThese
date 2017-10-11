@@ -78,6 +78,6 @@ krakenator_umount_OUTPUT:
 main_clean:
 	latexmk main -C
 
-main.pdf: main.tex
+main.pdf: main.tex biblio.bib
 	latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f main
 

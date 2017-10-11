@@ -13,7 +13,7 @@
 #+COLUMNS: %25ITEM %TODO %3PRIORITY %TAGS
 #+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(g!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
 #+LaTeX_CLASS: these
-#+latex_header: \usepackage[citestyle=authoryear-icomp, bibstyle=authoryear, hyperref=true,backref=true,maxcitenames=2,url=true,backend=biber,natbib=true]{biblatex}
+#+latex_header: \usepackage[citestyle=authoryear, bibstyle=authoryear, hyperref=true,backref=true,maxcitenames=2,url=true,backend=biber,natbib=true]{biblatex}
 #+latex_header: \addbibresource{biblio.bib}
 #+LATEX_HEADER: \input{packages.tex}
 #+LATEX_HEADER: \input{setup.tex}
@@ -6371,12 +6371,12 @@ prise chez deux individus différents, soit identique. Si la probabilité est
 supérieure à $0.08$, nous n'avons gardé qu'un des deux individus. Par ailleurs,
 il est connu que les SNPs sont corrélés le long du génome par liaison génétique
 (LD, linkage disequilibrium). Nous avons donc filtré les SNPs très corrélés
-entre eux. Cette étape est identifiée dans la littérature comme l'étape de "LD
-pruning". Pour chaque SNP nous n'avons gardé que le SNP de variance maximum sur
+entre eux. Cette étape est identifiée dans la littérature comme l'étape de /LD
+pruning/. Pour chaque SNP nous n'avons gardé que le SNP de variance maximum sur
 une fenêtre de 100 SNPs, et cela sur les SNPs ayant un coefficient de
 corrélation linéaire au carré qui est supérieur à $0.2$. Cette procédure de
 prunning nous a permis d'identifier un sous-ensemble de 80275 SNPs. Les
-opérations de filtrage ont été effectuées à l'aide du logiciel plink
+opérations de filtrage ont été effectuées à l'aide du logiciel =plink=
 citep:Purcell_2007. Enfin nous avons utilisé le logiciel beagle pour imputer les
 données manquantes de la matrice de SNPs citep:Browning_2016.
 
@@ -6387,8 +6387,8 @@ facteurs de confusion, nous avons appliqué les méthodes sur le sous-ensemble d
 le test d'hypothèse présenté dans la section [[sec:hypothese]] sur les 281122 SNPs,
 en utilisant l'estimation des variables latentes calculées sur le sous-ensemble
 de 80275 SNPs. Les 281122 SNPs ont finalement été groupés par voisinage de SNPs
-corrélés. Cette étape a été réalisée à l'aide de l'algorithme de clumping du
-logiciel plink. La \pvalue attribuée au groupe est la plus faible \pvalue du
+corrélés. Cette étape a été réalisée à l'aide de l'algorithme de /clumping/ du
+logiciel =plink=. La \pvalue attribuée au groupe est la plus faible \pvalue du
 groupe. Comme dans l'étude EWAS, le contrôle du FDR a été réalisé à l'aide du
 package R =qvalue=.
 
@@ -7089,14 +7089,14 @@ Nous avons enlevé les populations afro-américaine et africaine des Caraïbes p
 ne garder que les individus vivant dans leur environnement depuis plusieurs
 générations. Après cette étape de filtrage il reste 1409 individus et 5397214
 locus. Enfin, de la même façon que pour l'étude GWAS, nous avons identifié un
-sous-ensemble de 296948 SNPs grâce au LD pruning. Nous avons utilisé ce
+sous-ensemble de 296948 SNPs grâce au /LD pruning/. Nous avons utilisé ce
 sous-ensemble de locus pour calculer les variables latentes avec les méthodes
 PCAlm, cate, lassoLFMM et ridgeLFMM. Nous avons calculé ensuite des \pvalues
 pour chacun des 5397214 locus et pour chacune des méthodes. Les candidats
 retournés par les méthodes a été étudiée grâce au logiciel VEP (Variant Effect
 Predictor). Le logiciel VEP permet d'annoter l'effet d'un polymorphisme sur
 l'expression des gènes citep:McLaren_2016. Les annotations retournées par VEP
-sont classées en catégories d'importance: LOW, MODERATE et HIGH. Nous avons
+sont classées en catégories d'importance: /LOW/, /MODERATE/ et /HIGH/. Nous avons
 réalisé un test exact de Fisher afin d'étudier la sur-représentation de chacune
 des catégories d'importance. Nous avons enfin utilisé le package BiomaRt afin
 d'annoter les SNPs qui ont été associés à un phénotype dans d'autres études.
@@ -10916,19 +10916,20 @@ ridgeLFMM.
 \end{figure}
 #+END_EXPORT
 
-On constate une augmentation du nombre de petites \pvalues pour toutes les
+Nous constatons une augmentation du nombre de petites \pvalues pour toutes les
 méthodes; cette augmentation est encore plus forte pour les méthodes lm et
-sva-irw. La figure ref:fig:ewas_qqplot_top B montre la proportion des candidats
-identifiés par citet:Zou_2014,Rahmani_2016 qui sont retrouvés dans les listes
-rangées (les listes sont rangées selon les $p\text{-valeurs}$) de chaque méthode. Nous
-rappelons que les candidats identifiés par citet:Zou_2014,Rahmani_2016 sont au
-nombre de 5. Ils ont été identifiés en prenant en compte les facteurs de
-confusion tels que l'âge, le sexe et une estimation de la composition
-cellulaire. Les méthodes considérées dans notre analyse retrouvent les candidats
-de la littérature dans leurs 40 premiers rangs, sauf lm et sva-irw. Pour la
-méthode lm, il faut prendre le rang 11881 pour trouver le premier candidat de
-citet:Zou_2014,Rahmani_2016, et le rang 138038 pour tous les avoir. Pour la
-méthode sva-irw, les candidats de citet:Zou_2014,Rahmani_2016 sont tous
+sva-irw (Figure ref:fig:ewas_qqplot_top A). La figure ref:fig:ewas_qqplot_top B
+montre la proportion des candidats identifiés par citet:Zou_2014,Rahmani_2016
+qui sont retrouvés dans les listes rangées (les listes sont rangées selon les
+$p\text{-valeurs}$) retournées par chaque méthode. Nous rappelons que les
+candidats identifiés par citet:Zou_2014,Rahmani_2016 sont au nombre de 5. Ils
+ont été identifiés en prenant en compte les facteurs de confusion tels que
+l'âge, le sexe et une estimation de la composition cellulaire. Les méthodes
+considérées dans notre analyse retrouvent les candidats de la littérature dans
+leurs 40 premiers rangs, sauf lm et sva-irw (Figure ref:fig:ewas_qqplot_top B).
+Pour la méthode lm, il faut prendre le rang 11881 pour trouver le premier
+candidat de citet:Zou_2014,Rahmani_2016, et le rang 138038 pour tous les avoir.
+Pour la méthode sva-irw, les candidats de citet:Zou_2014,Rahmani_2016 sont tous
 identifiés entre les rangs $5111$ et $87659$.
 
 #+NAME: code:lfmm_ewas_res_print
@@ -10962,14 +10963,21 @@ identifiés entre les rangs $5111$ et $87659$.
 \end{figure}
 #+END_EXPORT
 
-Nous avons écarté lm et sva-irw car ils renvoyaient des listes trop différentes
-des autres méthodes. Parmi les 19 candidats trouvés par toutes les méthodes
-lorsque nous contrôlons le FDR à $1 \%$, nous retrouvons les 5 candidats
-identifiés par citet:Zou_2014,Rahmani_2016 (Figure ref:fig:ewas_venn). Nous
-remarquons de plus que d'autres sites de méthylation situés dans des gènes sont
-détectés avant les 5 candidats de la littérature. En particulier, nous trouvons
-des gènes situés dans le complexe de gènes HLA qui joue un rôle central dans le
-système immunitaire (Table ref:table:ewas).
+Enfin, nous calculons les sites de méthylation candidats pour l'association avec
+la polyarthrite lorsque l'on contrôle le taux de fausse découverte à $1\%$. Nous
+avons écarté lm et sva-irw car ils renvoyaient des listes trop différentes des
+autres méthodes. Parmi les 19 candidats trouvés par toutes les méthodes lorsque
+nous contrôlons le FDR à $1 \%$, nous retrouvons les 5 candidats identifiés par
+citet:Zou_2014,Rahmani_2016. Avec un FDR controlé à $1 \%$, les méthodes PCAlm
+et sva-two-step retournent des listes de 20 candidats avec 19 candidats en
+commun. Les méthodes cate, lassoLFMM et ridgeLFMM proposent des listes de
+candidats plus de deux fois plus longues que les méthodes PCAlm et sva-two-step.
+De plus, les méthodes cate, lassoLFMM et ridgeLFMM proposent en commun 51 sites
+de méthylation (Figure ref:fig:ewas_venn). Enfin, nous remarquons que d'autres
+sites de méthylation situés dans des gènes sont détectés avant les 5 candidats
+de la littérature. En particulier, nous trouvons des gènes situés dans le
+complexe de gènes HLA qui joue un rôle central dans le système immunitaire
+(Table ref:table:ewas).
 
 #+NAME: code:lfmm_ewas_venn_print
 #+CAPTION: Dépend de [[code:ewas_venn]]
@@ -13003,14 +13011,18 @@ lassoLFMM et cate qui retrouvent le plus vite les candidats du GWAS catalog
 \end{figure}
 #+END_EXPORT
 
-Ce sont ridgeLFMM et PCAlm qui donnent les plus petites listes contrôlées avec
-754 candidats pour ridgeLFMM et 777 candidats pour PCAlm (Figure
-ref:fig:gwas_venn). Les méthodes cate et lm donnent les plus grandes listes avec
-le même nombre de 1319 candidats. Nous constatons que l'intersection des listes
-à FDR contrôlé de toutes les méthodes contient $28\%$ des candidats du GWAS
-catalog. Dans les 20 premières zones détectées par lassoLFMM, en dehors du
-chromosome 6, 6 zones ne contiennent pas de SNPs référencés dans le GWAS catalog
-(Table ref:table:gwas_table).
+Enfin, nous calculons les SNPs candidats pour l'association avec la maladie
+\celiac lorsque l'on contrôle le taux de fausse découverte à $1\%$. Ce sont
+ridgeLFMM et PCAlm qui donnent les plus petites listes contrôlées avec 754
+candidats pour ridgeLFMM et 777 candidats pour PCAlm (Figure ref:fig:gwas_venn).
+Les méthodes cate et lm donnent les plus grandes listes avec le même nombre de
+1319 candidats. Nous constatons que l'intersection des listes à FDR contrôlé de
+toutes les méthodes contient $28\%$ des candidats du GWAS catalog. Afin
+d'identifier des groupes de SNPs associés à la maladie \celiac, nous avons
+regroupé les SNPs voisins corrélés grâce à l'algorithme de /clumping/ du
+logiciel =plink=. Dans les 20 premières zones détectées par lassoLFMM, en dehors
+du chromosome 6, 6 zones ne sont pas référencés dans le GWAS catalog (Table
+ref:table:gwas_table).
 
 #+NAME: code:lfmm_gwas_venn_print
 #+CAPTION: Dépend de [[code:gwas_venn]]
@@ -15115,7 +15127,7 @@ il pourrait s'agir de facteurs de confusion à prendre en compte dans l'étude
 d'association (Figure ref:fig:eas_variable C). Enfin, les 10-ième et 11-ième
 variables latentes séparent un seul individu du reste du groupe (Figure
 ref:fig:eas_variable D), nous avons donc choisi $K = 9$. Pour $\K = 9$, les
-valeurs du paramètre de régularisation $L_{2}$ ($\lambRidge$) entre $10^{-10}$
+valeurs du paramètre de régularisation $L_{2}$ comprises entre $10^{-10}$
 et $1.0$ donnent les mêmes valeurs moyennes d'erreur de prédiction (Figure
 ref:fig:eas_params C). Nous avons choisi de prendre $\lambRidge = 10^{-5}$ pour
 ridgeLFMM.
@@ -15189,27 +15201,31 @@ ridgeLFMM.
 La figure ref:fig:geas_qqplot montre la distribution observée des \pvalues
 renvoyées par chaque méthode, contre la distribution théorique sous l'hypothèse
 nulle. Nous constatons une forte inflation pour les petites \pvalues de la
-méthode lm. Le MAD des \pvalues renvoyées par lm est de $8.7$. De plus nous
-remarquons que le diagramme quantile-quantile de lm forme une droite. Cela
-signifie que la calibration des \pvalues retournées par la méthode lm ne permet
-pas d'identifier des \pvalues atypiques et donc des candidats pour
-l'association. Par contre, on observe un excès \pvalues atypiques dans les
-\pvalues renvoyées par les autre méthodes. Pour les méthodes PCAlm, ridgeLFMM,
-lassoLFMM et cate, nous avons calculé la liste des candidats lorsque nous
-contrôlons le FDR à $1 \%$. La méthode lm a été écartée pour les raisons que
-nous venons d'évoquer. La Figure ref:fig:gwas_venn montre l'intersection des
-listes de candidats contrôlés à un FDR de $1\%$ entre les méthodes. L'union des
-candidats retournés par ces quatre méthodes donne 836 SNPs. Nous avons étudié la
-sur-représentation de chacun des degrés d'annotation de vep dans la sous-liste
-des 836 SNPs par rapport à la liste complète de SNPs. Nous constatons qu'il y a
-en proportion 22 fois plus d'annotation HIGH, 8 fois plus de MODERATE et $1.7$
-fois plus de LOW dans les 836 SNPs que dans les 5397214 SNPs. Nous avons de
-plus testé si chaque rapport de proportion est significativement supérieur à 1 à
-l'aide d'un test exact de Fisher; les trois tests renvoient une \pvalue
-inférieure à $0.005$. Nous observons que dans l'union des candidats 21 SNPs sont
-référencés dans le GWAS catalog pour être associés à différents phénotypes liés
-à l'environnement (Table ref:table:geas). Aucun SNP référencé dans le GWAS
-catalog n'est détecté par les méthodes lm et PCAlm.
+méthode lm. En effet, le MAD des \zscores retournées par la méthode lm est de
+$8.7$. De plus nous remarquons que le diagramme quantile-quantile de lm forme
+une droite. Cela signifie que même si nous recalibrons les \pvalues retournées
+par la méthode lm, celle-ci ne permet pas d'identifier des \pvalues atypiques et
+donc des candidats pour l'association. Par contre, nous observons un excès de
+\pvalues atypiques pour les autre méthodes. Pour les méthodes PCAlm, ridgeLFMM,
+lassoLFMM et cate, nous avons calculé la liste des SNPs candidats pour
+l'association avec le gradient climatique, lorsque nous contrôlons le FDR à $1
+\%$. La méthode lm a été écartée pour les raisons que nous venons d'évoquer. La
+Figure ref:fig:gwas_venn montre l'intersection des listes de candidats contrôlés
+à un FDR de $1\%$ entre les méthodes. L'union des candidats retournés par ces
+quatre méthodes donne 836 SNPs. Nous avons étudié la sur-représentation de
+chacun des degrés d'annotation de vep dans la sous-liste des 836 SNPs par
+rapport à la liste complète de SNPs. Nous constatons qu'il y a en proportion 22
+fois plus d'annotation \HIGH\, 8 fois plus de \MODERATE\ et $1.7$ fois plus de
+\LOW\ dans les 836 SNPs que parmi les 5397214 SNPs. Nous avons de plus testé si
+chaque rapport de proportion est significativement supérieur à 1 à l'aide d'un
+test exact de Fisher; les trois tests renvoient une \pvalue inférieure à
+$0.005$. Ainsi, parmi les SNPs que nous proposons pour l'association aux
+conditions climatiques, il y a une sur-représentation significative de
+polymorphismes ayant des impacts forts sur l'expression des gènes. Enfin, dans
+l'union des candidats, nous observons 21 SNPs référencés dans le GWAS catalog
+pour être associés à différents phénotypes liés à l'environnement (Table
+ref:table:geas). Nous remarquons qu'aucun SNP référencé dans le GWAS catalog
+n'est détecté par les méthodes lm et PCAlm.
 
 #+NAME: code:geas_qqplot_print
 #+CAPTION: Très long !!! Dépend de [[code:geas_qqplot]]
@@ -17350,6 +17366,46 @@ CLOSED: [2017-09-22 ven. 11:28]
   save_expr(table.df, "geas_table_toprint.rds")
 #+end_src
 
+Est ce que on a des association avec le GWAS catalog par hasard ?
+
+#+NAME: code:geas_table_test
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(MaTheseR)
+  library(broom)
+
+  geas.snps <- readRDS("./OUTPUT/Expr/geas_union_biomart.rds") %>%
+    dplyr::filter(phenotype_description != "")
+  detected <- length(geas.snps$snps %>% unique())
+
+  GWAS.catalog <- readRDS("~/Projects/Thesis/Data/GWASCatalog/gwas_catalog_v1.0.1-associations_e88_r2017-04-24.rds")
+  all.snps.rs <- readRDS("./Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.colnames.rds")
+  length(all.snps.rs)
+  all <- GWAS.catalog$SNPS[(GWAS.catalog$SNPS %in% all.snps.rs)] %>% unique() %>% length()
+
+  ## 
+
+  cont <- matrix(c(detected, 836, all, length(all.snps.rs)), 2, 2)
+  colnames(cont) <- c("candidates","all")
+  rownames(cont) <- c("GWAScatalog","noGWAScatalog")
+  cont
+
+  fisher.test(cont, alternative = "greater") %>% tidy() %>% knitr::kable()
+
+
+#+end_src
+
+#+RESULTS: code:geas_table_test
+: [1] 5397214
+:               candidates     all
+: GWAScatalog           15   17855
+: noGWAScatalog        836 5397214
+: 
+: 
+: | estimate| p.value| conf.low| conf.high|method                             |alternative |
+: |--------:|-------:|--------:|---------:|:----------------------------------|:-----------|
+: | 5.424445|   3e-07| 3.328905|       Inf|Fisher's Exact Test for Count Data |greater     |
+
 ** Discussion
 :LOGBOOK:
 - Note taken on [2017-09-25 lun. 15:47] \\
@@ -17774,8 +17830,10 @@ Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que 
 * Liste des travaux réalisés
 
 
+*Article de revue*
 
-TODO
+*Conférences*
+
 
 * Soutenance                                                       :noexport:
 :LOGBOOK:
