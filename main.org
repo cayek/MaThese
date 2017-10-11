@@ -17846,7 +17846,7 @@ aussi un complexité faible pour le smodèle mixte :D
 **** Qu'est ce qu'explique les variables latentes ?
 **** Comment le choix du model (model pour le test) influence les étude d'association ?
 j'ai utilisé un lm, est ce bien adapté pour des variables discrete ? 
-Pourrait-on utilisé les variables latentes dans un modèle logistique ?
+Pourrait-on utiliser les variables latentes dans un modèle logistique ?
 *** Général
 **** Les types de mutation génétiques
 indel : insertion délétion
