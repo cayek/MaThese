@@ -130,11 +130,12 @@ problèmes de factorisation matricielle. Une première méthode permet l'infére
 rapide de la structure de populations à partir de données génétiques en incluant
 l'information de proximité géographique. Une deuxième méthode permet de corriger
 les études d'association pour les facteurs de confusion. Nous présentons dans ce
-manuscrit les modèles, ainsi que les aspects théoriques des algorithmes
-d'inférence. De plus, à l'aide de simulations numériques, nous comparons les
-performances de nos méthodes à celles des méthodes existantes. Enfin, nous
-utilisons nos méthodes sur des données biologiques réelles. Nos méthodes ont été
-implémentées et distribuées sous la forme de packages R : =tess3r= et =lfmm=.
+manuscrit les modèles statistiques, ainsi que des aspects théoriques des
+algorithmes d'inférence. De plus, à l'aide de simulations numériques, nous
+comparons les performances de nos méthodes à celles des méthodes existantes.
+Enfin, nous appliquons nos méthodes sur des données biologiques réelles. Nos
+méthodes ont été implémentées et distribuées sous la forme de packages R :
+=tess3r= et =lfmm=.
 
 \noindent *Mots-clés :* optimisation, factorisation de matrices, structure génétique des
 populations, métissage, étude d'association, facteurs de confusion, bio-informatique.
@@ -215,7 +216,7 @@ tirer l'information qui permettra de mieux comprendre le monde qui nous entoure
 
 Le premier problème qui se pose avec les grands jeux de données est celui de la
 vitesse des algorithmes utilisés pour les traiter. Si nous avons beaucoup de
-données rapidement nous voulons aussi des algorithmes rapides pour les traiter
+données rapidement nous voulons aussi des algorithmes rapides pour les analyser
 et les visualiser. L'augmentation de la puissance des ordinateurs ne suffit pas
 toujours à rendre applicable un algorithme à un plus grand jeu de données. Par
 conséquent, il est toujours nécessaire de trouver des nouveaux algorithmes afin
