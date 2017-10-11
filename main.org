@@ -838,7 +838,7 @@ telle que
 \label{eq:model0}
 \end{equation} 
 Cette simulation correspond à une situation où $1 \%$ des colonnes de $\Y$ sont
-associées avec $\X$. La variable latente $\matr{U} est un facteur de confusion
+associées avec $\X$. La variable latente $\matr{U}$ est un facteur de confusion
 pour cette étude d'association car elle est corrélée avec la variable $\X$.
 
 Afin de détecter les variables expliquées associées à la variable explicative,
@@ -932,21 +932,21 @@ modèles construit à partir des dérivé de l'équation eqref:eq:model0 dans le
 tableau.
 
 #+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
-#+ATTR_LATEX: :align p{3cm}|p{4cm}p{4cm}p{5cm}|p{4cm} :float sideways
+#+ATTR_LATEX: :align p{3cm}|p{4.2cm}p{4cm}p{5cm}|p{4cm} :float sideways
 #+CAPTION: *Méthodes reposant sur l'équation ref:eq:model0 pour la correction des facteurs de confusion dans les études d'association.* Les méthodes ridgeLFMM et LassoLFMM sont présentées dans cette thèse. Les méthodes cate, sva-twostep et sva-riw sont présentées plus en détail dans la section [[sec:similar_method]].
 #+NAME: table:lfmm_etat_art
-|----------------------+-------------------------------------------------------+----------------------------------------------------------------------+---------------------------------------------------------------------------------+------------------------------------------------|
-| Méthode              | Modèle                                                | Algorithme                                                           | Test d'hypothèse                                                                | Référence                                      |
-|----------------------+-------------------------------------------------------+----------------------------------------------------------------------+---------------------------------------------------------------------------------+------------------------------------------------|
-| sva-twostep          | PCA et régression linéaire                            | moindres carrés ordinaire et SVD                                     | test de Fisher                                                                  | citet:article_Leek_Storey_2007                 |
-| sva-irw              | weighted-PCA et régression linéaire                   | moindres carrés ordinaire et weighted-SVD                            | test de Fisher                                                                  | citet:article_Leek_Storey_2008                 |
-| RLFM                 | bayésien                                              | Monte-Carlo EM                                                       | pas de test                                                                     | citet:agarwal09_regres                         |
-| famt                 | vraisemblance                                         | EM                                                                   | test de Student                                                                 | citet:friguet09_factor_model_approac_to_multip |
-| LFMM                 | bayésien                                              | MCMC                                                                 | test de wald, estimation de la variance par bootstrap bayésien                  | citet:Frichot_2013                             |
-| cate                 | analyse factorielle et régression linéaire            | EM ou SVD et estimation par moindres carrés généralisée              | test basé sur la distribution asymptotique de l'estimateur des effets d'intérêt | citet:wang2015confounder                       |
-| ridgeLFMM            | factorisation matricielle avec régularisation $L_{2}$ | SVD et moindres carrés régularisés en norme $L_{2}$                  | test de Student                                                                 |                                                |
-| lassoLFMM            | factorisation matricielle avec régularisation $L_{1}$ | soft-thresholded SVD et moindres carrés régularisés en norme $L_{1}$ | test de Student                                                                 |                                                |
-| MOUTHWASH / BACKWASH | régression linéaire et analyse factorielle            | moindres carrés ordinaire et EM ou descente par coordonnées          | adaptive shrinkage (ASH) citep:stephens16_false_discov_rates                    | citet:gerard2017empirical                      |
+|----------------------+-------------------------------------------------------+------------------------------------------------------------------------+---------------------------------------------------------------------------------+------------------------------------------------|
+| Méthode              | Modèle                                                | Algorithme                                                             | Test d'hypothèse                                                                | Référence                                      |
+|----------------------+-------------------------------------------------------+------------------------------------------------------------------------+---------------------------------------------------------------------------------+------------------------------------------------|
+| sva-twostep          | PCA et régression linéaire                            | moindres carrés ordinaire et SVD                                       | test de Fisher                                                                  | citet:article_Leek_Storey_2007                 |
+| sva-irw              | weighted-PCA et régression linéaire                   | moindres carrés ordinaire et /weighted/-SVD                            | test de Fisher                                                                  | citet:article_Leek_Storey_2008                 |
+| RLFM                 | bayésien                                              | Monte-Carlo EM                                                         | pas de test                                                                     | citet:agarwal09_regres                         |
+| famt                 | vraisemblance                                         | EM                                                                     | test de Student                                                                 | citet:friguet09_factor_model_approac_to_multip |
+| LFMM                 | bayésien                                              | MCMC                                                                   | test de wald, estimation de la variance par bootstrap bayésien                  | citet:Frichot_2013                             |
+| cate                 | analyse factorielle et régression linéaire            | EM ou SVD et estimation par moindres carrés généralisée                | test basé sur la distribution asymptotique de l'estimateur des effets d'intérêt | citet:wang2015confounder                       |
+| ridgeLFMM            | factorisation matricielle avec régularisation $L_{2}$ | SVD et moindres carrés régularisés en norme $L_{2}$                    | test de Student                                                                 |                                                |
+| lassoLFMM            | factorisation matricielle avec régularisation $L_{1}$ | /soft-thresholded/ SVD et moindres carrés régularisés en norme $L_{1}$ | test de Student                                                                 |                                                |
+| MOUTHWASH / BACKWASH | régression linéaire et analyse factorielle            | moindres carrés ordinaire et EM ou descente par coordonnées            | /adaptive shrinkage/ (ASH) citep:stephens16_false_discov_rates                  | citet:gerard2017empirical                      |
 #+LATEX:\rowcolors{2}{}{}
 
 ** La factorisation de matrice en statistique          :noexport:deprecated:
@@ -979,19 +979,19 @@ permettrait de mieux comprendre les spécificités de chaque méthode.
   [[https://persyval-lab.org/fr/research/phd/m%25C3%25A9thodes-dapprentissage-statistique-pour-les-tests-dassociation-%25C3%25A9cologique][labex persyval]]
 :END:
 
-Les travaux de cette thèse ont été financés par le LabEx PERSYVAL-Lab et est
-co-encadrée par Olivier François du laboratoire TIMC-IMAG et Olivier Michel du
-laboratoire GIPSA-lab. Nos travaux ont principalement été réalisés au sein de
-l'équipe BCM (Biologie Computationnelle et Mathématique). L'équipe BCM du
-laboratoire TIMC-IMAG est spécialisée en étude de données génétiques et en
-développement de modèles mathématiques pour les systèmes biologiques complexes.
-Les méthodes présentées dans de cette thèse sont donc dans la ligné des méthodes
-développées au sein de l'équipe BCM. Ainsi, les logiciels que nous avons
-développés sont la suite logique des logiciels développés dans l'équipe BCM,
-qu'ils viennent compléter. Nous parlons en particulier de =TESS= 2.3, un
-logiciel d'inférence spatiale de la structure génétique des populations
-citep:Durand_2009; ainsi que de =LEA=, un package R proposant une suite de
-fonctions dédiées aux études d'association génomique citep:Frichot_2015.
+Cette thèse a été financée par le LabEx PERSYVAL-Lab et co-encadrée par Olivier
+François du laboratoire TIMC-IMAG et Olivier Michel du laboratoire GIPSA-lab.
+Nos travaux ont principalement été réalisés au sein de l'équipe BCM (Biologie
+Computationnelle et Mathématique). L'équipe BCM du laboratoire TIMC-IMAG est
+spécialisée en étude de données génétiques et en développement de modèles
+mathématiques pour les systèmes biologiques complexes. Les méthodes présentées
+dans de cette thèse sont donc dans la ligné des méthodes développées au sein de
+l'équipe BCM. Ainsi, les logiciels que nous avons développés sont la suite
+logique des logiciels développés dans l'équipe BCM, qu'ils viennent compléter.
+Nous parlons en particulier de =TESS= 2.3, un logiciel d'inférence spatiale de
+la structure génétique des populations citep:Durand_2009; ainsi que de =LEA=, un
+package R proposant une suite de fonctions dédiées aux études d'association
+génomique citep:Frichot_2015.
 
 ** Objectifs de la thèse
 
@@ -1316,7 +1316,7 @@ correspondant au nombre d'allèles de référence observé à ce locus. Dans nos
 algorithmes nous utilisons des formes disjonctives introduites par
 citet:Frichot_2014 pour coder les génotypes. Par exemple pour un organisme
 diploïde, le nombre d'allèles observés à chaque locus $,0,1,2$ est encodé comme
-$100$, $010$ et $001$. Pour les organismes \dploide, il existe $(d + 1)$
+$100$, $010$ et $001$. Pour les organismes $d\text{-ploïde}$, il existe $(d + 1)$
 génotypes possibles à chaque locus, et chaque valeur est encodée sous une forme
 disjonctive unique.
 
@@ -6235,7 +6235,7 @@ multidimensionnelle tel que
 \end{equation*}
 La matrice de covariance de la loi normale est choisie de sorte que $\X^{'}$ et
 $\matr{U}^{'}$ soient corrélées. Les coefficients de corrélation linéaire, notée
-$c_{k}$, de la variable $\X^{'}$ avec variable latente $\matr{U}_{k}$, est tirée selon
+$c_{k}$, de la variable $\X^{'}$ avec variable latente $\matr{U}_{k}$, sont tirés selon
 une loi uniforme entre $-1$ et $1$. Ensuite, afin de régler l'intensité de la
 corrélation entre les variables latentes et la variable explicative, nous
 multiplions les coefficients de corrélation par une valeur que l'on note $\rho$.
@@ -6249,9 +6249,9 @@ s_{1} & 0 & \cdots & \rho c_{1} \\
 \rho c_{1} & \cdots & \rho c_{K} & 1 \\
 \end{bmatrix},
 \end{equation*}
-où $s_{k}$ désigne la variance de $\matr{U}_{k}$. Cette simulation permet de
-produire des variables latentes de même variance que celles de l'ACP et une variable
-explicative corrélée aux variables latentes.
+où $s_{k}$ désigne la variance empirique de $\matr{U}_{k}$. Cette simulation
+permet de produire des variables latentes de même variance que les scores de
+l'ACP et une variable explicative corrélée aux variables latentes.
 
 Enfin nous simulons une matrice des effets $\B^{'}$, de sorte
 qu'une proportion fixée des lignes de $\B^{'}$ soit non nulle et tirée selon une
@@ -17905,6 +17905,9 @@ C'est purement numérique... j'ai pas d'intuition.
 **** Est ce que tess3 est sensible au LD ?
 **** Est ce que tess3 est sensible à la taille des pops ?
 Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
+**** A quoi sert la modélisation disjonctive ?
+A pas faire l'hypothèse de hardy weinberg, on éstime les fréquence de chaque
+génotype plutot que la fréquence d'allèle.
 *** lfmm
 **** Pourquoi ne pas en dire plus sur les candidats trouvé pour la GWAS, EWAS et GEAS ?
 C'est la que s'arrète mon travail ! Je suis pas biologiste ! C'est au biologiste
