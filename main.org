@@ -35,7 +35,7 @@
 %   textwidth in pt: \the\textwidth \\
 %   textheight in pt: \the\textheight \\
 % \end{tabular}
-\baselineskip 0.6cm
+\baselineskip 0.7cm
 \frontmatter
 #+END_EXPORT
 
@@ -139,7 +139,7 @@ implémentées et distribuées sous la forme de packages R : =tess3r= et =lfmm=.
 \noindent *Mots-clés :* optimisation, factorisation de matrices, structure génétique des
 populations, métissage, étude d'association, facteurs de confusion, bio-informatique.
 
-#+LATEX: \vspace{1cm}
+#+LATEX: \vspace{0.5cm}
 
 \noindent *Title:* Matrix factorization methods for population genomics and association
 mapping.
@@ -1012,12 +1012,12 @@ implémentations informatiques efficaces des nouvelles méthodes statistiques.
 
 Dans le cadre de cette thèse, nous avons proposé plusieurs algorithmes résolvant
 des problèmes de factorisation matricielle. Nos algorithmes ont été implémentés
-dans deux packages R : =tess3r= (https://bcm-uga.github.io/TESS3_encho_sen/) et
-=lfmm= (https://github.com/bcm-uga/lfmm). Le package =tess3r= contient les
+dans deux packages R : =tess3r= et =lfmm=. Le package =tess3r= contient les
 algorithmes AQP et APLS d'inférence de l'ascendance génétique en incluant
 l'information spatiale. Le package =lfmm= contient les algorithmes lassoLFMM et
 ridgeLFMM d'estimation des facteurs de confusion pour corriger les études
 d'association.
+
 
 *** =tess3r=
 
@@ -17783,11 +17783,13 @@ l'évolution des données utilisées en biologie. Ainsi, nos travaux s'inscriven
 dans une logique de coévolution des méthodes statistiques et des techniques
 d'acquisition de données. Les perspectives ouvertes par cette thèse sont
 multiples. D'une part, nos travaux ouvrent des perspectives de développements
-méthodologiques et logiciels, afin d'ajouter des fonctionnalités à nos packages
-en fonction des retours des utilisateurs. D'autre part, nos algorithmes
-résolvent des problèmes de factorisation matricielle. Ainsi, nos travaux ouvrent
-des perspectives sur l'utilisation de la factorisation matricielle dans d'autres
-problèmes d'analyse de données.
+méthodologiques et logiciels, afin par exemple d'ajouter des fonctionnalités à
+nos packages R en fonction des retours des utilisateurs. D'autre part, nos
+travaux ouvrent des perspectives sur l'utilisation de la factorisation
+matricielle dans d'autres problèmes d'analyse de données massives. Nous pensons
+par exemple aux études d'association à partir de données d'expression génique
+(données RNA-Seq), ou bien de données de méthylation de l'ADN utilisant les
+technologies de séquençage dernière génération.
 
 
 
@@ -17827,13 +17829,58 @@ chromosomes. Le mode de transmition des chromosomes des parents au enfant
 provoque un déséquilibre de liaison entre les SNPs voisins. Avant 
 
 Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que la redaction...
-* Liste des travaux réalisés
+* Travaux réalisés
 
+#+LATEX:\subsection*{Articles de revue}
 
-*Article de revue*
+- *Kévin Caye*, Timo Deist, Helena Martins, Olivier Michel, Olivier François
+  (2016) TESS3: fast inference of spatial population structure and genome scans
+  for selection. /Molecular Ecology Resources/ 16 (2), 540-548. DOI :
+  [[http://dx.doi.org/10.1111/1755-0998.12471][10.1111/1755-0998.12471]].
+- *Kévin Caye*, Flora Jay, Olivier Michel, Olivier Francois (2017). Fast
+  Inference of Individual Admixture Coefficients Using Geographic Data. Accepted
+  to /The Annals of Applied Statistics/. DOI : [[http://dx.doi.org/10.1101/080291][10.1101/080291]].
+- Helena Martins, *Kévin Caye*, Keurcien Luu, Michael GB Blum, Olivier François
+  (2016). Identifying outlier loci in admixed and in continuous populations
+  using ancestral population differentiation statistics. /Molecular Ecology/ 25
+  (20), 5029-5042. DOI : [[http://dx.doi.org/10.1101/054585][10.1101/054585]].
+- Olivier François, Helena Martins, *Kévin Caye*, Sean D Schoville (2016).
+  Controlling false discoveries in genome scans for selection. /Molecular
+  ecology/ 26 (2), 454-469. DOI : [[http://dx.doi.org/10.1111/mec.13513][10.1111/mec.13513]].
 
-*Conférences*
+#+LATEX:\subsection*{Conférences}
 
+- *Kévin Caye*, Olivier Michel, Olivier François (2016). Algorithmes Pour
+  l’Estimation des Coefficients de Métissage dans des Populations Continues
+  Spatialement. 48èmes Journées de Statistique de la SFdS, 30 mai-3 juin 2016.
+- *Kévin Caye*, Olivier Michel, Olivier François (2016). =tess3r= : étude du
+  jeux de données Arabidopsis thaliana RegMap. Cinquièmes Rencontres R, 22-24
+  juin 2016.
+- *Kévin Caye*, Olivier Michel, Olivier François (2016). =tess3r= : un package R
+  pour l’estimation de la structure génétique des populations spatialisées.
+  JOBIM, 28-30 juin 2016.
+
+#+LATEX:\subsection*{Logiciels}
+
+- *Kévin Caye*, Olivier François, Flora Jay. =tess3r= : An R package for
+  estimating and visualizing spatial population structure based on
+  geographically constrained non-negative matrix factorization and population
+  genetics.
+- *Kévin Caye*, Olivier François. =lfmm= : An R package for correcting
+  association studies for confounding factors.
+- Michael Blum, *Kévin Caye*, Thomas Dias Alves, Keurcien Luu. SSMPG2015 : Un
+  site web pour l'organisation du challenge de l'école de printemps /Software
+  and Statistical Methods for Population Genetics/ 2015.
+  https://ssmpg-challenge.imag.fr
+- Michael Blum, *Kévin Caye*, Keurcien Luu, Florian Privé. SSMPG2017 : Une
+  application web pour l'organisation du challenge de l'école de printemps
+  /Software and Statistical Methods for Population Genetics/ 2017.
+  https://github.com/bcm-uga/SSMPG2017
+
+#+LATEX:\subsection*{Scripts}
+
+Les scripts utilisés pour réaliser les expériences présentées dans cette thèse
+sont disponibles à l'adresse : https://github.com/cayek/MaThese.
 
 * Soutenance                                                       :noexport:
 :LOGBOOK:
