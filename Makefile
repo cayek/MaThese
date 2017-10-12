@@ -5,7 +5,6 @@ HOSTNAME=`hostname`
 ## start
 
 hajime:
-	make krakenator_mount_data
 	make krakenator_mount_OUTPUT
 	git pull
 
@@ -50,16 +49,6 @@ krakenator_deploy:
 # git commit --allow-empty -am "deploy on krakenator"
 	git push krakenator master
 
-## Data/
-krakenator_mount_data:
-	if [ $(HOSTNAME) == "timc-bcm-15.imag.fr" ] ; then \
-		sshfs cayek@krakenator.imag.fr:/home/cayek/Projects/Thesis/Data Data -o allow_other; \
-	fi
-
-krakenator_umount_data:
-	if [ $(HOSTNAME) == "timc-bcm-15.imag.fr" ] ; then \
-		sudo umount Data/; \
-	fi
 
 ## OUTPUT
 krakenator_mount_OUTPUT:

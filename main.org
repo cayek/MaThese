@@ -18048,3 +18048,4 @@ Un modèle je dirais, l'algo ca peut être n'importe quoi genre EM etc
 **** Rna-seq et DNA methylation, c'est quoi ?
 Et surtout les pbs d'assocaition ??
 En gros si on me demande les perspectives, je réponds quoi ?
+**** Résultats de convergence des estimateurs ? Résultats théorique de stat ?
