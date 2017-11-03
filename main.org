@@ -17947,6 +17947,85 @@ sont disponibles à l'adresse : https://github.com/cayek/MaThese.
   - developpement des deux axes
   - Conclusion et résumé de la thèse
 :END:
+
+** Introduction
+*** La génétiques
+*** Les données génétiques
+*** Plan
+** Inférence des coefficients de métissage à l'aide de données géographiques
+*** La structure de population
+blabla
+*** La structure génétiques des populations
+graphe de différenciation avec les forces évolutives
+*** Visualisation de la structure génétique des populations avec l'ACP
+graphe ACP
+*** Les coefficient de métissage
+plot sans m migrants
+et formule
+*** Estimation des coefficients de métissage
+tableau
+*** Visualisation des coefficients de métissage
+barplot
+*** Données géographiques
+une carte (d'arabidopsis)
+*** Estimation des coefficients de métissage à l'aide de données géographique
+tableau et avec nos méthodes.
+*** Les matrices d'ascendance génétique
+formule factorisation matrice
+*** Information géographique
+carte d'un graphe avec la formule de math
+*** Problème d'optimisation des moindres carrés
+La fonction à optimiser
+*** Algorithme de descente par blocs de coordonnées
+Figure 2.1
+*** Algorithme d'optimisation quadratique alternée (AQP)
+pseudo code
+résultat 
+*** Algorithme des moindres carrés alternés projetés (APLS)
+on pert le théorème mais pseudo code
+*** Données simulées
+le gros schemas
+*** Comparaison avec une méthodes bayesienne TESS 2.3
+*** Application à des données /Arabidopsis Thaliana/
+présentation du data set avec une petite fleur et la carte.
+on va l'analyser avec tess3r (comme ca je parle du package ici)
+*** Choix des paramètres 
+a voir si on parle des deux paramètres
+*** Carte des coefficients de métissage
+** Algorithmes d'estimation pour les modèles de régression à facteurs latents
+*** Test d'association
+*** Exemple d'une étude d'association avec les données /Arabidopsis Thaliana/
+la covariable : les conditions climatique
+*** Modèle de régression linéaire
+Y = X B^T
+stat de student
+*** Exemple d'une étude d'association avec les données /Arabidopsis Thaliana/
+qqplot
+*** Les facteurs de confusions
+le petit graphe de corrélation et éventuellement une superposition de la carte
+et la température.
+*** Modèles de régression à facteurs latents 
+présentation du modèle
+*** Méthodes d'estimation pour les modèles de régression à facteurs latents
+*** Estimateur des moindres carrées régularisé en norme L2
+fonction objectif
+*** Estimateur des moindres carrées régularisé en norme L2
+algo
+*** Estimateur des moindres carrées régularisé en norme L2
+théorème
+*** Estimateur des moindres carrées régularisé en norme L1
+fonction objectif
+*** Estimateur des moindres carrées régularisé en norme L1
+algo
+*** Estimateur des moindres carrées régularisé en norme L1
+théorème
+** Conclusions et perspectives
+*** Deux logicielles
+tess3r et lfmm
+de la factorisation de matrices
+*** tess3r
+*** lfmm
+*** perspectives
 ** FAQ                                                            :noexport:
 *** tess3
 **** Pourquoi cette fonction de poid pour le graphe ? Tester d'autre ?
@@ -17960,6 +18039,10 @@ Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
 **** A quoi sert la modélisation disjonctive ?
 A pas faire l'hypothèse de hardy weinberg, on éstime les fréquence de chaque
 génotype plutot que la fréquence d'allèle.
+**** Pk il y a des bandes qui se forme dans les bars plots (bar plot de A.thaliana)?
+- C'est un artefacte de la méthode ? Il faudrait visualiser ce que donne une
+  méthode bayésienne sur ce dataset.
+- ça pourrait être résolu en ajoutant une régularisation sparse
 *** lfmm
 **** Pourquoi ne pas en dire plus sur les candidats trouvé pour la GWAS, EWAS et GEAS ?
 C'est la que s'arrète mon travail ! Je suis pas biologiste ! C'est au biologiste
