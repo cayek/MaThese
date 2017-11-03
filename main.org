@@ -15268,8 +15268,8 @@ Figure ref:fig:gwas_venn montre l'intersection des listes de candidats contrôl�
 quatre méthodes donne 836 SNPs. Nous avons étudié la sur-représentation de
 chacun des degrés d'annotation de vep dans la sous-liste des 836 SNPs par
 rapport à la liste complète de SNPs. Nous constatons qu'il y a en proportion 22
-fois plus d'annotation \HIGH\, 8 fois plus de \MODERATE\ et $1.7$ fois plus de
-\LOW\ dans les 836 SNPs que parmi les 5397214 SNPs. Nous avons de plus testé si
+fois plus d'annotation /HIGH/, 8 fois plus de /MODERATE/ et $1.7$ fois plus de
+/LOW/ dans les 836 SNPs que parmi les 5397214 SNPs. Nous avons de plus testé si
 chaque rapport de proportion est significativement supérieur à 1 à l'aide d'un
 test exact de Fisher; les trois tests renvoient une \pvalue inférieure à
 $0.005$. Ainsi, parmi les SNPs que nous proposons pour l'association aux
@@ -17955,6 +17955,8 @@ sont disponibles à l'adresse : https://github.com/cayek/MaThese.
 ** Inférence des coefficients de métissage à l'aide de données géographiques
 *** La structure de population
 blabla
+pk c'est important
+les application etc (on motive)
 *** La structure génétiques des populations
 graphe de différenciation avec les forces évolutives
 *** Visualisation de la structure génétique des populations avec l'ACP
@@ -17991,9 +17993,15 @@ présentation du data set avec une petite fleur et la carte.
 on va l'analyser avec tess3r (comme ca je parle du package ici)
 *** Choix des paramètres 
 a voir si on parle des deux paramètres
+le plus simple est de faire deux slides : 
+- comment j'ai cross validé K 
+- montrer le résultat
 *** Carte des coefficients de métissage
 ** Algorithmes d'estimation pour les modèles de régression à facteurs latents
 *** Test d'association
+c'est quoi 
+pk c'est important 
+on motive 
 *** Exemple d'une étude d'association avec les données /Arabidopsis Thaliana/
 la covariable : les conditions climatique
 *** Modèle de régression linéaire
@@ -18007,6 +18015,7 @@ et la température.
 *** Modèles de régression à facteurs latents 
 présentation du modèle
 *** Méthodes d'estimation pour les modèles de régression à facteurs latents
+tableau
 *** Estimateur des moindres carrées régularisé en norme L2
 fonction objectif
 *** Estimateur des moindres carrées régularisé en norme L2
@@ -18019,13 +18028,50 @@ fonction objectif
 algo
 *** Estimateur des moindres carrées régularisé en norme L1
 théorème
+*** Tests d'hypothèse corrigés pour les facteurs de confusion
+calcul de la pvalue (on parle pas la calibration ici). On dit ici que la pvalue
+c'est le score de signifiance et blabla.
+*** Données simulées
+il faut trouver un moyen simple d'expliquer comment j'ai simulé, mettre l'accent
+sur le paramètre de corrélation
+*** Comparaison des méthodes sur des données simulées
+Montrer les résultats pour différent paramètre de régularisation
+*** Étude d'association entre des données génétiques et un gradient environnemental
+présentation des données, carte
+*** Étude d'association entre des données génétiques et un gradient environnemental
+décrire l'experience, on va parler ici des méthodes qu'on a lancé et de la
+calibration des tests et de la qvalue !!!
+*** Choix du nombre de variables latentes
+On présente la procédure, c'est a dire transformation des données pour enlever
+Y. (Méthode qui vient de cate, a vérifier mais je crois pas).
+*** Choix du nombre de variables latentes
+le scree plot
+*** Choix du nombre de variables latentes
+les plots étoiles
+*** Comparaison des résultats 
+diagramme de venne
+*** Annotation de l'union des candidats 
+sur représentation
+et
+tableau ?
 ** Conclusions et perspectives
-*** Deux logicielles
+*** Deux logiciels
 tess3r et lfmm
 de la factorisation de matrices
 *** tess3r
+On fait comme une version bayésienne mais en plus rapide
+permet de rapidement visualiser la structure de population et de l'afficher 
 *** lfmm
+On à deux algorithme reposant sur des factorisation différente
+On a montré qu'ils font comme les autres algorithmes 
+On a montré qu'il existait des différences entre les méthode => notre méthode
+s'ajoute a l'arsenal de méthode d'association. (lfmmridge à la même compléxité
+que cate mais ne donne pas les même résultats)
 *** perspectives
+- perspective de maintient des logiciel 
+- utilisation d'approche basé sur la factorisation matriciel à d'autre étude, 
+ex RNA-Seq et données méthylation au débit => s'attendre a des questions
+
 ** FAQ                                                            :noexport:
 *** tess3
 **** Pourquoi cette fonction de poid pour le graphe ? Tester d'autre ?
