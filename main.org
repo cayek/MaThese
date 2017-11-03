@@ -18091,6 +18091,8 @@ aussi un complexité faible pour le smodèle mixte :D
 **** Comment le choix du model (model pour le test) influence les étude d'association ?
 j'ai utilisé un lm, est ce bien adapté pour des variables discrete ? 
 Pourrait-on utiliser les variables latentes dans un modèle logistique ?
+**** Le centering + scaling des données ?
+Je crois que j'ai oublié d'en parler... a verifier !!
 *** Général
 **** Les types de mutation génétiques
 indel : insertion délétion
@@ -18128,7 +18130,7 @@ Exemple d'algo MCMC :
 [[https://en.wikipedia.org/wiki/Empirical_Bayes_method][Empirical Bayes method]]
 C'est plutot une un modèle :D
 Un modèle je dirais, l'algo ca peut être n'importe quoi genre EM etc
-**** Rna-seq et DNA methylation, c'est quoi ?
+**** Rna-seq et DNA methylation et eQTL, c'est quoi ?
 Et surtout les pbs d'assocaition ??
 En gros si on me demande les perspectives, je réponds quoi ?
 **** Résultats de convergence des estimateurs ? Résultats théorique de stat ?
