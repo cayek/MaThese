@@ -41,6 +41,8 @@ MaTheseR.params$textwidthcm <- 0.0352778 * MaTheseR.params$textwidthpt
 MaTheseR.params$textheightinch <- 0.0138889 *  MaTheseR.params$textheightpt
 MaTheseR.params$textwidthinch <- 0.0138889 * MaTheseR.params$textwidthpt
 
+
+
 ## color
 MaTheseR.params$color.values <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 names(MaTheseR.params$color.values) <- c("lm", "sva-two-step", "oracle", "lassoLFMM",

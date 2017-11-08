@@ -1,0 +1,627 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+
+# beamer
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [aspectratio=169]
+#+BEAMER_FRAME_LEVEL: 2
+#+OPTIONS: H:2 toc:t num:t
+#+latex_header: \usepackage[citestyle=authoryear, bibstyle=authoryear, hyperref=true,backref=true,maxcitenames=2,url=true,backend=biber,natbib=true]{biblatex}
+#+latex_header: \addbibresource{biblio.bib}
+#+LATEX_HEADER: \input{../packages.tex}
+#+LATEX_HEADER: \input{../setup.tex}
+#+LATEX_HEADER: \input{../notations.tex}
+
+
+#+TITLE: Méthodes de factorisation matricielle pour la génomique des populations et les tests d'association
+#+AUTHOR: Kévin CAYE
+#+LANGUAGE: fr
+#+STARTUP: overview indent inlineimages logdrawer
+#+TAGS: noexport(n)
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+# reveal
+#+REVEAL_ROOT: ./
+#+REVEAL_TRANS: none
+#+OPTIONS: reveal_mathjax:t reveal_slide_number:h.v/t reveal_history:t
+#+OPTIONS: reveal_title_slide:nil
+#+REVEAL_THEME: cayek_solarized
+#+REVEAL_HLEVEL: 0 ## all header on same lvl
+#+REVEAL_SPEED: fast
+
+#+PROPERTY: header-args :exports none :eval no-export :session *R* :dir ~/Projects/Thesis/MaThese/Slides :results silent
+
+# title
+#+BEGIN_EXPORT html
+<section>
+	<h1 style="-webkit-hyphens:none;-moz-hyphens:none;hyphens:none;"> <strong>Méthodes de
+	factorisation matricielle pour la génomique des populations et les tests
+	d'association</strong><br/>
+	<h3 style="margin-top:50px;">Kévin CAYE</h3>
+	<footer>
+		<div>
+			Thèse dirigée par Olivier FRANÇOIS <br/>
+      et co-encadrée par Olivier MICHEL et Jean-Luc BOSSON
+		</div>
+	  <img src="img/logo/logo-comue.png" class="ugaLogo"/>
+	</footer>
+	<aside class="notes">
+    Intro
+  </aside>
+</section>
+#+END_EXPORT
+
+* Install                                                          :noexport:
+  Install with spacemacs see [[https://github.com/syl20bnr/spacemacs/tree/master/layers/%252Bemacs/org#revealjs-support][Reveal.js support]].
+  Some sources: 
+  - [[http://jr0cket.co.uk/2013/10/create-cool-slides--Org-mode-Revealjs.html.html][Creating Cool Slides With Emacs Org-Mode and Revealjs]]
+  - [[https://github.com/yjwen/org-reveal/][yjwen/org-reveal]]
+  - Finally I started from [[https://github.com/jlevallois/PhD-Thesis/tree/master/slides][jlevallois/PhD-Thesis]]
+** Install local of reveal.js
+  Install reaveal.js, see [[https://github.com/hakimel/reveal.js/#installation][reaveal.ls]] : 
+
+  #+BEGIN_SRC shell
+    cd ~/Software/
+    git clone https://github.com/hakimel/reveal.js.git
+    cd reveal.js
+    npm install
+    npm start
+  #+END_SRC
+** Beamer
+see : [[http://orgmode.org/worg/exporters/beamer/tutorial.html][Writing Beamer presentations in org-mode]]
+
+I use =org-beamer-mode= for shortcut.
+
+* Introduction
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: slide-title="Introduction"
+:END:
+** La génétiques
+** Les données génétiques
+** Plan
+* Inférence des coefficients de métissage à l'aide de données géographiques
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: slide-title="Coefficient de métissage"
+:END:
+** La structure de population
+
+Les populations étudiées par la génétique des populations sont constituées d'un
+ensemble d'individus qui forme une unité de reproduction.
+
+Les individus d'une population peuvent se croiser entre eux, ils se reproduisent
+moins avec les individus des populations voisines, desquelles ils sont
+géographiquement isolés.
+
+** La structure génétiques des populations
+
+#+NAME: code:diff
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:tess3_intro_plot][code:tess3_intro_plot]] 
+#+begin_src R 
+  library(MaTheseR)
+  library(ggplot2)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("../OUTPUT/Expr/tess3_intro_freq_toprint.rds") +
+    theme_bw(base_size = 14, base_family = "serif") +
+    theme(strip.background = element_rect(fill = NA)) +
+    theme(legend.position="bottom")
+
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "tess3_intro_freq_slides",
+                                   env = MaTheseR.params,
+                                   height = 2.5,
+                                   width = 4)
+#+end_src
+
+*** graphe                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.7
+:END:
+
+#+CAPTION: *Différenciation allélique entre des populations.* Distribution des allèles du SNP rs17066888 dans des populations européenne, africaine et afro-américaine.
+[[file:../OUTPUT/Rplots/tess3_intro_freq_slides.pdf]]
+
+*** pression                                                        :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.3
+:END:
+
+Différenciation des fréquences d'allèle entre les populations à cause des
+pressions évolutives :
+- la mutation
+- la sélection
+- la dérive génétique
+- la migration
+
+** Pourquoi étudier la structure génétiques des populations
+
+- Représentation synthétique de données multivariées. 
+
+- Étude de l'histoire démographique des populations citep:Li_2008.
+
+- Facteur de correction dans les études d'association citep:marchini2004effects.
+
+- Médecine personnalisé : calcul d'un score de risque génétique pour une maladie citep:Wray_2013.
+
+- Étudier la répartition des populations dans leur habitat citep:Fran_ois_2015.
+
+** Visualisation de la structure génétique des populations avec l'ACP
+
+#+NAME: code:pca
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:tess3_intro_plot][code:tess3_intro_plot]]
+#+begin_src R 
+  library(MaTheseR)
+  library(ggplot2)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("../OUTPUT/Expr/tess3_intro_pca_toprint.rds") + 
+    theme(legend.position = "right") +
+    ylab("Composante\nprincipale 2")
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "tess3_intro_pca_slides",
+                                        env = MaTheseR.params,
+                                        height = 2.5,
+                                        width = 5)
+#+end_src
+
+#+CAPTION:Scores des deux premières composantes principales calculées sur des données de SNPs d'invidus humains de populations européenne, africaine et afro-américaine.
+[[file:../OUTPUT/Rplots/tess3_intro_pca_slides.pdf]]
+
+** Le modèle du logiciel =structure= citep:Pritchard2000
+
+*** graphe                                                          :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+#+BEGIN_EXPORT latex
+\begin{figure}[th!]
+\def\svgwidth{\linewidth}
+\input{structure_inkscape.pdf_tex}
+\caption{Illustration du modèle de structure génétique de population.}
+\end{figure}
+#+END_EXPORT
+
+*** formule                                                         :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+\begin{equation*}
+\Pr(\Y_{i,\ell} = j) = \sum_{k = 1}^{K} \matr{G}_{(d + 1)\ell + j, k} \Q_{i,k},
+\end{equation*}
+où 
+- $\Pr(\Y_{i,\ell} = j)$ est la probabilité d'observer l'allèle $j$ au locus
+  $\ell$ chez l'individu $i$
+- $\matr{G}_{(d + 1)\ell + j, k}$ est la fréquence d'apparition de
+  l'allèle $j$ au locus $\ell$ dans le groupe génétique $k$.
+- $\matr{Q}_{i, k}$ est la proportion de gènes de l'individu $i$
+  provenant du groupe $k$.
+
+** Méthodes d'estimation des coefficients de métissage
+
+#+LATEX: \rowcolors{2}{contiYellow!5}{contiYellow!20}
+#+ATTR_LATEX: :align p{3cm}|p{4.2cm}p{4cm}p{5cm}|p{4cm}
+|---------------+-----------------------------------------+---------------------------------------------------+---------------------------------------------|
+| Méthode       | Modèle                                  | Algorithme                                        | Référence                                   |
+|---------------+-----------------------------------------+---------------------------------------------------+---------------------------------------------|
+| STRUCTURE     | bayésien                                | MCMC                                              | citet:Pritchard2000,Falush1567              |
+| FRAPPE        | vraisemblance                           | EM                                                | citet:Tang_2005                             |
+| ADMIXTURE     | vraisemblance                           | optimisation quasi-Newton alternée                | citet:alexander2009admixture,Alexander_2011 |
+| fastStructure | bayésien                                | inférence variationnelle bayésienne               | citet:Raj_2014                              |
+| PSIKO         | ACP                                     | SVD                                               | citet:Popescu_2014                          |
+| sNMF          | factorisation matricielle parcimonieuse | optimisation quadratique alternée avec projection | citet:Frichot_2014                          |
+#+LATEX:\rowcolors{2}{}{}
+
+** Visualisation des coefficients de métissage
+
+#+NAME: code:pca
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:tess3_intro_plot][code:tess3_intro_plot]]
+#+begin_src R 
+  library(MaTheseR)
+  library(ggplot2)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl <- readRDS("../OUTPUT/Expr/tess3_intro_barplot_toprint.rds")
+
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "tess3_intro_barplot_slides",
+                                   env = MaTheseR.params,
+                                   height = 2,
+                                   width = 5)
+#+end_src
+
+#+CAPTION: Estimation par le logiciel =snmf= citep:Frichot_2014 des coefficients de métissage pour un jeu de données composé d'individus humains provenant de populations européenne, africaine et afro-américaine.
+[[file:../OUTPUT/Rplots/tess3_intro_barplot_slides.pdf]]
+
+** Données géographiques
+
+#+NAME: code:map
+#+CAPTION: Dépend de rien
+#+begin_src R 
+  library(MaTheseR)
+  library(tidyverse)
+  library(ggmap)
+  MaTheseR.params <- get_MaTheseRparams()
+  gtheme <- MaTheseR.params$gtheme
+
+
+  ## load coord
+  ## data.file <- "../Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData"
+  ## load(data.file)
+  ## coord <- call_method_75_TAIR9.europe$coord
+  ## rm(call_method_75_TAIR9.europe)
+  ## saveRDS(coord, "../Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9_coord.rds")
+  ## gc()
+  coord <- readRDS("../Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9_coord.rds") 
+
+
+  ## plot
+  toplot <- as_tibble(coord)
+  map.world <- ggmap::get_map(location =  c(left = -16, bottom = 42, right = 33, top = 67),
+                              maptype = "watercolor")
+
+  pl <- ggmap(map.world) +
+    geom_point(data = toplot, mapping = aes(x = long, y = lat), color = "red", size = 0.25) +
+    scale_size_continuous(guide = FALSE) +
+    xlab("Longitude") +
+    ylab("Latitude") +
+    MaTheseR.params$gtheme
+
+
+  save_expr(pl, "tess3_intro_map_slides_toplot.rds")
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "tess3_intro_map_slides",
+                                   env = MaTheseR.params,
+                                   height = 3,
+                                   width = 3)
+#+end_src
+
+#+ATTR_LATEX: :height 0.9\textheight :width nil
+[[file:../OUTPUT/Rplots/tess3_intro_map_slides.pdf]]
+
+** Méthodes d'estimation des coefficients de métissage à l'aide de données géographique
+
+#+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
+#+ATTR_LATEX: :align l|p{5cm}p{5.5cm}|p{5.5cm}
+|------------+--------------------------------------------------+-----------------------------------+----------------------|
+| Méthode    | Modèle                                           | Algorithme                        | Référence            |
+|------------+--------------------------------------------------+-----------------------------------+----------------------|
+| TESS       | bayésien                                         | MCMC                              | citet:CHEN_2007      |
+| GENELAND   | bayésien                                         | MCMC                              | citet:phdGuedj       |
+| BAPS       | bayésien                                         | optimisation stochastique         | citet:Corander2008   |
+| TESS3-AQP  | factorisation matricielle régularisée sur graphe | optimisation quadratique alternée |                      |
+| TESS3-APLS | factorisation matricielle régularisée sur graphe | moindres carrés alternés projetés |                      |
+| conStruct  | bayésien                                         | MCMC                              | citet:Bradburd189688 |
+#+LATEX:\rowcolors{2}{}{}
+
+** Estimation des matrices d'ascendance génétique
+
+Ajouter un petit dessin de factorisation de matrice !!! se mettre sur 2 colonnes
+
+citet:Frichot_2014 cherchent à décomposer la matrice de génotype :
+
+\begin{equation*}
+\Y = \Q \mathbf{G}^{T},
+\end{equation*}
+
+où
+
+\begin{equation*}
+\Q \geq 0 \, , \quad \sum_{k=1}^K {\bf Q}_{i,k} = 1, \quad i = 1...n
+\end{equation*}
+
+et
+
+\begin{equation*}
+\mathbf{G} \geq 0 \, , \quad \sum_{j=0}^{d} {\bf G}_{(d+1)\ell + j, k} = 1, \quad \ell = 1...p.
+\end{equation*}
+
+** Information géographique
+
+*** graph
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+#+NAME: code:map_graph
+#+CAPTION: Dépend de [[code:map]]
+#+begin_src R 
+  library(MaTheseR)
+  library(tidyverse)
+  library(ggmap)
+  MaTheseR.params <- get_MaTheseRparams()
+  gtheme <- MaTheseR.params$gtheme
+
+
+  ## load coord
+  coord <- readRDS("../Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9_coord.rds") 
+
+
+  ## plot
+  pl <- readRDS("../OUTPUT/Expr/tess3_intro_map_slides_toplot.rds")
+  ## graph
+  library(tess3r)
+  W <- tess3r::ComputeHeatKernelWeight(coord, 1.5)
+  W[W < 0.999] <- 0
+  sum(W != 0)
+  plot(W)
+
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "tess3_intro_map_slides",
+                                   env = MaTheseR.params,
+                                   height = 3,
+                                   width = 3)
+
+#+end_src
+
+*** formule
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+Entre chaque individu $i$ et $j$, nous avons le poids de graphe
+\begin{equation*}
+\W_{i,j} = \exp( - {\rm dist}( x_i, x_j )^2/ \sigma^2)
+\end{equation*}
+
+où la fonction ${\rm dist}( x_i, x_j)$ est une distance entre les coordonnées géographique $x_{i}$ et $x_{j}$. 
+
+Ensuite, nous introduisons la régularisation
+\begin{equation*}
+\frac{1}{2} \sum_{i,j = 1}^n  \W_{i,j}  \| \Q_{i,.} - \Q_{j,.} \|^2
+\end{equation*}
+
+La régularisation peut se réécrire 
+\begin{equation*}
+{\rm Tr} (\Q^{T} \Laplacienne \Q)
+\end{equation*}
+
+** Problème d'optimisation des moindres carrés
+
+Pour estimer les matrice d'ascendance on cherche à optimiser la fonction 
+
+\begin{equation*}
+\mathcal{L}(\Q, \mathbf{G}) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \alpha {\rm Tr} (\Q^{T} \Laplacienne \Q)
+\end{equation$}
+
+** Algorithme de descente par blocs de coordonnées
+
+*** graphe
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+#+CAPTION: Illustration de l'algorithme de descente par blocs de coordonnées.
+[[file:../OUTPUT/Rplots/coordinate_descente.pdf]]
+
+*** test                                                            :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+On alterne deux étapes jusque convergence vers un point critique : 
+
+- optimisation de $\mathcal{L}$ selon $\Q$ avec $\matr{G}$ fixé
+- optimisation de $\mathcal{L}$ selon $\matr{G}$ avec $\Q$ fixé
+
+*Nous présentons deux algorithmes utilisant ce principe.*
+
+** Algorithme d'optimisation quadratique alternée (AQP)
+pseudo code
+résultat 
+** Algorithme des moindres carrés alternés projetés (APLS)
+on pert le théorème mais pseudo code
+** Simulation de génotypes métissés spatialement
+*** graphe
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+#+BEGIN_EXPORT latex
+\begin{figure}[th!]
+\def\svgwidth{\linewidth}
+\input{cline_inkscape.pdf_tex}
+\end{figure}
+#+END_EXPORT
+*** texte                                                           :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- La matrice $\matr{G}$ est simulée par un modèle de Wright à deux îles
+- La matrice $\Q$ est simulée selon un gradient longitudinal
+- Ma matrice $\Y$ est générée en tirant des gènes des deux populations sources
+  avec des probabilités données par les coefficient de métissage
+
+On simule plusieurs génotype pour avoir plusieurs valeur de différenciation
+mesuré par 
+\begin{equation*}
+F_{\rm ST} = \frac{1}{1 + 4N_0 m}
+\end{equation*}
+
+** Comparaison avec une méthodes bayesienne TESS 2.3
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!t]
+\centering
+\begin{minipage}{0.49\textwidth}
+  \includegraphics[height=0.7\textheight]{../OUTPUT/Rplots/tess3_tess2_3_rmseG.pdf}
+\end{minipage}
+\begin {minipage}{0.49\textwidth}
+  \includegraphics[height=0.7\textheight]{../OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
+\end{minipage}
+\caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation de
+    $\Q$ (figure A) et $\mathbf{G}$ (figure B).}}
+\end{figure}    
+#+END_EXPORT
+** Application à des données /Arabidopsis Thaliana/
+
+#+ATTR_LATEX: :width nil :height 0.4\textheight
+[[file:img/a_thaliana.jpg]]
+
+- 1,307 accessions of A. thaliana have been genotyped using the Aymetrix Arabidopsis 250k - SNP chip [Horton et al., 2012]
+- Geographic coordinates for 1,193 of these samples [Anastasio et al., 2011]
+
+#+LATEX: \centerline{\alert{On va analyser les données avec le package \texttt{tess3r}}}
+
+** Choix des paramètres 
+a voir si on parle des deux paramètres
+le plus simple est de faire deux slides : 
+- comment j'ai cross validé K 
+- montrer le résultat
+
+*** graphe
+
+*** texte
+
+** Carte des coefficients de métissage
+*** carte
+
+*** résultat
+
+* Algorithmes d'estimation pour les modèles de régression à facteurs latents
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: slide-title="Étude d'association"
+:END:
+** Test d'association
+c'est quoi 
+pk c'est important 
+on motive 
+** Exemple d'une étude d'association avec les données /Arabidopsis Thaliana/
+
+#+NAME: code:AT_covariate_plot
+#+CAPTION: Dépend de [[code:AT_covariate]]
+#+begin_src R 
+  library(MaTheseR)
+  library(tidyverse)
+  library(ggmap)
+  MaTheseR.params <- get_MaTheseRparams()
+  gtheme <- MaTheseR.params$gtheme
+
+  ## load data
+  X <- readRDS("../Data/AthalianaGegMapLines/call_method_75/X_worldclim.rds")
+  coord <- readRDS("../Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9_coord.rds") 
+
+
+  ## plot
+  toplot <- coord %>%
+    cbind(X = X) %>%
+    as_tibble()
+  map.world <- ggmap::get_map(location =  c(left = -16, bottom = 42, right = 33, top = 67),
+                              maptype = "watercolor")
+
+  pl <- ggmap(map.world) +
+    geom_point(data = toplot, mapping = aes(x = long, y = lat, color = X), size = 0.25) +
+    xlab("Longitude") +
+    ylab("Latitude") +
+    MaTheseR.params$gtheme
+
+
+  save_expr(pl, "tess3_intro_map_slides_toplot.rds")
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "tess3_intro_map_slides",
+                                   env = MaTheseR.params,
+                                   height = 3,
+                                   width = 3)
+#+end_src
+
+**** Scripts                                                    :noexport:
+#+NAME: code:AT_covariate
+#+CAPTION: Dépend de rien
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+
+  ## load data
+  data.file <- "./Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData"
+  load(data.file)
+  coord <- call_method_75_TAIR9.europe$coord
+  rm(call_method_75_TAIR9.europe)
+  gc()
+
+  ## get climatic gradient
+  ## worldclim : http://www.worldclim.org/formats1
+  ## getdata in R: http://www.gis-blog.com/r-raster-data-acquisition/
+  library(raster)
+  climate <- raster::getData('worldclim', var='bio', res = 2.5)
+  bio <- extract(climate, y = coord)
+  pc.bio <- prcomp(bio,scale = T)
+  plot(pc.bio$sdev)
+  X <- pc.bio$x[,1]
+
+  saveRDS(X, "./Data/AthalianaGegMapLines/call_method_75/X_worldclim.rds")
+
+#+end_src
+
+** Modèle de régression linéaire
+Y = X B^T
+stat de student
+** Exemple d'une étude d'association avec les données /Arabidopsis Thaliana/
+qqplot
+** Les facteurs de confusions
+le petit graphe de corrélation et éventuellement une superposition de la carte
+et la température.
+** Modèles de régression à facteurs latents 
+présentation du modèle
+** Méthodes d'estimation pour les modèles de régression à facteurs latents
+tableau
+** Estimateur des moindres carrées régularisé en norme L2
+fonction objectif
+** Estimateur des moindres carrées régularisé en norme L2
+algo
+** Estimateur des moindres carrées régularisé en norme L2
+théorème
+** Estimateur des moindres carrées régularisé en norme L1
+fonction objectif
+** Estimateur des moindres carrées régularisé en norme L1
+algo
+** Estimateur des moindres carrées régularisé en norme L1
+théorème
+** Tests d'hypothèse corrigés pour les facteurs de confusion
+calcul de la pvalue (on parle pas la calibration ici). On dit ici que la pvalue
+c'est le score de signifiance et blabla.
+** Données simulées
+il faut trouver un moyen simple d'expliquer comment j'ai simulé, mettre l'accent
+sur le paramètre de corrélation
+** Comparaison des méthodes sur des données simulées
+Montrer les résultats pour différent paramètre de régularisation
+** Étude d'association entre des données génétiques et un gradient environnemental
+présentation des données, carte
+** Étude d'association entre des données génétiques et un gradient environnemental
+décrire l'experience, on va parler ici des méthodes qu'on a lancé et de la
+calibration des tests et de la qvalue !!!
+** Choix du nombre de variables latentes
+On présente la procédure, c'est a dire transformation des données pour enlever
+Y. (Méthode qui vient de cate, a vérifier mais je crois pas).
+** Choix du nombre de variables latentes
+le scree plot
+** Choix du nombre de variables latentes
+les plots étoiles
+** Comparaison des résultats 
+diagramme de venne
+** Annotation de l'union des candidats 
+sur représentation
+et
+tableau ?
+* Conclusions et perspectives
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: slide-title="Conclusions et perspectives"
+:END:
+** Deux logiciels
+tess3r et lfmm
+de la factorisation de matrices
+** tess3r
+On fait comme une version bayésienne mais en plus rapide
+permet de rapidement visualiser la structure de population et de l'afficher 
+** lfmm
+On à deux algorithme reposant sur des factorisation différente
+On a montré qu'ils font comme les autres algorithmes 
+On a montré qu'il existait des différences entre les méthode => notre méthode
+s'ajoute a l'arsenal de méthode d'association. (lfmmridge à la même compléxité
+que cate mais ne donne pas les même résultats)
+** perspectives
+- perspective de maintient des logiciel 
+- utilisation d'approche basé sur la factorisation matriciel à d'autre étude, 
+ex RNA-Seq et données méthylation au débit => s'attendre a des questions
+* Merci de votre attention
