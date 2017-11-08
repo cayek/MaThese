@@ -497,6 +497,7 @@ on motive
   library(MaTheseR)
   library(tidyverse)
   library(ggmap)
+  library(broom)
   MaTheseR.params <- get_MaTheseRparams()
   gtheme <- MaTheseR.params$gtheme
 
@@ -512,10 +513,17 @@ on motive
   map.world <- ggmap::get_map(location =  c(left = -16, bottom = 42, right = 33, top = 67),
                               maptype = "watercolor")
 
+  cor(toplot)
+  lm.df <- lm(X ~ lat + long - 1, data = toplot) %>%
+    broom::tidy()
+  lm.df
+
+
   pl <- ggmap(map.world) +
-    geom_point(data = toplot, mapping = aes(x = long, y = lat, color = X), size = 0.25) +
+    geom_point(data = toplot, mapping = aes(x = long, y = lat, color = X)) +
     xlab("Longitude") +
     ylab("Latitude") +
+    scale_colour_gradient(low = "green", high = "red") +
     MaTheseR.params$gtheme
 
 
