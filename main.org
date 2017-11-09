@@ -626,7 +626,12 @@ Tuto pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
   toplot[toplot$pop == "ASW",]$citie = "New-york"
   toplot[toplot$pop == "TSI",]$citie = "Italia"
   toplot[toplot$pop == "GBR",]$citie = "England"
-  toplot <- cbind(toplot, ggmap::geocode(toplot$citie))
+  ## toplot <- cbind(toplot, ggmap::geocode(toplot$citie)) ## do not work sometime...
+  toplot <- toplot %>%
+    mutate(lon = c(-1.174320, 8.675277, 37.906193, -74.005973, 12.567380),
+           lat = c(52.355518, 9.081999, 0.023559, 40.712775, 41.871940),
+           r = 8)
+
 
   ## frequencie
   toplot <- toplot %>%
@@ -635,7 +640,6 @@ Tuto pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
     mutate(`allèle 1` = freq, `allèle 2` = 1 - freq)
 
   mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
-  map.world <- ggmap::get_map(location = "world")
   pl <- ggplot(toplot, aes(x = lon, y = lat, color = pop)) +
     mapWorld +
     MaTheseR.params$gtheme +
@@ -649,6 +653,7 @@ Tuto pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
 
   save_plot_png(pl.res, "tess3_intro_freq.png")
   save_expr(pl.res, "tess3_intro_freq_toprint.rds")
+  save_expr(toplot, "tess3_intro_freq_toplot_df.rds")
 
   ## barplot
   expr$indiv.df$pop %>% unique()
@@ -4554,6 +4559,8 @@ CLOSED: [2017-09-11 lun. 19:35]
     MaTheseR.params$gtheme +
     xlab("Longitude (°E)") +
     ylab("Latitude (°N)")
+
+  save_expr(mappl, "tess3_at_map.rds")
 
   ################################################################################
   ## barplot
