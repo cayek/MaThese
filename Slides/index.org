@@ -29,9 +29,11 @@
 #+REVEAL_TRANS: none
 #+OPTIONS: reveal_mathjax:t reveal_slide_number:h.v/t reveal_history:t
 #+OPTIONS: reveal_title_slide:nil reveal_center:nil
+#+OPTIONS: reveal_width:1200 reveal_height:800
 #+REVEAL_THEME: cayek_solarized
 #+REVEAL_HLEVEL: 0 ## all header on same lvl
 #+REVEAL_SPEED: fast
+#+REVEAL_EXTRA_CSS: ./local.css
 
 #+PROPERTY: header-args :exports none :eval no-export :session *R* :dir ~/Projects/Thesis/MaThese/Slides :results silent
 
@@ -56,21 +58,26 @@
 #+END_EXPORT
 
 * Install                                                          :noexport:
-  Install with spacemacs see [[https://github.com/syl20bnr/spacemacs/tree/master/layers/%252Bemacs/org#revealjs-support][Reveal.js support]].
-  Some sources: 
-  - [[http://jr0cket.co.uk/2013/10/create-cool-slides--Org-mode-Revealjs.html.html][Creating Cool Slides With Emacs Org-Mode and Revealjs]]
-  - [[https://github.com/yjwen/org-reveal/][yjwen/org-reveal]]
-  - Finally I started from [[https://github.com/jlevallois/PhD-Thesis/tree/master/slides][jlevallois/PhD-Thesis]]
+Install with spacemacs see [[https://github.com/syl20bnr/spacemacs/tree/master/layers/%252Bemacs/org#revealjs-support][Reveal.js support]].
+Some sources: 
+- [[http://jr0cket.co.uk/2013/10/create-cool-slides--Org-mode-Revealjs.html.html][Creating Cool Slides With Emacs Org-Mode and Revealjs]]
+- [[https://github.com/yjwen/org-reveal/][yjwen/org-reveal]]
+- Finally I started from [[https://github.com/jlevallois/PhD-Thesis/tree/master/slides][jlevallois/PhD-Thesis]]
+- Example of config : [[http://www.i3s.unice.fr/~malapert/org/tips/emacs_orgmode.html][Yet Another Org-Mode Configuration]]
+- Example of slide html : https://privefl.github.io/thesis-docs/suivi-these.html#1
+
 ** Install local of reveal.js
   Install reaveal.js, see [[https://github.com/hakimel/reveal.js/#installation][reaveal.ls]] : 
 
-  #+BEGIN_SRC shell
+#+BEGIN_SRC shell
     cd ~/Software/
     git clone https://github.com/hakimel/reveal.js.git
     cd reveal.js
     npm install
     npm start
-  #+END_SRC
+#+END_SRC
+
+
 ** Beamer
 see : [[http://orgmode.org/worg/exporters/beamer/tutorial.html][Writing Beamer presentations in org-mode]]
 
@@ -165,17 +172,20 @@ $
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:tess3_intro_plot][code:tess3_intro_plot]] 
 #+begin_src R 
   library(MaTheseR)
+  library(scatterpie)
   library(ggplot2)
   MaTheseR.params <- get_MaTheseRparams()
 
-
-
   toplot <- readRDS("../OUTPUT/Expr/tess3_intro_freq_toplot_df.rds")
+  expr <- readRDS("../OUTPUT/Expr/tess3_intro.rds")
   map.world <- ggmap::get_map(location = c(left = -140, bottom = -50, right = 100, top = 70),
                               maptype = "watercolor")
 
   pl <- ggmap(map.world) +
-    theme_bw(base_size = 12, base_family = "serif") +
+    MaTheseR.params$gtheme + 
+    theme(panel.background = element_rect(fill = "transparent", colour = NA),
+          plot.background = element_rect(fill = "transparent", colour = NA),
+          legend.background = element_rect(fill = "transparent", colour = NA)) +
     coord_cartesian() + 
     geom_scatterpie(aes(x = lon, y = lat, r = r), data = toplot, cols = c("allèle 1", "allèle 2")) +
     guides(fill = guide_legend(title = paste0("SNP ", expr$snps.rs))) +
@@ -192,31 +202,37 @@ $
 #+end_src
 
 #+BEGIN_SRC shell
-  cd ../OUTPUT/Rplots/
+  cd ~/Projects/Thesis/MaThese/OUTPUT/Rplots/
 
   inkscape \
       --without-gui \
       --file=tess3_intro_freq_slides.pdf \
-      --export-plain-svg=tess3_intro_freq_slides.svg 
+      --export-plain-svg=tess3_intro_freq_slides.png 
 #+END_SRC
-*** graphe                                                          :BMCOL:
-:PROPERTIES:
-:BEAMER_col: 0.7
-:END:
+
+#+HTML: <div style="float:left;width:70%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.7\columnwidth}
+
 
 #+CAPTION: *Différenciation allélique entre des populations.* Distribution des allèles du SNP rs17066888 dans des populations européenne, africaine et afro-américaine.
-[[file:../OUTPUT/Rplots/tess3_intro_freq_slides.pdf]]
+#+ATTR_HTML: :align center :style width:70%
+[[file:../OUTPUT/Rplots/tess3_intro_freq_slides.svg]]
 
-*** pression                                                        :BMCOL:
-:PROPERTIES:
-:BEAMER_col: 0.3
-:END:
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.3\columnwidth}
+#+HTML: <div style="float:left;width:30%;margin-top:50px;">
 
 Pressions évolutives :
 - la mutation
 - la sélection
 - la dérive génétique
 - la migration
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
 
 ** Pourquoi étudier la structure génétiques des populations ?
 
@@ -241,17 +257,31 @@ Pressions évolutives :
 
   pl <- readRDS("../OUTPUT/Expr/tess3_intro_pca_toprint.rds") + 
     theme(legend.position = "right") +
-    ylab("Composante\nprincipale 2")
+    ylab("Composante\nprincipale 2") +
+    theme(panel.background = element_rect(fill = "transparent", colour = NA),
+          plot.background = element_rect(fill = "transparent", colour = NA),
+          legend.box.background = element_rect(fill = "transparent", colour = NA),
+          legend.background = element_rect(fill = "transparent", colour = NA))
 
   ThesisRpackage::Plots_export_tikz_pdf(pl,
                                         basename.output = "tess3_intro_pca_slides",
                                         env = MaTheseR.params,
                                         height = 2.5,
                                         width = 5)
-#+end_src
+#+END_SRC
+
+#+BEGIN_SRC shell
+  cd ~/Projects/Thesis/MaThese/OUTPUT/Rplots/
+
+  inkscape \
+      --without-gui \
+      --file=tess3_intro_pca_slides.pdf \
+      --export-plain-svg=tess3_intro_pca_slides.svg
+#+END_SRC
 
 #+CAPTION:Scores des deux premières composantes principales calculées sur des données de SNPs d'invidus humains de populations européenne, africaine et afro-américaine.
-[[file:../OUTPUT/Rplots/tess3_intro_pca_slides.pdf]]
+#+ATTR_HTML: :align center :style width:80%
+[[file:../OUTPUT/Rplots/tess3_intro_pca_slides.svg]]
 
 ** Le modèle du logiciel =structure= citep:Pritchard2000
 
@@ -291,6 +321,7 @@ où
 #+LATEX: \begingroup\small
 #+LATEX: \rowcolors{2}{contiYellow!5}{contiYellow!20}
 #+ATTR_LATEX: :align l|p{4cm}p{3cm}|p{3cm}
+#+ATTR_HTML: :class TFtable
 |---------------+-----------------------------------------+---------------------------------------------------+----------------------|
 | Méthode       | Modèle                                  | Algorithme                                        | Référence            |
 |---------------+-----------------------------------------+---------------------------------------------------+----------------------|
@@ -668,7 +699,6 @@ On étudie 214k SNPs pour 1 095 écotypes européens des espèces végétales
 
 [[file:../OUTPUT/Rplots/tess3_intro_map_slides.pdf]]
 
-
 ** Choix des paramètres
 
 #+NAME: code:tess3_AT_params
@@ -715,6 +745,52 @@ c'est quoi
 pk c'est important 
 on motive
 ** Étude d'association entre des données génétiques et un gradient environnemental 
+
+#+NAME: code:lfmm_map
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_climatic_gradient][code:eas_climatic_gradient]]
+#+begin_src R 
+  library(MaTheseR)
+  library(ggmap)
+  MaTheseR.params <- get_MaTheseRparams()
+
+
+  indiv.df <- readRDS("../Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df_2.rds")
+
+  map.world <- ggmap::get_map(location = c(left = -50, bottom = -50, right = 100, top = 70),
+                              maptype = "watercolor")
+
+  pl <- ggmap(map.world) +
+    geom_point(data = indiv.df,
+               mapping = aes(x = lon, y = lat, color = X),
+               size = 1) +
+    MaTheseR.params$gtheme +
+    theme(panel.background = element_rect(fill = "transparent", colour = NA),
+          plot.background = element_rect(fill = "transparent", colour = NA),
+          legend.background = element_rect(fill = "transparent", colour = NA)) +
+    scale_colour_gradient(low = "chartreuse1",
+                        high = "firebrick1") + 
+    xlab("Longitude") +
+    ylab("Latitude")
+  pl
+
+  save_expr(pl, "lfmm_intro_map_covariate_slides_toplot.rds")
+
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "lfmm_intro_map_covariate_slides",
+                                   env = MaTheseR.params,
+                                   height = 3,
+                                   width = 3)
+  ggsave("../OUTPUT/Rplots/lfmm_intro_map_covariate_slides.png",
+         pl,
+         width = 300 * 0.01041666666667,
+         height = 200 * 0.01041666666667,
+         dpi = 300,
+         units = "in",
+         bg = "transparent")
+#+end_src
+
+[[file:../OUTPUT/Rplots/lfmm_intro_map_covariate_slides.png]]
+
 *** map
 
 *** text
@@ -812,7 +888,36 @@ on motive
 Y = X B^T
 stat de student
 ** Étude d'association entre des données génétiques et un gradient environnemental
-qqplot et qqplot recalibré par le gif
+
+#+NAME: code:lfmm_qqplot
+#+CAPTION: Dépend de 
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  library(tidyverse)
+  library(MaTheseR)
+  library(cowplot)
+  library(gridExtra)
+  library(scales)
+  MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
+
+  ## res
+  res.df <- readRDS("./OUTPUT/Expr/Eas_df_lm_2049b91fd6d2c9798533d7ebed94e547.rds")
+
+  pl.qq <- ggplot(res.df, aes(sample = -log10(pvalue), color = method)) +
+    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
+    geom_abline(slope = 1, intercept = 0) +
+    scale_color_manual(name = "Méthodes", values = color.values) + 
+    theme(legend.position="bottom") +
+    xlab("Quantiles théoriques") +
+    ylab("Quantiles observés")
+
+  pl.qq
+
+
+#+end_src
+
 ** Modèles de régression à facteurs latents 
 Le petit graph et les equations
 ** Méthodes d'estimation pour les modèles de régression à facteurs latents
@@ -931,3 +1036,5 @@ de la factorisation de matrices
 - utilisation d'approche basé sur la factorisation matriciel à d'autre étude, 
 ex RNA-Seq et données méthylation au débit => s'attendre a des questions
 * Merci de votre attention
+* Bibliography
+bibliography:../biblio.bib

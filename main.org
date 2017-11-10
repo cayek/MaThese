@@ -7172,7 +7172,7 @@ ref:fig:eas_gradient représente la valeur du gradient climatique pour chaque
 population.
 
 #+NAME: code:geas:map
-#+CAPTION: Dépend de [[code:tess3:comparison:plot]]
+#+CAPTION: Dépend de [[code:eas_climatic_gradient_plot]]
 #+begin_src R :session *R* :dir ~/Projects/Thesis/MaThese/ :results silent
   library(MaTheseR)
   MaTheseR.params <- get_MaTheseRparams()
