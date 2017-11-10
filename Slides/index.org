@@ -915,7 +915,9 @@ de la factorisation de matrices
 - Deux nouveaux algorithmes d'estimation pour les modèles de régression à facteur
   latents
 - Résultats théorique sur la convergence des algorithmes
-- Sur les simulations même puissance que l'oracle et que la méthode =cate=
+- Sur les simulations même puissance que l'oracle et que la méthode cate
+- Sur des données réelles les méthodes reposant sur le modèle de regression à
+  facteurs latents découvre plus d'association.
 - Sur les données réelles les associassions découvertes peuvent varier largement
   entre les méthodes
 
