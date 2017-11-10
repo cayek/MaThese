@@ -1,3 +1,12 @@
 # NPM install files
 node_modules/
 js/*.min.js
+
+index.5.vrb
+index.9.vrb
+index.aux
+index.bcf
+index.html
+index.log
+index.out
+index.tex
