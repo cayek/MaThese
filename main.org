@@ -18062,3 +18062,44 @@ Un modèle je dirais, l'algo ca peut être n'importe quoi genre EM etc
 Et surtout les pbs d'assocaition ??
 En gros si on me demande les perspectives, je réponds quoi ?
 **** Résultats de convergence des estimateurs ? Résultats théorique de stat ?
+** Retours des rapporteurs
+*** R1
+**** Intro
+- le chap aurait gagné a élargir son spectre de rèf
+- intro un peu courte
+**** tess3r
+- comparaison avec d'autres logiciels
+**** lfmm
+- pour le calcul de la stat de test, comparaison avec d'autre approche. (Le
+  modèle est paramétrique (donc on pourrait calculer la stat de test). Mais avec
+  une vraisemblance pénalisé c'est compliqué !)
+- comportement étrange des sva-irw
+- Pas de précision sur l'adaptation de la méthode au données cas-temoin
+*** R2
+**** Intro
+- volume du manuscrit trop faible
+- Intro trop courte pour :
+  - détail des notions stat et bio
+  - présentation détaillée des méthodes
+**** tess3r
+- Choix de modélisation et d'algo pas assez motivé
+- plus de méthodes :D
+- plus de jeux de données :D
+- discussion des hyper param trop rapide
+- pas convaincu sur le choix des params
+- étude de sensibilité des params pour être convaincu
+***** Réponses
+
+- *Motivation du modèle et des algos :* ...
+
+- *Hyperparamètres :* Une étude sensibilité aide pas à choisir un paramètre.
+  L'objectif est de proposé une solution concrète. Il faut des solutions
+  concrètes pour le choix des paramètres.
+
+  Une étude de sensibilité comme par exemple dans cite:DengCai2011 montre comment
+  réagit le modèle en fonction des param sur un dataset en particulier.
+
+**** lfmm
+- chap sur le choix des hyper paramètres est peu éclairant
+**** ccl
+- il aurait voulu une présentation en détails des paquets et appli web :D

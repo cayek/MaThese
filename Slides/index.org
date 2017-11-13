@@ -789,11 +789,27 @@ on motive
          bg = "transparent")
 #+end_src
 
-[[file:../OUTPUT/Rplots/lfmm_intro_map_covariate_slides.png]]
+#+HTML: <div style="float:left;width:50%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.5\columnwidth}
 
-*** map
+[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/lfmm_intro_map_covariate_slides.pdf]]
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.5\columnwidth}
+#+HTML: <div style="float:left;width:50%;margin-top:50px;">
 
-*** text
+Données génétiques du projet 1000Genome
+- 1409 individus de 14 populations
+- 5397214 locus
+
+Gradient environnemental 
+- données climatiques de la base WordClim
+- première composante principale
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
 
 ** Exemple d'une étude d'association avec les données /Arabidopsis Thaliana/ :noexport:
 *** map                                                             :BMCOL:
@@ -885,8 +901,23 @@ on motive
 #+end_src
 
 ** Modèle de régression linéaire
-Y = X B^T
-stat de student
+Modèle linéaire pour chaque locus $j$
+$$
+\matr{Y}_{.,j} = \matr{X} b_j + \matr{E}_{.,j}
+$$
+où
+- b_j représente l'effet de la variable $\matr{X}$ sur le
+- $\E_{.,j}$ est le bruit résiduel
+On veux détecter les locus où l'on rejette l'hypothèse nulle
+$$
+H_0 : b_j = 0
+$$
+On réalise un test de Student
+$$
+t_j = \frac{\hat{b_j}}{\hat{\sigma}}
+$$
+où $\hat{b_j}$ et $\hat{\sigma}$ sont des estimations de l'effet et de son erreur standard.
+
 ** Étude d'association entre des données génétiques et un gradient environnemental
 
 #+NAME: code:lfmm_qqplot
@@ -909,50 +940,166 @@ stat de student
     stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
     geom_abline(slope = 1, intercept = 0) +
     scale_color_manual(name = "Méthodes", values = color.values) + 
-    theme(legend.position="bottom") +
+    theme(legend.position = "none") +
     xlab("Quantiles théoriques") +
     ylab("Quantiles observés")
 
-  pl.qq
-
-
+  ggsave("./OUTPUT/Rplots/lfmm_intro_lm_slide.png",
+         pl.qq,
+         width = 5.2,
+         height = 3,
+         dpi = 300,
+         units = "in",
+         bg = "transparent")
 #+end_src
 
+[[file:../OUTPUT/Rplots/lfmm_intro_lm_slide.png]]
+
 ** Modèles de régression à facteurs latents 
-Le petit graph et les equations
+
+#+NAME: code:conf_factor
+#+BEGIN_SRC dot :file img/conf_factor.png :exports results :eval no-export
+  graph {
+    graph [fontname = "serif"];
+    node [fontname = "serif"];
+    edge [fontname = "serif"];
+    U -- Y;
+    U -- X;
+  }
+#+END_SRC
+
+
+
+#+HTML: <div style="float:left;width:50%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.5\columnwidth}
+
+[[file:img/conf_factor.png]]
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.5\columnwidth}
+#+HTML: <div style="float:left;width:50%;margin-top:50px;">
+
+\begin{equation}
+\Y = \X \B^T + \matr{U} \V^T + \E.
+\end{equation}
+
+où 
+
+- $\matr{U}$ est la matrices des variables latentes
+- $\matr{V}$ est la matrices des effets des variables latentes
+- $\B$ est l'effet de la variable $\matr{X}$ sur le
+- $\E$ est la matrice de bruit résiduel
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
 ** Méthodes d'estimation pour les modèles de régression à facteurs latents
-tableau
+
+#+LATEX: \begingroup\small
+#+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
+#+ATTR_LATEX: :align p{2cm}|p{3.8cm}p{3.8cm}|p{2cm}
+#+NAME: table:lfmm_etat_art
+|-------------+-------------------------------------------------------+---------------------------------------------------------------------------------------+--------------------------------|
+| Méthode     | Modèle                                                | Algorithme                                                                            | Référence                      |
+|-------------+-------------------------------------------------------+---------------------------------------------------------------------------------------+--------------------------------|
+| sva-twostep | ACP et régression linéaire                            | moindres carrés ordinaire et SVD                                                      | citet:article_Leek_Storey_2007 |
+| sva-irw     | /weighted/-ACP et régression linéaire                 | moindres carrés ordinaire et /weighted/-SVD                                           | citet:article_Leek_Storey_2008 |
+| cate        | analyse factorielle et régression linéaire            | EM ou SVD et estimation des moindres carrés généralisée                               | citet:wang2015confounder       |
+| *ridgeLFMM* | factorisation matricielle avec régularisation $L_{2}$ | SVD et estimation des moindres carrés régularisée en norme $L_{2}$                    |                                |
+| *lassoLFMM* | factorisation matricielle avec régularisation $L_{1}$ | /soft-thresholded/ SVD et estimation des moindres carrés régularisée en norme $L_{1}$ |                                |
+#+LATEX:\rowcolors{2}{}{}
+#+LATEX: \endgroup
+
 ** Estimateur des moindres carrées régularisé en norme L2
 *Fonction objectif*
 
-\begin{equation}
+\begin{equation*}
 \Lridge(\matr{U}, \V, \B) =  \frac{1}{2} \norm{\Y - \matr{U} \V^{T} - \X \B^T}_{F}^2 +
 \frac{\lambRidge}{2} \norm{\B}^{2}_{2}%
-\end{equation}
+\end{equation*}
 
 *Algorithme*
 
-\begin{align}
-\label{eq:RidgeLfmmEstomatorW}
-\hat{\matr{U}} \hat{\V}^{T} & =  \matr{Q} \Dlambda^{-1} \svd_{\K}( \Dlambda \matr{Q}^{T} \Y ) \\
-\label{eq:RidgeLfmmEstomatorB}
-\hat{\B}^{T} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\matr{U}} \hat{\V}^{T}),
-\end{align}
+1. On calcule
+  $$
+  \hat{\matr{U}} \hat{\V}^{T} & = \sqrt{\matr{P}_{\lambda}}^{-1} \svd_{\K}( \sqrt{\matr{P}_{\lambda}} \Y ) 
+  $$
+  où 
+  $$
+  \matr{P}_{\lambda} = \Id_{n} - (\X^T \X + \lambda \Id_{n})^{-1} \X^T \X
+  $$
 
-*théorème*
+2. On calcule
+  $$
+  \hat{\B}^{T} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\matr{U}} \hat{\V}^{T}),
+  $$
 
-Pour $\lambRidge$ strictement supérieur à zéro, les
-estimateurs des paramètres de LFMM régularisés en norme $L_{2}$, définis par
-eqref:eq:RidgeLfmmEstomatorW et eqref:eq:RidgeLfmmEstomatorB, définissent un
-minimum global de la fonction objectif $\Lridge$.
+** Estimateur des moindres carrées régularisé en norme L2
+
+*Si $\lambda \to 0$*
+- \matr{P}_{\lambda} = \Id_{n} - (\X^T \X )^{-1} \X^T \X
+- \matr{P}_{\lambda} n'est plus inversible
+- $\U$ et $\V$ sont calculé sur le résidu de la régression linéaire de $\Y$ par $\X$
+*Si $\lambda \to \infty$*
+- \matr{P}_{\lambda} = \Id_{n}
+- $\U$ et $\V$ sont données par l'ACP
+
+*** Notes                                                        :noexport:
+
+#+BEGIN_NOTES 
+- si lambda -> 0
+  on enlève complétement l'effet de X pour calculer les variables latentes.
+  V est bien calculé (c'est l'approche de cate et sva-twostep)
+  MAIS
+  on ne peut plus inversé P pour calculer U
+- si lambda -> inf
+  on ne corrige pas le calculer des facteurs ===> on va capté un partie de ce
+  qui doit être expliqué par X dans le calcul des facteurs !!
+#+END_NOTES
+** Estimateur des moindres carrées régularisé en norme L2
+
+On peut montrer que
+
+\begin{align*}
+\Lridge(\matr{U}, \V, \B) & \geq & \Lridge(\matr{U}, \V, \hat{\B}) \\
+ & & = \frac{1}{2} \norm{ \sqrt{\matr{P_{\lambda}}} (\Y - \matr{U} \V^{T})}_{F}^{2}
+\end{align*}
+
+*Théorème*
+
+Pour $\lambRidge$ strictement supérieur à zéro, les estimateurs des paramètres
+de LFMM régularisés en norme $L_{2}$ définissent un minimum global de la
+fonction objectif $\Lridge$.
 
 ** Estimateur des moindres carrées régularisé en norme L1
 *Fonction objectif*
-\begin{equation}
+\begin{equation*}
 \Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 +
 \lambLasso \norm{\B}_{1} + \gamma \norm{\W}_{*}
-\end{equation}
-*Algorithme*
+\end{equation*}
+
+où $\matr{W}$ est la matrice latente et 
+$$
+\matr{W} = \matr{U} \matr{V}^T
+$$
+est calculé grâce à l'ACP.
+
+** Estimateur des moindres carrées régularisé en norme L1
+
+*Algorithme de descente par blocs de coordonnées*
+
+On initialise 
+
+\begin{align*}
+\hat{\W}_{t = 0} & = 0 \\
+\hat{\B}_{t = 0} & = 0
+\end{align*}
+
+On alterne les étapes:
+
 1. Calculer $\hat{\B}_{t}$ le point minimum de 
    \begin{equation}
    \label{eq:lasso1}
@@ -961,34 +1108,194 @@ minimum global de la fonction objectif $\Lridge$.
 2. Calculer $\hat{\W}_{t}$ le point minimum de  
    \begin{equation}
    \label{eq:lasso2}
-   \mathcal{L}_{\mathrm{lasso}}^{''}(\W) = \frac{1}{2} ||(\Y - \X \hat{\B}_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}.
+   \mathcal{L}_{\mathrm{lasso}}^{''}(\W) = \frac{1}{2} ||(\Y - \X \hat{\B}_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}
    \end{equation}
+
+** Estimateur des moindres carrées régularisé en norme L1
+
 *Théorème*
 
-...
-
 ** Tests d'hypothèse corrigés pour les facteurs de confusion
-calcul de la pvalue (on parle pas la calibration ici). On dit ici que la pvalue
-c'est le score de signifiance et blabla.
+
+Parler du test avec en plus U 
+de la calibration
+du controle du FDR
+
 ** Données simulées
-il faut trouver un moyen simple d'expliquer comment j'ai simulé, mettre l'accent
-sur le paramètre de corrélation
+On calcule les $K$ premières composantes principales des chromosomes 1 et 2 de
+la base de données 1000Genome (52211 SNPs et 1758 individus)
+\begin{equation*}
+\Y = \matr{U} \V^{T} + \E
+\end{equation*}
+
+On simule des variables latentes et une variable explicative
+\begin{equation*}
+\left[ \matr{U} \X \right] \sim \mathcal{N}(0, \matr{S}) \text{, avec } \matr{S} = 
+\begin{bmatrix}
+s_{1} & 0 & \cdots & \rho c_{1} \\
+0 & \ddots & 0 & \vdots \\
+\vdots & 0 & s_{K} & \rho c_{K} \\
+\rho c_{1} & \cdots & \rho c_{K} & 1 \\
+\end{bmatrix}
+\end{equation*}
+où $\rho$ est regle l'intessité de la corrélation entre $\matr{U}$ et $\X$.
+
+
+Enfin
+$$
+\Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
+$$
+
 ** Comparaison des méthodes sur des données simulées
-Montrer les résultats pour différent paramètre de régularisation
-** Étude d'association entre des données génétiques et un gradient environnemental
-présentation des données, carte
-** Étude d'association entre des données génétiques et un gradient environnemental
-décrire l'experience, on va parler ici des méthodes qu'on a lancé et de la
-calibration des tests et de la qvalue !!!
+
+On compare les méthodes : 
+- lm
+- lmPCA
+- sva-twostep
+- sva-irw
+- cate
+- oracle
+- ridgeLFMM
+- lassoLFMM
+
+Critère
+- AUC : aire sous la courbe 
+
+mettre des images ???
+
+*** Notes                                                        :noexport:
+On passe sous silence le facteur d'inflation !! On considère que tout le monde
+est recalibré pour simplifier.
+
+** Comparaison des méthodes sur des données simulées
+
+#+NAME: code:lfmm_comp
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:num_val_auc_gif_df][code:num_val_auc_gif_df]]
+#+begin_src R 
+  require(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  library(gridExtra)
+  library(forcats)
+  library(tidyverse)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
+
+  auc.df <- readRDS("../OUTPUT/Expr/auc.df.rds") 
+
+  ## filter and order method
+  auc.df <- auc.df %>%
+    dplyr::mutate(method = factor(article3_method_name(method), method.ordered))
+  auc.df$method %>% unique()
+
+  ## auc
+  toplot <- auc.df %>%
+    group_by(method, rho.c) %>%
+    summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N))
+  auc.rho.pl <- ggplot(toplot, aes(x = as.factor(rho.c), y = auc.mean, fill = method)) +
+    geom_bar(position = "dodge", stat = "identity") +
+    geom_errorbar(aes(ymin = auc.mean - se,
+                      ymax = auc.mean + se),
+                  width = 0.9,
+                  position = "dodge") +
+    scale_fill_manual(values = color.values) +
+    gtheme + 
+    theme(legend.position = "bottom") +
+    xlab("Param\\`etre de corr\\'elation entre $\\mathbf{U}$ et $\\mathbf{X}$ ($\\rho$)") +
+    ylab("AUC")
+
+  ThesisRpackage::Plots_export_tikz_pdf(auc.rho.pl,
+                                        basename.output = "lfmm_method_comp_slides",
+                                        env = MaTheseR.params,
+                                        width = 5.2,
+                                        height = 3)
+#+end_src
+
+
+[[file:../OUTPUT/Rplots/lfmm_method_comp_slides.pdf]]
+
 ** Choix du nombre de variables latentes
 On présente la procédure, c'est a dire transformation des données pour enlever
 Y. (Méthode qui vient de cate, a vérifier mais je crois pas).
-** Choix du nombre de variables latentes
-le scree plot
-** Choix du nombre de variables latentes
-les plots étoiles
-** Comparaison des résultats 
-diagramme de venne
+** Étude d'association entre des données génétiques et un gradient environnemental
+
+#+NAME: code:lfmm_geas_scree
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_screeplot_CV][code:eas_screeplot_CV]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  latex_percent <- function (x) {
+    x <- plyr::round_any(x, scales:::precision(x)/100)
+    stringr::str_c(comma(x * 100), "\\%")
+  }
+
+  ## screeplot
+  expr <- readRDS("../OUTPUT/Expr/geas_screeplot_expr.rds")
+  plA <- ggplot(expr, aes(x = index, y = var.expl)) +
+    geom_point() +
+    coord_cartesian(xlim = c(1,15)) +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Variance\nexpliqu\\'ee") +
+    MaTheseR.params$gtheme +
+    scale_color_discrete(name = "$\\lambda$") +
+    scale_y_continuous(labels=latex_percent) +
+    geom_vline(xintercept = 9, linetype = "dashed") +
+    theme(legend.position=c(0.8, 0.6))
+
+  ThesisRpackage::Plots_export_tikz_pdf(plA,
+                                        basename.output = "lfmm_geas_scree_slide",
+                                        env = MaTheseR.params,
+                                        height = 3,
+                                        width = 5.2)
+#+end_src
+
+
+[[file:../OUTPUT/Rplots/lfmm_geas_scree_slide.pdf]]
+
+*** Notes                                                        :noexport:
+Retour sur l'exemple
+** Étude d'association entre des données génétiques et un gradient environnemental
+
+#+NAME: code:lfmm_geas_PCs_slide
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_PCs][code:eas_PCs]]
+#+begin_src R 
+  library(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  pl.leg <- readRDS("../OUTPUT/Expr/eas_pc_toprint.rds")
+
+  pl <- pl.leg$pl
+  mylegend <- pl.leg$mylegend
+
+  pl.leg <- drawable(function() {
+    gridExtra::grid.arrange(pl,
+                            mylegend, nrow=2, heights=c(10, 2))
+  })
+
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl.leg,
+                                        basename.output = "lfmm_geas_pc_slides",
+                                        env = MaTheseR.params,
+                                        height = 5,
+                                        width = 7.2)
+#+end_src
+
+[[file:../OUTPUT/Rplots/lfmm_geas_pc_slides.pdf]]
+
+*** Notes                                                        :noexport:
+les plots en étoiles
+Enlever les lettres !!
+
+** Étude d'association entre des données génétiques et un gradient environnemental
+
+Dire pk il reste seulement ces méthodes
+diagramme de venne : montre que tout le monde ne fait pas pareil
+Les candidats détecté par lassoLFMM, ridgeLFMM et cate 
 ** Annotation de l'union des candidats 
 sur représentation
 et
