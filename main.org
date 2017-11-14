@@ -5767,8 +5767,8 @@ x_{i}^{k+1} \in \mathrm{arg} \min_{\zeta \in X_{i}} f(x_{1}^{k}, ...,x_{i-1}^{k}
 i = 1,...,m.
 \end{equation}
 En nous inspirant des résultats présentés par citet:Tseng_2001 et de la
-proposition 2.7.1 de citet:Bertsekas_1997 (ce démontrant la convergence de
-l'algorithme de descente par blocs de coordonnées dans le cas où la fonction
+proposition 2.7.1 de citet:Bertsekas_1997 (ce dernier démontrant la convergence
+de l'algorithme de descente par blocs de coordonnées dans le cas où la fonction
 objectif est différentiable), nous pouvons énoncer le théorème suivant :
 #+BEGIN_theorem 
 Si $f$ est une fonction continue de $A$ dans $\RR$, convexe et telle que
@@ -6038,7 +6038,7 @@ variables restantes. On notera $J$ l'ensemble des colonnes de la matrice des
 variables expliquées $\Y$ sélectionnées pour estimer la matrice des variables
 latentes. La matrice des variables latentes est estimée de la manière suivante
 \begin{equation}
-\hat{\matr{U}}_{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}_{-I}[J,])^{T}) \hat{\V}_{-I}[-J,]^{T},
+\hat{\matr{U}}_{-J} = (\Y[I,-J] - \X[I,] (\hat{\B}_{-I}[-J,])^{T}) \hat{\V}_{-I}[-J,]^{T},
 \end{equation}
 où l'opérateur crochet représente l'opérateur de sélection de lignes et colonnes
 d'une matrice. Enfin, on peut calculer l'erreur de prédiction comme ceci
@@ -13137,7 +13137,7 @@ ref:table:gwas_table).
     xtable(align = "lllllccp{6cm}",
     type = "latex",
     label = "table:gwas_table",
-    caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retrounés par l'algorithme lassoLFMM.} Les lignes en gras sont les SNPs référencés dans la base de données GWAS catalog.") %>%
+    caption = "{\\bf 20 premiers groupes de SNPs associés avec la maladie \\coeliac retournés par l'algorithme lassoLFMM.} Les lignes en gras sont les SNPs référencés dans la base de données GWAS catalog.") %>%
     print(include.rownames=FALSE,
           sanitize.colnames.function=identity,
           sanitize.text.function=identity,

@@ -89,7 +89,8 @@ I use =org-beamer-mode= for shortcut.
 :END:
 ** La génomiques
 
-https://www.genome.gov/images/content/costpergenome_2017.jpg
+#+ATTR_LATEX: :width nil :height 0.8\textheight
+[[file:./img/costpergenome_2017.jpg]]
 
 *** Notes                                                        :noexport:
 Les dernière décéni ont été marquées par l'arrivé de sequenceur à haut débit à
@@ -746,11 +747,14 @@ On étudie 214k SNPs pour 1 095 écotypes européens des espèces végétales
 
 Détecter les SNPs en relation avec une variable.
 
+$$\Y \sim \X$$
+Un petit dessin !!
+
 *Exemple*
 
-- Une maladie : diabète, coeliaque
-- Un phénotype : la taille
-- Une variable d'envoronnement : la température
+- Maladie  : diabète, maladie cœliaque
+- Phénotype : la taille
+- Environnement : la température
 
 ** Étude d'association entre des données génétiques et un gradient environnemental 
 
@@ -797,15 +801,15 @@ Détecter les SNPs en relation avec une variable.
          bg = "transparent")
 #+end_src
 
-#+HTML: <div style="float:left;width:50%;margin-top:50px;">
+#+HTML: <div style="float:left;width:60%;margin-top:50px;">
 #+LATEX: \begin{columns}
-#+LATEX: \begin{column}{0.5\columnwidth}
+#+LATEX: \begin{column}{0.6\columnwidth}
 
 [[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/lfmm_intro_map_covariate_slides.pdf]]
 #+HTML: </div>
 #+LATEX: \end{column}
-#+LATEX: \begin{column}{0.5\columnwidth}
-#+HTML: <div style="float:left;width:50%;margin-top:50px;">
+#+LATEX: \begin{column}{0.4\columnwidth}
+#+HTML: <div style="float:left;width:40%;margin-top:50px;">
 
 Données génétiques du projet 1000Genome
 - 1409 individus de 14 populations
@@ -909,22 +913,22 @@ Gradient environnemental
 #+end_src
 
 ** Modèle de régression linéaire
-Modèle linéaire pour chaque locus $j$
+Modèle linéaire pour chaque locus $\Y_{j}$
 $$
-\matr{Y}_{.,j} = \matr{X} b_j + \matr{E}_{.,j}
+\matr{Y}_{j} = \X \beta_{j} + \matr{E_{j}},
 $$
 où
-- b_j représente l'effet de la variable $\matr{X}$ sur le
-- $\E_{.,j}$ est le bruit résiduel
+- $\beta_j$ représente l'effet de la variable $\matr{X}$ sur le
+- $\E_{j}$ est le bruit résiduel
 On veux détecter les locus où l'on rejette l'hypothèse nulle
 $$
-H_0 : b_j = 0
+H_0 : \beta_j = 0
 $$
-On réalise un test de Student
+On réalise un *test de Student*
 $$
-t_j = \frac{\hat{b_j}}{\hat{\sigma}}
+t_j = \frac{\hat{\beta_j}}{\hat{\sigma}}
 $$
-où $\hat{b_j}$ et $\hat{\sigma}$ sont des estimations de l'effet et de son erreur standard.
+où $\hat{\beta_j}$ et $\hat{\sigma}$ sont des estimations de l'effet et de son erreur standard.
 
 ** Étude d'association entre des données génétiques et un gradient environnemental
 
@@ -1121,15 +1125,68 @@ On alterne les étapes:
 
 ** Estimateur des moindres carrées régularisé en norme L1
 
-*Théorème*
+On a 
+- $\W,\B \mapsto  \norm{\Y - \W - \X \B^T}_{F}^2$ est convexe et différentiable (terme d'attache au données dans $\Llasso$)
+- $\B \mapsto \norm{\B}_{1}$ est continue et convexe
+  (terme de régularisation dans $\Llasso$)
+- $\W \mapsto \norm{\W}_{*}$ est continue et convexe
+  (terme de régularisation dans $\Llasso$)
+
+citet:Tseng_2001 ont montré que
+
+*Théorème* 
+
+L'algorithme d'estimation des moindres carré régularisé en norme $L_{1}$ converge
+vers un minimum global de la fonction objectif $\Llasso$.
+
+** Choix du nombre de variables latentes
+On présente la procédure, c'est a dire transformation des données pour enlever
+Y. (Méthode qui vient de cate, a vérifier mais je crois pas).
+
+un scree plot a gauche et la formule a droite pour expliquer
+
+*** Notes                                                        :noexport:
+Une paramètre important dans les méthodes à facteur latent est le nombre de
+variables latentes.
+
+Comme ca je vais me préparer à la questions comment on choisi les autres.
 
 ** Tests d'hypothèse corrigés pour les facteurs de confusion
 
-Parler du test avec en plus U 
-de la calibration
-du controle du FDR
+Pour chaque variable expliquée $\Y_{j}$
+\begin{equation*}
+\Y_{j} =  \hat{\matr{U}} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{E_{j}},
+\end{equation*}
+où $\hat{\matr{U}}$ est l'estimation de la matrice des variables latentes.
 
-** Données simulées
+On test l'hypothèse
+$$
+H_0 : \beta_j = 0
+$$
+grâce à un *test de Student*.
+
+*** Notes                                                        :noexport:
+Jusqu'ici, nous avons abordé l'estimation des variables latentes et des effets.
+Mais le but est de trouver les associations significatives ! On doit construire
+un test de significativité qui prend en compte les facteurs que l'on a estimé.
+
+** Contrôle du taux de Fausses Découvertes 
+
+On cherche une liste de candidat $\Gamma = \{1,..,J\}$ tel que
+$$p( \beta_j = 0 | j \in \Gamma) = T$$
+où $T$ est le taux de fausse découverte souhaité.
+
+On utilise la \qvalue de citet:Storey_2011 pour contrôler le taux de fausses
+découvertes.
+
+*** Notes                                                        :noexport:
+Maintenant qu'on a des Pvalue on peut proposer une liste de découverte. On veut
+fournir une liste de candidats
+
+Remark : je parle pas de la calibration justement !!
+Pour moi il y a deux choses le ranking et la calibration. citet:Sun_2012 en parle !!
+
+** Données simulées                                               :noexport:
 On calcule les $K$ premières composantes principales des chromosomes 1 et 2 de
 la base de données 1000Genome (52211 SNPs et 1758 individus)
 \begin{equation*}
@@ -1154,6 +1211,23 @@ $$
 \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
 $$
 
+** Données simulées à partir des données 1000Genomes
+- On calcule les $K$ premières composantes principales des chromosomes 1 et 2 de
+  la base de données 1000Genome (52211 SNPs et 1758 individus)
+  \begin{equation*}
+  \Y = \matr{U} \V^{T} + \E
+  \end{equation*}
+
+- On simule des variables latentes \matr{U}^{'} et une variable explicative
+  $\X^{'}$ en contrôlant l'intessité de la corrélation.
+
+- On simule $\B^{'}$ tel qu'une proportion soit non nulle. 
+
+- On calcule une nouvelle matrice tel que
+  $$
+  \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
+  $$
+
 ** Comparaison des méthodes sur des données simulées
 
 On compare les méthodes : 
@@ -1169,12 +1243,12 @@ On compare les méthodes :
 Critère
 - AUC : aire sous la courbe 
 
-mettre des images ???
+mettre des images ??? oui comme en plus j'ai introduit le FDR c'est facile d'en
+parler 
 
 *** Notes                                                        :noexport:
 On passe sous silence le facteur d'inflation !! On considère que tout le monde
 est recalibré pour simplifier.
-
 ** Comparaison des méthodes sur des données simulées
 
 #+NAME: code:lfmm_comp
@@ -1222,11 +1296,10 @@ est recalibré pour simplifier.
 #+end_src
 
 
+Enlever 0.1 et 0.3 (les cas interessant)
+
 [[file:../OUTPUT/Rplots/lfmm_method_comp_slides.pdf]]
 
-** Choix du nombre de variables latentes
-On présente la procédure, c'est a dire transformation des données pour enlever
-Y. (Méthode qui vient de cate, a vérifier mais je crois pas).
 ** Étude d'association entre des données génétiques et un gradient environnemental
 
 #+NAME: code:lfmm_geas_scree
@@ -1301,15 +1374,193 @@ Enlever les lettres !!
 
 ** Étude d'association entre des données génétiques et un gradient environnemental
 
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics[height=0.6\textheight]{../OUTPUT/Rplots/geas_venn.png}
+\caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
+    un gradient environnemental (GEAS).} Diagramme de Venn des listes controlées à
+  un taux de fausses de découvertes de $1 \%$ pour chaque méthode.}
+\label{fig:geas_venn}
+\end{figure}
+#+END_EXPORT
+
+*** Notes                                                        :noexport:
 Dire pk il reste seulement ces méthodes
 diagramme de venne : montre que tout le monde ne fait pas pareil
 Les candidats détecté par lassoLFMM, ridgeLFMM et cate 
-** Annotation de l'union des candidats 
-sur représentation
-et
-tableau ?
-** EWAS
-https://en.wikipedia.org/wiki/DNA_methylation
+** Étude d'association entre des données génétiques et un gradient environnemental
+
+#+LATEX: \rowcolors{2}{gray!25}{white}
+#+NAME: code:geas_table_print
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:geas_table][code:geas_table]]
+#+begin_src R :results output latex replace :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(xtable)
+  library(knitr)
+  library(kableExtra)
+
+  table.df <- readRDS("../OUTPUT/Expr/geas_table_toprint.rds")
+
+  ## table.df %>% names() %>% paste0(collapse = "|")
+
+  table.df %>%
+    xtable(align = "lp{4cm}ll", type = "latex", label = "table:geas",
+           caption = "{\\bf SNPs associés avec un gradient climatique qui ont été associés avec des phénotypes dans d'autres études.} SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\\%$.") %>%
+    print(include.rownames=FALSE,
+          sanitize.colnames.function=identity,
+          sanitize.text.function=identity,
+          floating = TRUE
+          )
+#+end_src
+
+#+RESULTS: code:geas_table_print
+#+BEGIN_EXPORT latex
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Tue Nov 14 15:53:24 2017
+\begin{table}[ht]
+\centering
+\begin{tabular}{p{4cm}ll}
+  \hline
+SNPs & Détecté par les méthodes & Description du phénotype \\ 
+  \hline
+rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\ 
+  rs10496731 & lassoLFMM & Body Height \\ 
+  rs2472297 & ridgeLFMM, cate, lassoLFMM & Caffeine metabolism \\ 
+  rs2256175 & ridgeLFMM, cate, lassoLFMM & Cholesterol total \\ 
+  rs2472297 & ridgeLFMM, cate, lassoLFMM & Coffee consumption (cups per day) \\ 
+  rs2278544, rs2322659 & lassoLFMM & Congenital lactase deficiency \\ 
+  rs4954218 & ridgeLFMM, cate, lassoLFMM & Corneal structure \\ 
+  rs882300 & ridgeLFMM, cate, lassoLFMM & Electrocardiographic traits \\ 
+  rs882300 & ridgeLFMM, cate, lassoLFMM & Electrocardiography \\ 
+  rs2256175 & ridgeLFMM, cate, lassoLFMM & Giant cell arteritis \\ 
+  rs2256175, rs6085576, rs2104012, rs1983716, rs2853977 & ridgeLFMM, cate, lassoLFMM & Height \\ 
+  rs6430549 & ridgeLFMM, cate, lassoLFMM & Hematocrit \\ 
+  rs2278544, rs2322659 & lassoLFMM & Lactose intolerance \\ 
+  rs882300 & ridgeLFMM, cate, lassoLFMM & Multiple sclerosis \\ 
+  rs1123848 & ridgeLFMM, cate, lassoLFMM & Neuroblastoma \\ 
+  rs17158483 & lassoLFMM & Obesity-related traits \\ 
+   \hline
+\end{tabular}
+\caption{{\bf SNPs associés avec un gradient climatique qui ont été associés avec des phénotypes dans d'autres études.} SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\%$.} 
+\label{table:geas}
+\end{table}
+#+END_EXPORT
+
+#+LATEX:\rowcolors{2}{}{}
+
+** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+:LOGBOOK:
+- Note taken on [2017-11-14 mar. 16:13] \\
+  Sources: 
+  - image from https://en.wikipedia.org/wiki/DNA_methylation
+:END:
+
+#+HTML: <div style="float:left;width:40%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.4\columnwidth}
+
+#+ATTR_LATEX: :width \textwidth :height nil
+[[file:./img/1280px-DNA_methylation.jpg]]
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.6\columnwidth}
+#+HTML: <div style="float:left;width:60%;margin-top:50px;">
+
+*Données*
+
+- $\Y$ contient le niveau de méthylation de $485 577$ sites de l'ADN chez 699
+  individus
+- $\X$ contient la maladie polyarthrite rhumatoïde
+
+*Facteurs de confusion*
+
+- âge
+- genre
+- consommation de tabac
+
+*Objectif*
+
+Trouver les sites de méthylation associés à la maladie polyarthrite rhumatoïde.
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
+*** Notes                                                        :noexport:
+La méthylation de l'ADN est un processus au cours duquel un groupe méthyle est
+ajouté aux molécules d'ADN. La méthylation peut changer l'activité de l'ADN et
+en particulier modifier sa transcription en protéine.
+
+** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics[height=0.6\textheight]{../OUTPUT/Rplots/ewas_venn.png}
+\caption{{\bf Diagramme de Venn de l'étude d'association entre des sites de
+    méthylation et la polyarthrite rhumatoïde (EWAS).} Diagramme de Venn des
+  listes controlées à un taux de fausses de découvertes de 1 \%.}
+\label{fig:ewas_venn}
+\end{figure}
+#+END_EXPORT
+** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+#+LATEX: \rowcolors{2}{gray!25}{white}
+#+NAME: code:ewas_table_print
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:ewas_table][code:ewas_table]] 
+#+begin_src R :results output latex replace :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
+
+  ewas.table <- readRDS("../OUTPUT/Expr/ewas_table_toprint.rds")
+
+  ewas.table %>%
+    xtable(align = "lllllcccc",
+           digits = -2, type = "latex",
+           caption = "{\\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \\pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\citep{Zou_2014, Rahmani_2016}",
+           label = "table:ewas") %>%
+    print(include.rownames=FALSE,
+          sanitize.text.function=identity)
+
+#+end_src
+
+#+RESULTS: code:ewas_table_print
+#+BEGIN_EXPORT latex
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Tue Nov 14 16:28:21 2017
+\begin{table}[ht]
+\centering
+\begin{tabular}{llllcccc}
+  \hline
+ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\ 
+  \hline
+\textbf{cg16411857} & \textbf{16} & \textbf{57023191} & \textbf{NLRC5} & \textbf{9.2e-13} & \textbf{2.4e-12} & \textbf{6.6e-12} & \textbf{5.3e-12} \\ 
+  \textbf{cg07839457} & \textbf{16} & \textbf{57023022} & \textbf{NLRC5} & \textbf{1.9e-11} & \textbf{4.5e-11} & \textbf{1.1e-10} & \textbf{9.7e-11} \\ 
+  \textbf{cg05428452} & \textbf{6} & \textbf{32712979} & \textbf{HLA-DQA2} & \textbf{5.4e-11} & \textbf{4.6e-11} & \textbf{8.5e-11} & \textbf{8.8e-11} \\ 
+  cg02508743 & 8 & 56903623 & LYN & 2.9e-08 & 2.7e-08 & 2.7e-08 & 2.8e-08 \\ 
+  \textbf{cg20821042} & \textbf{6} & \textbf{32709158} & \textbf{HLA-DQA2} & \textbf{6.5e-08} & \textbf{6.1e-08} & \textbf{9.6e-08} & \textbf{1.0e-07} \\ 
+  cg13081526 & 6 & 32449961 &  & 1.5e-07 & 1.2e-07 & 2.0e-07 & 2.2e-07 \\ 
+  cg18052547 & 6 & 32552547 & HLA-DRB1 & 1.8e-07 & 1.8e-07 & 3.0e-07 & 3.1e-07 \\ 
+  \textbf{cg25372449} & \textbf{6} & \textbf{32490350} & \textbf{HLA-DRB5} & \textbf{2.5e-07} & \textbf{2.6e-07} & \textbf{4.5e-07} & \textbf{4.6e-07} \\ 
+  cg02030958 & 13 & 110386267 &  & 4.0e-07 & 7.8e-08 & 6.0e-08 & 1.1e-07 \\ 
+  cg16171858 & 3 & 58472734 &  & 4.6e-07 & 1.6e-07 & 2.7e-08 & 3.8e-08 \\ 
+  cg03280622 & 8 & 145023013 & PLEC1 & 4.7e-07 & 5.0e-09 & 5.8e-09 & 3.8e-08 \\ 
+  cg24150157 & 19 & 51891210 & LIM2 & 6.2e-07 & 3.1e-07 & 1.6e-07 & 2.1e-07 \\ 
+  cg26244575 & 12 & 76354015 &  & 6.9e-07 & 2.7e-09 & 5.0e-10 & 4.2e-09 \\ 
+  cg05370853 & 6 & 32606634 & HLA-DQA1 & 7.1e-07 & 3.0e-07 & 3.3e-07 & 4.4e-07 \\ 
+  cg14989316 & 10 & 80757927 & LOC283050 & 7.3e-07 & 6.1e-08 & 7.8e-08 & 2.1e-07 \\ 
+  cg17360552 & 6 & 32725332 & HLA-DQB2 & 8.1e-07 & 6.1e-07 & 1.1e-06 & 1.2e-06 \\ 
+  cg01373248 & 3 & 18480297 & SATB1 & 8.1e-07 & 1.4e-07 & 1.1e-07 & 2.5e-07 \\ 
+  cg26164488 & 2 & 64440295 &  & 9.3e-07 & 3.5e-09 & 1.6e-09 & 1.4e-08 \\ 
+  cg05874806 & 2 & 102350276 & MAP4K4 & 1.1e-06 & 1.1e-06 & 4.7e-07 & 5.6e-07 \\ 
+   \hline
+\end{tabular}
+\caption{{\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \citep{Zou_2014, Rahmani_2016}} 
+\label{table:ewas}
+\end{table}
+#+END_EXPORT
+
+
+#+LATEX:\rowcolors{2}{}{}
+
 * Conclusions
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: slide-title="Conclusions et perspectives"
