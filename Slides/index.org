@@ -88,17 +88,17 @@ I use =org-beamer-mode= for shortcut.
 :REVEAL_EXTRA_ATTR: slide-title="Introduction"
 :END:
 ** La génomiques
- 
-une image d'adn 
 
-en fond ??? un truc avec plien d'ACTG
+https://www.genome.gov/images/content/costpergenome_2017.jpg
 
-Les dernière décéni ont été marquées par l'arrivé de sequenceur à haut débit. 
+*** Notes                                                        :noexport:
+Les dernière décéni ont été marquées par l'arrivé de sequenceur à haut débit à
+permit de sequencer l'ADN de beaucoup d'oganisme vivant. Comment extraire de
+l'information pour répondre au questions biologique.
 
-Une photo de "il y a beaucoup de données"
+https://www.genome.gov/sequencingcostsdata/
 
 ** Les données génétiques
-
 
 - L'ADN peut être considéré comme une longue séquence des nucléotides : A, C, T, G. 
 
@@ -741,9 +741,17 @@ On étudie 214k SNPs pour 1 095 écotypes européens des espèces végétales
 :REVEAL_EXTRA_ATTR: slide-title="Étude d'association"
 :END:
 ** Test d'association
-c'est quoi 
-pk c'est important 
-on motive
+
+*Objectif*
+
+Détecter les SNPs en relation avec une variable.
+
+*Exemple*
+
+- Une maladie : diabète, coeliaque
+- Un phénotype : la taille
+- Une variable d'envoronnement : la température
+
 ** Étude d'association entre des données génétiques et un gradient environnemental 
 
 #+NAME: code:lfmm_map
@@ -1301,6 +1309,7 @@ sur représentation
 et
 tableau ?
 ** EWAS
+https://en.wikipedia.org/wiki/DNA_methylation
 * Conclusions
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: slide-title="Conclusions et perspectives"
@@ -1310,6 +1319,11 @@ tess3r et lfmm
 de la factorisation de matrices
 ** =tess3r=
 
+- Package R
+#+begin_src R :exports both
+  # install.packages("devtools")
+  devtools::install_github("bcm-uga/TESS3_encho_sen")
+#+end_src
 - Nouveau modèle pour l'estimation de la structure génétique des populations à
   partir de données génétique et géographique
 - Deux algorithmes pour l'inférence des paramètres
@@ -1317,13 +1331,13 @@ de la factorisation de matrices
 - Algorithme 30 fois plus rapide que =TESS= 2.3
 - Visualisation de la strucuture génétique de population dans l'espace
 
-#+begin_src R :exports both
-  # install.packages("devtools")
-  devtools::install_github("bcm-uga/TESS3_encho_sen")
-#+end_src
-
 ** =lfmm=
 
+- Package R
+#+begin_src R :exports both
+  # install.packages("devtools")
+  devtools::install_github("bcm-uga/lfmm")
+#+end_src
 - Deux nouveaux algorithmes d'estimation pour les modèles de régression à facteur
   latents
 - Résultats théorique sur la convergence des algorithmes
@@ -1332,11 +1346,6 @@ de la factorisation de matrices
   facteurs latents découvre plus d'association.
 - Sur les données réelles les associassions découvertes peuvent varier largement
   entre les méthodes
-
-#+begin_src R :exports both
-  # install.packages("devtools")
-  devtools::install_github("bcm-uga/lfmm")
-#+end_src
 
 ** perspectives                                                   :noexport:
 - perspective de maintient des logiciel 
