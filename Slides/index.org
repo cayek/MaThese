@@ -10,7 +10,7 @@
 #+latex_header: \usepackage[citestyle=authoryear, bibstyle=authoryear, hyperref=true,backref=true,maxcitenames=2,url=true,backend=biber,natbib=true]{biblatex}
 #+latex_header: \addbibresource{../biblio.bib}
 #+LATEX_HEADER: \input{../packages.tex}
-#+LATEX_HEADER: \input{../setup.tex}
+#+LATEX_HEADER: \input{setup.tex}
 #+LATEX_HEADER: \input{../notations.tex}
 
 
@@ -87,46 +87,79 @@ I use =org-beamer-mode= for shortcut.
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: slide-title="Introduction"
 :END:
-** La génomiques
+
+
+** La génomique
 
 #+ATTR_LATEX: :width nil :height 0.8\textheight
 [[file:./img/costpergenome_2017.jpg]]
 
 *** Notes                                                        :noexport:
-Les dernière décéni ont été marquées par l'arrivé de sequenceur à haut débit à
-permit de sequencer l'ADN de beaucoup d'oganisme vivant. Comment extraire de
-l'information pour répondre au questions biologique.
+#+BEGIN_NOTES
+Mes travaux de thèse intervienne dans le contexte de la génomique. La dernière
+décéni a été marquées par l'arrivé de sequenceur à haut débit qui à permit de
+sequencer l'ADN de beaucoup d'oganisme vivant.
+
+Par exemple pour un humain en 2017 ca coûte environ mille euros de sequencer
+sont génome complet alors qu'il y a 10 ans ca coutait 10 million d'euros.
+
+L'amélioration des technologie de séquence permet d'obetenir énormement de
+données génétique. Il faut dont de dévelloper les méthodes statistique pour
+les analyser et répondre à des question biologique.
+#+END_NOTES
 
 https://www.genome.gov/sequencingcostsdata/
 
 ** Les données génétiques
 
-- L'ADN peut être considéré comme une longue séquence des nucléotides : A, C, T, G. 
+- L'ADN est une longue séquence de nucléotides : A, C, T, G. 
 
-- On s'interesse au polymorphisme d'un seul nucléotide (SNPs)
+- On s'intéresse aux polymorphismes d'un seul nucléotide (SNPs)
 
-On va plutot mettre https://fr.wikipedia.org/wiki/Polymorphisme_nucl%C3%A9otidique#/media/File:Dna-SNP.svg
+- On suppose qu'il y a seulement deux allèles possibles par position 
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
   \centering
   ADNs \left \{\begin{tabular}{cccccccc}
-                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots & \cdots \\
-                \cdots & G & A & \cellcolor{blue!25} A & C & C & \cdots & \cdots \\
-                \cdots & G & A & \cellcolor{blue!25} A & C & C & \cdots & \cdots \\
-                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots & \cdots \\
-                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots & \cdots 
+                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} A & C & C & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} A & C & C & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots 
               \end{tabular}
               
               \caption{{\bf Illustration d'un SNP.} Le nucléotide différent
-                entre les séquences est un SNP.}
+                entre les séquences d'ADN est un SNP.}
 \label{fig:SNP}
 \end{figure}
 #+END_EXPORT
 
+*** Notes                                                        :noexport:
+
+#+BEGIN_NOTES
+L'ADN une très longue séquence de nucléotide
+Les séquenceurs permettent de savoir pour chaque individu sa séquence nuclotyde.
+On s'intéresse aux endroits du génome ou on a pu observé un polymorphisme entre
+les individus entre les individu. 
+CAD que à une position données de l'ADN tout les individus n'on pas le même
+nucléotyde.
+Ce sont ces positions ou on pu observé des allèle différent entre les individus
+qui nous interesse.
+Ce qu'on appel allèle est un variant d'un nucléotyde 
+Par exemple a cette position il y 2 allèle, l'allèle A et l'allèle T
+Enfin une hypothèse importante est que l'on suppose qu'il seulement possible
+d'observé deux allèle possibles pour une position données. 
+Ce n'est pas si réducteur car pour les espece que l'on a considéré dans cette
+thèse la probabilité que deux mutation de l'ADN apparaisse deux fois au même
+endroit est très faible.
+#+END_NOTES
+
+[[file:./img/457px-Dna-SNP.svg.png]]
+
 ** Les données génétiques
 
-Les données sont rangé dans une matrice :
+Les données sont rangées dans une matrice :
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
@@ -147,17 +180,48 @@ $
 \end{figure}
 #+END_EXPORT
 
-** Plan
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
 
-- Inférence des coefficients de métissage à l'aide de données géographiques
-  (=tess3r=)
+Ensuite les données génétiques sont rangé dans une matrice qu'on notera Y. 
+Chaque ligne représente un individu et chaque collone représente une position
+dans le génome.
+Pour chaque individu position on va compté le nombre de fois qu'on observe le
+l'allèle muté.
+Par exemple pour un individu diploid qui possède deux fois chaque gène on va
+compté 0 1 ou 2 fois l'allèle muté.
+
+#+END_NOTES
+** Problématiques
+
+- *=tess3r=*
   
-- Algorithmes d'estimation pour les modèles de régression à facteurs latents (=lfmm=)
+   Inférence des coefficients de métissage à l'aide de données géographiques
+  
+- *=lfmm=*
 
+   Correction des facteurs de confusion pour les études d'association
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+Au cours de ma thèse nous nous sommes intéresse à deux problématiques
+statistiques. Pour chacune de ces problématique nous avons proposé un package R.
+
+Dans un premier temps nous nous sommes intéressé à l'inférence des coefficient
+de métissage a partir des données génétique et de données géographique. 
+Pour cet problématique nous avons proposé le package tess3r.
+
+Dans un deuxième temps nous nous somme interessé à la correction des facteur de
+confusion qui apparaisse des les étude d'association génétique.
+Nous avons proposé pour cette problématique le package lfmm.
+#+END_NOTES
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: slide-title="Coefficient de métissage"
 :END:
+#+BEGIN_EXPORT latex
+\frame{\sectionpage}
+#+END_EXPORT
 ** La structure de population                                     :noexport:
 
 - Les populations étudiées par la génétique des populations sont constituées d'un
@@ -218,7 +282,7 @@ $
 
 #+CAPTION: *Différenciation allélique entre des populations.* Distribution des allèles du SNP rs17066888 dans des populations européenne, africaine et afro-américaine.
 #+ATTR_HTML: :align center :style width:70%
-[[file:../OUTPUT/Rplots/tess3_intro_freq_slides.svg]]
+[[file:../OUTPUT/Rplots/tess3_intro_freq_slides.pdf]]
 
 #+HTML: </div>
 #+LATEX: \end{column}
@@ -237,15 +301,15 @@ Pressions évolutives :
 
 ** Pourquoi étudier la structure génétiques des populations ?
 
-- Représentation synthétique de données multivariées. 
+- Représentation synthétique de données multivariées 
 
-- Étude de l'histoire démographique des populations citep:Li_2008.
+- Étude de l'histoire démographique des populations 
 
-- Facteur de correction dans les études d'association citep:marchini2004effects.
+- Étudier la répartition des populations dans leur habitat 
 
-- Médecine personnalisé : calcul d'un score de risque génétique pour une maladie citep:Wray_2013.
+- Facteur de confusion dans les études d'association 
 
-- Étudier la répartition des populations dans leur habitat citep:Fran_ois_2015.
+- Médecine personnalisée : calcul d'un score de risque génétique pour une maladie 
 
 ** Visualisation de la structure génétique des populations avec l'ACP
 
@@ -282,7 +346,7 @@ Pressions évolutives :
 
 #+CAPTION:Scores des deux premières composantes principales calculées sur des données de SNPs d'invidus humains de populations européenne, africaine et afro-américaine.
 #+ATTR_HTML: :align center :style width:80%
-[[file:../OUTPUT/Rplots/tess3_intro_pca_slides.svg]]
+[[file:../OUTPUT/Rplots/tess3_intro_pca_slides.pdf]]
 
 ** Le modèle du logiciel =structure= citep:Pritchard2000
 
@@ -304,7 +368,7 @@ Pressions évolutives :
 #+HTML: <div style="float:left;width:50%;margin-top:50px;">
 
 \begin{equation*}
-\Pr(\Y_{i,\ell} = j) = \sum_{k = 1}^{K} \matr{G}_{(d + 1)\ell + j, k} \Q_{i,k},
+\Pr(\Y_{i,\ell} = j) = \sum_{k = 1}^{K} \matr{G}_{(d + 1)\ell + j, k} \Q_{i,k}
 \end{equation*}
 où 
 - $\Pr(\Y_{i,\ell} = j)$ est la probabilité d'observer l'allèle $j$ au locus
@@ -406,34 +470,28 @@ où
 
 #+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
 #+ATTR_LATEX: :align l|p{4cm}p{3cm}|p{3cm}
-|--------------+--------------------------------------------------+-----------------------------------+----------------------|
-| Méthode      | Modèle                                           | Algorithme                        | Référence            |
-|--------------+--------------------------------------------------+-----------------------------------+----------------------|
-| TESS         | bayésien                                         | MCMC                              | citet:CHEN_2007      |
-| GENELAND     | bayésien                                         | MCMC                              | citet:phdGuedj       |
-| BAPS         | bayésien                                         | optimisation stochastique         | citet:Corander2008   |
-| *TESS3-AQP*  | factorisation matricielle régularisée sur graphe | optimisation quadratique alternée |                      |
-| *TESS3-APLS* | factorisation matricielle régularisée sur graphe | moindres carrés alternés projetés |                      |
-| conStruct    | bayésien                                         | MCMC                              | citet:Bradburd189688 |
+|-----------+--------------------------------------------------+-----------------------------------+----------------------|
+| Méthode   | Modèle                                           | Algorithme                        | Référence            |
+|-----------+--------------------------------------------------+-----------------------------------+----------------------|
+| TESS      | bayésien                                         | MCMC                              | citet:CHEN_2007      |
+| GENELAND  | bayésien                                         | MCMC                              | citet:phdGuedj       |
+| BAPS      | bayésien                                         | optimisation stochastique         | citet:Corander2008   |
+| *TESS3*   | factorisation matricielle régularisée sur graphe | moindres carrés alternés projetés |                      |
+| conStruct | bayésien                                         | MCMC                              | citet:Bradburd189688 |
 #+LATEX:\rowcolors{2}{}{}
 
 ** Estimation des matrices d'ascendance génétique
 
-Ajouter un petit dessin de factorisation de matrice !!! se mettre sur 2 colonnes
-
 citet:Frichot_2014 cherchent à décomposer la matrice de génotype :
 
-\begin{equation*}
-\Y = \Q \mathbf{G}^{T},
-\end{equation*}
+#+ATTR_LATEX: :width nil :height 0.20\textheight
+[[file:img/NMF.png]]
 
 où
 
 \begin{equation*}
 \Q \geq 0 \, , \quad \sum_{k=1}^K {\bf Q}_{i,k} = 1, \quad i = 1...n
 \end{equation*}
-
-et
 
 \begin{equation*}
 \mathbf{G} \geq 0 \, , \quad \sum_{j=0}^{d} {\bf G}_{(d+1)\ell + j, k} = 1, \quad \ell = 1...p.
@@ -540,7 +598,7 @@ Ensuite, nous introduisons la régularisation
 
 La régularisation peut se réécrire 
 \begin{equation*}
-{\rm Tr} (\Q^{T} \matr{\Gamma} \Q)
+{\rm Tr} (\Q^{T} \bm{\Gamma} \Q)
 \end{equation*}
 
 ** Problème d'optimisation des moindres carrés
@@ -548,7 +606,16 @@ La régularisation peut se réécrire
 Pour estimer les matrice d'ascendance on cherche à optimiser la fonction 
 
 \begin{equation*}
-\mathcal{L}(\Q, \mathbf{G}) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \alpha {\rm Tr} (\Q^{T} \matr{\Gamma} \Q)
+\mathcal{L}(\Q, \mathbf{G}) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \alpha {\rm Tr} (\Q^{T} \bm{\Gamma} \Q)
+\end{equation*}
+avec les contraintes
+
+\begin{equation*}
+\Q \geq 0 \, , \quad \sum_{k=1}^K {\bf Q}_{i,k} = 1, \quad i = 1...n
+\end{equation*}
+
+\begin{equation*}
+\mathbf{G} \geq 0 \, , \quad \sum_{j=0}^{d} {\bf G}_{(d+1)\ell + j, k} = 1, \quad \ell = 1...p.
 \end{equation*}
 
 ** Algorithme de descente par blocs de coordonnées
@@ -627,7 +694,7 @@ fournis de bonnes approximation de AQP.
 - D'après citet:Grippo_2000, AQP converge vers un minimum local de la fonction
   objectif $\LS$
 - L'étape de calcul de $\Q$ implique de résoudre un problème d'optimisation
-  convexe de taille $n \times K$
+  quadratique convexe de taille $n \times K$
 
 *** Algorithme des moindres carrés alternés projetés (APLS)
 
@@ -679,7 +746,7 @@ F_{\rm ST} = \frac{1}{1 + 4N_0 m}
   \includegraphics[height=0.7\textheight]{../OUTPUT/Rplots/tess3_tess2_3_rmseQ.pdf}
 \end{minipage}
 \caption{{\bf Racine de l'erreur quadratique moyenne (RMSE) pour l'estimation de
-    $\Q$ (figure A) et $\mathbf{G}$ (figure B).}}
+    $\Q$ (figure A) et $\mathbf{G}$ (figure B)}. APLS était 30 fois plus rapide que TESS 2.3.}
 \end{figure}    
 #+END_EXPORT
 ** Application à des données /Arabidopsis Thaliana/
@@ -737,18 +804,38 @@ On étudie 214k SNPs pour 1 095 écotypes européens des espèces végétales
 
 [[file:../OUTPUT/Rplots/tess3_AT_map_slides.pdf]]
 
-* Algorithmes d'estimation pour les modèles de régression à facteurs latents
+* Correction des facteurs de confusion pour les études d'association
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: slide-title="Étude d'association"
 :END:
+#+BEGIN_EXPORT latex
+\frame{\sectionpage}
+#+END_EXPORT
 ** Test d'association
+
 
 *Objectif*
 
 Détecter les SNPs en relation avec une variable.
 
-$$\Y \sim \X$$
-Un petit dessin !!
+#+BEGIN_EXPORT latex
+$$  
+\begin{bmatrix}
+  0      & 1    &  \cellcolor{blue!25} 2    & 2& \cdots      & \cdots & \cellcolor{blue!25} 0 & \cdots \\
+  1      & 1    & \cellcolor{blue!25} 0    & & \cdots      & \cdots  & \cellcolor{blue!25} 1  &  \cdots \\
+  \vdots      & \vdots    & \cellcolor{blue!25} \vdots    & \vdots & \cdots & \cdots & \cellcolor{blue!25} \vdots   &  \cdots \\
+  \vdots      & \vdots    & \cellcolor{blue!25} \vdots    & \vdots & \cdots   &  \cdots & \cellcolor{blue!25} \vdots   &  \cdots \\
+  0      & 0    & \cellcolor{blue!25} 2    &  0 & \cdots      & \cdots  &  \cellcolor{blue!25} 1  &  \cdots \\
+\end{bmatrix} \sim
+\begin{bmatrix}
+  0.2 \\
+  1.5 \\
+  \vdots \\
+  \vdots \\
+  0 \\
+\end{bmatrix} 
+$$
+#+END_EXPORT
 
 *Exemple*
 
@@ -756,7 +843,7 @@ Un petit dessin !!
 - Phénotype : la taille
 - Environnement : la température
 
-** Étude d'association entre des données génétiques et un gradient environnemental 
+** Étude d'association entre des données génétiques et un gradient climatique 
 
 #+NAME: code:lfmm_map
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_climatic_gradient][code:eas_climatic_gradient]]
@@ -813,15 +900,18 @@ Un petit dessin !!
 
 Données génétiques du projet 1000Genome
 - 1409 individus de 14 populations
-- 5397214 locus
+- 5397214 SNPs
 
-Gradient environnemental 
+Variable climatique
 - données climatiques de la base WordClim
 - première composante principale
+
+*On veut identifier les SNPs associé au climat*
 
 #+HTML: </div>
 #+LATEX: \end{column}
 #+LATEX: \end{columns}
+
 
 ** Exemple d'une étude d'association avec les données /Arabidopsis Thaliana/ :noexport:
 *** map                                                             :BMCOL:
@@ -913,7 +1003,7 @@ Gradient environnemental
 #+end_src
 
 ** Modèle de régression linéaire
-Modèle linéaire pour chaque locus $\Y_{j}$
+Modèle linéaire pour chaque SNP $\Y_{j}$
 $$
 \matr{Y}_{j} = \X \beta_{j} + \matr{E_{j}},
 $$
@@ -930,7 +1020,7 @@ t_j = \frac{\hat{\beta_j}}{\hat{\sigma}}
 $$
 où $\hat{\beta_j}$ et $\hat{\sigma}$ sont des estimations de l'effet et de son erreur standard.
 
-** Étude d'association entre des données génétiques et un gradient environnemental
+** Étude d'association entre des données génétiques et un gradient climatique
 
 #+NAME: code:lfmm_qqplot
 #+CAPTION: Dépend de 
@@ -948,26 +1038,25 @@ où $\hat{\beta_j}$ et $\hat{\sigma}$ sont des estimations de l'effet et de son 
   ## res
   res.df <- readRDS("./OUTPUT/Expr/Eas_df_lm_2049b91fd6d2c9798533d7ebed94e547.rds")
 
-  pl.qq <- ggplot(res.df, aes(sample = -log10(pvalue), color = method)) +
-    stat_qq(distribution = stats::qexp, dparams = list(rate = log(10))) +
-    geom_abline(slope = 1, intercept = 0) +
-    scale_color_manual(name = "Méthodes", values = color.values) + 
-    theme(legend.position = "none") +
-    xlab("Quantiles théoriques") +
-    ylab("Quantiles observés")
+  pl <- ggplot(res.df, aes(pvalue)) +
+      geom_histogram(position = "dodge", aes(y = (..count..)/sum(..count..))) +
+      MaTheseR.params$gtheme +
+      xlab("P-valeur") +
+      ylab("Pourcentage") +
+      scale_y_continuous(labels=percent)
 
-  ggsave("./OUTPUT/Rplots/lfmm_intro_lm_slide.png",
-         pl.qq,
-         width = 5.2,
-         height = 3,
-         dpi = 300,
-         units = "in",
-         bg = "transparent")
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   "lfmm_intro_lm_slide",
+                                   MaTheseR.params,
+                                   width = 5.3,
+                                   height = 3)
+
+
 #+end_src
 
-[[file:../OUTPUT/Rplots/lfmm_intro_lm_slide.png]]
+[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/lfmm_intro_lm_slide.pdf]]
 
-** Modèles de régression à facteurs latents 
+** Modèles mixtes à facteurs latents
 
 #+NAME: code:conf_factor
 #+BEGIN_SRC dot :file img/conf_factor.png :exports results :eval no-export
@@ -993,9 +1082,9 @@ où $\hat{\beta_j}$ et $\hat{\sigma}$ sont des estimations de l'effet et de son 
 #+LATEX: \begin{column}{0.5\columnwidth}
 #+HTML: <div style="float:left;width:50%;margin-top:50px;">
 
-\begin{equation}
-\Y = \X \B^T + \matr{U} \V^T + \E.
-\end{equation}
+\begin{equation*}
+\Y = \X \B^T + \matr{U} \V^T + \E
+\end{equation*}
 
 où 
 
@@ -1054,10 +1143,10 @@ où
 *Si $\lambda \to 0$*
 - \matr{P}_{\lambda} = \Id_{n} - (\X^T \X )^{-1} \X^T \X
 - \matr{P}_{\lambda} n'est plus inversible
-- $\U$ et $\V$ sont calculé sur le résidu de la régression linéaire de $\Y$ par $\X$
+- $\matr{U}$ et $\V$ sont calculés sur le résidu de la régression linéaire de $\Y$ par $\X$
 *Si $\lambda \to \infty$*
 - \matr{P}_{\lambda} = \Id_{n}
-- $\U$ et $\V$ sont données par l'ACP
+- $\matr{U}$ et $\V$ sont données par l'ACP
 
 *** Notes                                                        :noexport:
 
@@ -1076,7 +1165,7 @@ où
 On peut montrer que
 
 \begin{align*}
-\Lridge(\matr{U}, \V, \B) & \geq & \Lridge(\matr{U}, \V, \hat{\B}) \\
+\Lridge(\matr{U}, \V, \B) & \geq & \Lridge(\matr{U}, \V, (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \matr{U} \V^{T})) \\
  & & = \frac{1}{2} \norm{ \sqrt{\matr{P_{\lambda}}} (\Y - \matr{U} \V^{T})}_{F}^{2}
 \end{align*}
 
@@ -1140,10 +1229,73 @@ L'algorithme d'estimation des moindres carré régularisé en norme $L_{1}$ conv
 vers un minimum global de la fonction objectif $\Llasso$.
 
 ** Choix du nombre de variables latentes
-On présente la procédure, c'est a dire transformation des données pour enlever
-Y. (Méthode qui vient de cate, a vérifier mais je crois pas).
 
-un scree plot a gauche et la formule a droite pour expliquer
+#+NAME: code:lfmm_K
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(MaTheseR)
+  library(tidyverse)
+  require(magrittr)
+  library(scales)
+
+  latex_percent <- function (x) {
+    x <- plyr::round_any(x, scales:::precision(x)/100)
+    stringr::str_c(comma(x * 100), "\\%")
+  }
+
+
+  dat <- ExpRsampler_generativeData(n = 200,
+                                    p = 1000,
+                                    K = 3,
+                                    outlier.prop = 0.1,
+                                    cs = 0.7,
+                                    sigma = 0.2,
+                                    B.sd = 1.0,
+                                    B.mean = 0.0,
+                                    U.sd = 1.0,
+                                    V.sd = 1.0) %>%
+    ExpRmouline()
+
+  ## projection
+  P.list <- lfmm::compute_P(dat$X, lambda = 0.0)
+  Y <- P.list$sqrt.P %*% dat$Y
+  rm(P.list)
+  rm(dat)
+  gc()
+
+  ## PCA
+  svd.res <- svd(Y,0,0)
+  df.res <- tibble(index = seq_along(svd.res$d), singular.value = svd.res$d) %>%
+    mutate(var.expl = singular.value / sum(singular.value))
+
+  ## plot
+  pl <- ggplot(df.res, aes(x = as.factor(index), y = var.expl)) +
+    geom_point() +
+    geom_line(aes(x = index, y = var.expl)) +
+    coord_cartesian(xlim = c(1,10)) +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Variance\nexpliqu\\'ee") +
+    MaTheseR.params$gtheme +
+    scale_y_continuous(labels=latex_percent)
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "lfmm_K_slides",
+                                        env = MaTheseR.params,
+                                        height = 1.5,
+                                        width = 4.5)
+#+end_src
+
+On projette $\Y$ sur l'espace orthogonal à $\X$ en prenant $\lambRidge = 0$
+\begin{equation*}
+\matr{D}_{0} \Q^{T} \Y = \matr{D}_{0} \Q^{T}\matr{U} \V^{T} + \matr{D}_{0} \Q^{T} \E.
+\end{equation*}
+
+On calcule les valeurs singulières pour visualisé la variance expliqué par
+chaque variable latente (scree plot).
+
+#+ATTR_LATEX: :width \textwidth :height nil
+[[file:../OUTPUT/Rplots/lfmm_K_slides.pdf]]
+
 
 *** Notes                                                        :noexport:
 Une paramètre important dans les méthodes à facteur latent est le nombre de
@@ -1230,7 +1382,74 @@ $$
 
 ** Comparaison des méthodes sur des données simulées
 
-On compare les méthodes : 
+#+NAME: code:lmm_auc
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(MaTheseR)
+  library(foreach)
+  library(doParallel)
+  library(tidyverse)
+  require(ExpRiment)
+  require(foreach)
+  require(magrittr)
+
+  dat <- ExpRsampler_generativeData(n = 200,
+                                    p = 1000,
+                                    K = 3,
+                                    outlier.prop = 0.2,
+                                    cs = 0.8,
+                                    sigma = 0.2,
+                                    B.sd = 1.0,
+                                    B.mean = 0.0,
+                                    U.sd = 1.0,
+                                    V.sd = 1.0) %>%
+    ExpRmouline()
+
+  ## param
+  K.method <- 3
+
+  ## methods
+  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.num = 100,
+                              relative.err.epsilon = 1e-6)
+  m.lm <- method_lm()
+  m.pca <- method_PCAlm(K = K.method)
+  m.cate <- method_cate(K = K.method)
+  m.famt <- method_famt(K.method)
+  m.sva_irw <- method_sva(K.method, method = "irw")
+  m.sva_twostep <- method_sva(K.method, method = "two-step")
+  m.oracle <- method_oracle()
+
+  methods <- m.ridgeLfmm * param(force = FALSE, save = TRUE) +
+    m.lm * param(force = FALSE, save = TRUE) +
+    m.pca * param(force = FALSE, save = TRUE) +
+    m.cate * param(force = FALSE, save = TRUE) +
+    m.lasso * param(force = FALSE, save = TRUE) +
+    m.oracle * param(force = FALSE, save = TRUE) + 
+    m.sva_twostep * param(force = FALSE, save = TRUE) +
+    m.sva_irw * param(force = FALSE, save = TRUE)
+
+
+  df.res <- tibble()
+  for (m in methods) {
+    m.res <- ExpRmouline(m, dat)
+    df.res <- expectedFDR_trueFDR_power(pvalue = m.res$pvalue, dat$outlier) %>%
+      mutate(method = m$name) %>%
+      rbind(df.res)
+  }
+
+
+
+
+  pl <- ggplot(df.res, aes(x = true.power, y = 1 - true.fdr,
+                           color = method)) +
+    geom_smooth() +
+    ylab("1 - FDR") +
+    xlab("Puissance")
+#+end_src
+
+*On compare les méthodes*
+
 - lm
 - lmPCA
 - sva-twostep
@@ -1240,11 +1459,9 @@ On compare les méthodes :
 - ridgeLFMM
 - lassoLFMM
 
-Critère
-- AUC : aire sous la courbe 
+*Critère*
 
-mettre des images ??? oui comme en plus j'ai introduit le FDR c'est facile d'en
-parler 
+- AUC : aire sous la courbe précision (1 - FDR) $\times$ rappel (puissance)
 
 *** Notes                                                        :noexport:
 On passe sous silence le facteur d'inflation !! On considère que tout le monde
@@ -1275,7 +1492,8 @@ est recalibré pour simplifier.
   ## auc
   toplot <- auc.df %>%
     group_by(method, rho.c) %>%
-    summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N))
+    summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N)) %>%
+    dplyr::filter(rho.c %in% c(0.5, 0.8, 1.0))
   auc.rho.pl <- ggplot(toplot, aes(x = as.factor(rho.c), y = auc.mean, fill = method)) +
     geom_bar(position = "dodge", stat = "identity") +
     geom_errorbar(aes(ymin = auc.mean - se,
@@ -1295,12 +1513,9 @@ est recalibré pour simplifier.
                                         height = 3)
 #+end_src
 
-
-Enlever 0.1 et 0.3 (les cas interessant)
-
 [[file:../OUTPUT/Rplots/lfmm_method_comp_slides.pdf]]
 
-** Étude d'association entre des données génétiques et un gradient environnemental
+** Étude d'association entre des données génétiques et un gradient climatique
 
 #+NAME: code:lfmm_geas_scree
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_screeplot_CV][code:eas_screeplot_CV]]
@@ -1340,30 +1555,75 @@ Enlever 0.1 et 0.3 (les cas interessant)
 
 *** Notes                                                        :noexport:
 Retour sur l'exemple
-** Étude d'association entre des données génétiques et un gradient environnemental
+** Étude d'association entre des données génétiques et un gradient climatique
 
 #+NAME: code:lfmm_geas_PCs_slide
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_PCs][code:eas_PCs]]
 #+begin_src R 
   library(MaTheseR)
+  library(cowplot)
   MaTheseR.params <- get_MaTheseRparams()
 
-  pl.leg <- readRDS("../OUTPUT/Expr/eas_pc_toprint.rds")
+  ## get res
+  rownames.Y <- readRDS("../Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.rownames.rds")
+  expr <- readRDS("../OUTPUT/Expr/Eas_U_ridgeLFMM_K14.rds")
 
-  pl <- pl.leg$pl
-  mylegend <- pl.leg$mylegend
+  ## get indiv information
+  indiv.df <- readRDS("../Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df.rds")
 
+  ## plot
+  U.df <- as_tibble(expr$U) 
+  colnames(U.df) <- paste0("PC",1:14)
+  U.df <- U.df %>% cbind(indiv.df) %>% as_tibble() %>%
+    mutate(Population = pop)
+
+  pl2 <- ggplot(U.df, aes(x = PC4, PC5, color = Population)) +
+    geom_point() +
+    xlab("Var. latente 4") +
+    ylab("Var. latente 5") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none")
+  pl3 <- ggplot(U.df, aes(x = PC6, PC7, color = Population)) +
+    geom_point() +
+    xlab("Var. latente 6") +
+    ylab("Var. latente 7") +
+    MaTheseR.params$gtheme+
+    theme(legend.position = "none")
+  pl4 <- ggplot(U.df, aes(x = PC8, PC9, color = Population)) +
+    geom_point() +
+    xlab("Var. latente 8") +
+    ylab("Var. latente 9") +
+    MaTheseR.params$gtheme+
+    theme(legend.position = "none")
+  pl5 <- ggplot(U.df, aes(x = PC10, PC11, color = Population)) +
+    geom_point() +
+    xlab("Var. latente 10") +
+    ylab("Var. latente 11") +
+    MaTheseR.params$gtheme+
+    theme(legend.position = "none")
+
+
+    ## plot for thesis
+  mylegend <- g_legend(pl2 + theme(legend.position = "bottom") +
+                       guides(color = guide_legend(nrow = 2)))
+  pl <- plot_grid(pl2,
+                  pl3,
+                  pl4,
+                  pl5,
+                  nrow = 2)
   pl.leg <- drawable(function() {
-    gridExtra::grid.arrange(pl,
-                            mylegend, nrow=2, heights=c(10, 2))
+      gridExtra::grid.arrange(pl,
+                              mylegend, nrow=2, heights=c(10, 2))
   })
+  pl.leg$pl <- pl
+  pl.leg$mylegend <- mylegend
 
 
   ThesisRpackage::Plots_export_tikz_pdf(pl.leg,
                                         basename.output = "lfmm_geas_pc_slides",
                                         env = MaTheseR.params,
-                                        height = 5,
-                                        width = 7.2)
+                                        height = 3.3,
+                                        width = 5.4)
 #+end_src
 
 [[file:../OUTPUT/Rplots/lfmm_geas_pc_slides.pdf]]
@@ -1371,8 +1631,7 @@ Retour sur l'exemple
 *** Notes                                                        :noexport:
 les plots en étoiles
 Enlever les lettres !!
-
-** Étude d'association entre des données génétiques et un gradient environnemental
+** Étude d'association entre des données génétiques et un gradient climatique
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
@@ -1389,8 +1648,9 @@ Enlever les lettres !!
 Dire pk il reste seulement ces méthodes
 diagramme de venne : montre que tout le monde ne fait pas pareil
 Les candidats détecté par lassoLFMM, ridgeLFMM et cate 
-** Étude d'association entre des données génétiques et un gradient environnemental
+** Étude d'association entre des données génétiques et un gradient climatique
 
+#+LATEX: \begingroup\fontsize{9}{9}\selectfont
 #+LATEX: \rowcolors{2}{gray!25}{white}
 #+NAME: code:geas_table_print
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:geas_table][code:geas_table]]
@@ -1404,8 +1664,7 @@ Les candidats détecté par lassoLFMM, ridgeLFMM et cate
   ## table.df %>% names() %>% paste0(collapse = "|")
 
   table.df %>%
-    xtable(align = "lp{4cm}ll", type = "latex", label = "table:geas",
-           caption = "{\\bf SNPs associés avec un gradient climatique qui ont été associés avec des phénotypes dans d'autres études.} SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\\%$.") %>%
+    xtable(align = "lp{4cm}ll", type = "latex", label = "table:geas") %>%
     print(include.rownames=FALSE,
           sanitize.colnames.function=identity,
           sanitize.text.function=identity,
@@ -1416,7 +1675,7 @@ Les candidats détecté par lassoLFMM, ridgeLFMM et cate
 #+RESULTS: code:geas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Tue Nov 14 15:53:24 2017
+% Wed Nov 15 14:32:05 2017
 \begin{table}[ht]
 \centering
 \begin{tabular}{p{4cm}ll}
@@ -1441,12 +1700,12 @@ rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\
   rs17158483 & lassoLFMM & Obesity-related traits \\ 
    \hline
 \end{tabular}
-\caption{{\bf SNPs associés avec un gradient climatique qui ont été associés avec des phénotypes dans d'autres études.} SNPs présents dans l'union des SNPs détectés par les méthodes lassoLFMM, ridgeLFMM, cate et PCAlm pour un le FDR à $1\%$.} 
 \label{table:geas}
 \end{table}
 #+END_EXPORT
 
 #+LATEX:\rowcolors{2}{}{}
+#+LATEX: \endgroup
 
 ** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
 :LOGBOOK:
@@ -1504,6 +1763,8 @@ en particulier modifier sa transcription en protéine.
 \end{figure}
 #+END_EXPORT
 ** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+
+#+LATEX: \begingroup\fontsize{9}{9}\selectfont
 #+LATEX: \rowcolors{2}{gray!25}{white}
 #+NAME: code:ewas_table_print
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:ewas_table][code:ewas_table]] 
@@ -1515,7 +1776,6 @@ en particulier modifier sa transcription en protéine.
   ewas.table %>%
     xtable(align = "lllllcccc",
            digits = -2, type = "latex",
-           caption = "{\\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \\pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \\citep{Zou_2014, Rahmani_2016}",
            label = "table:ewas") %>%
     print(include.rownames=FALSE,
           sanitize.text.function=identity)
@@ -1525,7 +1785,7 @@ en particulier modifier sa transcription en protéine.
 #+RESULTS: code:ewas_table_print
 #+BEGIN_EXPORT latex
 % latex table generated in R 3.4.0 by xtable 1.8-2 package
-% Tue Nov 14 16:28:21 2017
+% Wed Nov 15 14:30:37 2017
 \begin{table}[ht]
 \centering
 \begin{tabular}{llllcccc}
@@ -1553,55 +1813,59 @@ ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\
   cg05874806 & 2 & 102350276 & MAP4K4 & 1.1e-06 & 1.1e-06 & 4.7e-07 & 5.6e-07 \\ 
    \hline
 \end{tabular}
-\caption{{\bf Sites de méthylation associés avec la maladie polyarthrite rhumatoïde (EWAS).} \pvalues des candidats détectés par les méthodes PCAlm, lassoLFMM, ridgeLFMM et cate pour un taux de fausse décourverte controlé à 1$\%$ pour l'EWAS. Les Sites de méthylation en gras sont les candidats de \citep{Zou_2014, Rahmani_2016}} 
 \label{table:ewas}
 \end{table}
 #+END_EXPORT
 
-
 #+LATEX:\rowcolors{2}{}{}
+#+LATEX: \endgroup
 
 * Conclusions
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: slide-title="Conclusions et perspectives"
 :END:
+
+#+BEGIN_EXPORT latex
+\frame{\sectionpage}
+#+END_EXPORT
+
 ** Deux logiciels                                                 :noexport:
 tess3r et lfmm
 de la factorisation de matrices
 ** =tess3r=
 
 - Package R
+- Nouveau modèle pour l'estimation de la structure génétique des populations à
+  partir de données génétique et géographique
+- Deux algorithmes pour l'inférence des paramètres
+- Même precision statistique que le logiciel bayésien  =TESS= 2.3 
+- Algorithme 30 fois plus rapide que =TESS= 2.3
+- Visualisation de la structure génétique de population dans l'espace
+  
+*** Notes                                                        :noexport:
 #+begin_src R :exports both
   # install.packages("devtools")
   devtools::install_github("bcm-uga/TESS3_encho_sen")
 #+end_src
-- Nouveau modèle pour l'estimation de la structure génétique des populations à
-  partir de données génétique et géographique
-- Deux algorithmes pour l'inférence des paramètres
-- Même precision statistique que le logiciel bayesien  =TESS= 2.3 
-- Algorithme 30 fois plus rapide que =TESS= 2.3
-- Visualisation de la strucuture génétique de population dans l'espace
-
 ** =lfmm=
-
 - Package R
+- Deux nouvelles méthodes d'estimation des facteurs de confusion pour corriger
+  les études d'association
+- Résultats théoriques sur la convergence des algorithmes
+- Sur les simulations même puissance que l'oracle
+- Sur des données réelles les méthodes reposant sur le modèle mixte à facteurs
+  latents découvre plus d'association
+- Sur les données réelles les associassions découvertes peuvent varier largement
+  entre les méthodes
+
+*** Notes                                                        :noexport:
+
 #+begin_src R :exports both
   # install.packages("devtools")
   devtools::install_github("bcm-uga/lfmm")
 #+end_src
-- Deux nouveaux algorithmes d'estimation pour les modèles de régression à facteur
-  latents
-- Résultats théorique sur la convergence des algorithmes
-- Sur les simulations même puissance que l'oracle et que la méthode cate
-- Sur des données réelles les méthodes reposant sur le modèle de regression à
-  facteurs latents découvre plus d'association.
-- Sur les données réelles les associassions découvertes peuvent varier largement
-  entre les méthodes
-
 ** perspectives                                                   :noexport:
 - perspective de maintient des logiciel 
 - utilisation d'approche basé sur la factorisation matriciel à d'autre étude, 
 ex RNA-Seq et données méthylation au débit => s'attendre a des questions
 * Merci de votre attention
-* Bibliography
-bibliography:../biblio.bib

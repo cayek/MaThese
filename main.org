@@ -12885,7 +12885,6 @@ CLOSED: [2017-09-16 sam. 16:02]
 #+end_src
 
 #+RESULTS:
-[[./OUTPUT/Rplots/ewas_venn.png]]
 
 ***** DONE Table 
 CLOSED: [2017-09-27 mer. 14:57]
