@@ -138,21 +138,21 @@ https://www.genome.gov/sequencingcostsdata/
 *** Notes                                                        :noexport:
 
 #+BEGIN_NOTES
-L'ADN une très longue séquence de nucléotide
-Les séquenceurs permettent de savoir pour chaque individu sa séquence nuclotyde.
-On s'intéresse aux endroits du génome ou on a pu observé un polymorphisme entre
-les individus entre les individu. 
-CAD que à une position données de l'ADN tout les individus n'on pas le même
-nucléotyde.
-Ce sont ces positions ou on pu observé des allèle différent entre les individus
-qui nous interesse.
-Ce qu'on appel allèle est un variant d'un nucléotyde 
-Par exemple a cette position il y 2 allèle, l'allèle A et l'allèle T
-Enfin une hypothèse importante est que l'on suppose qu'il seulement possible
-d'observé deux allèle possibles pour une position données. 
-Ce n'est pas si réducteur car pour les espece que l'on a considéré dans cette
-thèse la probabilité que deux mutation de l'ADN apparaisse deux fois au même
-endroit est très faible.
+- L'ADN une très longue séquence de nucléotide Les séquenceurs permettent de
+  savoir pour chaque individu et chaque locus (un locus est une position sur
+  l'adn) son nuclotyde.
+- On s'intéresse aux locus ou on a pu observé un polymorphisme entre les individus . 
+- CAD que à une position données de l'ADN tout les individus n'on pas le même nucléotyde. 
+- les version différent d'un meme gêne sont appelé des allèle est un variant
+  d'un nucléotyde
+- Ce sont ces positions ou on pu observé des allèle différent entre les
+  individus qui nous interesse.
+- Par exemple a cette position il y 2 allèle, l'allèle A et l'allèle T
+- Enfin une hypothèse importante est que l'on suppose qu'il seulement possible
+  d'observé deux allèle possibles pour une position données.
+- Ce n'est pas si réducteur car pour les espece que l'on a considéré dans cette
+  thèse la probabilité que deux mutation de l'ADN apparaisse deux fois au même
+  endroit est très faible.
 #+END_NOTES
 
 [[file:./img/457px-Dna-SNP.svg.png]]
@@ -196,11 +196,11 @@ compté 0 1 ou 2 fois l'allèle muté.
 
 - *=tess3r=*
   
-   Inférence des coefficients de métissage à l'aide de données géographiques
+  Inférence des coefficients de métissage à l'aide de données géographiques
   
 - *=lfmm=*
 
-   Correction des facteurs de confusion pour les études d'association
+  Correction des facteurs de confusion pour les études d'association
 
 *** Notes                                                        :noexport:
 #+BEGIN_NOTES
@@ -596,17 +596,12 @@ Ensuite, nous introduisons la régularisation
 \frac{1}{2} \sum_{i,j = 1}^n  \W_{i,j}  \| \Q_{i,.} - \Q_{j,.} \|^2
 \end{equation*}
 
-La régularisation peut se réécrire 
-\begin{equation*}
-{\rm Tr} (\Q^{T} \bm{\Gamma} \Q)
-\end{equation*}
-
 ** Problème d'optimisation des moindres carrés
 
 Pour estimer les matrice d'ascendance on cherche à optimiser la fonction 
 
 \begin{equation*}
-\mathcal{L}(\Q, \mathbf{G}) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \alpha {\rm Tr} (\Q^{T} \bm{\Gamma} \Q)
+\mathcal{L}(\Q, \mathbf{G}) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \frac{\alpha}{2} \sum_{i,j = 1}^n  \W_{i,j}  \| \Q_{i,.} - \Q_{j,.} \|^2
 \end{equation*}
 avec les contraintes
 
@@ -618,6 +613,10 @@ avec les contraintes
 \mathbf{G} \geq 0 \, , \quad \sum_{j=0}^{d} {\bf G}_{(d+1)\ell + j, k} = 1, \quad \ell = 1...p.
 \end{equation*}
 
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- fonction convexe quand G est fixé et inversement
+#+END_NOTES
 ** Algorithme de descente par blocs de coordonnées
 *** graphe
 :PROPERTIES:
