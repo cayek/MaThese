@@ -13,7 +13,6 @@
 #+LATEX_HEADER: \input{setup.tex}
 #+LATEX_HEADER: \input{../notations.tex}
 
-
 #+TITLE: Méthodes de factorisation matricielle pour la génomique des populations et les tests d'association
 #+AUTHOR: Kévin CAYE
 #+LANGUAGE: fr
@@ -57,6 +56,8 @@
 </section>
 #+END_EXPORT
 
+#+LATEX: \setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
 * Install                                                          :noexport:
 Install with spacemacs see [[https://github.com/syl20bnr/spacemacs/tree/master/layers/%252Bemacs/org#revealjs-support][Reveal.js support]].
 Some sources: 
@@ -83,13 +84,18 @@ see : [[http://orgmode.org/worg/exporters/beamer/tutorial.html][Writing Beamer p
 
 I use =org-beamer-mode= for shortcut.
 
+* TODO A faire                                                     :noexport:
+:LOGBOOK:
+- State "TODO"       from              [2017-11-16 jeu. 16:51]
+:END:
+- [ ] page de garde
+- [ ] numbering
+
 * Introduction
 :PROPERTIES:
 :REVEAL_EXTRA_ATTR: slide-title="Introduction"
 :END:
-
-
-** La génomique
+** Volume des données en génétique
 
 #+ATTR_LATEX: :width nil :height 0.8\textheight
 [[file:./img/costpergenome_2017.jpg]]
@@ -111,12 +117,18 @@ les analyser et répondre à des question biologique.
 https://www.genome.gov/sequencingcostsdata/
 
 ** Les données génétiques
+:LOGBOOK:
+- Note taken on [2017-11-16 jeu. 16:54] \\
+  Sources : 
+  - nb of SNPs et taille du génome : https://ghr.nlm.nih.gov/primer/genomicresearch/snp
+:END:
 
-- L'ADN est une longue séquence de nucléotides : A, C, T, G. 
+- L'ADN est une longue séquence de nucléotides : A, C, T, G (3 milliards chez l'humain)
 
-- On s'intéresse aux polymorphismes d'un seul nucléotide (SNPs)
+- Les données sont constituées de polymorphisme nucléotidique appelé SNPs (10
+  millions chez l'humain)
 
-- On suppose qu'il y a seulement deux allèles possibles par position 
+- Il y a deux allèles possibles par locus
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
@@ -157,7 +169,7 @@ https://www.genome.gov/sequencingcostsdata/
 
 [[file:./img/457px-Dna-SNP.svg.png]]
 
-** Les données génétiques
+** Matrice de génotype
 
 Les données sont rangées dans une matrice :
 
@@ -173,9 +185,9 @@ $ \Y =
   0      & 0    &  2    &0& \cdots      & \cdots    &  \cdots \\
 \end{bmatrix}
 $
-\caption{{\bf Illustration d'une matrice de SNPs pour une espèce diploïde.}
-  Chaque élément de la matrice est le nombre de fois que l'allèle muté est
-  observé pour un individu donné à un locus donné.}
+\caption{{\bf Illustration d'une matrice de génotype.} Chaque élément de la
+  matrice est le nombre de fois que l’allèle muté est observé pour un individu
+  donné à un locus donné}
 \label{fig:matrix}
 \end{figure}
 #+END_EXPORT
@@ -194,26 +206,46 @@ compté 0 1 ou 2 fois l'allèle muté.
 #+END_NOTES
 ** Problématiques
 
-- *=tess3r=*
-  
-  Inférence des coefficients de métissage à l'aide de données géographiques
-  
-- *=lfmm=*
+*Inférence des coefficients de métissage à l'aide de données géographiques*
 
-  Correction des facteurs de confusion pour les études d'association
+- Kévin Caye, Timo Deist, Helena Martins, Olivier Michel, Olivier François
+  (2016) TESS3: fast inference of spatial population structure and genome scans
+  for selection. /Molecular Ecology Resources/ 16 (2), 540-548. DOI :
+  [[http://dx.doi.org/10.1111/1755-0998.12471][10.1111/1755-0998.12471]].
+- Kévin Caye, Flora Jay, Olivier Michel, Olivier Francois (2017). Fast
+  Inference of Individual Admixture Coefficients Using Geographic Data. Accepted
+  to /The Annals of Applied Statistics/. DOI : [[http://dx.doi.org/10.1101/080291][10.1101/080291]].
+- Kévin Caye, Olivier François, Flora Jay. =tess3r= : An R package for
+  estimating and visualizing spatial population structure based on
+  geographically constrained non-negative matrix factorization and population
+  genetics.
+
+** Problématiques
+
+*Correction des facteurs de confusion pour les études d'association*
+
+- Olivier François, Kevin Caye. Genome-wide association studies in
+  geographically structured populations. /Molecular Ecology Resources/, papier
+  invité. En révision.
+- Kevin Caye, Olivier François. Optimal confounder adjustment in genome and
+  epigenome-wide association studies. En préparation.
+- Kévin Caye, Olivier François. =lfmm= : An R package for correcting
+  association studies for confounding factors.
 
 *** Notes                                                        :noexport:
 #+BEGIN_NOTES
 Au cours de ma thèse nous nous sommes intéresse à deux problématiques
-statistiques. Pour chacune de ces problématique nous avons proposé un package R.
+statistiques. Pour chacune de ces problématique nous avons dévellopé des
+méthodes que l'on a implémenté dans un package R.
 
 Dans un premier temps nous nous sommes intéressé à l'inférence des coefficient
 de métissage a partir des données génétique et de données géographique. 
-Pour cet problématique nous avons proposé le package tess3r.
+Pour cet problématique nous avons publié ... et proposé le package tess3r.
 
-Dans un deuxième temps nous nous somme interessé à la correction des facteur de
+Dans un deuxième temps nous nous somme intéressé à la correction des facteur de
 confusion qui apparaisse des les étude d'association génétique.
-Nous avons proposé pour cette problématique le package lfmm.
+Nous avons proposé les articles .... qui sont en cour de publication ainsi que
+le package lfmm qui implémente nos méthodes
 #+END_NOTES
 * Inférence des coefficients de métissage à l'aide de données géographiques
 :PROPERTIES:
