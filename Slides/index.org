@@ -1374,7 +1374,6 @@ où
 #+END_NOTES
 ** Estimateur des moindres carrées régularisé en norme L2
 
-
 *Théorème 1*
 
 Pour $\lambRidge$ strictement supérieur à zéro, les estimateurs des paramètres
@@ -1393,7 +1392,6 @@ fonction objectif $\Lridge$.
 #+BEGIN_NOTES
 - La preuve est purement calculatoire
 #+END_NOTES
-
 
 ** Estimateur des moindres carrées régularisé en norme L1
 

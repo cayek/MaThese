@@ -12223,7 +12223,7 @@ CLOSED: [2017-07-27 jeu. 11:39]
 - State "TODO"       from              [2017-07-27 jeu. 11:32]
 :END:
 
-#+NAME: code:ewas_venn
+#+NAME: code:ewas_venn0
 #+CAPTION: Dépend de [[ewas_load_res]]
 #+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
   toplot <- expr$df.res %>%
@@ -12894,7 +12894,7 @@ CLOSED: [2017-09-27 mer. 14:57]
 :END:
 
 #+NAME: code:ewas_table
-#+CAPTION: Dépend de [[ewas_venn]]
+#+CAPTION: Dépend de [[code:ewas_venn]]
 #+begin_src R
   library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
 
