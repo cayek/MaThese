@@ -96,6 +96,7 @@ I use =org-beamer-mode= for shortcut.
 - [ ] test time, si j'ai le temps ajouté celiac
 - [ ] se renseigner sur RNA seq et méthylation haut débit [[*perspectives][perspectives]] (mettre
   de référence dans cette partie)
+- [ ] mettre des breaks
 * FAQ                                                              :noexport:
 ** tess3
 *** Pourquoi cette fonction de poid pour le graphe ? Tester d'autre ?
