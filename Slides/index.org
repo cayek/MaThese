@@ -83,13 +83,165 @@ Some sources:
 see : [[http://orgmode.org/worg/exporters/beamer/tutorial.html][Writing Beamer presentations in org-mode]]
 
 I use =org-beamer-mode= for shortcut.
-
 * TODO A faire                                                     :noexport:
 :LOGBOOK:
 - State "TODO"       from              [2017-11-16 jeu. 16:51]
 :END:
 - [ ] page de garde
 - [ ] numbering
+- [ ] question de convergence des estimateurs, regarder cate
+- [ ] Les EM ? cv vers un minimum local ?
+- [ ] se préparer la question sur le choix de K et des autres paramètre en
+  général. Il se passe quoi si K est trop grand ?
+* FAQ                                                              :noexport:
+** tess3
+*** Pourquoi cette fonction de poid pour le graphe ? Tester d'autre ?
+*** Quelle est l'influence de $\sigma$ sur les estimations ?
+*** Quelle est l'influence de $\alpha$ sur les estimations ?
+*** Pourquoi une matrice laplacienne apparait ici ?
+C'est purement numérique... j'ai pas d'intuition.
+*** Est ce que tess3 est sensible au LD ?
+*** Est ce que tess3 est sensible à la taille des pops ?
+Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
+*** A quoi sert la modélisation disjonctive ?
+A pas faire l'hypothèse de hardy weinberg, on éstime les fréquence de chaque
+génotype plutot que la fréquence d'allèle.
+*** Pk il y a des bandes qui se forme dans les bars plots (bar plot de A.thaliana)?
+- C'est un artefacte de la méthode ? Il faudrait visualiser ce que donne une
+  méthode bayésienne sur ce dataset.
+- ça pourrait être résolu en ajoutant une régularisation sparse
+** lfmm
+*** Pourquoi ne pas en dire plus sur les candidats trouvé pour la GWAS, EWAS et GEAS ?
+C'est la que s'arrète mon travail ! Je suis pas biologiste ! C'est au biologiste
+de decider si ce que j'ai trouvé est intéressants !! 
+
+C'est frustrant ? oui
+ 
+*** Pourquoi PCAlm retrouve mieux les candidats sur l'EWAS et GWAS chrm 6 et pas sur GWAS autre chrm
+Je ne sais pas comment les candidats on été trouvé dans les autres études. Je ne
+peux pas me comparer a elle dirrectement !! Dans dubois et al je ne sais pas
+comment ils ont composé leur liste.
+
+Tout ce que je peut dire c'est que PCAlm sur les simulations passe a coté de
+certain candidats !!
+
+*Donc* 
+
+Sur les données réelles
+- quand PCAlm trouve plus vite les candidats que les autre c'est que peu être il
+  est passé a coté d'outlier
+- quand PCAlm est derriere c'est qu'il passe a coté de ces outlier 
+
+:D
+
+Tout ce que je peux dire c'est que ce que je trouve en plus sont pas abérant: 
+- dans l'ewas il sont dans des gènes interessant ?
+- dans la gwas ils sont dans des gènes interesant ?
+- pour la GEAS on trouve des zones annotés ?
+
+#  LocalWords:  GWAS EWAS GEAS hyperparamètres décorrélé décorrélées ridgeLFMM
+#  LocalWords:  lassoLFMM Thaliana Arabidopsis thaliana variogramme ploïdie
+
+# Local Variables:
+# eval: (load-file "./these-publish.el")
+# End:
+#  LocalWords:  variogrammes
+*** Comment on se compare avec les modèles mixes ?
+En théorie les modèle mixe c'est en n^2p pour calculer la matrice de kindship.
+lfmm c'est du npk !! 
+
+La grande différence est dans le calcule de l'acp
+
+Du coups la matrice de kindship pourrait etre calculé avec l'acp et du coup on a
+aussi un complexité faible pour le smodèle mixte :D
+*** Qu'est ce qu'explique les variables latentes ?
+*** Comment le choix du model (model pour le test) influence les étude d'association ?
+j'ai utilisé un lm, est ce bien adapté pour des variables discrete ? 
+Pourrait-on utiliser les variables latentes dans un modèle logistique ?
+*** Le centering + scaling des données ?
+Je crois que j'ai oublié d'en parler... a verifier !!
+** Général
+*** Les types de mutation génétiques
+indel : insertion délétion
+SNPs : 
+mircosat : répétition
+*** Hyper paramètre sur le scree plot et décroissance de l'erreur de prédiction
+On ne s'arrête pas au même endroit !!!!
+- scree plot c'est pour la PC avant les PC qui explique le bruit
+- pour CV c'est le coude !!
+*** Les gamètes :D
+par humain il y a 2 ^ 23 gamète possibles car on 23 paire de chromosomes.
+*** Pk pas un EM ?
+Ce qu'on fait c'est pas un peut des EM mais pas dans un cadre probabiliste ? 
+
+Nous on a changé de paradigme ! plus dans un cadre probabiliste.
+
+La question de l'EM a pas trop lieu d'etre, il faut une vraisemblance pour un EM.
+*** Un EM c'est quoi ?
+[[https://fr.wikipedia.org/wiki/Algorithme_esp%25C3%25A9rance-maximisation][Algorithme espérance-maximisation]]
+
+Ca maximise la vraisemblance. Je comprends que c'est venu remplacer le MCMC des
+modèle probabiliste.
+*** C'est quoi un Monte Carlo EM ?
+*** Un MCMC c'est quoi ?
+[[https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo][Markov chain Monte Carlo]]
+Ca echantillone une loi.
+
+Exemple d'algo MCMC : 
+- Gibs sampler
+
+*** L'inference variationnel bayesienne c'est quoi ?
+[[https://en.wikipedia.org/wiki/Variational_Bayesian_methods][Variational Bayesian methods]]
+
+*** Empirical bayes c'est quoi ?
+[[https://en.wikipedia.org/wiki/Empirical_Bayes_method][Empirical Bayes method]]
+C'est plutot une un modèle :D
+Un modèle je dirais, l'algo ca peut être n'importe quoi genre EM etc
+*** Rna-seq et DNA methylation et eQTL, c'est quoi ?
+Et surtout les pbs d'assocaition ??
+En gros si on me demande les perspectives, je réponds quoi ?
+*** Résultats de convergence des estimateurs ? Résultats théorique de stat ?
+* Retours des rapporteurs                                          :noexport:
+** R1
+*** Intro
+- le chap aurait gagné a élargir son spectre de rèf
+- intro un peu courte
+*** tess3r
+- comparaison avec d'autres logiciels
+*** lfmm
+- pour le calcul de la stat de test, comparaison avec d'autre approche. (Le
+  modèle est paramétrique (donc on pourrait calculer la stat de test). Mais avec
+  une vraisemblance pénalisé c'est compliqué !)
+- comportement étrange des sva-irw
+- Pas de précision sur l'adaptation de la méthode au données cas-temoin
+** R2
+*** Intro
+- volume du manuscrit trop faible
+- Intro trop courte pour :
+  - détail des notions stat et bio
+  - présentation détaillée des méthodes
+*** tess3r
+- Choix de modélisation et d'algo pas assez motivé
+- plus de méthodes :D
+- plus de jeux de données :D
+- discussion des hyper param trop rapide
+- pas convaincu sur le choix des params
+- étude de sensibilité des params pour être convaincu
+**** Réponses
+
+- *Motivation du modèle et des algos :* ...
+
+- *Hyperparamètres :* Une étude sensibilité aide pas à choisir un paramètre.
+  L'objectif est de proposé une solution concrète. Il faut des solutions
+  concrètes pour le choix des paramètres.
+
+  Une étude de sensibilité comme par exemple dans cite:DengCai2011 montre comment
+  réagit le modèle en fonction des param sur un dataset en particulier.
+
+*** lfmm
+- chap sur le choix des hyper paramètres est peu éclairant
+*** ccl
+- il aurait voulu une présentation en détails des paquets et appli web :D
 
 * Introduction
 :PROPERTIES:
@@ -171,7 +323,7 @@ https://www.genome.gov/sequencingcostsdata/
 
 ** Matrice de génotype
 
-Les données sont rangées dans une matrice :
+Les données sont rangées dans une matrice de taille $n \times p$ :
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
@@ -239,8 +391,9 @@ statistiques. Pour chacune de ces problématique nous avons dévellopé des
 méthodes que l'on a implémenté dans un package R.
 
 Dans un premier temps nous nous sommes intéressé à l'inférence des coefficient
-de métissage a partir des données génétique et de données géographique. 
-Pour cet problématique nous avons publié ... et proposé le package tess3r.
+de métissage a partir des données génétique et de données géographique. Pour
+cette problématique nous nous apuions sur les travaux publié ... et
+le package tess3r.
 
 Dans un deuxième temps nous nous somme intéressé à la correction des facteur de
 confusion qui apparaisse des les étude d'association génétique.
@@ -335,14 +488,17 @@ Pressions évolutives :
 
 - Représentation synthétique de données multivariées 
 
-- Étude de l'histoire démographique des populations 
+- Étude de l'histoire démographique des populations citep:Li_2008
 
-- Étudier la répartition des populations dans leur habitat 
+- Étude d'association de gènes avec une maladie citep:marchini2004effects
 
-- Facteur de confusion dans les études d'association 
-
-- Médecine personnalisée : calcul d'un score de risque génétique pour une maladie 
-
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- Pour étudier les cause génétiques d'une maladi a partir de données génétique
+  il est indispensable de corriger pour la structure de population. On dit que
+  la structure de population est un facteur de confusion, on parlera plus en
+  détail des facteur de confusion dans la deuxième parti
+#+END_NOTES
 ** Visualisation de la structure génétique des populations avec l'ACP
 
 #+NAME: code:pca
@@ -380,7 +536,7 @@ Pressions évolutives :
 #+ATTR_HTML: :align center :style width:80%
 [[file:../OUTPUT/Rplots/tess3_intro_pca_slides.pdf]]
 
-** Le modèle du logiciel =structure= citep:Pritchard2000
+** Le modèle de métissage citep:Pritchard2000
 
 #+HTML: <div style="float:left;width:50%;margin-top:50px;">
 #+LATEX: \begin{columns}
@@ -431,7 +587,7 @@ où
 #+LATEX:\rowcolors{2}{}{}
 #+LATEX: \endgroup
 
-** Visualisation des coefficients de métissage
+** Visualisation des coefficients de métissage ($\matr{Q}$)
 
 #+NAME: code:pca
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:tess3_intro_plot][code:tess3_intro_plot]]
@@ -506,12 +662,16 @@ où
 | Méthode   | Modèle                                           | Algorithme                        | Référence            |
 |-----------+--------------------------------------------------+-----------------------------------+----------------------|
 | TESS      | bayésien                                         | MCMC                              | citet:CHEN_2007      |
-| GENELAND  | bayésien                                         | MCMC                              | citet:phdGuedj       |
+| GENELAND  | bayésien                                         | MCMC                              | citet:GUEDJ_2011     |
 | BAPS      | bayésien                                         | optimisation stochastique         | citet:Corander2008   |
-| *TESS3*   | factorisation matricielle régularisée sur graphe | moindres carrés alternés projetés |                      |
+| *TESS3*   | factorisation matricielle régularisée sur graphe | moindres carrés alternés projetés | citet:Caye_2016      |
 | conStruct | bayésien                                         | MCMC                              | citet:Bradburd189688 |
 #+LATEX:\rowcolors{2}{}{}
 
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- de nombreuse comparaison on été faite entre ces méthodes bayésiennes
+#+END_NOTES
 ** Estimation des matrices d'ascendance génétique
 
 citet:Frichot_2014 cherchent à décomposer la matrice de génotype :
@@ -530,10 +690,6 @@ où
 \end{equation*}
 
 ** Information géographique
-*** graph
-:PROPERTIES:
-:BEAMER_col: 0.5
-:END:
 
 #+NAME: code:map_graph_print
 #+CAPTION: Dépend de [[code:map]] [[code:map_graph]]
@@ -548,21 +704,21 @@ où
   coord <- readRDS("../Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9_coord.rds") 
 
   ## graph.df <- readRDS("../OUTPUT/Expr/slide_graph_df.rds")
-  graph.df <- tibble()
-  long <- c(0,10,15,3,16,-3, 18)
-  lat <- c(52,50,56,45,47,54,63)
-  n <- length(lat)
-  W.adj <- matrix(TRUE, n,n)
-  for (i in 1:n) {
-    graph.df <- graph.df %>%
-      rbind(tibble(longend = long[W.adj[i,]], latend = lat[W.adj[i,]], long = long[i], lat = lat[i]))
-  }
+  graph.df <- tibble() %>%
+    rbind(tibble(longend = 25.3,latend = 54.9,long = 25,lat = 50)) %>%
+    rbind(tibble(longend = 19.3,latend = 50,long = 25,lat = 50)) %>%
+    rbind(tibble(longend = 30.5,latend = 50.5,long = 25,lat = 50)) %>%
+    rbind(tibble(longend = 21,latend = 52.4,long = 25,lat = 50)) %>%
+    rbind(tibble(longend = 30,latend = 52.4,long = 25,lat = 50)) %>%
+    rbind(tibble(longend = 22.3,latend = 44.6,long = 25,lat = 50)) 
 
   ## plot
   pl <- readRDS("../OUTPUT/Expr/tess3_intro_map_slides_toplot.rds") +
     geom_segment(aes(x = long, y = lat, xend = longend, yend = latend),
                  color = "red",
                  data = graph.df)
+  pl
+
 
   ThesisRpackage::Plots_export_pdf(pl,
                                    basename.output = "tess3_intro_map_graph_slides",
@@ -571,9 +727,34 @@ où
                                    width = 3)
 #+end_src
 
+#+HTML: <div style="float:left;width:50%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.5\columnwidth}
+
 [[file:../OUTPUT/Rplots/tess3_intro_map_graph_slides.pdf]]
 
-**** Script                                                     :noexport:
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.5\columnwidth}
+#+HTML: <div style="float:left;width:40%;margin-top:50px;">
+
+Entre chaque individu $i$ et $j$, nous avons le poids de graphe
+\begin{equation*}
+\W_{i,j} = \exp( - {\rm dist}( x_i, x_j )^2/ \sigma^2)
+\end{equation*}
+
+où la fonction ${\rm dist}( x_i, x_j)$ est une distance entre les coordonnées géographique $x_{i}$ et $x_{j}$. 
+
+Ensuite, nous introduisons la régularisation
+\begin{equation*}
+\frac{1}{2} \sum_{i,j = 1}^n  \W_{i,j}  \| \Q_{i,.} - \Q_{j,.} \|^2
+\end{equation*}
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
+*** Script                                                       :noexport:
 #+NAME: code:map_graph
 #+CAPTION: Dépend de rien
 #+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
@@ -611,26 +792,13 @@ où
   pl + geom_segment(aes(x = long, y = lat, xend = longend, yend = latend, colour = "segment"), data = graph.df)
 #+end_src
 
-*** formule
-:PROPERTIES:
-:BEAMER_col: 0.5
-:END:
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- On introduis la pénalisation
+#+END_NOTES
+** Problème des moindres carrés
 
-Entre chaque individu $i$ et $j$, nous avons le poids de graphe
-\begin{equation*}
-\W_{i,j} = \exp( - {\rm dist}( x_i, x_j )^2/ \sigma^2)
-\end{equation*}
-
-où la fonction ${\rm dist}( x_i, x_j)$ est une distance entre les coordonnées géographique $x_{i}$ et $x_{j}$. 
-
-Ensuite, nous introduisons la régularisation
-\begin{equation*}
-\frac{1}{2} \sum_{i,j = 1}^n  \W_{i,j}  \| \Q_{i,.} - \Q_{j,.} \|^2
-\end{equation*}
-
-** Problème d'optimisation des moindres carrés
-
-Pour estimer les matrice d'ascendance on cherche à optimiser la fonction 
+Pour estimer les matrice d'ascendance on cherche à minimiser la fonction 
 
 \begin{equation*}
 \mathcal{L}(\Q, \mathbf{G}) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \frac{\alpha}{2} \sum_{i,j = 1}^n  \W_{i,j}  \| \Q_{i,.} - \Q_{j,.} \|^2
@@ -731,17 +899,16 @@ fournis de bonnes approximation de AQP.
 
 - L'étape de calcul de $\Q$ peut être séparé en $n$ moindres carré régularisé en
   norme $L_2$
-- Il n'y a pas de garantit théorique sur la convergence
 - Dans nos comparaisons, APLS fourni de bonnes approximations de AQP tout en
   étant plus rapide
 
 *Nous utilisons APLS dans la suite*
 
 ** Simulation de génotypes métissés spatialement
-*** graphe
-:PROPERTIES:
-:BEAMER_col: 0.5
-:END:
+
+#+HTML: <div style="float:left;width:50%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.5\columnwidth}
 
 #+BEGIN_EXPORT latex
 \begin{figure}[th!]
@@ -749,23 +916,34 @@ fournis de bonnes approximation de AQP.
 \input{cline_inkscape.pdf_tex}
 \end{figure}
 #+END_EXPORT
-*** texte                                                           :BMCOL:
-:PROPERTIES:
-:BEAMER_col: 0.5
-:END:
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.5\columnwidth}
+#+HTML: <div style="float:left;width:40%;margin-top:50px;">
 
 - La matrice $\matr{G}$ est simulée par un modèle de Wright à deux îles
 - La matrice $\Q$ est simulée selon un gradient longitudinal
 - Ma matrice $\Y$ est générée en tirant des gènes des deux populations sources
   avec des probabilités données par les coefficient de métissage
 
-On simule plusieurs génotype pour avoir plusieurs valeur de différenciation
-mesuré par 
+On simule plusieurs génotypes pour avoir plusieurs valeurs de différenciation
+mesurées par 
 \begin{equation*}
 F_{\rm ST} = \frac{1}{1 + 4N_0 m}
 \end{equation*}
 
-** Comparaison avec une méthode bayésienne TESS 2.3
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- m = proportion de migrant échangé par génération
+#+END_NOTES
+
+
+** Comparaison avec une méthode bayésienne TESS 2.3 citep:Caye_2015
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!t]
@@ -780,7 +958,7 @@ F_{\rm ST} = \frac{1}{1 + 4N_0 m}
     $\Q$ (figure A) et $\mathbf{G}$ (figure B)}. APLS était 30 fois plus rapide que TESS 2.3.}
 \end{figure}    
 #+END_EXPORT
-** Application à des données /Arabidopsis Thaliana/
+** Application à des données /Arabidopsis thaliana/
 
 On étudie 214k SNPs pour 1 095 écotypes européens des espèces végétales
 /A.thaliana/ citep:Horton_2012.
@@ -798,7 +976,7 @@ On étudie 214k SNPs pour 1 095 écotypes européens des espèces végétales
 
 [[file:../OUTPUT/Rplots/tess3_intro_map_slides.pdf]]
 
-** Choix des paramètres
+** Choix des paramètres d'échelle géographique ($\sigma$) et du nombre de groupes génétiques ($K$)
 
 #+NAME: code:tess3_AT_params
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:tess3_AT_params][code:tess3_AT_params]]
@@ -815,8 +993,6 @@ On étudie 214k SNPs pour 1 095 écotypes européens des espèces végétales
                                         width = 6.3)
 #+end_src
 
-
-#+CAPTION: Choix de $\sigma$ et $K$ pour l'algorithme APLS
 [[file:../OUTPUT/Rplots/tess3_AT_params_slides.pdf]]
 
 ** Carte des coefficients de métissage
@@ -847,7 +1023,7 @@ On étudie 214k SNPs pour 1 095 écotypes européens des espèces végétales
 
 *Objectif*
 
-Détecter les SNPs en relation avec une variable.
+Détecter les SNPs dont les fréquences sont corrélées à une variable d'intérêt
 
 #+BEGIN_EXPORT latex
 $$  
@@ -868,11 +1044,11 @@ $$
 $$
 #+END_EXPORT
 
-*Exemple*
+*Exemple de variable d'intérêt*
 
-- Maladie  : diabète, maladie cœliaque
-- Phénotype : la taille
-- Environnement : la température
+- Maladie  : diabète, maladie cœliaque citep:dubois2010multiple
+- Phénotype : la taille citep:wood2014defining
+- Environnement : la température citep:Frichot_2013
 
 ** Étude d'association entre des données génétiques et un gradient climatique 
 
@@ -933,11 +1109,11 @@ Données génétiques du projet 1000Genome
 - 1409 individus de 14 populations
 - 5397214 SNPs
 
-Variable climatique
+Variable d'exposition
 - données climatiques de la base WordClim
 - première composante principale
 
-*On veut identifier les SNPs associé au climat*
+*On veut identifier les SNPs associés au climat*
 
 #+HTML: </div>
 #+LATEX: \end{column}
@@ -1046,12 +1222,8 @@ $$
 H_0 : \beta_j = 0
 $$
 On réalise un *test de Student*
-$$
-t_j = \frac{\hat{\beta_j}}{\hat{\sigma}}
-$$
-où $\hat{\beta_j}$ et $\hat{\sigma}$ sont des estimations de l'effet et de son erreur standard.
 
-** Étude d'association entre des données génétiques et un gradient climatique
+** Histogramme des \pvalues de l'étude d'association entre des données génétique et un gradient climatique
 
 #+NAME: code:lfmm_qqplot
 #+CAPTION: Dépend de 
@@ -1089,24 +1261,28 @@ où $\hat{\beta_j}$ et $\hat{\sigma}$ sont des estimations de l'effet et de son 
 
 ** Modèles mixtes à facteurs latents
 
-#+NAME: code:conf_factor
-#+BEGIN_SRC dot :file img/conf_factor.png :exports results :eval no-export
-  graph {
-    graph [fontname = "serif"];
-    node [fontname = "serif"];
-    edge [fontname = "serif"];
-    U -- Y;
-    U -- X;
-  }
-#+END_SRC
 
+#+begin_src latex :file img/conf_factor.pdf :packages '(("" "tikz")) :border 1em :exports results :eval no-export
+  % Define block styles
+  \usetikzlibrary{shapes,arrows}
+  \tikzstyle{astate} = [circle, draw, text centered, font=\footnotesize, fill=blue!25]
+  \tikzstyle{rstate} = [circle, draw, text centered, font=\footnotesize, fill=red!25]
 
+  \begin{tikzpicture}[node distance=2.8cm]
+    \node [astate] (1) at (0,0) {$\matbf{Y}$};
+    \node [astate] (2) at (2,0) {$\matbf{X}$};
+    \node [rstate] (3) at (1,2) {$\matbf{U}$};
+    \path (1) edge (2)
+    (2) edge (3)
+    (1) edge (3)
+  \end{tikzpicture}
+#+end_src
 
 #+HTML: <div style="float:left;width:50%;margin-top:50px;">
 #+LATEX: \begin{columns}
 #+LATEX: \begin{column}{0.5\columnwidth}
 
-[[file:img/conf_factor.png]]
+[[file:img/conf_factor.pdf]]
 
 #+HTML: </div>
 #+LATEX: \end{column}
@@ -1119,10 +1295,11 @@ où $\hat{\beta_j}$ et $\hat{\sigma}$ sont des estimations de l'effet et de son 
 
 où 
 
-- $\matr{U}$ est la matrices des variables latentes
-- $\matr{V}$ est la matrices des effets des variables latentes
-- $\B$ est l'effet de la variable $\matr{X}$ sur le
-- $\E$ est la matrice de bruit résiduel
+- $\matr{U}$ est la matrices des variables latentes de taille $n \times K$
+- $\matr{V}$ est la matrices des effets des variables latentes $p
+  \times K$
+- $\B$ est l'effet de la variable $\matr{X}$ sur $\Y$ de taille $p \times 1$
+- $\E$ est la matrice de bruit résiduel de taille $n \times p$
 
 #+HTML: </div>
 #+LATEX: \end{column}
@@ -1153,7 +1330,7 @@ où
 \frac{\lambRidge}{2} \norm{\B}^{2}_{2}%
 \end{equation*}
 
-*Algorithme*
+*Estimateurs*
 
 1. On calcule
   $$
@@ -1177,7 +1354,7 @@ où
 - $\matr{U}$ et $\V$ sont calculés sur le résidu de la régression linéaire de $\Y$ par $\X$
 *Si $\lambda \to \infty$*
 - \matr{P}_{\lambda} = \Id_{n}
-- $\matr{U}$ et $\V$ sont données par l'ACP
+- $\matr{U}$ et $\V$ sont données par la SVD de rang $K$
 
 *** Notes                                                        :noexport:
 
@@ -1193,38 +1370,45 @@ où
 #+END_NOTES
 ** Estimateur des moindres carrées régularisé en norme L2
 
-On peut montrer que
+
+*Théorème 1*
+
+Pour $\lambRidge$ strictement supérieur à zéro, les estimateurs des paramètres
+de LFMM régularisés en norme $L_{2}$ définissent un minimum global de la
+fonction objectif $\Lridge$.
+
+#+LATEX: \vspace{0.1in}
+*Idée de la preuve*
 
 \begin{align*}
 \Lridge(\matr{U}, \V, \B) & \geq & \Lridge(\matr{U}, \V, (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \matr{U} \V^{T})) \\
  & & = \frac{1}{2} \norm{ \sqrt{\matr{P_{\lambda}}} (\Y - \matr{U} \V^{T})}_{F}^{2}
 \end{align*}
 
-*Théorème*
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- La preuve est purement calculatoire
+#+END_NOTES
 
-Pour $\lambRidge$ strictement supérieur à zéro, les estimateurs des paramètres
-de LFMM régularisés en norme $L_{2}$ définissent un minimum global de la
-fonction objectif $\Lridge$.
 
 ** Estimateur des moindres carrées régularisé en norme L1
+
 *Fonction objectif*
 \begin{equation*}
 \Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 +
 \lambLasso \norm{\B}_{1} + \gamma \norm{\W}_{*}
 \end{equation*}
 
-où $\matr{W}$ est la matrice latente et 
+où $\matr{W}$ est la matrice latente tel que
 $$
 \matr{W} = \matr{U} \matr{V}^T
 $$
-est calculé grâce à l'ACP.
 
 ** Estimateur des moindres carrées régularisé en norme L1
 
 *Algorithme de descente par blocs de coordonnées*
 
 On initialise 
-
 \begin{align*}
 \hat{\W}_{t = 0} & = 0 \\
 \hat{\B}_{t = 0} & = 0
@@ -1245,19 +1429,20 @@ On alterne les étapes:
 
 ** Estimateur des moindres carrées régularisé en norme L1
 
+*Théorème 2* citep:Tseng_2001
+
+L'algorithme d'estimation des moindres carré régularisé en norme $L_{1}$ converge
+vers un minimum global de la fonction objectif $\Llasso$.
+
+#+LATEX: \vspace{0.1in}
+*Idée de la preuve*
+
 On a 
 - $\W,\B \mapsto  \norm{\Y - \W - \X \B^T}_{F}^2$ est convexe et différentiable (terme d'attache au données dans $\Llasso$)
 - $\B \mapsto \norm{\B}_{1}$ est continue et convexe
   (terme de régularisation dans $\Llasso$)
 - $\W \mapsto \norm{\W}_{*}$ est continue et convexe
   (terme de régularisation dans $\Llasso$)
-
-citet:Tseng_2001 ont montré que
-
-*Théorème* 
-
-L'algorithme d'estimation des moindres carré régularisé en norme $L_{1}$ converge
-vers un minimum global de la fonction objectif $\Llasso$.
 
 ** Choix du nombre de variables latentes
 
@@ -1334,7 +1519,7 @@ variables latentes.
 
 Comme ca je vais me préparer à la questions comment on choisi les autres.
 
-** Tests d'hypothèse corrigés pour les facteurs de confusion
+** Tests d'hypothèse corrigés pour les facteurs de confusion citep:Price_2006
 
 Pour chaque variable expliquée $\Y_{j}$
 \begin{equation*}
@@ -1342,33 +1527,30 @@ Pour chaque variable expliquée $\Y_{j}$
 \end{equation*}
 où $\hat{\matr{U}}$ est l'estimation de la matrice des variables latentes.
 
-On test l'hypothèse
+On test l'hypothèse (test de Student)
 $$
 H_0 : \beta_j = 0
 $$
-grâce à un *test de Student*.
+
+On cherche une liste de candidat $\Gamma = \{1,..,J\}$ tel que 
+$$p( \beta_j = 0 | j \in \Gamma) = T$$ 
+où $T$ est le taux de fausse découverte souhaité. 
+
+On utilise la \qvalue cite:storey2003statistical
 
 *** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- Même approche que EIGENSTRAT
+#+END_NOTES
 Jusqu'ici, nous avons abordé l'estimation des variables latentes et des effets.
 Mais le but est de trouver les associations significatives ! On doit construire
 un test de significativité qui prend en compte les facteurs que l'on a estimé.
 
-** Contrôle du taux de Fausses Découvertes 
-
-On cherche une liste de candidat $\Gamma = \{1,..,J\}$ tel que
-$$p( \beta_j = 0 | j \in \Gamma) = T$$
-où $T$ est le taux de fausse découverte souhaité.
-
-On utilise la \qvalue de citet:Storey_2011 pour contrôler le taux de fausses
-découvertes.
-
-*** Notes                                                        :noexport:
 Maintenant qu'on a des Pvalue on peut proposer une liste de découverte. On veut
 fournir une liste de candidats
 
 Remark : je parle pas de la calibration justement !!
 Pour moi il y a deux choses le ranking et la calibration. citet:Sun_2012 en parle !!
-
 ** Données simulées                                               :noexport:
 On calcule les $K$ premières composantes principales des chromosomes 1 et 2 de
 la base de données 1000Genome (52211 SNPs et 1758 individus)
@@ -1394,7 +1576,7 @@ $$
 \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
 $$
 
-** Données simulées à partir des données 1000Genomes
+** Données simulées à partir des données 1000Genomes              :noexport:
 - On calcule les $K$ premières composantes principales des chromosomes 1 et 2 de
   la base de données 1000Genome (52211 SNPs et 1758 individus)
   \begin{equation*}
@@ -1411,7 +1593,7 @@ $$
   \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
   $$
 
-** Comparaison des méthodes sur des données simulées
+** Comparaison des méthodes sur des données simulées à partir des données 1000Genomes cite:1000Genome_2015
 
 #+NAME: code:lmm_auc
 #+CAPTION: Dépend de 
@@ -1479,6 +1661,31 @@ $$
     xlab("Puissance")
 #+end_src
 
+
+#+HTML: <div style="float:left;width:60%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.6\columnwidth}
+
+*Données simulées*
+
+- On calcule les $K$ premières composantes principales 
+  \begin{equation*}
+  \Y = \matr{U} \V^{T} + \E
+  \end{equation*}
+
+- On simule \matr{U}^{'} et $\X^{'}$ en contrôlant leur corrélation. 
+
+- On calcule une nouvelle matrice tel que
+  $$
+  \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
+  $$
+
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.4\columnwidth}
+#+HTML: <div style="float:left;width:40%;margin-top:50px;">
+
 *On compare les méthodes*
 
 - lm
@@ -1490,14 +1697,26 @@ $$
 - ridgeLFMM
 - lassoLFMM
 
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
 *Critère*
 
 - AUC : aire sous la courbe précision (1 - FDR) $\times$ rappel (puissance)
 
+
 *** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- lm est la méthode de référence qui ne corrige pas les facteurs de dconfusion 
+- PCAlm est la méthode de référence qui corrige les facteurs de confusion sans
+  prendre en compte la variable d'interet
+- les autre méthode corrige pour les facteurs de confusion en prennant en compte
+  la variable d'interet
+#+END_NOTES
 On passe sous silence le facteur d'inflation !! On considère que tout le monde
 est recalibré pour simplifier.
-** Comparaison des méthodes sur des données simulées
+** Résultat de la comparaison des méthodes sur des données simulées
 
 #+NAME: code:lfmm_comp
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:num_val_auc_gif_df][code:num_val_auc_gif_df]]
@@ -1525,7 +1744,7 @@ est recalibré pour simplifier.
     group_by(method, rho.c) %>%
     summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N)) %>%
     dplyr::filter(rho.c %in% c(0.5, 0.8, 1.0))
-  auc.rho.pl <- ggplot(toplot, aes(x = as.factor(rho.c), y = auc.mean, fill = method)) +
+  auc.rho.pl <- ggplot(toplot, aes(x = as.factor(rho.c ^ 2), y = auc.mean, fill = method)) +
     geom_bar(position = "dodge", stat = "identity") +
     geom_errorbar(aes(ymin = auc.mean - se,
                       ymax = auc.mean + se),
@@ -1534,7 +1753,7 @@ est recalibré pour simplifier.
     scale_fill_manual(values = color.values) +
     gtheme + 
     theme(legend.position = "bottom") +
-    xlab("Param\\`etre de corr\\'elation entre $\\mathbf{U}$ et $\\mathbf{X}$ ($\\rho$)") +
+    xlab("Param\\`etre de corr\\'elation entre $\\mathbf{U}$ et $\\mathbf{X}$ ($\\rho ^ 2$)") +
     ylab("AUC")
 
   ThesisRpackage::Plots_export_tikz_pdf(auc.rho.pl,
@@ -1546,7 +1765,7 @@ est recalibré pour simplifier.
 
 [[file:../OUTPUT/Rplots/lfmm_method_comp_slides.pdf]]
 
-** Étude d'association entre des données génétiques et un gradient climatique
+** Étude d'association entre des données génétiques et un gradient climatique :noexport:
 
 #+NAME: code:lfmm_geas_scree
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_screeplot_CV][code:eas_screeplot_CV]]
@@ -1586,7 +1805,7 @@ est recalibré pour simplifier.
 
 *** Notes                                                        :noexport:
 Retour sur l'exemple
-** Étude d'association entre des données génétiques et un gradient climatique
+** Choix de K pour l'étude d'association entre des données génétiques et un gradient climatique
 
 #+NAME: code:lfmm_geas_PCs_slide
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_PCs][code:eas_PCs]]
@@ -1657,12 +1876,16 @@ Retour sur l'exemple
                                         width = 5.4)
 #+end_src
 
+
+#+ATTR_LATEX: :width nil :height 0.8\textheight
 [[file:../OUTPUT/Rplots/lfmm_geas_pc_slides.pdf]]
 
 *** Notes                                                        :noexport:
-les plots en étoiles
-Enlever les lettres !!
-** Étude d'association entre des données génétiques et un gradient climatique
+#+BEGIN_NOTES
+- Comme nous l'avons dit le choix de K est important, pour le choisir on peut se
+  demander ce que représente les variable latente
+#+END_NOTES
+** Étude d'association entre des données génétiques et un gradient climatique :noexport:
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
@@ -1737,6 +1960,16 @@ rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\
 
 #+LATEX:\rowcolors{2}{}{}
 #+LATEX: \endgroup
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- sur des donnnées réelle il n'y a pas vérité terrain on ne peut donc pas savoir
+  si une méthode fait mieux qu'un autre
+- Mais on peut recouper avec d'autre base de données pour essayer de comprendre
+  ce qui a été trouvé 
+- lactose : car lié a l'agriculture et donc au climat
+- PCAlm et lm ne permete pas d'identifier les SNPs classique qu'on devrais
+  retrouver 
+#+END_NOTES
 
 ** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
 :LOGBOOK:

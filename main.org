@@ -676,7 +676,7 @@ Tuto pour les piechart : [[https://guangchuangyu.github.io/2016/12/scatterpie-fo
     theme(legend.position="bottom",
           axis.ticks.x = element_blank()) +
     scale_x_continuous("",breaks=c(24, 110, 220), labels=c("Afro-américains",
-                                                           "Eropéens",
+                                                           "Européens",
                                                            "Africains"
                                                            ))
   brplot
@@ -759,7 +759,7 @@ d'ascendance génétique dans la Table [[table:tess3_etat_art]]
 | STRUCTURE     | bayésien                                         | non      | MCMC                                              | citet:Pritchard2000,Falush1567              |
 | FRAPPE        | vraisemblance                                    | non      | EM                                                | citet:Tang_2005                             |
 | TESS          | bayésien                                         | oui      | MCMC                                              | citet:CHEN_2007                             |
-| GENELAND      | bayésien                                         | oui      | MCMC                                              | citet:phdGuedj                              |
+| GENELAND      | bayésien                                         | oui      | MCMC                                              | citet:GUEDJ_2011                                   |
 | BAPS          | bayésien                                         | oui      | optimisation stochastique                         | citet:Corander2008                          |
 | ADMIXTURE     | vraisemblance                                    | non      | optimisation quasi-Newton alternée                | citet:alexander2009admixture,Alexander_2011 |
 | fastStructure | bayésien                                         | non      | inférence variationnelle bayésienne               | citet:Raj_2014                              |
@@ -17941,164 +17941,3 @@ Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que 
 Les scripts utilisés pour réaliser les expériences présentées dans cette thèse
 sont disponibles à l'adresse : https://github.com/cayek/MaThese.
 
-* Soutenance                                                       :noexport:
-:LOGBOOK:
-- Note taken on [2017-09-05 mar. 10:31] \\
-  Je vais suivre le plan de la thèse: 
-  - une intro pour le context, très générals, présentation de quelque
-    problématique importante en génétique de populations en association.
-  - Problématique
-  - Plan
-    celui de la thèse
-  - developpement des deux axes
-  - Conclusion et résumé de la thèse
-:END:
-** FAQ                                                            :noexport:
-*** tess3
-**** Pourquoi cette fonction de poid pour le graphe ? Tester d'autre ?
-**** Quelle est l'influence de $\sigma$ sur les estimations ?
-**** Quelle est l'influence de $\alpha$ sur les estimations ?
-**** Pourquoi une matrice laplacienne apparait ici ?
-C'est purement numérique... j'ai pas d'intuition.
-**** Est ce que tess3 est sensible au LD ?
-**** Est ce que tess3 est sensible à la taille des pops ?
-Est ce que c'est pas les zone ou il y a le plus d'individu que je clustrise ??
-**** A quoi sert la modélisation disjonctive ?
-A pas faire l'hypothèse de hardy weinberg, on éstime les fréquence de chaque
-génotype plutot que la fréquence d'allèle.
-**** Pk il y a des bandes qui se forme dans les bars plots (bar plot de A.thaliana)?
-- C'est un artefacte de la méthode ? Il faudrait visualiser ce que donne une
-  méthode bayésienne sur ce dataset.
-- ça pourrait être résolu en ajoutant une régularisation sparse
-*** lfmm
-**** Pourquoi ne pas en dire plus sur les candidats trouvé pour la GWAS, EWAS et GEAS ?
-C'est la que s'arrète mon travail ! Je suis pas biologiste ! C'est au biologiste
-de decider si ce que j'ai trouvé est intéressants !! 
-
-C'est frustrant ? oui
- 
-**** Pourquoi PCAlm retrouve mieux les candidats sur l'EWAS et GWAS chrm 6 et pas sur GWAS autre chrm
-Je ne sais pas comment les candidats on été trouvé dans les autres études. Je ne
-peux pas me comparer a elle dirrectement !! Dans dubois et al je ne sais pas
-comment ils ont composé leur liste.
-
-Tout ce que je peut dire c'est que PCAlm sur les simulations passe a coté de
-certain candidats !!
-
-*Donc* 
-
-Sur les données réelles
-- quand PCAlm trouve plus vite les candidats que les autre c'est que peu être il
-  est passé a coté d'outlier
-- quand PCAlm est derriere c'est qu'il passe a coté de ces outlier 
-
-:D
-
-Tout ce que je peux dire c'est que ce que je trouve en plus sont pas abérant: 
-- dans l'ewas il sont dans des gènes interessant ?
-- dans la gwas ils sont dans des gènes interesant ?
-- pour la GEAS on trouve des zones annotés ?
-
-#  LocalWords:  GWAS EWAS GEAS hyperparamètres décorrélé décorrélées ridgeLFMM
-#  LocalWords:  lassoLFMM Thaliana Arabidopsis thaliana variogramme ploïdie
-
-# Local Variables:
-# eval: (load-file "./these-publish.el")
-# End:
-#  LocalWords:  variogrammes
-**** Comment on se compare avec les modèles mixes ?
-En théorie les modèle mixe c'est en n^2p pour calculer la matrice de kindship.
-lfmm c'est du npk !! 
-
-La grande différence est dans le calcule de l'acp
-
-Du coups la matrice de kindship pourrait etre calculé avec l'acp et du coup on a
-aussi un complexité faible pour le smodèle mixte :D
-**** Qu'est ce qu'explique les variables latentes ?
-**** Comment le choix du model (model pour le test) influence les étude d'association ?
-j'ai utilisé un lm, est ce bien adapté pour des variables discrete ? 
-Pourrait-on utiliser les variables latentes dans un modèle logistique ?
-**** Le centering + scaling des données ?
-Je crois que j'ai oublié d'en parler... a verifier !!
-*** Général
-**** Les types de mutation génétiques
-indel : insertion délétion
-SNPs : 
-mircosat : répétition
-**** Hyper paramètre sur le scree plot et décroissance de l'erreur de prédiction
-On ne s'arrête pas au même endroit !!!!
-- scree plot c'est pour la PC avant les PC qui explique le bruit
-- pour CV c'est le coude !!
-**** Les gamètes :D
-par humain il y a 2 ^ 23 gamète possibles car on 23 paire de chromosomes.
-**** Pk pas un EM ?
-Ce qu'on fait c'est pas un peut des EM mais pas dans un cadre probabiliste ? 
-
-Nous on a changé de paradigme ! plus dans un cadre probabiliste.
-
-La question de l'EM a pas trop lieu d'etre, il faut une vraisemblance pour un EM.
-**** Un EM c'est quoi ?
-[[https://fr.wikipedia.org/wiki/Algorithme_esp%25C3%25A9rance-maximisation][Algorithme espérance-maximisation]]
-
-Ca maximise la vraisemblance. Je comprends que c'est venu remplacer le MCMC des
-modèle probabiliste.
-**** C'est quoi un Monte Carlo EM ?
-**** Un MCMC c'est quoi ?
-[[https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo][Markov chain Monte Carlo]]
-Ca echantillone une loi.
-
-Exemple d'algo MCMC : 
-- Gibs sampler
-
-**** L'inference variationnel bayesienne c'est quoi ?
-[[https://en.wikipedia.org/wiki/Variational_Bayesian_methods][Variational Bayesian methods]]
-
-**** Empirical bayes c'est quoi ?
-[[https://en.wikipedia.org/wiki/Empirical_Bayes_method][Empirical Bayes method]]
-C'est plutot une un modèle :D
-Un modèle je dirais, l'algo ca peut être n'importe quoi genre EM etc
-**** Rna-seq et DNA methylation et eQTL, c'est quoi ?
-Et surtout les pbs d'assocaition ??
-En gros si on me demande les perspectives, je réponds quoi ?
-**** Résultats de convergence des estimateurs ? Résultats théorique de stat ?
-** Retours des rapporteurs
-*** R1
-**** Intro
-- le chap aurait gagné a élargir son spectre de rèf
-- intro un peu courte
-**** tess3r
-- comparaison avec d'autres logiciels
-**** lfmm
-- pour le calcul de la stat de test, comparaison avec d'autre approche. (Le
-  modèle est paramétrique (donc on pourrait calculer la stat de test). Mais avec
-  une vraisemblance pénalisé c'est compliqué !)
-- comportement étrange des sva-irw
-- Pas de précision sur l'adaptation de la méthode au données cas-temoin
-*** R2
-**** Intro
-- volume du manuscrit trop faible
-- Intro trop courte pour :
-  - détail des notions stat et bio
-  - présentation détaillée des méthodes
-**** tess3r
-- Choix de modélisation et d'algo pas assez motivé
-- plus de méthodes :D
-- plus de jeux de données :D
-- discussion des hyper param trop rapide
-- pas convaincu sur le choix des params
-- étude de sensibilité des params pour être convaincu
-***** Réponses
-
-- *Motivation du modèle et des algos :* ...
-
-- *Hyperparamètres :* Une étude sensibilité aide pas à choisir un paramètre.
-  L'objectif est de proposé une solution concrète. Il faut des solutions
-  concrètes pour le choix des paramètres.
-
-  Une étude de sensibilité comme par exemple dans cite:DengCai2011 montre comment
-  réagit le modèle en fonction des param sur un dataset en particulier.
-
-**** lfmm
-- chap sur le choix des hyper paramètres est peu éclairant
-**** ccl
-- il aurait voulu une présentation en détails des paquets et appli web :D
