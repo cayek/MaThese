@@ -93,6 +93,9 @@ I use =org-beamer-mode= for shortcut.
 - [ ] Les EM ? cv vers un minimum local ?
 - [ ] se préparer la question sur le choix de K et des autres paramètre en
   général. Il se passe quoi si K est trop grand ?
+- [ ] test time, si j'ai le temps ajouté celiac
+- [ ] se renseigner sur RNA seq et méthylation haut débit [[*perspectives][perspectives]] (mettre
+  de référence dans cette partie)
 * FAQ                                                              :noexport:
 ** tess3
 *** Pourquoi cette fonction de poid pour le graphe ? Tester d'autre ?
@@ -1105,7 +1108,7 @@ $$
 #+LATEX: \begin{column}{0.4\columnwidth}
 #+HTML: <div style="float:left;width:40%;margin-top:50px;">
 
-Données génétiques du projet 1000Genome
+Données génétiques du projet 1000Genome citep:1000Genome_2015
 - 1409 individus de 14 populations
 - 5397214 SNPs
 
@@ -1593,7 +1596,7 @@ $$
   \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
   $$
 
-** Comparaison des méthodes sur des données simulées à partir des données 1000Genomes cite:1000Genome_2015
+** Comparaison des méthodes sur des données simulées à partir des données 1000Genomes 
 
 #+NAME: code:lmm_auc
 #+CAPTION: Dépend de 
@@ -1984,13 +1987,14 @@ rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\
 
 #+ATTR_LATEX: :width \textwidth :height nil
 [[file:./img/1280px-DNA_methylation.jpg]]
+citep:wiki:DNA_methylation
 
 #+HTML: </div>
 #+LATEX: \end{column}
 #+LATEX: \begin{column}{0.6\columnwidth}
 #+HTML: <div style="float:left;width:60%;margin-top:50px;">
 
-*Données*
+*Données* citep:Liu_2013
 
 - $\Y$ contient le niveau de méthylation de $485 577$ sites de l'ADN chez 699
   individus
@@ -2026,6 +2030,15 @@ en particulier modifier sa transcription en protéine.
 \label{fig:ewas_venn}
 \end{figure}
 #+END_EXPORT
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- PCAlm méthode qui ne prend pas en compte la variable d'interet dans le calul
+  de facteur latent fait moins de découverte
+- on s'interesse au 19 candidat découvert par toute les méthodes
+#+END_NOTES
+
+
 ** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
 
 #+LATEX: \begingroup\fontsize{9}{9}\selectfont
@@ -2083,6 +2096,16 @@ ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\
 
 #+LATEX:\rowcolors{2}{}{}
 #+LATEX: \endgroup
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- on retrouve les candidats qui ont été découvert sur le même jeu de données
+  mais en specifiant les facteurs de confusion 
+- on voit que les méthodes qui apprenne les facteur de confusion font d'autre
+  découverte
+- dans le HLA qui est une zone iportante pour le système himunitaire
+- LYN qui a un role dans le système himunitaire
+- Ces résultat confirme la conposante auto imune de la polyartrite 
+#+END_NOTES
 
 * Conclusions
 :PROPERTIES:
@@ -2098,21 +2121,21 @@ tess3r et lfmm
 de la factorisation de matrices
 ** =tess3r=
 
-- Package R
 - Nouveau modèle pour l'estimation de la structure génétique des populations à
   partir de données génétique et géographique
 - Deux algorithmes pour l'inférence des paramètres
 - Même precision statistique que le logiciel bayésien  =TESS= 2.3 
 - Algorithme 30 fois plus rapide que =TESS= 2.3
 - Visualisation de la structure génétique de population dans l'espace
-  
+- Package R
+
 *** Notes                                                        :noexport:
 #+begin_src R :exports both
   # install.packages("devtools")
   devtools::install_github("bcm-uga/TESS3_encho_sen")
 #+end_src
 ** =lfmm=
-- Package R
+
 - Deux nouvelles méthodes d'estimation des facteurs de confusion pour corriger
   les études d'association
 - Résultats théoriques sur la convergence des algorithmes
@@ -2121,6 +2144,7 @@ de la factorisation de matrices
   latents découvre plus d'association
 - Sur les données réelles les associassions découvertes peuvent varier largement
   entre les méthodes
+- Package R
 
 *** Notes                                                        :noexport:
 
@@ -2128,8 +2152,24 @@ de la factorisation de matrices
   # install.packages("devtools")
   devtools::install_github("bcm-uga/lfmm")
 #+end_src
-** perspectives                                                   :noexport:
-- perspective de maintient des logiciel 
-- utilisation d'approche basé sur la factorisation matriciel à d'autre étude, 
-ex RNA-Seq et données méthylation au débit => s'attendre a des questions
+** perspectives
+- perspective de maintient des logiciels
+- données manquantes
+- construction des tests d'hypothèse (glm, model à effets fixes et aléatoires)
+- convergeance statistique des estimateurs pour LFMM
+- utilisation d'approche basé sur la factorisation matricielle à d'autre étude :
+  RNA-Seq, données méthylation au débit
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- maintain des logicièle en fonction du retour de utilisateurs
+- on peut utiliser les variable latentes dans d'autre modèle ex dans une
+  regression logistique ou alors on peut utiliser la matrice latentes pour
+  calcule la matrice de covariance des effets aléatoire dans un modèle à effet
+  aléatoire et fixe
+- cv stat des estimateur pour LFMM, en particulier pour l'estimateur avec la
+  régularisation L2
+- 
+#+END_NOTES
+
+
 * Merci de votre attention
