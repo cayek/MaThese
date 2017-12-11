@@ -297,7 +297,7 @@ https://www.genome.gov/sequencingcostsdata/
                 \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots 
               \end{tabular}
               
-              \caption{{\bf Illustration d'un SNP.} Le nucléotide différent
+              \caption{{\bf Illustration d'un SNP.} Le nucléotide différant
                 entre les séquences d'ADN est un SNP.}
 \label{fig:SNP}
 \end{figure}
@@ -420,7 +420,7 @@ le package lfmm qui implémente nos méthodes
   moins avec les individus des populations voisines, desquelles ils sont 
   géographiquement isolés.
 
-** La structure génétiques des populations
+** La structure génétique des populations
 
 #+NAME: code:diff
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:tess3_intro_plot][code:tess3_intro_plot]] 
@@ -490,7 +490,7 @@ Pressions évolutives :
 *** Notes
 - presenter les données 1000 génome, rapidement. Dire que c'est des données de
   référence en génétique humaine.
-** Pourquoi étudier la structure génétiques des populations ?
+** Pourquoi étudier la structure génétique des populations ?
 
 - Représentation synthétique de données multivariées 
 
@@ -538,7 +538,7 @@ Pressions évolutives :
       --export-plain-svg=tess3_intro_pca_slides.svg
 #+END_SRC
 
-#+CAPTION:Scores des deux premières composantes principales calculées sur des données de SNPs d'invidus humains de populations européenne, africaine et afro-américaine (données 1000Genome \cite{1000Genome_2015}).
+#+CAPTION:Scores des deux premières composantes principales calculés sur des données de SNPs d'invidus humains de populations européenne, africaine et afro-américaine (données 1000Genome \cite{1000Genome_2015}).
 #+ATTR_HTML: :align center :style width:80%
 [[file:../OUTPUT/Rplots/tess3_intro_pca_slides.pdf]]
 *** Notes                                                        :noexport:
@@ -663,7 +663,7 @@ où
 #+ATTR_LATEX: :height 0.9\textheight :width nil
 [[file:../OUTPUT/Rplots/tess3_intro_map_slides.pdf]]
 
-** Méthodes d'estimation des coefficients de métissage à l'aide de données géographique
+** Méthodes d'estimation des coefficients de métissage à l'aide de données géographiques
 
 #+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
 #+ATTR_LATEX: :align l|p{4cm}p{3cm}|p{3cm}
@@ -754,7 +754,7 @@ Entre chaque individu $i$ et $j$, nous avons le poids de graphe
 
 où 
 - ${\rm dist}( x_i, x_j)$ est la fonction de distance entre les coordonnées
-  géographique $x_{i}$ et $x_{j}$. 
+  géographiques $x_{i}$ et $x_{j}$. 
 - $\sigma$ est le paramètre d'échelle géographique
 
 #+HTML: </div>
@@ -805,7 +805,7 @@ où
 #+END_NOTES
 ** Problème des moindres carrés
 
-Pour estimer les matrice d'ascendance on cherche à minimiser la fonction 
+Pour estimer les matrices d'ascendance on cherche à minimiser la fonction 
 
 \begin{equation*}
 \mathcal{L}(\Q, \mathbf{G}) =   \|  {\bf Y} - {\bf QG}^T \|^2_{\rm F} +  \frac{\alpha}{2} \sum_{i,j = 1}^n  \W_{i,j}  \| \Q_{i,.} - \Q_{j,.} \|^2
@@ -904,9 +904,9 @@ fournis de bonnes approximation de AQP.
 
 *** Algorithme des moindres carrés alternés projetés (APLS)
 
-- L'étape de calcul de $\Q$ peut être séparé en $n$ moindres carré régularisé en
+- L'étape de calcul de $\Q$ peut être séparée en $n$ moindres carrés régularisés en
   norme $L_2$
-- Dans nos comparaisons, APLS fourni de bonnes approximations de AQP tout en
+- Dans nos comparaisons, APLS fournit de bonnes approximations de AQP tout en
   étant plus rapide
 
 *Nous utilisons APLS dans la suite*
@@ -931,8 +931,8 @@ fournis de bonnes approximation de AQP.
 
 - La matrice $\matr{G}$ est simulée par un modèle de Wright à deux îles
 - La matrice $\Q$ est simulée selon un gradient longitudinal
-- Ma matrice $\Y$ est générée en tirant des gènes des deux populations sources
-  avec des probabilités données par les coefficient de métissage
+- La matrice $\Y$ est générée en tirant des gènes des deux populations sources
+  avec des probabilités données par les coefficients de métissage
 
 On simule plusieurs génotypes pour avoir plusieurs valeurs de différenciation
 mesurées par 
@@ -1231,7 +1231,7 @@ H_0 : \beta_j = 0
 $$
 On réalise un *test de Student*
 
-** Histogramme des \pvalues de l'étude d'association entre des données génétique et un gradient climatique
+** Histogramme des \pvalues de l'étude d'association entre des données génétiques et un gradient climatique
 
 #+NAME: code:lfmm_qqplot
 #+CAPTION: Dépend de 
@@ -1331,7 +1331,7 @@ où
 #+LATEX:\rowcolors{2}{}{}
 #+LATEX: \endgroup
 
-** Estimateur des moindres carrées régularisé en norme L2
+** Estimateur des moindres carrés régularisé en norme L2
 *Fonction objectif*
 
 \begin{equation*}
@@ -1355,12 +1355,12 @@ où
   \hat{\B}^{T} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\matr{U}} \hat{\V}^{T}),
   $$
 
-** Estimateur des moindres carrées régularisé en norme L2
+** Estimateur des moindres carrés régularisé en norme L2
 
 *Si $\lambda \to 0$*
 - \matr{P}_{\lambda} = \Id_{n} - (\X^T \X )^{-1} \X^T \X
 - \matr{P}_{\lambda} n'est plus inversible
-- $\matr{U}$ et $\V$ sont calculés sur le résidu de la régression linéaire de $\Y$ par $\X$
+- $\matr{U}$ et $\V$ sont calculées sur le résidu de la régression linéaire de $\Y$ par $\X$
 *Si $\lambda \to \infty$*
 - \matr{P}_{\lambda} = \Id_{n}
 - $\matr{U}$ et $\V$ sont données par la SVD de rang $K$
@@ -1377,7 +1377,7 @@ où
   on ne corrige pas le calculer des facteurs ===> on va capté un partie de ce
   qui doit être expliqué par X dans le calcul des facteurs !!
 #+END_NOTES
-** Estimateur des moindres carrées régularisé en norme L2
+** Estimateur des moindres carrés régularisé en norme L2
 
 *Théorème 1*
 
@@ -1398,7 +1398,7 @@ fonction objectif $\Lridge$.
 - La preuve est purement calculatoire
 #+END_NOTES
 
-** Estimateur des moindres carrées régularisé en norme L1
+** Estimateur des moindres carrés régularisé en norme L1
 
 *Fonction objectif*
 \begin{equation*}
@@ -1407,7 +1407,7 @@ fonction objectif $\Lridge$.
 \end{equation*}
 
 où 
-- $\matr{W}$ est la matrice latente tel que 
+- $\matr{W}$ est la matrice latente telle que 
 $$\matr{W} = \matr{U} \matr{V}^T$$
 - $\norm{\W}_{*}$ est la norme nucléaire
 
@@ -1416,7 +1416,7 @@ $$\matr{W} = \matr{U} \matr{V}^T$$
 - en effet on s'attend a ce que seulement une certaine proportion de gène soit
   associé à X
 - la norme matricielle pénalise le rang de W 
-** Estimateur des moindres carrées régularisé en norme L1
+** Estimateur des moindres carrés régularisé en norme L1
 
 *Algorithme de descente par blocs de coordonnées*
 
@@ -1439,7 +1439,7 @@ On alterne les étapes:
    \mathcal{L}_{\mathrm{lasso}}^{''}(\W) = \frac{1}{2} ||(\Y - \X \hat{\B}_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}
    \end{equation}
 
-** Estimateur des moindres carrées régularisé en norme L1
+** Estimateur des moindres carrés régularisé en norme L1
 
 *Théorème 2* 
 
@@ -1450,86 +1450,12 @@ vers un minimum global de la fonction objectif $\Llasso$.
 *La preuve* s'appuie sur les travaux de citet:Tseng_2001
 
 Les principales hypothèses sont : 
-- $\W,\B \mapsto  \norm{\Y - \W - \X \B^T}_{F}^2$ est convexe et différentiable (terme d'attache au données dans $\Llasso$)
+- $\W,\B \mapsto \norm{\Y - \W - \X \B^T}_{F}^2$ est convexe et différentiable
+  (terme d'attache aux données dans $\Llasso$)
 - $\B \mapsto \norm{\B}_{1}$ est continue et convexe
   (terme de régularisation dans $\Llasso$)
 - $\W \mapsto \norm{\W}_{*}$ est continue et convexe
   (terme de régularisation dans $\Llasso$)
-
-** Choix du nombre de variables latentes
-
-#+NAME: code:lfmm_K
-#+CAPTION: Dépend de 
-#+begin_src R 
-  library(MaTheseR)
-  library(tidyverse)
-  require(magrittr)
-  library(scales)
-
-  latex_percent <- function (x) {
-    x <- plyr::round_any(x, scales:::precision(x)/100)
-    stringr::str_c(comma(x * 100), "\\%")
-  }
-
-
-  dat <- ExpRsampler_generativeData(n = 200,
-                                    p = 1000,
-                                    K = 3,
-                                    outlier.prop = 0.1,
-                                    cs = 0.7,
-                                    sigma = 0.2,
-                                    B.sd = 1.0,
-                                    B.mean = 0.0,
-                                    U.sd = 1.0,
-                                    V.sd = 1.0) %>%
-    ExpRmouline()
-
-  ## projection
-  P.list <- lfmm::compute_P(dat$X, lambda = 0.0)
-  Y <- P.list$sqrt.P %*% dat$Y
-  rm(P.list)
-  rm(dat)
-  gc()
-
-  ## PCA
-  svd.res <- svd(Y,0,0)
-  df.res <- tibble(index = seq_along(svd.res$d), singular.value = svd.res$d) %>%
-    mutate(var.expl = singular.value / sum(singular.value))
-
-  ## plot
-  pl <- ggplot(df.res, aes(x = as.factor(index), y = var.expl)) +
-    geom_point() +
-    geom_line(aes(x = index, y = var.expl)) +
-    coord_cartesian(xlim = c(1,10)) +
-    xlab("Nombre de variables latentes ($K$)") +
-    ylab("Variance\nexpliqu\\'ee") +
-    MaTheseR.params$gtheme +
-    scale_y_continuous(labels=latex_percent)
-
-  ThesisRpackage::Plots_export_tikz_pdf(pl,
-                                        basename.output = "lfmm_K_slides",
-                                        env = MaTheseR.params,
-                                        height = 1.5,
-                                        width = 4.5)
-#+end_src
-
-On projette $\Y$ sur l'espace orthogonal à $\X$ en prenant $\lambRidge = 0$
-\begin{equation*}
-\matr{D}_{0} \Q^{T} \Y = \matr{D}_{0} \Q^{T}\matr{U} \V^{T} + \matr{D}_{0} \Q^{T} \E.
-\end{equation*}
-
-On calcule les valeurs singulières pour visualiser la variance expliqué par
-chaque variable latente (scree plot).
-
-#+ATTR_LATEX: :width \textwidth :height nil
-[[file:../OUTPUT/Rplots/lfmm_K_slides.pdf]]
-
-
-*** Notes                                                        :noexport:
-Une paramètre important dans les méthodes à facteur latent est le nombre de
-variables latentes.
-
-Comme ca je vais me préparer à la questions comment on choisi les autres.
 
 ** Tests d'hypothèse corrigés pour les facteurs de confusion citep:Price_2006
 
@@ -1598,7 +1524,7 @@ $$
 - On simule des variables latentes \matr{U}^{'} et une variable explicative
   $\X^{'}$ en contrôlant l'intessité de la corrélation.
 
-- On simule $\B^{'}$ tel qu'une proportion soit non nulle. 
+- On simule $\B^{'}$ telle qu'une proportion soit non nulle. 
 
 - On calcule une nouvelle matrice tel que
   $$
@@ -1687,7 +1613,7 @@ $$
 
 - On simule \matr{U}^{'} et $\X^{'}$ en contrôlant leur corrélation. 
 
-- On calcule une nouvelle matrice tel que
+- On calcule une nouvelle matrice telle que
   $$
   \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
   $$
@@ -2037,7 +1963,7 @@ en particulier modifier sa transcription en protéine.
 \centering
 \includegraphics[height=0.6\textheight]{ewas_venn_slides.png}
 \caption{ Diagramme de Venn des
-  listes controlées à un taux de fausses de découvertes de 1 \%.}
+  listes contrôlées à un taux de fausses découvertes de 1 \%.}
 \label{fig:ewas_venn}
 \end{figure}
 #+END_EXPORT
@@ -2264,7 +2190,7 @@ de la factorisation de matrices
 - Nouveau modèle pour l'estimation de la structure génétique des populations à
   partir de données génétique et géographique
 - Deux algorithmes pour l'inférence des paramètres
-- Même precision statistique que le logiciel bayésien  =TESS= 2.3 
+- Même précision statistique que le logiciel bayésien  =TESS= 2.3 
 - Algorithme 30 fois plus rapide que =TESS= 2.3
 - Visualisation de la structure génétique de population dans l'espace
 - Package R
@@ -2281,8 +2207,8 @@ de la factorisation de matrices
 - Résultats théoriques sur la convergence des algorithmes
 - Sur les simulations même puissance que l'oracle
 - Sur des données réelles les méthodes reposant sur le modèle mixte à facteurs
-  latents découvre plus d'association
-- Sur les données réelles les associassions découvertes peuvent varier largement
+  latents découvrent plus d'association
+- Sur les données réelles les associations découvertes peuvent varier largement
   entre les méthodes
 - Package R
 
@@ -2292,12 +2218,12 @@ de la factorisation de matrices
   # install.packages("devtools")
   devtools::install_github("bcm-uga/lfmm")
 #+end_src
-** perspectives
-- perspective de maintenance des logiciels
+** Perspectives
+- Perspective de maintenance des logiciels
 - données manquantes
-- construction des tests d'hypothèse (glm, model à effets fixes et aléatoires)
-- convergeance statistique des estimateurs pour LFMM
-- utilisation d'approche basé sur la factorisation matricielle à d'autre étude :
+- Construction des tests d'hypothèse (glm, modèle à effets fixes et aléatoires)
+- Convergence statistique des estimateurs pour LFMM
+- Utilisation de méthodes basées sur la factorisation matricielle à d'autres études :
   RNA-Seq, données méthylation au débit
 *** Notes                                                        :noexport:
 #+BEGIN_NOTES
@@ -2321,5 +2247,84 @@ de la factorisation de matrices
 \Huge \alert{Merci de votre attention !}
 \end{center}
 #+END_EXPORT
+\appendix
+\backupbegin
 * Annexe 
+** Choix du nombre de variables latentes
 
+#+NAME: code:lfmm_K
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(MaTheseR)
+  library(tidyverse)
+  require(magrittr)
+  library(scales)
+
+  latex_percent <- function (x) {
+    x <- plyr::round_any(x, scales:::precision(x)/100)
+    stringr::str_c(comma(x * 100), "\\%")
+  }
+
+
+  dat <- ExpRsampler_generativeData(n = 200,
+                                    p = 1000,
+                                    K = 3,
+                                    outlier.prop = 0.1,
+                                    cs = 0.7,
+                                    sigma = 0.2,
+                                    B.sd = 1.0,
+                                    B.mean = 0.0,
+                                    U.sd = 1.0,
+                                    V.sd = 1.0) %>%
+    ExpRmouline()
+
+  ## projection
+  P.list <- lfmm::compute_P(dat$X, lambda = 0.0)
+  Y <- P.list$sqrt.P %*% dat$Y
+  rm(P.list)
+  rm(dat)
+  gc()
+
+  ## PCA
+  svd.res <- svd(Y,0,0)
+  df.res <- tibble(index = seq_along(svd.res$d), singular.value = svd.res$d) %>%
+    mutate(var.expl = singular.value / sum(singular.value))
+
+  ## plot
+  pl <- ggplot(df.res, aes(x = as.factor(index), y = var.expl)) +
+    geom_point() +
+    geom_line(aes(x = index, y = var.expl)) +
+    coord_cartesian(xlim = c(1,10)) +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Variance\nexpliqu\\'ee") +
+    MaTheseR.params$gtheme +
+    scale_y_continuous(labels=latex_percent)
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "lfmm_K_slides",
+                                        env = MaTheseR.params,
+                                        height = 1.5,
+                                        width = 4.5)
+#+end_src
+
+On projette $\Y$ sur l'espace orthogonal à $\X$ en prenant $\lambRidge = 0$
+\begin{equation*}
+\matr{D}_{0} \Q^{T} \Y = \matr{D}_{0} \Q^{T}\matr{U} \V^{T} + \matr{D}_{0} \Q^{T} \E.
+\end{equation*}
+
+On calcule les valeurs singulières pour visualiser la variance expliquée par
+chaque variable latente (scree plot).
+
+#+ATTR_LATEX: :width \textwidth :height nil
+[[file:../OUTPUT/Rplots/lfmm_K_slides.pdf]]
+
+
+*** Notes                                                        :noexport:
+Une paramètre important dans les méthodes à facteur latent est le nombre de
+variables latentes.
+
+Comme ca je vais me préparer à la questions comment on choisi les autres.
+** GEAS : gènes candidats
+[[file:GEAS_GeneHits.pdf]]
+
+\backupend
