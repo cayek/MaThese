@@ -2,6 +2,7 @@
 # -*- mode: org -*-
 # -*- (load "./these-publish.el") -*-
 
+#+SETUPFILE: ~/Downloads/org-html-themes-master/setup/theme-readtheorg.setup
 #+TITLE: Méthodes de factorisation matricielle pour la génomique des populations et les tests d'association
 #+AUTHOR: Kévin CAYE
 #+LANGUAGE: fr
@@ -29,6 +30,11 @@
 # In Code we trust, all others bring data.
 # –William Edwards Deming (1900-1993).
 # #+END_QUOTE
+
+
+#+BEGIN_EXPORT html
+<script src="/MathJax/MathJax.js?config=TeX-AMS_HTML,notations.js"></script>
+#+END_EXPORT
 
 #+BEGIN_EXPORT latex
 % \begin{tabular}{ll}
@@ -119,7 +125,26 @@
 - =47 : homo_sapiens_vep_89_GRCh38.tar.gz=
 
 ** python
-* Remerciements                                                    :noexport:
+* Remerciements
+
+Tout d'abord je tiens à remercier Olivier François, mon directeur de thèse, à la
+fois pour son enseignement infini et pour sa patience (infinie aussi) quand il a
+du relire ce manuscrit. Je remercie toute l'équipe BCM pour la bonne ambiance de
+ces trois dernières années. Une mention spécial pour Michael Blum, si nous
+n'avons jamais manqué de bière lors d'une session poster c'est bien grâce à lui.
+
+Je remercie mon encadrant de thèse Olivier Michel, avec qui nos échanges ont
+toujours été très bénéfiques. Je remercie également Jean Luc Bosson, mon
+troisième, encadrant de thèse. Je remercie enfin mes rapporteurs Christophe
+Ambroise et Charles Bouveyron, ainsi que les membres du jury Thomas Burger et
+Michel Blum, qui ont accepté d'évaluer mon travail.
+
+Je remercie l'ensemble de ma famille qui m'a toujours soutenu. En particulier
+mes deux petits frères et ma mère. Elle m'aura aidé à faire mes devoirs de la
+maternelle à la thèse.
+
+Pour finir, merci ma puce, rien n'aurait été possible sans toi.
+
 * Résumé court
 
 \noindent *Titre :* Méthodes de factorisation matricielle pour la génomique des
@@ -17941,3 +17966,6 @@ Il faudrait aussi parler des méthodes qui sont sorti en même temps que ce que 
 Les scripts utilisés pour réaliser les expériences présentées dans cette thèse
 sont disponibles à l'adresse : https://github.com/cayek/MaThese.
 
+* Bibliographie                                                    :noexport:
+
+bibliography:biblio.bib
