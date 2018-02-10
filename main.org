@@ -130,7 +130,7 @@
 Tout d'abord je tiens à remercier Olivier François, mon directeur de thèse, à la
 fois pour son enseignement infini et pour sa patience (infinie aussi) quand il a
 du relire ce manuscrit. Je remercie toute l'équipe BCM pour la bonne ambiance de
-ces trois dernières années. Une mention spécial pour Michael Blum, si nous
+ces trois dernières années. Une mention spéciale pour Michael Blum, si nous
 n'avons jamais manqué de bière lors d'une session poster c'est bien grâce à lui.
 
 Je remercie mon encadrant de thèse Olivier Michel, avec qui nos échanges ont
