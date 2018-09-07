@@ -1,0 +1,1308 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+
+# beamer
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [aspectratio=169, xcolor={table}]
+#+BEAMER_FRAME_LEVEL: 2
+#+OPTIONS: H:2 toc:nil num:nil author:nil date:nil
+#+latex_header: \usepackage[citestyle=authoryear, bibstyle=authoryear, hyperref=true,backref=true,maxcitenames=2,url=true,backend=biber,natbib=true]{biblatex}
+#+latex_header: \addbibresource{../biblio.bib}
+#+LATEX_HEADER: \input{../packages.tex}
+#+LATEX_HEADER: \input{setup.tex}
+#+LATEX_HEADER: \input{../notations.tex}
+
+#+TITLE: Factorization Matrix Method For Association Testing
+#+AUTHOR: Kévin CAYE
+#+LANGUAGE: fr
+#+STARTUP: overview indent inlineimages logdrawer
+#+TAGS: noexport(n)
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+COLUMNS: %25ITEM %TODO %3PRIORITY %TAGS
+#+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(g!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
+
+* Resources                                                        :noexport:
+- [[file:/media/cayek/7ac59e2e-e6da-4779-9b99-da54f16f6f00/projects/home/MaThese/Slides/index.pdf][my thesis pres]] 
+* FAQ                                                              :noexport:
+** How to chose the hyper parameter lambda or K
+*lambda L2* We explore during my thesis the cross validation. Even if the error
+*around the cross validation error 
+
+*lambda L1* We propose to use a regularization path to explore the sparsity of
+B. We can chose a model where B as 
+
+*K*
+** Can that model be used in a recomender system ?
+** How to you handle missing values ? 
+** How do you think this subject can be related to one of the criteo research field ? 
+* Introduction
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: slide-title="Introduction"
+:END:
+** Big data in genomic
+
+#+ATTR_LATEX: :width nil :height 0.8\textheight
+[[file:./img/costpergenome_2017.jpg]]
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+Mes travaux de thèse intervienne dans le contexte de la génomique. La dernière
+décéni a été marquées par l'arrivé de sequenceur à haut débit qui à permit de
+sequencer l'ADN de beaucoup d'oganisme vivant.
+
+Par exemple pour un humain en 2017 ca coûte environ mille euros de sequencer
+sont génome complet alors qu'il y a 10 ans ca coutait 10 million d'euros.
+
+L'amélioration des technologie de séquence permet d'obetenir énormement de
+données génétique. Il faut dont de dévelloper les méthodes statistique pour
+les analyser et répondre à des question biologique.
+#+END_NOTES
+
+https://www.genome.gov/sequencingcostsdata/
+
+** Genomic Data
+:LOGBOOK:
+- Note taken on [2017-11-16 jeu. 16:54] \\
+  Sources : 
+  - nb of SNPs et taille du génome : https://ghr.nlm.nih.gov/primer/genomicresearch/snp
+:END:
+
+- The DNA is long sequence of nucleotide: A, C, T, G (3 billion for Human)
+
+- Les données sont constituées de polymorphismes nucléotidiques appelés SNPs (10
+  millions chez l'humain)
+
+- Il y a deux allèles possibles par locus
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+  \centering
+  ADNs \left \{\begin{tabular}{cccccccc}
+                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} A & C & C & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} A & C & C & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots \\
+                \cdots & G & A & \cellcolor{blue!25} T & C & C & \cdots 
+              \end{tabular}
+              
+              \caption{{\bf Illustration d'un SNP.} Le nucléotide différant
+                entre les séquences d'ADN est un SNP.}
+\label{fig:SNP}
+\end{figure}
+#+END_EXPORT
+
+*** Notes                                                        :noexport:
+
+#+BEGIN_NOTES
+- L'ADN une très longue séquence de nucléotide Les séquenceurs permettent de
+  savoir pour chaque individu et chaque locus (un locus est une position sur
+  l'adn) son nuclotyde.
+- On s'intéresse aux locus ou on a pu observé un polymorphisme entre les individus . 
+- CAD que à une position données de l'ADN tout les individus n'on pas le même nucléotyde. 
+- les version différent d'un meme gêne sont appelé des allèle est un variant
+  d'un nucléotyde
+- Ce sont ces positions ou on pu observé des allèle différent entre les
+  individus qui nous interesse.
+- Par exemple a cette position il y 2 allèle, l'allèle A et l'allèle T
+- Enfin une hypothèse importante est que l'on suppose qu'il seulement possible
+  d'observé deux allèle possibles pour une position données.
+- Ce n'est pas si réducteur car pour les espece que l'on a considéré dans cette
+  thèse la probabilité que deux mutation de l'ADN apparaisse deux fois au même
+  endroit est très faible.
+#+END_NOTES
+
+[[file:./img/457px-Dna-SNP.svg.png]]
+
+** Matrice de génotype
+
+Les données sont rangées dans une matrice de taille $n \times p$ :
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+  \centering
+$ \Y = 
+\begin{bmatrix}
+  0      & 1    &  2    & 2& \cdots      & \cdots & \cdots \\
+  1      & 1    &  0    &1& \cdots      & \cdots    &  \cdots \\
+  \vdots      & \vdots    &  \vdots    & \vdots     & \cdots   & \cdots    &  \cdots \\
+  \vdots      & \vdots    &  \vdots    & \vdots     & \cdots   & \cdots    &  \cdots \\
+  0      & 0    &  2    &0& \cdots      & \cdots    &  \cdots \\
+\end{bmatrix}
+$
+\caption{{\bf Illustration d'une matrice de génotype.} Chaque élément de la
+  matrice est le nombre de fois que l’allèle muté est observé pour un individu
+  donné à un locus donné}
+\label{fig:matrix}
+\end{figure}
+#+END_EXPORT
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+
+Ensuite les données génétiques sont rangé dans une matrice qu'on notera Y. 
+Chaque ligne représente un individu et chaque collone représente une position
+dans le génome.
+Pour chaque individu position on va compté le nombre de fois qu'on observe le
+l'allèle muté.
+Par exemple pour un individu diploid qui possède deux fois chaque gène on va
+compté 0 1 ou 2 fois l'allèle muté.
+
+#+END_NOTES
+** Problématiques
+
+*Inférence des coefficients de métissage à l'aide de données géographiques*
+
+- Kévin Caye, Timo Deist, Helena Martins, Olivier Michel, Olivier François
+  (2016) TESS3: fast inference of spatial population structure and genome scans
+  for selection. /Molecular Ecology Resources/ 16 (2), 540-548. DOI :
+  [[http://dx.doi.org/10.1111/1755-0998.12471][10.1111/1755-0998.12471]].
+- Kévin Caye, Flora Jay, Olivier Michel, Olivier Francois (2017). Fast Inference
+  of Individual Admixture Coefficients Using Geographic Data. /The Annals of
+  Applied Statistics/. DOI : [[http://dx.doi.org/10.1101/080291][10.1101/080291]].
+- Kévin Caye, Olivier François, Flora Jay. =tess3r= : An R package for
+  estimating and visualizing spatial population structure based on
+  geographically constrained non-negative matrix factorization and population
+  genetics.
+
+** Problématiques
+
+*Correction des facteurs de confusion pour les études d'association*
+
+- Olivier François, Kevin Caye. Genome-wide association studies in
+  geographically structured populations. /Molecular Ecology Resources/, papier
+  invité. En révision.
+- Kevin Caye, Olivier François. Optimal confounder adjustment in genome and
+  epigenome-wide association studies. En préparation.
+- Kévin Caye, Olivier François. =lfmm= : An R package for correcting
+  association studies for confounding factors.
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+Au cours de ma thèse nous nous sommes intéresse à deux problématiques
+statistiques. Pour chacune de ces problématique nous avons dévellopé des
+méthodes que l'on a implémenté dans un package R.
+
+Dans un premier temps nous nous sommes intéressé à l'inférence des coefficient
+de métissage a partir des données génétique et de données géographique. Pour
+cette problématique nous nous apuions sur les travaux publié ... et
+le package tess3r.
+
+Dans un deuxième temps nous nous somme intéressé à la correction des facteur de
+confusion qui apparaisse des les étude d'association génétique.
+Nous avons proposé les articles .... qui sont en cour de publication ainsi que
+le package lfmm qui implémente nos méthodes
+#+END_NOTES
+
+* Correction des facteurs de confusion pour les études d'association
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: slide-title="Étude d'association"
+:END:
+#+BEGIN_EXPORT latex
+\frame{\sectionpage}
+#+END_EXPORT
+** Test d'association
+
+*Objectif*
+
+Détecter les SNPs dont les fréquences sont corrélées à une variable d'intérêt
+
+#+BEGIN_EXPORT latex
+$$  
+\begin{bmatrix}
+  0      & 1    &  \cellcolor{blue!25} 2    & 2& \cdots      & \cdots & \cellcolor{blue!25} 0 & \cdots \\
+  1      & 1    & \cellcolor{blue!25} 0    & & \cdots      & \cdots  & \cellcolor{blue!25} 1  &  \cdots \\
+  \vdots      & \vdots    & \cellcolor{blue!25} \vdots    & \vdots & \cdots & \cdots & \cellcolor{blue!25} \vdots   &  \cdots \\
+  \vdots      & \vdots    & \cellcolor{blue!25} \vdots    & \vdots & \cdots   &  \cdots & \cellcolor{blue!25} \vdots   &  \cdots \\
+  0      & 0    & \cellcolor{blue!25} 2    &  0 & \cdots      & \cdots  &  \cellcolor{blue!25} 1  &  \cdots \\
+\end{bmatrix} \sim
+\begin{bmatrix}
+  0.2 \\
+  1.5 \\
+  \vdots \\
+  \vdots \\
+  0 \\
+\end{bmatrix} 
+$$
+#+END_EXPORT
+
+*Exemple de variable d'intérêt*
+
+- Maladie  : diabète, maladie cœliaque citep:dubois2010multiple
+- Phénotype : la taille citep:wood2014defining
+- Environnement : la température citep:Frichot_2013
+
+** Étude d'association entre des données génétiques et un gradient climatique 
+
+#+HTML: <div style="float:left;width:60%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.6\columnwidth}
+
+[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/lfmm_intro_map_covariate_slides.pdf]]
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.4\columnwidth}
+#+HTML: <div style="float:left;width:40%;margin-top:50px;">
+
+Données génétiques du projet 1000Genome citep:1000Genome_2015
+- 1409 individus de 14 populations
+- 5397214 SNPs
+
+Variable d'exposition
+- données climatiques de la base WordClim
+- première composante principale
+
+*On veut identifier les SNPs associés au climat*
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
+** Exemple d'une étude d'association avec les données /Arabidopsis Thaliana/ :noexport:
+*** map                                                             :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+#+NAME: code:AT_covariate_plot
+#+CAPTION: Dépend de [[code:AT_covariate]]
+#+begin_src R 
+  library(MaTheseR)
+  library(tidyverse)
+  library(ggmap)
+  library(broom)
+  MaTheseR.params <- get_MaTheseRparams()
+  gtheme <- MaTheseR.params$gtheme
+
+  ## load data
+  X <- readRDS("../Data/AthalianaGegMapLines/call_method_75/X_worldclim.rds")
+  coord <- readRDS("../Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9_coord.rds") 
+
+
+  ## plot
+  toplot <- coord %>%
+    cbind(X = X) %>%
+    as_tibble()
+  map.world <- ggmap::get_map(location =  c(left = -16, bottom = 42, right = 33, top = 67),
+                              maptype = "watercolor")
+
+  cor(toplot)
+  lm.df <- lm(X ~ lat + long - 1, data = toplot) %>%
+    broom::tidy()
+  lm.df
+
+
+  pl <- ggmap(map.world) +
+    geom_point(data = toplot, mapping = aes(x = long, y = lat, color = X), size = 0.25) +
+    xlab("Longitude") +
+    ylab("Latitude") +
+    scale_colour_gradient(low = "chartreuse1",
+                          high = "firebrick1") +
+    MaTheseR.params$gtheme
+
+
+  save_expr(pl, "tess3_intro_map_covariate_slides_toplot.rds")
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   basename.output = "tess3_intro_map_covariate_slides",
+                                   env = MaTheseR.params,
+                                   height = 3,
+                                   width = 3)
+#+end_src
+
+#+ATTR_LATEX: :height 0.9\textheight :width nil
+[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/tess3_intro_map_covariate_slides.pdf]]
+*** text                                                            :BMCOL:
+:PROPERTIES:
+:BEAMER_col: 0.5
+:END:
+
+- On récupère des données climatiques à partir de la base données worldclim. 
+
+- La covariable $\matr{X}$ est fabriquée en prenant la première composante
+  principale de plusieur 
+
+**** Scripts                                                    :noexport:
+#+NAME: code:AT_covariate
+#+CAPTION: Dépend de rien
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  library(MaTheseR)
+
+  ## load data
+  data.file <- "./Data/AthalianaGegMapLines/call_method_75/call_method_75_TAIR9.RData"
+  load(data.file)
+  coord <- call_method_75_TAIR9.europe$coord
+  rm(call_method_75_TAIR9.europe)
+  gc()
+
+  ## get climatic gradient
+  ## worldclim : http://www.worldclim.org/formats1
+  ## getdata in R: http://www.gis-blog.com/r-raster-data-acquisition/
+  library(raster)
+  climate <- raster::getData('worldclim', var='bio', res = 2.5)
+  bio <- extract(climate, y = coord)
+  pc.bio <- prcomp(bio,scale = T)
+  plot(pc.bio$sdev)
+  X <- pc.bio$x[,1]
+
+  saveRDS(X, "./Data/AthalianaGegMapLines/call_method_75/X_worldclim.rds")
+
+#+end_src
+
+** Modèle de régression linéaire                                  :noexport:
+Modèle linéaire pour chaque SNP $\Y_{j}$
+$$
+\matr{Y}_{j} = \X \beta_{j} + \matr{E_{j}},
+$$
+où
+- $\beta_j$ représente l'effet de la variable $\matr{X}$ sur le
+- $\E_{j}$ est le bruit résiduel
+On veux détecter les locus où l'on rejette l'hypothèse nulle
+$$
+H_0 : \beta_j = 0
+$$
+On réalise un *test de Student*
+
+** Histogramme des \pvalues de l'étude d'association entre des données génétiques et un gradient climatique
+
+#+NAME: code:lfmm_qqplot
+#+CAPTION: Dépend de 
+#+begin_src R :session *krakR* :results output :dir /scp:cayek@krakenator:~/Projects/Thesis/MaThese/
+  library(tidyverse)
+  library(MaTheseR)
+  library(cowplot)
+  library(gridExtra)
+  library(scales)
+  MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
+
+  ## res
+  res.df <- readRDS("./OUTPUT/Expr/Eas_df_lm_2049b91fd6d2c9798533d7ebed94e547.rds")
+
+  pl <- ggplot(res.df, aes(pvalue)) +
+      geom_histogram(position = "dodge", aes(y = (..count..)/sum(..count..))) +
+      MaTheseR.params$gtheme +
+      xlab("P-valeur") +
+      ylab("Pourcentage") +
+      scale_y_continuous(labels=percent)
+
+  ThesisRpackage::Plots_export_pdf(pl,
+                                   "lfmm_intro_lm_slide",
+                                   MaTheseR.params,
+                                   width = 5.3,
+                                   height = 3)
+
+
+#+end_src
+
+[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/lfmm_intro_lm_slide.pdf]]
+
+*** Notes                                                        :noexport:
+- du coup ici il faut dire qu'on fait un test de student pour calculer des pvaleurs.
+** Modèles mixtes à facteurs latents (LFMM)
+
+
+#+begin_src latex :file img/conf_factor.pdf :packages '(("" "tikz")) :border 1em :exports results :eval no-export
+  % Define block styles
+  \usetikzlibrary{shapes,arrows}
+  \tikzstyle{astate} = [circle, draw, text centered, font=\footnotesize, fill=blue!25]
+  \tikzstyle{rstate} = [circle, draw, text centered, font=\footnotesize, fill=red!25]
+
+  \begin{tikzpicture}[node distance=2.8cm]
+    \node [astate] (1) at (0,0) {$\matbf{Y}$};
+    \node [astate] (2) at (2,0) {$\matbf{X}$};
+    \node [rstate] (3) at (1,2) {$\matbf{U}$};
+    \path (2) edge (3)
+    (1) edge (3)
+  \end{tikzpicture}
+#+end_src
+
+#+HTML: <div style="float:left;width:50%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.5\columnwidth}
+
+[[file:img/conf_factor.pdf]]
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.5\columnwidth}
+#+HTML: <div style="float:left;width:50%;margin-top:50px;">
+
+\begin{equation*}
+\Y = \X \B^T + \matr{U} \V^T + \E
+\end{equation*}
+
+où 
+
+- $\matr{U}$ est la matrice des variables latentes de taille $n \times K$
+- $\matr{V}$ est la matrice des effets des variables latentes $p
+  \times K$
+- $\B$ est l'effet de la variable $\matr{X}$ sur $\Y$ de taille $p \times 1$
+- $\E$ est la matrice de bruit résiduel de taille $n \times p$
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
+** Méthodes d'estimation pour les modèles de régression à facteurs latents
+
+#+LATEX: \begingroup\small
+#+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
+#+ATTR_LATEX: :align p{2cm}|p{3.8cm}p{3.8cm}|p{2cm}
+#+NAME: table:lfmm_etat_art
+|-------------+-------------------------------------------------------+---------------------------------------------------------------------------------------+--------------------------------|
+| Méthode     | Modèle                                                | Algorithme                                                                            | Référence                      |
+|-------------+-------------------------------------------------------+---------------------------------------------------------------------------------------+--------------------------------|
+| sva-twostep | ACP et régression linéaire                            | moindres carrés ordinaire et SVD                                                      | citet:article_Leek_Storey_2007 |
+| sva-irw     | /weighted/-ACP et régression linéaire                 | moindres carrés ordinaire et /weighted/-SVD                                           | citet:article_Leek_Storey_2008 |
+| cate        | analyse factorielle et régression linéaire            | EM ou SVD et estimation des moindres carrés généralisée                               | citet:wang2015confounder       |
+| *ridgeLFMM* | factorisation matricielle avec régularisation $L_{2}$ | SVD et estimation des moindres carrés régularisée en norme $L_{2}$                    |                                |
+| *lassoLFMM* | factorisation matricielle avec régularisation $L_{1}$ | /soft-thresholded/ SVD et estimation des moindres carrés régularisée en norme $L_{1}$ |                                |
+#+LATEX:\rowcolors{2}{}{}
+#+LATEX: \endgroup
+
+** Estimateur des moindres carrés régularisé en norme L2
+*Fonction objectif*
+
+\begin{equation*}
+\Lridge(\matr{U}, \V, \B) =  \frac{1}{2} \norm{\Y - \matr{U} \V^{T} - \X \B^T}_{F}^2 +
+\frac{\lambRidge}{2} \norm{\B}^{2}_{2}%
+\end{equation*}
+
+*Estimateurs*
+
+1. On calcule
+  $$
+  \hat{\matr{U}} \hat{\V}^{T} & = \sqrt{\matr{P}_{\lambda}}^{-1} \svd_{\K}( \sqrt{\matr{P}_{\lambda}} \Y ) 
+  $$
+  où 
+  $$
+  \matr{P}_{\lambda} = \Id_{n} - (\X^T \X + \lambda \Id_{n})^{-1} \X^T \X
+  $$
+
+2. On calcule
+  $$
+  \hat{\B}^{T} & = (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \hat{\matr{U}} \hat{\V}^{T}),
+  $$
+
+** Estimateur des moindres carrés régularisé en norme L2
+
+*Si $\lambda \to 0$*
+- \matr{P}_{\lambda} = \Id_{n} - (\X^T \X )^{-1} \X^T \X
+- \matr{P}_{\lambda} n'est plus inversible
+- $\matr{U}$ et $\V$ sont calculées sur le résidu de la régression linéaire de $\Y$ par $\X$
+*Si $\lambda \to \infty$*
+- \matr{P}_{\lambda} = \Id_{n}
+- $\matr{U}$ et $\V$ sont données par la SVD de rang $K$
+
+*** Notes                                                        :noexport:
+
+#+BEGIN_NOTES 
+- si lambda -> 0
+  on enlève complétement l'effet de X pour calculer les variables latentes.
+  V est bien calculé (c'est l'approche de cate et sva-twostep)
+  MAIS
+  on ne peut plus inversé P pour calculer U
+- si lambda -> inf
+  on ne corrige pas le calculer des facteurs ===> on va capté un partie de ce
+  qui doit être expliqué par X dans le calcul des facteurs !!
+#+END_NOTES
+** Estimateur des moindres carrés régularisé en norme L2
+
+*Théorème 1*
+
+Pour $\lambRidge$ strictement supérieur à zéro, les estimateurs des paramètres
+de LFMM régularisés en norme $L_{2}$ définissent un minimum global de la
+fonction objectif $\Lridge$.
+
+#+LATEX: \vspace{0.1in}
+*Idée de la preuve*
+
+\begin{align*}
+\Lridge(\matr{U}, \V, \B) & \geq & \Lridge(\matr{U}, \V, (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \matr{U} \V^{T})) \\
+ & & = \frac{1}{2} \norm{ \sqrt{\matr{P_{\lambda}}} (\Y - \matr{U} \V^{T})}_{F}^{2}
+\end{align*}
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- La preuve est purement calculatoire
+#+END_NOTES
+
+** Estimateur des moindres carrés régularisé en norme L1
+
+*Fonction objectif*
+\begin{equation*}
+\Llasso(\W, \B) =  \frac{1}{2} \norm{\Y - \W - \X \B^T}_{F}^2 +
+\lambLasso \norm{\B}_{1} + \gamma \norm{\W}_{*}
+\end{equation*}
+
+où 
+- $\matr{W}$ est la matrice latente telle que 
+$$\matr{W} = \matr{U} \matr{V}^T$$
+- $\norm{\W}_{*}$ est la norme nucléaire
+
+*** Notes                                                        :noexport:
+- on introduit une norme L1 pour renforcer la parsimoni.
+- en effet on s'attend a ce que seulement une certaine proportion de gène soit
+  associé à X
+- la norme matricielle pénalise le rang de W 
+** Estimateur des moindres carrés régularisé en norme L1
+
+*Algorithme de descente par blocs de coordonnées*
+
+On initialise 
+\begin{align*}
+\hat{\W}_{t = 0} & = 0 \\
+\hat{\B}_{t = 0} & = 0
+\end{align*}
+
+On alterne les étapes:
+
+1. Calculer $\hat{\B}_{t}$ le point minimum de 
+   \begin{equation}
+   \label{eq:lasso1}
+   \mathcal{L}_{\mathrm{lasso}}^{'}(\B) =  \frac{1}{2} ||(\Y - \hat{\W}_{t-1}) - \X \B^T||_{F}^2 + \lambLasso ||\B||_1
+   \end{equation}
+2. Calculer $\hat{\W}_{t}$ le point minimum de  
+   \begin{equation}
+   \label{eq:lasso2}
+   \mathcal{L}_{\mathrm{lasso}}^{''}(\W) = \frac{1}{2} ||(\Y - \X \hat{\B}_t^T)- \W ||_{F}^2 + \gamma ||\W||_{*}
+   \end{equation}
+
+** Estimateur des moindres carrés régularisé en norme L1
+
+*Théorème 2* 
+
+L'algorithme d'estimation des moindres carré régularisé en norme $L_{1}$ converge
+vers un minimum global de la fonction objectif $\Llasso$.
+
+#+LATEX: \vspace{0.1in}
+*La preuve* s'appuie sur les travaux de citet:Tseng_2001
+
+Les principales hypothèses sont : 
+- $\W,\B \mapsto \norm{\Y - \W - \X \B^T}_{F}^2$ est convexe et différentiable
+  (terme d'attache aux données dans $\Llasso$)
+- $\B \mapsto \norm{\B}_{1}$ est continue et convexe
+  (terme de régularisation dans $\Llasso$)
+- $\W \mapsto \norm{\W}_{*}$ est continue et convexe
+  (terme de régularisation dans $\Llasso$)
+
+** Tests d'hypothèse corrigés pour les facteurs de confusion citep:Price_2006
+
+Pour chaque variable expliquée $\Y_{j}$
+\begin{equation*}
+\Y_{j} =  \hat{\matr{U}} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{E_{j}},
+\end{equation*}
+où $\hat{\matr{U}}$ est l'estimation de la matrice des variables latentes.
+
+On teste l'hypothèse (test de Student)
+$$
+H_0 : \beta_j = 0
+$$
+
+On cherche une liste de candidats $\Gamma = \{1,..,J\}$ telle que 
+$$p( \beta_j = 0 | j \in \Gamma) = T$$ 
+où $T$ est le taux de fausse découverte souhaité. 
+
+On utilise la \qvalue cite:storey2003statistical
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- Même approche que EIGENSTRAT
+#+END_NOTES
+Jusqu'ici, nous avons abordé l'estimation des variables latentes et des effets.
+Mais le but est de trouver les associations significatives ! On doit construire
+un test de significativité qui prend en compte les facteurs que l'on a estimé.
+
+Maintenant qu'on a des Pvalue on peut proposer une liste de découverte. On veut
+fournir une liste de candidats
+
+Remark : je parle pas de la calibration justement !!
+Pour moi il y a deux choses le ranking et la calibration. citet:Sun_2012 en parle !!
+** Données simulées                                               :noexport:
+On calcule les $K$ premières composantes principales des chromosomes 1 et 2 de
+la base de données 1000Genome (52211 SNPs et 1758 individus)
+\begin{equation*}
+\Y = \matr{U} \V^{T} + \E
+\end{equation*}
+
+On simule des variables latentes et une variable explicative
+\begin{equation*}
+\left[ \matr{U} \X \right] \sim \mathcal{N}(0, \matr{S}) \text{, avec } \matr{S} = 
+\begin{bmatrix}
+s_{1} & 0 & \cdots & \rho c_{1} \\
+0 & \ddots & 0 & \vdots \\
+\vdots & 0 & s_{K} & \rho c_{K} \\
+\rho c_{1} & \cdots & \rho c_{K} & 1 \\
+\end{bmatrix}
+\end{equation*}
+où $\rho$ est regle l'intessité de la corrélation entre $\matr{U}$ et $\X$.
+
+
+Enfin
+$$
+\Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
+$$
+
+** Données simulées à partir des données 1000Genomes              :noexport:
+- On calcule les $K$ premières composantes principales des chromosomes 1 et 2 de
+  la base de données 1000Genome (52211 SNPs et 1758 individus)
+  \begin{equation*}
+  \Y = \matr{U} \V^{T} + \E
+  \end{equation*}
+
+- On simule des variables latentes \matr{U}^{'} et une variable explicative
+  $\X^{'}$ en contrôlant l'intessité de la corrélation.
+
+- On simule $\B^{'}$ telle qu'une proportion soit non nulle. 
+
+- On calcule une nouvelle matrice tel que
+  $$
+  \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
+  $$
+
+** Comparaison des méthodes sur des données simulées à partir des données 1000Genomes 
+
+#+NAME: code:lmm_auc
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(MaTheseR)
+  library(foreach)
+  library(doParallel)
+  library(tidyverse)
+  require(ExpRiment)
+  require(foreach)
+  require(magrittr)
+
+  dat <- ExpRsampler_generativeData(n = 200,
+                                    p = 1000,
+                                    K = 3,
+                                    outlier.prop = 0.2,
+                                    cs = 0.8,
+                                    sigma = 0.2,
+                                    B.sd = 1.0,
+                                    B.mean = 0.0,
+                                    U.sd = 1.0,
+                                    V.sd = 1.0) %>%
+    ExpRmouline()
+
+  ## param
+  K.method <- 3
+
+  ## methods
+  m.ridgeLfmm <- method_ridgeLFMM(K = K.method)
+  m.lasso <- method_lassoLFMM(K = K.method, nozero.prop = NULL, lambda.num = 100,
+                              relative.err.epsilon = 1e-6)
+  m.lm <- method_lm()
+  m.pca <- method_PCAlm(K = K.method)
+  m.cate <- method_cate(K = K.method)
+  m.famt <- method_famt(K.method)
+  m.sva_irw <- method_sva(K.method, method = "irw")
+  m.sva_twostep <- method_sva(K.method, method = "two-step")
+  m.oracle <- method_oracle()
+
+  methods <- m.ridgeLfmm * param(force = FALSE, save = TRUE) +
+    m.lm * param(force = FALSE, save = TRUE) +
+    m.pca * param(force = FALSE, save = TRUE) +
+    m.cate * param(force = FALSE, save = TRUE) +
+    m.lasso * param(force = FALSE, save = TRUE) +
+    m.oracle * param(force = FALSE, save = TRUE) + 
+    m.sva_twostep * param(force = FALSE, save = TRUE) +
+    m.sva_irw * param(force = FALSE, save = TRUE)
+
+
+  df.res <- tibble()
+  for (m in methods) {
+    m.res <- ExpRmouline(m, dat)
+    df.res <- expectedFDR_trueFDR_power(pvalue = m.res$pvalue, dat$outlier) %>%
+      mutate(method = m$name) %>%
+      rbind(df.res)
+  }
+
+
+
+
+  pl <- ggplot(df.res, aes(x = true.power, y = 1 - true.fdr,
+                           color = method)) +
+    geom_smooth() +
+    ylab("1 - FDR") +
+    xlab("Puissance")
+#+end_src
+
+
+#+HTML: <div style="float:left;width:60%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.6\columnwidth}
+
+*Données simulées*
+
+- On calcule les $K$ premières composantes principales 
+  \begin{equation*}
+  \Y = \matr{U} \V^{T} + \E
+  \end{equation*}
+
+- On simule \matr{U}^{'} et $\X^{'}$ en contrôlant leur corrélation. 
+
+- On calcule une nouvelle matrice telle que
+  $$
+  \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
+  $$
+
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.4\columnwidth}
+#+HTML: <div style="float:left;width:40%;margin-top:50px;">
+
+*On compare les méthodes*
+
+- lm
+- lmPCA
+- sva-twostep
+- sva-irw
+- cate
+- oracle
+- ridgeLFMM
+- lassoLFMM
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
+*Critère*
+
+- AUC : aire sous la courbe précision (1 - FDR) $\times$ rappel (puissance)
+
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- lm est la méthode de référence qui ne corrige pas les facteurs de dconfusion 
+- PCAlm est la méthode de référence qui corrige les facteurs de confusion sans
+  prendre en compte la variable d'interet
+- les autre méthode corrige pour les facteurs de confusion en prennant en compte
+  la variable d'interet
+#+END_NOTES
+On passe sous silence le facteur d'inflation !! On considère que tout le monde
+est recalibré pour simplifier.
+** Résultat de la comparaison des méthodes sur des données simulées
+
+#+NAME: code:lfmm_comp
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:num_val_auc_gif_df][code:num_val_auc_gif_df]]
+#+begin_src R 
+  require(MaTheseR)
+  MaTheseR.params <- get_MaTheseRparams()
+  library(gridExtra)
+  library(forcats)
+  library(tidyverse)
+  library(latex2exp)
+  MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
+
+  auc.df <- readRDS("../OUTPUT/Expr/auc.df.rds") 
+
+  ## filter and order method
+  auc.df <- auc.df %>%
+    dplyr::mutate(method = factor(article3_method_name(method), method.ordered))
+  auc.df$method %>% unique()
+
+  ## auc
+  toplot <- auc.df %>%
+    group_by(method, rho.c) %>%
+    summarise(auc.mean = mean(auc), N = length(auc), sd = sd(auc), se = sd / sqrt(N)) %>%
+    dplyr::filter(rho.c %in% c(0.5, 0.8, 1.0))
+  auc.rho.pl <- ggplot(toplot, aes(x = as.factor(rho.c ^ 2), y = auc.mean, fill = method)) +
+    geom_bar(position = "dodge", stat = "identity") +
+    geom_errorbar(aes(ymin = auc.mean - se,
+                      ymax = auc.mean + se),
+                  width = 0.9,
+                  position = "dodge") +
+    scale_fill_manual(values = color.values) +
+    gtheme + 
+    theme(legend.position = "bottom") +
+    xlab("Param\\`etre de corr\\'elation entre $\\mathbf{U}$ et $\\mathbf{X}$ ($\\rho ^ 2$)") +
+    ylab("AUC")
+
+  ThesisRpackage::Plots_export_tikz_pdf(auc.rho.pl,
+                                        basename.output = "lfmm_method_comp_slides",
+                                        env = MaTheseR.params,
+                                        width = 5.2,
+                                        height = 3)
+#+end_src
+
+[[file:../OUTPUT/Rplots/lfmm_method_comp_slides.pdf]]
+
+** Étude d'association entre des données génétiques et un gradient climatique :noexport:
+
+#+NAME: code:lfmm_geas_scree
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_screeplot_CV][code:eas_screeplot_CV]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  library(scales)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  latex_percent <- function (x) {
+    x <- plyr::round_any(x, scales:::precision(x)/100)
+    stringr::str_c(comma(x * 100), "\\%")
+  }
+
+  ## screeplot
+  expr <- readRDS("../OUTPUT/Expr/geas_screeplot_expr.rds")
+  plA <- ggplot(expr, aes(x = index, y = var.expl)) +
+    geom_point() +
+    coord_cartesian(xlim = c(1,15)) +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Variance\nexpliqu\\'ee") +
+    MaTheseR.params$gtheme +
+    scale_color_discrete(name = "$\\lambda$") +
+    scale_y_continuous(labels=latex_percent) +
+    geom_vline(xintercept = 9, linetype = "dashed") +
+    theme(legend.position=c(0.8, 0.6))
+
+  ThesisRpackage::Plots_export_tikz_pdf(plA,
+                                        basename.output = "lfmm_geas_scree_slide",
+                                        env = MaTheseR.params,
+                                        height = 3,
+                                        width = 5.2)
+#+end_src
+
+
+[[file:../OUTPUT/Rplots/lfmm_geas_scree_slide.pdf]]
+
+*** Notes                                                        :noexport:
+Retour sur l'exemple
+** Choix de K pour l'étude d'association entre des données génétiques et un gradient climatique
+
+#+NAME: code:lfmm_geas_PCs_slide
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_PCs][code:eas_PCs]]
+#+begin_src R 
+  library(MaTheseR)
+  library(cowplot)
+  MaTheseR.params <- get_MaTheseRparams()
+
+  ## get res
+  rownames.Y <- readRDS("../Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_G_noNA_scaled.rownames.rds")
+  expr <- readRDS("../OUTPUT/Expr/Eas_U_ridgeLFMM_K14.rds")
+
+  ## get indiv information
+  indiv.df <- readRDS("../Data/ThesisDataset/3Article/1000GenomesPhase3/EAS_indiv_df.rds")
+
+  ## plot
+  U.df <- as_tibble(expr$U) 
+  colnames(U.df) <- paste0("PC",1:14)
+  U.df <- U.df %>% cbind(indiv.df) %>% as_tibble() %>%
+    mutate(Population = pop)
+
+  pl2 <- ggplot(U.df, aes(x = PC4, PC5, color = Population)) +
+    geom_point() +
+    xlab("Var. latente 4") +
+    ylab("Var. latente 5") +
+    MaTheseR.params$gtheme +
+    theme(legend.position = "none")
+  pl3 <- ggplot(U.df, aes(x = PC6, PC7, color = Population)) +
+    geom_point() +
+    xlab("Var. latente 6") +
+    ylab("Var. latente 7") +
+    MaTheseR.params$gtheme+
+    theme(legend.position = "none")
+  pl4 <- ggplot(U.df, aes(x = PC8, PC9, color = Population)) +
+    geom_point() +
+    xlab("Var. latente 8") +
+    ylab("Var. latente 9") +
+    MaTheseR.params$gtheme+
+    theme(legend.position = "none")
+  pl5 <- ggplot(U.df, aes(x = PC10, PC11, color = Population)) +
+    geom_point() +
+    xlab("Var. latente 10") +
+    ylab("Var. latente 11") +
+    MaTheseR.params$gtheme+
+    theme(legend.position = "none")
+
+
+    ## plot for thesis
+  mylegend <- g_legend(pl2 + theme(legend.position = "bottom") +
+                       guides(color = guide_legend(nrow = 2)))
+  pl <- plot_grid(pl2,
+                  pl3,
+                  pl4,
+                  pl5,
+                  nrow = 2)
+  pl.leg <- drawable(function() {
+      gridExtra::grid.arrange(pl,
+                              mylegend, nrow=2, heights=c(10, 2))
+  })
+  pl.leg$pl <- pl
+  pl.leg$mylegend <- mylegend
+
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl.leg,
+                                        basename.output = "lfmm_geas_pc_slides",
+                                        env = MaTheseR.params,
+                                        height = 3.3,
+                                        width = 5.4)
+#+end_src
+
+
+#+ATTR_LATEX: :width nil :height 0.8\textheight
+[[file:../OUTPUT/Rplots/lfmm_geas_pc_slides.pdf]]
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- Comme nous l'avons dit le choix de K est important, pour le choisir on peut se
+  demander ce que représente les variable latente
+#+END_NOTES
+** Étude d'association entre des données génétiques et un gradient climatique :noexport:
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics[height=0.6\textheight]{../OUTPUT/Rplots/geas_venn.png}
+\caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
+    un gradient environnemental (GEAS).} Diagramme de Venn des listes controlées à
+  un taux de fausses de découvertes de $1 \%$ pour chaque méthode.}
+\label{fig:geas_venn}
+\end{figure}
+#+END_EXPORT
+
+*** Notes                                                        :noexport:
+Dire pk il reste seulement ces méthodes
+diagramme de venne : montre que tout le monde ne fait pas pareil
+Les candidats détecté par lassoLFMM, ridgeLFMM et cate 
+** Étude d'association entre des données génétiques et un gradient climatique
+
+#+LATEX: \begingroup\fontsize{9}{9}\selectfont
+#+LATEX: \rowcolors{2}{gray!25}{white}
+#+NAME: code:geas_table_print
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:geas_table][code:geas_table]]
+#+begin_src R :results output latex replace :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(xtable)
+  library(knitr)
+  library(kableExtra)
+
+  table.df <- readRDS("../OUTPUT/Expr/geas_table_toprint.rds")
+
+  ## table.df %>% names() %>% paste0(collapse = "|")
+
+  table.df %>%
+    xtable(align = "lp{4cm}ll", type = "latex", label = "table:geas") %>%
+    print(include.rownames=FALSE,
+          sanitize.colnames.function=identity,
+          sanitize.text.function=identity,
+          floating = TRUE
+          )
+#+end_src
+
+#+RESULTS: code:geas_table_print
+#+BEGIN_EXPORT latex
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Wed Nov 15 14:32:05 2017
+\begin{table}[ht]
+\centering
+\begin{tabular}{p{4cm}ll}
+  \hline
+SNPs & Détecté par les méthodes & Description du phénotype \\ 
+  \hline
+rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\ 
+  rs10496731 & lassoLFMM & Body Height \\ 
+  rs2472297 & ridgeLFMM, cate, lassoLFMM & Caffeine metabolism \\ 
+  rs2256175 & ridgeLFMM, cate, lassoLFMM & Cholesterol total \\ 
+  rs2472297 & ridgeLFMM, cate, lassoLFMM & Coffee consumption (cups per day) \\ 
+  rs2278544, rs2322659 & lassoLFMM & Congenital lactase deficiency \\ 
+  rs4954218 & ridgeLFMM, cate, lassoLFMM & Corneal structure \\ 
+  rs882300 & ridgeLFMM, cate, lassoLFMM & Electrocardiographic traits \\ 
+  rs882300 & ridgeLFMM, cate, lassoLFMM & Electrocardiography \\ 
+  rs2256175 & ridgeLFMM, cate, lassoLFMM & Giant cell arteritis \\ 
+  rs2256175, rs6085576, rs2104012, rs1983716, rs2853977 & ridgeLFMM, cate, lassoLFMM & Height \\ 
+  rs6430549 & ridgeLFMM, cate, lassoLFMM & Hematocrit \\ 
+  rs2278544, rs2322659 & lassoLFMM & Lactose intolerance \\ 
+  rs882300 & ridgeLFMM, cate, lassoLFMM & Multiple sclerosis \\ 
+  rs1123848 & ridgeLFMM, cate, lassoLFMM & Neuroblastoma \\ 
+  rs17158483 & lassoLFMM & Obesity-related traits \\ 
+   \hline
+\end{tabular}
+\label{table:geas}
+\end{table}
+#+END_EXPORT
+
+#+LATEX:\rowcolors{2}{}{}
+#+LATEX: \endgroup
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- sur des donnnées réelle il n'y a pas vérité terrain on ne peut donc pas savoir
+  si une méthode fait mieux qu'un autre
+- Mais on peut recouper avec d'autre base de données pour essayer de comprendre
+  ce qui a été trouvé 
+- lactose : car lié a l'agriculture et donc au climat
+- PCAlm et lm ne permete pas d'identifier les SNPs classique qu'on devrais
+  retrouver 
+#+END_NOTES
+
+** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+:LOGBOOK:
+- Note taken on [2017-11-14 mar. 16:13] \\
+  Sources: 
+  - image from https://en.wikipedia.org/wiki/DNA_methylation
+:END:
+
+#+HTML: <div style="float:left;width:40%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.4\columnwidth}
+
+#+ATTR_LATEX: :width \textwidth :height nil
+[[file:./img/1280px-DNA_methylation.jpg]]
+citep:wiki:DNA_methylation
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.6\columnwidth}
+#+HTML: <div style="float:left;width:60%;margin-top:50px;">
+
+*Données* citep:Liu_2013
+
+- $\Y$ contient le niveau de méthylation de $485 577$ sites de l'ADN chez 699
+  individus (354 cas et 335 contrôles)
+- $\X$ représente la maladie polyarthrite rhumatoïde
+
+*Facteurs de confusion*
+
+- composition cellulaire
+- âge
+- genre
+- consommation de tabac
+
+*Objectif*
+
+Trouver les sites de méthylation associés à la maladie polyarthrite rhumatoïde.
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
+*** Notes                                                        :noexport:
+La méthylation de l'ADN est un processus au cours duquel un groupe méthyle est
+ajouté aux molécules d'ADN. La méthylation peut changer l'activité de l'ADN et
+en particulier modifier sa transcription en protéine.
+
+** Diagramme de Venn de l'étude d'association entre des sites de méthylation et la polyarthrite rhumatoïde (EWAS)
+
+
+#+BEGIN_EXPORT latex
+\begin{figure}[!h]
+\centering
+\includegraphics[height=0.6\textheight]{ewas_venn_slides.png}
+\caption{ Diagramme de Venn des
+  listes contrôlées à un taux de fausses découvertes de 1 \%.}
+\label{fig:ewas_venn}
+\end{figure}
+#+END_EXPORT
+
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- PCAlm méthode qui ne prend pas en compte la variable d'interet dans le calul
+  de facteur latent fait moins de découverte
+- on s'interesse au 19 candidat découvert par toute les méthodes
+#+END_NOTES
+
+*** script                                                       :noexport:
+
+#+BEGIN_SRC R
+  library(MaTheseR)
+  library(cowplot)
+  library(gridExtra)
+  library(scales)
+  library(tidyverse)
+  MaTheseR.params <- get_MaTheseRparams()
+  method.ordered <- MaTheseR.params$method.ordered
+  color.values <- MaTheseR.params$color.values
+  gtheme <- MaTheseR.params$gtheme
+
+  expr <- readRDS("../../MaThese/OUTPUT/Expr/EWAS_all.rds")
+  candidates <- readRDS("../../Data/ThesisDataset/3Article/GSE42861/candidates.rds")
+  m1 <- length(candidates)
+
+  ## filter and order method
+  expr$df.res$method %>% unique()
+  df.res <- expr$df.res %>%
+    dplyr::filter(!(method %in% c("famt"))) %>%
+    transmute(method = factor(article3_method_name(method), method.ordered),
+              index = index,
+              pvalue = pvalue,
+              calibrated.pvalue = calibrated.pvalue,
+              outlier = index %in% candidates,
+              name = colname)
+
+
+  #############################################################################
+  ## venn
+
+  ## we calibrate sva-two-step with gif ! 
+  calibrate <- function(p) {
+    score2 <- qchisq(p, df = 1, lower.tail = FALSE)
+    gif <- median(score2) / qchisq(0.5, df = 1)
+    score2 <- score2 / gif
+    pchisq(score2, lower.tail = FALSE, df = 1)
+  }
+  p <- df.res$pvalue[df.res$method == "sva-two-step"]
+  hist(p)
+  p.calibrated <- calibrate(p)
+  hist(p.calibrated)
+  df.res$calibrated.pvalue[df.res$method == "sva-two-step"] <- p.calibrated
+
+  toplot <- df.res %>%
+    dplyr::mutate(pvalue = calibrated.pvalue) %>%
+    group_by(method) %>%
+    filter_candidates_threshold(0.01) %>%
+    ungroup()
+  sets <- list(cate = toplot$index[toplot$method == "cate"],
+               lassoLFMM = toplot$index[toplot$method == "lassoLFMM"],
+               ridgeLFMM = toplot$index[toplot$method == "ridgeLFMM"],
+               PCAlm = toplot$index[toplot$method == "PCAlm"],
+               `sva-two-step` = toplot$index[toplot$method == "sva-two-step"]
+               )
+
+  ## VennDiagram
+  inter <- function(...) {
+    id <- list(...)
+    res <- sets[[id[[1]]]]
+    for (i in id) {
+      res <- base::intersect(res, sets[[i]])
+    }
+    length(res)
+  }
+  cat <- sapply(1:5, function(i) paste0(names(sets)[i], " (",length(sets[[i]]),")"))
+
+  venn <- VennDiagram::draw.quintuple.venn(
+                         area1 = inter(1),
+                         area2 = inter(2),
+                         area3 = inter(3),
+                         area4 = inter(4),
+                         area5 = inter(5),
+                         n12 = inter(1,2),
+                         n13 = inter(1,3),
+                         n14 = inter(1,4),
+                         n15 = inter(1,5),
+                         n23 = inter(2,3),
+                         n24 = inter(2,4),
+                         n25 = inter(2,5),
+                         n34 = inter(3,4),
+                         n35 = inter(3,5),
+                         n45 = inter(4,5),
+                         n123 = inter(1,2,3),
+                         n124 = inter(1,2,4),
+                         n125 = inter(1,2,5),
+                         n134 = inter(1,3,4),
+                         n135 = inter(1,3,5),
+                         n145 = inter(1,4,5),
+                         n234 = inter(2,3,4),
+                         n235 = inter(2,3,5),
+                         n245 = inter(2,4,5),
+                         n345 = inter(3,4,5),
+                         n1234 = inter(1,2,3,4),
+                         n1235 = inter(1,2,3,5),
+                         n1245 = inter(1,2,4,5),
+                         n1345 = inter(1,3,4,5),
+                         n2345 = inter(2,3,4,5),
+                         n12345 = inter(1,2,3,4,5),
+                         category = cat,
+                         fill = color.values[names(sets)],
+                         cat.col = color.values[names(sets)],
+                         cat.cex = 1.2,
+                         cat.pos = c(0.0, -30, 180, 180, 30),
+                         cat.dist = c(0.2,0.25,0.2,0.2,0.25),
+                         margin = 0.07,
+                         ind = TRUE
+                       )
+
+  MaTheseR.params$fig.dir <- "./"
+  pl <- drawable(pl.func = function() {
+      grid::grid.draw(venn)
+  })
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "ewas_venn_slides",
+                                        env = MaTheseR.params,
+                                        height = 0.4 * MaTheseR.params$textheightinch,
+                                        width = MaTheseR.params$textwidthinch)
+
+  convert.cmd <- paste("convert",
+                       "-density 600",
+                       "./ewas_venn_slides.pdf",
+                       "-quality 100",
+                       "./ewas_venn_slides.png")
+  system(convert.cmd)
+#+END_SRC
+** Sites de méthylation trouvés dans d'autres études citep:Rahmani_2016,Zou_2014 (EWAS)
+
+#+LATEX: \begingroup\fontsize{9}{9}\selectfont
+#+LATEX: \rowcolors{2}{gray!25}{white}
+#+NAME: code:ewas_table_print
+#+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:ewas_table][code:ewas_table]] 
+#+begin_src R :results output latex replace :exports results :session *R* :dir ~/Projects/Thesis/MaThese/
+  library(xtable) ## https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
+
+  ewas.table <- readRDS("../OUTPUT/Expr/ewas_table_toprint.rds")
+
+  ewas.table %>%
+    xtable(align = "lllllcccc",
+           digits = -2, type = "latex",
+           label = "table:ewas") %>%
+    print(include.rownames=FALSE,
+          sanitize.text.function=identity)
+
+#+end_src
+
+#+RESULTS: code:ewas_table_print
+#+BEGIN_EXPORT latex
+% latex table generated in R 3.4.0 by xtable 1.8-2 package
+% Wed Nov 15 14:30:37 2017
+\begin{table}[ht]
+\centering
+\begin{tabular}{llllcccc}
+  \hline
+ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\ 
+  \hline
+\textbf{cg16411857} & \textbf{16} & \textbf{57023191} & \textbf{NLRC5} & \textbf{9.2e-13} & \textbf{2.4e-12} & \textbf{6.6e-12} & \textbf{5.3e-12} \\ 
+  \textbf{cg07839457} & \textbf{16} & \textbf{57023022} & \textbf{NLRC5} & \textbf{1.9e-11} & \textbf{4.5e-11} & \textbf{1.1e-10} & \textbf{9.7e-11} \\ 
+  \textbf{cg05428452} & \textbf{6} & \textbf{32712979} & \textbf{HLA-DQA2} & \textbf{5.4e-11} & \textbf{4.6e-11} & \textbf{8.5e-11} & \textbf{8.8e-11} \\ 
+  cg02508743 & 8 & 56903623 & LYN & 2.9e-08 & 2.7e-08 & 2.7e-08 & 2.8e-08 \\ 
+  \textbf{cg20821042} & \textbf{6} & \textbf{32709158} & \textbf{HLA-DQA2} & \textbf{6.5e-08} & \textbf{6.1e-08} & \textbf{9.6e-08} & \textbf{1.0e-07} \\ 
+  cg13081526 & 6 & 32449961 &  & 1.5e-07 & 1.2e-07 & 2.0e-07 & 2.2e-07 \\ 
+  cg18052547 & 6 & 32552547 & HLA-DRB1 & 1.8e-07 & 1.8e-07 & 3.0e-07 & 3.1e-07 \\ 
+  \textbf{cg25372449} & \textbf{6} & \textbf{32490350} & \textbf{HLA-DRB5} & \textbf{2.5e-07} & \textbf{2.6e-07} & \textbf{4.5e-07} & \textbf{4.6e-07} \\ 
+  cg02030958 & 13 & 110386267 &  & 4.0e-07 & 7.8e-08 & 6.0e-08 & 1.1e-07 \\ 
+  cg16171858 & 3 & 58472734 &  & 4.6e-07 & 1.6e-07 & 2.7e-08 & 3.8e-08 \\ 
+  cg03280622 & 8 & 145023013 & PLEC1 & 4.7e-07 & 5.0e-09 & 5.8e-09 & 3.8e-08 \\ 
+  cg24150157 & 19 & 51891210 & LIM2 & 6.2e-07 & 3.1e-07 & 1.6e-07 & 2.1e-07 \\ 
+  cg26244575 & 12 & 76354015 &  & 6.9e-07 & 2.7e-09 & 5.0e-10 & 4.2e-09 \\ 
+  cg05370853 & 6 & 32606634 & HLA-DQA1 & 7.1e-07 & 3.0e-07 & 3.3e-07 & 4.4e-07 \\ 
+  cg14989316 & 10 & 80757927 & LOC283050 & 7.3e-07 & 6.1e-08 & 7.8e-08 & 2.1e-07 \\ 
+  cg17360552 & 6 & 32725332 & HLA-DQB2 & 8.1e-07 & 6.1e-07 & 1.1e-06 & 1.2e-06 \\ 
+  cg01373248 & 3 & 18480297 & SATB1 & 8.1e-07 & 1.4e-07 & 1.1e-07 & 2.5e-07 \\ 
+  cg26164488 & 2 & 64440295 &  & 9.3e-07 & 3.5e-09 & 1.6e-09 & 1.4e-08 \\ 
+  cg05874806 & 2 & 102350276 & MAP4K4 & 1.1e-06 & 1.1e-06 & 4.7e-07 & 5.6e-07 \\ 
+   \hline
+\end{tabular}
+\label{table:ewas}
+\end{table}
+#+END_EXPORT
+
+#+LATEX:\rowcolors{2}{}{}
+#+LATEX: \endgroup
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- on retrouve les candidats qui ont été découvert sur le même jeu de données
+  mais en specifiant les facteurs de confusion 
+- on voit que les méthodes qui apprenne les facteur de confusion font d'autre
+  découverte
+- dans le HLA qui est une zone iportante pour le système himunitaire
+- LYN qui a un role dans le système himunitaire
+- Ces résultat confirme la conposante auto imune de la polyartrite 
+#+END_NOTES
+
+*Question* Comparaison des facteur latents avec les facteurs de confusion connus.
+* Methods Comparison On Simulations
+* Genome Wide Association Study With an Environmental Gradient
+* Conclusion
