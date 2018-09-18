@@ -500,16 +500,13 @@ where
 #+END_NOTES
 ** L2 regularized least-squares estimates
 
-*Theorem 1*
+*Theorem 1* 
 
-For $\lambRidge$ strictly superior to zero, 
-
-les estimateurs des paramètres
-de LFMM régularisés en norme $L_{2}$ définissent un minimum global de la
-fonction objectif $\Lridge$.
+Let $\lambRidge > 0$. The estimates $\hat{\matr{U}}$, $\hat{\V}$ and \hat{\B} ̂
+define a global mimimum of the penalized loss function $\Lridge$.
 
 #+LATEX: \vspace{0.1in}
-*Idée de la preuve*
+*Idea of the proof*
 
 \begin{align*}
 \Lridge(\matr{U}, \V, \B) & \geq & \Lridge(\matr{U}, \V, (\X^{T} \X + \lambRidge \Id_{d})^{-1} \X^{T} (\Y - \matr{U} \V^{T})) \\
@@ -567,38 +564,38 @@ Then alternate
 
 *Theorem 1* 
 
-L'algorithme d'estimation des moindres carré régularisé en norme $L_{1}$ converge
-vers un minimum global de la fonction objectif $\Llasso$.
+The bloc coordinate descent algorithm for estimating the L1 regularized
+parameters converge toward a global minimum of the loss function $\Llasso$.
 
 #+LATEX: \vspace{0.1in}
-*La preuve* s'appuie sur les travaux de citet:Tseng_2001
+*The proof* rely on a work of citet:Tseng_2001
 
-Les principales hypothèses sont : 
-- $\W,\B \mapsto \norm{\Y - \W - \X \B^T}_{F}^2$ est convexe et différentiable
-  (terme d'attache aux données dans $\Llasso$)
-- $\B \mapsto \norm{\B}_{1}$ est continue et convexe
-  (terme de régularisation dans $\Llasso$)
-- $\W \mapsto \norm{\W}_{*}$ est continue et convexe
-  (terme de régularisation dans $\Llasso$)
+The main hypothesis are : 
+- $\W,\B \mapsto \norm{\Y - \W - \X \B^T}_{F}^2$ is convex and differentiable
+  (the term of attach to data in $\Llasso$)
+- $\B \mapsto \norm{\B}_{1}$ is continuous and convex
+  (regularization term in $\Llasso$)
+- $\W \mapsto \norm{\W}_{*}$ is continuous and convex
+  (regularization term in $\Llasso$)
 
-** Tests d'hypothèse corrigés pour les facteurs de confusion citep:Price_2006
+** hypothesis testing corrected for confunders citep:Price_2006
 
-Pour chaque variable expliquée $\Y_{j}$
+For each explained variable $\Y_{j}$
 \begin{equation*}
 \Y_{j} =  \hat{\matr{U}} \matr{\gamma}_{j}^{T} + \X \beta_{j} + \matr{E_{j}},
 \end{equation*}
-où $\hat{\matr{U}}$ est l'estimation de la matrice des variables latentes.
+where $\hat{\matr{U}}$ is an estimates of the latent variable matrix.
 
-On teste l'hypothèse (test de Student)
+We test the following hypothesis
 $$
 H_0 : \beta_j = 0
 $$
 
-On cherche une liste de candidats $\Gamma = \{1,..,J\}$ telle que 
+We want to the list $\Gamma = \{1,..,J\}$ such that
 $$p( \beta_j = 0 | j \in \Gamma) = T$$ 
-où $T$ est le taux de fausse découverte souhaité. 
+where $T$ is the expected false discovery rate (FDR). 
 
-On utilise la \qvalue cite:storey2003statistical
+We used the \qvalue cite:storey2003statistical
 
 *** Notes                                                        :noexport:
 #+BEGIN_NOTES
@@ -662,7 +659,7 @@ $$
   \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
   $$
 
-** Comparaison des méthodes sur des données simulées à partir des données 1000Genomes 
+** Methods comparison on dataset simulated from 1000Genomes dataset
 
 #+NAME: code:lmm_auc
 #+CAPTION: Dépend de 
@@ -735,16 +732,16 @@ $$
 #+LATEX: \begin{columns}
 #+LATEX: \begin{column}{0.6\columnwidth}
 
-*Données simulées*
+*Simulated Dataset*
 
-- On calcule les $K$ premières composantes principales 
+- Compute the $K$ first principal components
   \begin{equation*}
   \Y = \matr{U} \V^{T} + \E
   \end{equation*}
 
-- On simule \matr{U}^{'} et $\X^{'}$ en contrôlant leur corrélation. 
+- Simulate $\matr{U}^{'}$ and $\X^{'}$ by controlling the correlation. 
 
-- On calcule une nouvelle matrice telle que
+- Then create a new matrix
   $$
   \Y^{'} = \matr{U}^{'} \V^{T} + \X^{'} \B^{'}^{T} + \E
   $$
@@ -755,7 +752,7 @@ $$
 #+LATEX: \begin{column}{0.4\columnwidth}
 #+HTML: <div style="float:left;width:40%;margin-top:50px;">
 
-*On compare les méthodes*
+*We compared the following method*
 
 - lm
 - lmPCA
@@ -770,9 +767,9 @@ $$
 #+LATEX: \end{column}
 #+LATEX: \end{columns}
 
-*Critère*
+*Criteria*
 
-- AUC : aire sous la courbe précision (1 - FDR) $\times$ rappel (puissance)
+- AUC : Area under the curve (1 - FDR) $\times$ recall (or power)
 
 
 *** Notes                                                        :noexport:
@@ -785,7 +782,7 @@ $$
 #+END_NOTES
 On passe sous silence le facteur d'inflation !! On considère que tout le monde
 est recalibré pour simplifier.
-** Résultat de la comparaison des méthodes sur des données simulées
+** Result of methods comparison on simulated dataset
 
 #+NAME: code:lfmm_comp
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:num_val_auc_gif_df][code:num_val_auc_gif_df]]
@@ -835,7 +832,33 @@ est recalibré pour simplifier.
 [[file:../OUTPUT/Rplots/lfmm_method_comp_slides.pdf]]
 
 * Methods Comparison on True Dataset
-** Étude d'association entre des données génétiques et un gradient climatique :noexport:
+** Gene-environment association study (GEA)
+
+#+HTML: <div style="float:left;width:60%;margin-top:50px;">
+#+LATEX: \begin{columns}
+#+LATEX: \begin{column}{0.6\columnwidth}
+
+[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/lfmm_intro_map_covariate_slides.pdf]]
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \begin{column}{0.4\columnwidth}
+#+HTML: <div style="float:left;width:40%;margin-top:50px;">
+
+Genome data come from the 1000Genome project citep:1000Genome_2015
+- 1409 individuals from 14 populations
+- 5397214 SNPs
+
+Variable of interest
+- climatic data from WordClim DataBase
+- first principal component
+
+*We want to identify SNPs associated with the climate*
+
+#+HTML: </div>
+#+LATEX: \end{column}
+#+LATEX: \end{columns}
+
+** Choice of K for the gene-environment association study
 
 #+NAME: code:lfmm_geas_scree
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_screeplot_CV][code:eas_screeplot_CV]]
@@ -875,7 +898,7 @@ est recalibré pour simplifier.
 
 *** Notes                                                        :noexport:
 Retour sur l'exemple
-** Choix de K pour l'étude d'association entre des données génétiques et un gradient climatique
+** Choice of K for the gene-environment association study 
 
 #+NAME: code:lfmm_geas_PCs_slide
 #+CAPTION: Dépend de [[file:~/Projects/Thesis/MaThese/main.org::code:eas_PCs][code:eas_PCs]]
@@ -955,7 +978,7 @@ Retour sur l'exemple
 - Comme nous l'avons dit le choix de K est important, pour le choisir on peut se
   demander ce que représente les variable latente
 #+END_NOTES
-** Étude d'association entre des données génétiques et un gradient climatique :noexport:
+** Results of the gene-environment association study
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
@@ -972,7 +995,7 @@ Retour sur l'exemple
 Dire pk il reste seulement ces méthodes
 diagramme de venne : montre que tout le monde ne fait pas pareil
 Les candidats détecté par lassoLFMM, ridgeLFMM et cate 
-** Étude d'association entre des données génétiques et un gradient climatique
+** Results of the gene-environment association study
 
 #+LATEX: \begingroup\fontsize{9}{9}\selectfont
 #+LATEX: \rowcolors{2}{gray!25}{white}
@@ -1041,7 +1064,7 @@ rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\
   retrouver 
 #+END_NOTES
 
-** Étude d'association entre des niveaux de méthylation de l'ADN et la polyarthrite rhumatoïde (EWAS)
+** Association study between DNA methylation level and the rheumatoid arthritis (EWAS)
 :LOGBOOK:
 - Note taken on [2017-11-14 mar. 16:13] \\
   Sources: 
@@ -1061,22 +1084,22 @@ citep:wiki:DNA_methylation
 #+LATEX: \begin{column}{0.6\columnwidth}
 #+HTML: <div style="float:left;width:60%;margin-top:50px;">
 
-*Données* citep:Liu_2013
+*Dataset* citep:Liu_2013
 
-- $\Y$ contient le niveau de méthylation de $485 577$ sites de l'ADN chez 699
-  individus (354 cas et 335 contrôles)
-- $\X$ représente la maladie polyarthrite rhumatoïde
+- $\Y$ contains methylation level for $485 577$ DNA location for 699 individuals
+  (354 case and 335 control)
+- $\X$ stand for the rheumatoid arthritis
 
-*Facteurs de confusion*
+*Confounding factors*
 
-- composition cellulaire
-- âge
-- genre
-- consommation de tabac
+- celular composition
+- age
+- gender
+- tabacco consummation 
 
-*Objectif*
+*Aim*
 
-Trouver les sites de méthylation associés à la maladie polyarthrite rhumatoïde.
+Find the methylation sites associated with the rheumatoid arthritis
 
 #+HTML: </div>
 #+LATEX: \end{column}
@@ -1087,7 +1110,7 @@ La méthylation de l'ADN est un processus au cours duquel un groupe méthyle est
 ajouté aux molécules d'ADN. La méthylation peut changer l'activité de l'ADN et
 en particulier modifier sa transcription en protéine.
 
-** Diagramme de Venn de l'étude d'association entre des sites de méthylation et la polyarthrite rhumatoïde (EWAS)
+** Results of the EWAS 
 
 
 #+BEGIN_EXPORT latex
@@ -1235,7 +1258,7 @@ en particulier modifier sa transcription en protéine.
                        "./ewas_venn_slides.png")
   system(convert.cmd)
 #+END_SRC
-** Sites de méthylation trouvés dans d'autres études citep:Rahmani_2016,Zou_2014 (EWAS)
+** Methylation sites found out in other studies citep:Rahmani_2016,Zou_2014 (EWAS)
 
 #+LATEX: \begingroup\fontsize{9}{9}\selectfont
 #+LATEX: \rowcolors{2}{gray!25}{white}
@@ -1305,4 +1328,141 @@ ID & Chr & Position & Gene & PCAlm & lassoLFMM & cate & ridgeLFMM \\
 
 *Question* Comparaison des facteur latents avec les facteurs de confusion connus.
 
-* Conclusion
+* Conclusions
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: slide-title="Conclusions et perspectives"
+:END:
+
+#+BEGIN_EXPORT latex
+\frame{\sectionpage}
+#+END_EXPORT
+
+** Deux logiciels                                                 :noexport:
+tess3r et lfmm
+de la factorisation de matrices
+** =lfmm=
+
+- Two new methods to estimate the confunction factor for correcting association
+  studies
+- Theorical convergence of the algorithms
+- Same power that oracle on simulation
+- On true dataset methods based on the latent factor mixed model discover more association
+- On true dataset association discovered can be very different between methods
+- We deliver a R package =lfmm= which implement these methods
+
+*** Notes                                                        :noexport:
+
+#+begin_src R :exports both
+  # install.packages("devtools")
+  devtools::install_github("bcm-uga/lfmm")
+#+end_src
+** Perspectives                                                   :noexport:
+- Perspective de maintenance des logiciels
+- données manquantes
+- Construction des tests d'hypothèse (glm, modèle à effets fixes et aléatoires)
+- Convergence statistique des estimateurs pour LFMM
+- Utilisation de méthodes basées sur la factorisation matricielle à d'autres études :
+  RNA-Seq, données méthylation au débit
+*** Notes                                                        :noexport:
+#+BEGIN_NOTES
+- maintain des logicièle en fonction du retour de utilisateurs
+- on peut utiliser les variable latentes dans d'autre modèle ex dans une
+  regression logistique ou alors on peut utiliser la matrice latentes pour
+  calcule la matrice de covariance des effets aléatoire dans un modèle à effet
+  aléatoire et fixe
+- cv stat des estimateur pour LFMM, en particulier pour l'estimateur avec la
+  régularisation L2
+- 
+#+END_NOTES
+
+* Thank you for your attention                                  :B_fullframe:
+:PROPERTIES:
+:BEAMER_env: fullframe
+:END:
+
+#+BEGIN_EXPORT latex
+\begin{center}
+\Huge \alert{Thank you for your attention !}
+\end{center}
+#+END_EXPORT
+\appendix
+\backupbegin
+* Annex 
+** Choix du nombre de variables latentes
+
+#+NAME: code:lfmm_K
+#+CAPTION: Dépend de 
+#+begin_src R 
+  library(MaTheseR)
+  library(tidyverse)
+  require(magrittr)
+  library(scales)
+
+  latex_percent <- function (x) {
+    x <- plyr::round_any(x, scales:::precision(x)/100)
+    stringr::str_c(comma(x * 100), "\\%")
+  }
+
+
+  dat <- ExpRsampler_generativeData(n = 200,
+                                    p = 1000,
+                                    K = 3,
+                                    outlier.prop = 0.1,
+                                    cs = 0.7,
+                                    sigma = 0.2,
+                                    B.sd = 1.0,
+                                    B.mean = 0.0,
+                                    U.sd = 1.0,
+                                    V.sd = 1.0) %>%
+    ExpRmouline()
+
+  ## projection
+  P.list <- lfmm::compute_P(dat$X, lambda = 0.0)
+  Y <- P.list$sqrt.P %*% dat$Y
+  rm(P.list)
+  rm(dat)
+  gc()
+
+  ## PCA
+  svd.res <- svd(Y,0,0)
+  df.res <- tibble(index = seq_along(svd.res$d), singular.value = svd.res$d) %>%
+    mutate(var.expl = singular.value / sum(singular.value))
+
+  ## plot
+  pl <- ggplot(df.res, aes(x = as.factor(index), y = var.expl)) +
+    geom_point() +
+    geom_line(aes(x = index, y = var.expl)) +
+    coord_cartesian(xlim = c(1,10)) +
+    xlab("Nombre de variables latentes ($K$)") +
+    ylab("Variance\nexpliqu\\'ee") +
+    MaTheseR.params$gtheme +
+    scale_y_continuous(labels=latex_percent)
+
+  ThesisRpackage::Plots_export_tikz_pdf(pl,
+                                        basename.output = "lfmm_K_slides",
+                                        env = MaTheseR.params,
+                                        height = 1.5,
+                                        width = 4.5)
+#+end_src
+
+On projette $\Y$ sur l'espace orthogonal à $\X$ en prenant $\lambRidge = 0$
+\begin{equation*}
+\matr{D}_{0} \Q^{T} \Y = \matr{D}_{0} \Q^{T}\matr{U} \V^{T} + \matr{D}_{0} \Q^{T} \E.
+\end{equation*}
+
+On calcule les valeurs singulières pour visualiser la variance expliquée par
+chaque variable latente (scree plot).
+
+#+ATTR_LATEX: :width \textwidth :height nil
+[[file:../OUTPUT/Rplots/lfmm_K_slides.pdf]]
+
+
+*** Notes                                                        :noexport:
+Une paramètre important dans les méthodes à facteur latent est le nombre de
+variables latentes.
+
+Comme ca je vais me préparer à la questions comment on choisi les autres.
+** GEAS : gènes candidats
+[[file:GEAS_GeneHits.pdf]]
+
+\backupend
