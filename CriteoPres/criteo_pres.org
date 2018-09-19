@@ -11,10 +11,10 @@
 #+latex_header: \addbibresource{../biblio.bib}
 #+latex_header: \addbibresource{~/Papers/references.bib}
 #+LATEX_HEADER: \input{../packages.tex}
-#+LATEX_HEADER: \input{setup.tex}
 #+LATEX_HEADER: \input{../notations.tex}
+#+LATEX_HEADER: \input{header.tex}
 
-#+TITLE: Factorization Matrix Method For Association Testing
+#+TITLE: Factorization Matrix Methods For Association Testing
 #+AUTHOR: Kévin CAYE
 #+LANGUAGE: en
 #+STARTUP: overview indent inlineimages logdrawer
@@ -23,6 +23,9 @@
 #+EXPORT_EXCLUDE_TAGS: noexport
 #+COLUMNS: %25ITEM %TODO %3PRIORITY %TAGS
 #+SEQ_TODO: TODO(t!) STARTED(s!) WAITING(w!) RUNNING(r!) DEBUG(g!) APPT(a!) | DONE(d!) CANCELLED(c!) DEFERRED(f!)
+
+
+#+PROPERTY: header-args :eval no-export :exports none
 
 * Resources                                                        :noexport:
 - [[file:/media/cayek/7ac59e2e-e6da-4779-9b99-da54f16f6f00/projects/home/MaThese/Slides/index.pdf][my thesis pres]]
@@ -76,7 +79,7 @@ https://www.genome.gov/sequencingcostsdata/
   - nb of SNPs et taille du génome : https://ghr.nlm.nih.gov/primer/genomicresearch/snp
 :END:
 
-- The DNA is long sequence of nucleotide: A, C, T, G (3 billion for Human)
+- The DNA is long sequence of nucleotide: A, C, T, G (3 billion for Human being)
 
 - Data are single-nucleotide polymorphism called SNPs (10 millions for humain species) 
 - There are 2 alleles for each locus.
@@ -121,7 +124,7 @@ https://www.genome.gov/sequencingcostsdata/
 
 ** Genomic matrix
 
-Data are put into a matrix of size $n \times p$ :
+Data are put into a matrix of size $n \times p$:
 
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
@@ -153,7 +156,6 @@ compté 0 1 ou 2 fois l'allèle muté.
 
 #+END_NOTES
 ** Problematic
-
 
 *Latent Factor models for confounder adjustment in genome association studies*
 
@@ -191,9 +193,9 @@ le package lfmm qui implémente nos méthodes
 #+END_EXPORT
 ** Association testing
 
-*Aim*
+*Goal*
 
-We want to detect SNPs correlated to an interest variable.
+We want to detect SNPs correlated to a variable of interest.
 
 #+BEGIN_EXPORT latex
 $$  
@@ -214,7 +216,7 @@ $$
 $$
 #+END_EXPORT
 
-*Example of interest variable*
+*Example of variable of interest*
 
 - Disease : diabetes, celiac disease citep:dubois2010multiple
 - Phenotype : la length citep:wood2014defining
@@ -226,7 +228,7 @@ $$
 #+LATEX: \begin{columns}
 #+LATEX: \begin{column}{0.6\columnwidth}
 
-[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/lfmm_intro_map_covariate_slides.pdf]]
+[[file:../OUTPUT/Rplots/lfmm_intro_map_covariate_slides.pdf]]
 #+HTML: </div>
 #+LATEX: \end{column}
 #+LATEX: \begin{column}{0.4\columnwidth}
@@ -297,7 +299,7 @@ Variable of interest
 #+end_src
 
 #+ATTR_LATEX: :height 0.9\textheight :width nil
-[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/tess3_intro_map_covariate_slides.pdf]]
+[[file:../OUTPUT/Rplots/tess3_intro_map_covariate_slides.pdf]]
 *** text                                                            :BMCOL:
 :PROPERTIES:
 :BEAMER_col: 0.5
@@ -341,7 +343,7 @@ $$
 \matr{Y}_{j} = \X \beta_{j} + \matr{E_{j}},
 $$
 where
-- $\beta_j$ stand for the effect of the interest variable $\matr{X}$ over the
+- $\beta_j$ stand for the effect of the variable of interest $\matr{X}$ on the
   variable $\matr{Y}_{j}$
 - $\E_{j}$ is the residual noise
 We want to detect locus for which we can reject the null hypothesis
@@ -385,7 +387,7 @@ We use the *Student's t-test*
 
 #+end_src
 
-[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/lfmm_intro_lm_slide.pdf]]
+[[file:../OUTPUT/Rplots/lfmm_intro_lm_slide.pdf]]
 
 *** Notes                                                        :noexport:
 - du coup ici il faut dire qu'on fait un test de student pour calculer des pvaleurs.
@@ -465,7 +467,7 @@ where
   $$
   \hat{\matr{U}} \hat{\V}^{T} & = \sqrt{\matr{P}_{\lambda}}^{-1} \svd_{\K}( \sqrt{\matr{P}_{\lambda}} \Y ) 
   $$
-  où 
+  where
   $$
   \matr{P}_{\lambda} = \Id_{n} - (\X^T \X + \lambda \Id_{n})^{-1} \X^T \X
   $$
@@ -539,7 +541,7 @@ $$\matr{W} = \matr{U} \matr{V}^T$$
 - la norme matricielle pénalise le rang de W 
 ** L1 regularized least-squares estimates
 
-*Coordinate bloc descent algorithm*
+*block-coordinate descent algorithm*
 
 Initialize
 \begin{align*}
@@ -564,7 +566,7 @@ Then alternate
 
 *Theorem 1* 
 
-The bloc coordinate descent algorithm for estimating the L1 regularized
+The block-coordinate descent algorithm for estimating the L1 regularized
 parameters converge toward a global minimum of the loss function $\Llasso$.
 
 #+LATEX: \vspace{0.1in}
@@ -838,7 +840,7 @@ est recalibré pour simplifier.
 #+LATEX: \begin{columns}
 #+LATEX: \begin{column}{0.6\columnwidth}
 
-[[file:~/Projects/Thesis/MaThese/OUTPUT/Rplots/lfmm_intro_map_covariate_slides.pdf]]
+[[file:../OUTPUT/Rplots/lfmm_intro_map_covariate_slides.pdf]]
 #+HTML: </div>
 #+LATEX: \end{column}
 #+LATEX: \begin{column}{0.4\columnwidth}
@@ -984,9 +986,7 @@ Retour sur l'exemple
 \begin{figure}[!h]
 \centering
 \includegraphics[height=0.6\textheight]{../OUTPUT/Rplots/geas_venn.png}
-\caption{{\bf Diagramme de Venn de l'étude d'association entre des génotypes et
-    un gradient environnemental (GEAS).} Diagramme de Venn des listes controlées à
-  un taux de fausses de découvertes de $1 \%$ pour chaque méthode.}
+\caption{Venn diagram for an expected false discovery rate of $1 \%$.}
 \label{fig:geas_venn}
 \end{figure}
 #+END_EXPORT
@@ -1097,7 +1097,7 @@ citep:wiki:DNA_methylation
 - gender
 - tabacco consummation 
 
-*Aim*
+*Goal*
 
 Find the methylation sites associated with the rheumatoid arthritis
 
@@ -1112,13 +1112,11 @@ en particulier modifier sa transcription en protéine.
 
 ** Results of the EWAS 
 
-
 #+BEGIN_EXPORT latex
 \begin{figure}[!h]
 \centering
-\includegraphics[height=0.6\textheight]{ewas_venn_slides.png}
-\caption{ Diagramme de Venn des
-  listes contrôlées à un taux de fausses découvertes de 1 \%.}
+\includegraphics[height=0.6\textheight]{../OUTPUT/Rplots/ewas_venn.png}
+\caption{Venn diagram for an expected false discovery rate of 1 \%.}
 \label{fig:ewas_venn}
 \end{figure}
 #+END_EXPORT
@@ -1462,7 +1460,4 @@ Une paramètre important dans les méthodes à facteur latent est le nombre de
 variables latentes.
 
 Comme ca je vais me préparer à la questions comment on choisi les autres.
-** GEAS : gènes candidats
-[[file:GEAS_GeneHits.pdf]]
-
 \backupend
