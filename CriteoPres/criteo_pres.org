@@ -14,7 +14,7 @@
 #+LATEX_HEADER: \input{../notations.tex}
 #+LATEX_HEADER: \input{header.tex}
 
-#+TITLE: Factorization Matrix Methods For Genomic Association Testing
+#+TITLE: Factorization Matrix Methods For Genome-wide Association Testing
 #+AUTHOR: Kévin CAYE
 #+LANGUAGE: en
 #+STARTUP: overview indent inlineimages logdrawer
