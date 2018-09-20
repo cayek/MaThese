@@ -9,12 +9,12 @@
 #+OPTIONS: H:2 toc:nil num:nil author:nil date:nil
 #+latex_header: \usepackage[citestyle=authoryear, bibstyle=authoryear, hyperref=true,backref=true,maxcitenames=2,url=true,backend=biber,natbib=true]{biblatex}
 #+latex_header: \addbibresource{../biblio.bib}
-#+latex_header: \addbibresource{~/Papers/references.bib}
+# #+latex_header: \addbibresource{~/Papers/references.bib}
 #+LATEX_HEADER: \input{../packages.tex}
 #+LATEX_HEADER: \input{../notations.tex}
 #+LATEX_HEADER: \input{header.tex}
 
-#+TITLE: Factorization Matrix Methods For Association Testing
+#+TITLE: Factorization Matrix Methods For Genomic Association Testing
 #+AUTHOR: Kévin CAYE
 #+LANGUAGE: en
 #+STARTUP: overview indent inlineimages logdrawer
@@ -31,6 +31,7 @@
 - [[file:/media/cayek/7ac59e2e-e6da-4779-9b99-da54f16f6f00/projects/home/MaThese/Slides/index.pdf][my thesis pres]]
 - [[file:/media/cayek/7ac59e2e-e6da-4779-9b99-da54f16f6f00/projects/home/Thesis/3Article/Slides/BCMSeminar/main.pdf][bcm presentation of lfmm]]
 - the article written by oliver cite:Caye_LFMM_2.0:_Latent_factor_models_for_confounder
+- [[file:~/Nextcloud/Th%C3%A8se/Biblio/org-ref-pdfs/stephens16_false_discov_rates.pdf][false discovery rate new deal]]
 * FAQ                                                              :noexport:
 ** How to chose the hyper parameter lambda or K
 *lambda L2* We explore during my thesis the cross validation. Even if the error
@@ -155,42 +156,6 @@ Par exemple pour un individu diploid qui possède deux fois chaque gène on va
 compté 0 1 ou 2 fois l'allèle muté.
 
 #+END_NOTES
-** Problematic
-
-*Latent Factor models for confounder adjustment in genome association studies*
-
-- Olivier François, Kevin Caye. Genome-wide association studies in
-  geographically structured populations. /Molecular Ecology Resources/, papier
-  invité. En révision.
-- Kevin Caye, Olivier François. Optimal confounder adjustment in genome and
-  epigenome-wide association studies. En préparation.
-- Kévin Caye, Olivier François. =lfmm= : An R package for correcting
-  association studies for confounding factors.
-
-*** Notes                                                        :noexport:
-#+BEGIN_NOTES
-Au cours de ma thèse nous nous sommes intéresse à deux problématiques
-statistiques. Pour chacune de ces problématique nous avons dévellopé des
-méthodes que l'on a implémenté dans un package R.
-
-Dans un premier temps nous nous sommes intéressé à l'inférence des coefficient
-de métissage a partir des données génétique et de données géographique. Pour
-cette problématique nous nous apuions sur les travaux publié ... et
-le package tess3r.
-
-Dans un deuxième temps nous nous somme intéressé à la correction des facteur de
-confusion qui apparaisse des les étude d'association génétique.
-Nous avons proposé les articles .... qui sont en cour de publication ainsi que
-le package lfmm qui implémente nos méthodes
-#+END_NOTES
-
-* Confounders correction in association testing
-:PROPERTIES:
-:REVEAL_EXTRA_ATTR: slide-title="Étude d'association"
-:END:
-#+BEGIN_EXPORT latex
-\frame{\sectionpage}
-#+END_EXPORT
 ** Association testing
 
 *Goal*
@@ -218,9 +183,9 @@ $$
 
 *Example of variable of interest*
 
-- Disease : diabetes, celiac disease citep:dubois2010multiple
-- Phenotype : la length citep:wood2014defining
-- Environment : the temperature citep:Frichot_2013
+- Disease : diabetes, celiac disease (dubois 2010) 
+- Phenotype : the size (wood et al. 2010)
+- Environment : the temperature (Frichot et al. 2013)
 
 ** Genome wide association study with environmental variable
 
@@ -234,7 +199,7 @@ $$
 #+LATEX: \begin{column}{0.4\columnwidth}
 #+HTML: <div style="float:left;width:40%;margin-top:50px;">
 
-Genome data come from the 1000Genome project citep:1000Genome_2015
+Genome data come from the 1000Genome project (1000Genome Consortium 2015)
 - 1409 individuals from 14 populations
 - 5397214 SNPs
 
@@ -391,6 +356,13 @@ We use the *Student's t-test*
 
 *** Notes                                                        :noexport:
 - du coup ici il faut dire qu'on fait un test de student pour calculer des pvaleurs.
+* Confounders correction in association testing
+:PROPERTIES:
+:REVEAL_EXTRA_ATTR: slide-title="Étude d'association"
+:END:
+#+BEGIN_EXPORT latex
+\frame{\sectionpage}
+#+END_EXPORT
 ** Latent factor mixed model (LFMM)
 
 
@@ -442,14 +414,14 @@ where
 #+LATEX: \rowcolors[]{2}{contiYellow!5}{contiYellow!20}
 #+ATTR_LATEX: :align p{2cm}|p{3.8cm}p{3.8cm}|p{2cm}
 #+NAME: table:lfmm_etat_art
-|-------------+-------------------------------------------------------+---------------------------------------------------------------------------------------+--------------------------------|
-| Méthode     | Modèle                                                | Algorithme                                                                            | Référence                      |
-|-------------+-------------------------------------------------------+---------------------------------------------------------------------------------------+--------------------------------|
-| sva-twostep | ACP et régression linéaire                            | moindres carrés ordinaire et SVD                                                      | citet:article_Leek_Storey_2007 |
-| sva-irw     | /weighted/-ACP et régression linéaire                 | moindres carrés ordinaire et /weighted/-SVD                                           | citet:article_Leek_Storey_2008 |
-| cate        | analyse factorielle et régression linéaire            | EM ou SVD et estimation des moindres carrés généralisée                               | citet:wang2015confounder       |
-| *ridgeLFMM* | factorisation matricielle avec régularisation $L_{2}$ | SVD et estimation des moindres carrés régularisée en norme $L_{2}$                    |                                |
-| *lassoLFMM* | factorisation matricielle avec régularisation $L_{1}$ | /soft-thresholded/ SVD et estimation des moindres carrés régularisée en norme $L_{1}$ |                                |
+|-------------+-------------------------------------------------------+---------------------------------------------------------------------------------------+----------------------|
+| Méthode     | Modèle                                                | Algorithme                                                                            | Référence            |
+|-------------+-------------------------------------------------------+---------------------------------------------------------------------------------------+----------------------|
+| sva-twostep | ACP et régression linéaire                            | moindres carrés ordinaire et SVD                                                      | Leek and Storey 2007 |
+| sva-irw     | /weighted/-ACP et régression linéaire                 | moindres carrés ordinaire et /weighted/-SVD                                           | Leek and Storey 2008 |
+| cate        | analyse factorielle et régression linéaire            | EM ou SVD et estimation des moindres carrés généralisée                               | Wang et al. 2018     |
+| *ridgeLFMM* | factorisation matricielle avec régularisation $L_{2}$ | SVD et estimation des moindres carrés régularisée en norme $L_{2}$                    |                      |
+| *lassoLFMM* | factorisation matricielle avec régularisation $L_{1}$ | /soft-thresholded/ SVD et estimation des moindres carrés régularisée en norme $L_{1}$ |                      |
 #+LATEX:\rowcolors{2}{}{}
 #+LATEX: \endgroup
 
@@ -570,7 +542,7 @@ The block-coordinate descent algorithm for estimating the L1 regularized
 parameters converge toward a global minimum of the loss function $\Llasso$.
 
 #+LATEX: \vspace{0.1in}
-*The proof* rely on a work of citet:Tseng_2001
+*The proof* rely on a work of Tseng et al. (2001)
 
 The main hypothesis are : 
 - $\W,\B \mapsto \norm{\Y - \W - \X \B^T}_{F}^2$ is convex and differentiable
@@ -580,7 +552,7 @@ The main hypothesis are :
 - $\W \mapsto \norm{\W}_{*}$ is continuous and convex
   (regularization term in $\Llasso$)
 
-** hypothesis testing corrected for confunders citep:Price_2006
+** hypothesis testing corrected for confunders (Price et al. 2006)
 
 For each explained variable $\Y_{j}$
 \begin{equation*}
@@ -597,7 +569,7 @@ We want to the list $\Gamma = \{1,..,J\}$ such that
 $$p( \beta_j = 0 | j \in \Gamma) = T$$ 
 where $T$ is the expected false discovery rate (FDR). 
 
-We used the \qvalue cite:storey2003statistical
+We used the \qvalue (Storey et al. 2003)
 
 *** Notes                                                        :noexport:
 #+BEGIN_NOTES
@@ -834,6 +806,9 @@ est recalibré pour simplifier.
 [[file:../OUTPUT/Rplots/lfmm_method_comp_slides.pdf]]
 
 * Methods Comparison on True Dataset
+#+BEGIN_EXPORT latex
+\frame{\sectionpage}
+#+END_EXPORT
 ** Gene-environment association study (GEA)
 
 #+HTML: <div style="float:left;width:60%;margin-top:50px;">
@@ -846,7 +821,7 @@ est recalibré pour simplifier.
 #+LATEX: \begin{column}{0.4\columnwidth}
 #+HTML: <div style="float:left;width:40%;margin-top:50px;">
 
-Genome data come from the 1000Genome project citep:1000Genome_2015
+Genome data come from the 1000Genome project (1000Genome Consortium 2015)
 - 1409 individuals from 14 populations
 - 5397214 SNPs
 
@@ -1077,14 +1052,14 @@ rs10908907 & ridgeLFMM, cate & Alcoholism (heaviness of drinking) \\
 
 #+ATTR_LATEX: :width \textwidth :height nil
 [[file:./img/1280px-DNA_methylation.jpg]]
-citep:wiki:DNA_methylation
+(Wikipedia)
 
 #+HTML: </div>
 #+LATEX: \end{column}
 #+LATEX: \begin{column}{0.6\columnwidth}
 #+HTML: <div style="float:left;width:60%;margin-top:50px;">
 
-*Dataset* citep:Liu_2013
+*Dataset* (Liu et al. 2013)
 
 - $\Y$ contains methylation level for $485 577$ DNA location for 699 individuals
   (354 case and 335 control)
@@ -1256,7 +1231,7 @@ en particulier modifier sa transcription en protéine.
                        "./ewas_venn_slides.png")
   system(convert.cmd)
 #+END_SRC
-** Methylation sites found out in other studies citep:Rahmani_2016,Zou_2014 (EWAS)
+** Methylation sites found out in other studies (Rahmani et al. 2016, Zou et al. 2014) (EWAS)
 
 #+LATEX: \begingroup\fontsize{9}{9}\selectfont
 #+LATEX: \rowcolors{2}{gray!25}{white}
@@ -1344,8 +1319,8 @@ de la factorisation de matrices
   studies
 - Theorical convergence of the algorithms
 - Same power that oracle on simulation
-- On true dataset methods based on the latent factor mixed model discover more association
-- On true dataset association discovered can be very different between methods
+- On true dataset methods based on the latent factor mixed model discover more associations
+- On true dataset association discovered can be different between methods
 - We deliver a R package =lfmm= which implement these methods
 
 *** Notes                                                        :noexport:
